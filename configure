@@ -1,0 +1,872 @@
+#!/bin/sh
+#
+# libvalhalla configure script - (c) 2009 Mathieu Schroeter
+#
+#  Fully inspired from :
+#     libdlna configure script - (c) 2007-2008 Benjamin Zores
+#   libplayer configure script - (c) 2006 Benjamin Zores
+#      FFmpeg configure script, thanks to Fabrice Bellard
+#
+
+# make sure we are running under a compatible shell
+unset foo
+(: ${foo%%bar}) 2>/dev/null && ! (: ${foo?}) 2>/dev/null
+if test "$?" != 0; then
+    if test "x$VALHALLA_CONFIGURE_EXEC" = x; then
+        VALHALLA_CONFIGURE_EXEC=1
+        export VALHALLA_CONFIGURE_EXEC
+        exec bash "$0" "$@"
+        exec ksh "$0" "$@"
+        exec /usr/xpg4/bin/sh "$0" "$@"
+    fi
+    echo "No compatible shell script interpreter found."
+    exit 1
+fi
+
+show_help(){
+  echo "Usage: configure [options]"
+  echo "Options: [defaults in brackets after descriptions]"
+  echo
+  echo "Standard options:"
+  echo "  --help                      print this message"
+  echo "  --log[=FILE|yes|no]         log tests and output to FILE [config.log]"
+  echo "  --prefix=PREFIX             install in PREFIX [$PREFIX]"
+  echo "  --bindir=DIR                install bins in DIR [PREFIX/bin]"
+  echo "  --libdir=DIR                install libs in DIR [PREFIX/lib]"
+  echo "  --includedir=DIR            install includes in DIR [PREFIX/include]"
+  echo "  --enable-static             build static libraries [default=yes]"
+  echo "  --disable-static            do not build static libraries [default=no]"
+  echo "  --enable-shared             build shared libraries [default=yes]"
+  echo "  --disable-shared            do not build shared libraries [default=no]"
+  echo ""
+  echo "Search paths:"
+  echo "  --with-lavf=PATH            specify prefix directory for libavformat package."
+  echo "                              Equivalent to --with-lavf-inc=PATH/include"
+  echo "                                       plus --with-lavf-lib=PATH/lib"
+  echo "  --with-lavf-inc=PATH        specify directory for libavformat include files"
+  echo "  --with-lavf-lib=PATH        specify directory for libavformat library"
+  echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
+  echo ""
+  echo "Advanced options (experts only):"
+  echo "  --arch=ARCH                 force architecture"
+  echo "  --cpu=CPU                   force CPU optimization"
+  echo "  --disable-debug             disable debugging symbols"
+  echo "  --disable-strip             disable stripping of executables at installation"
+  echo "  --disable-optimize          disable compiler optimization"
+  echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
+  echo "  --cross-compile             assume a cross-compiler is used"
+  echo ""
+  echo "Miscellaneous:"
+  echo "  --disable-logcolor          disable colorful console output on terminals"
+  echo "  --enable-doc                build Doxygen documentation"
+  exit 1
+}
+
+log(){
+    echo "$@" >>$logfile
+}
+
+log_file(){
+    log BEGIN $1
+    cat -n $1 >>$logfile
+    log END $1
+}
+
+echolog(){
+    log "$@"
+    echo "$@"
+}
+
+clean(){
+    rm -f $TMPC $TMPO $TMPE $TMPS
+}
+
+die(){
+    echolog "$@"
+    if enabled logging; then
+      echo "See file \"$logfile\" produced by configure for more details."
+    else
+      echo "Rerun configure with logging enabled (do not use --log=no) for more details."
+    fi
+    clean
+    exit 1
+}
+
+set_all(){
+    value=$1
+    shift
+    for var in $*; do
+        eval $var=$value
+    done
+}
+
+enable(){
+    set_all yes $*
+}
+
+enabled(){
+    eval test "x\$$1" = "xyes"
+}
+
+flags_saved(){
+    (: ${SAVE_CFLAGS?}) 2>/dev/null
+}
+
+save_flags(){
+    flags_saved && return
+    SAVE_CFLAGS="$CFLAGS"
+    SAVE_extracflags="$extracflags"
+    SAVE_LDFLAGS="$LDFLAGS"
+    SAVE_extralibs="$extralibs"
+}
+
+restore_flags(){
+    CFLAGS="$SAVE_CFLAGS"
+    HOST_CFLAGS="$SAVE_HOST_CFLAGS"
+    LDFLAGS="$SAVE_LDFLAGS"
+    extralibs="$SAVE_extralibs"
+    unset SAVE_CFLAGS
+    unset SAVE_HOST_CFLAGS
+    unset SAVE_LDFLAGS
+    unset SAVE_extralibs
+}
+
+temp_cflags(){
+    temp_append CFLAGS "$@"
+}
+
+temp_host_cflags(){
+    temp_append HOST_CFLAGS "$@"
+}
+
+temp_ldflags(){
+    temp_append LDFLAGS "$@"
+}
+
+temp_extralibs(){
+    temp_append extralibs "$@"
+}
+
+temp_append(){
+    local var
+    var=$1
+    shift
+    save_flags
+    append_var "$var" "$@"
+}
+
+append_var(){
+    local var f
+    var=$1
+    shift
+    for f in $@; do
+      if eval echo \$$var | grep -qv -e "$f"; then
+        test -n "$(eval echo \$$var)" && eval "$var=\"\$$var $f\"" || eval "$var=\"$f\""
+      fi
+    done
+}
+
+append(){
+    local var
+    var=$1
+    shift
+    flags_saved && append_var "SAVE_$var" "$@"
+    append_var "$var" "$@"
+}
+
+add_cflags(){
+    append CFLAGS "$@"
+}
+
+add_ldflags(){
+    append LDFLAGS "$@"
+}
+
+add_extralibs(){
+    append extralibs "$@"
+}
+
+add_pkgconfig_requires(){
+    append pkgconfig_requires "$@"
+}
+
+check_cmd(){
+    log "$@"
+    "$@" >>$logfile 2>&1
+}
+
+check_cc(){
+    log check_cc "$@"
+    cat >$TMPC
+    log_file $TMPC
+    check_cmd $cc $CFLAGS "$@" -c -o $TMPO $TMPC
+}
+
+check_host_cc(){
+    log check_host_cc "$@"
+    cat >$TMPC
+    log_file $TMPC
+    check_cmd $host_cc $HOST_CFLAGS "$@" -c -o $TMPO $TMPC
+}
+
+check_cpp(){
+    log check_cpp "$@"
+    cat >$TMPC
+    log_file $TMPC
+    check_cmd $cc $CFLAGS "$@" -E -o $TMPO $TMPC
+}
+
+check_ld(){
+    log check_ld "$@"
+    check_cc || return
+    check_cmd $cc $LDFLAGS "$@" -o $TMPE $TMPO $extralibs
+}
+
+check_host_ld(){
+    log check_host_ld "$@"
+    check_host_cc || return
+    check_cmd $host_cc $HOST_LDFLAGS "$@" -o $TMPE $TMPO
+}
+
+check_exec(){
+    check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
+}
+
+check_cflags(){
+    log check_cflags "$@"
+    check_cc "$@" <<EOF && add_cflags "$@"
+int x;
+EOF
+}
+
+check_ldflags(){
+    log check_ldflags "$@"
+    check_ld "$@" <<EOF && add_ldflags "$@"
+int main(){
+    return 0;
+}
+EOF
+}
+
+check_header(){
+    local header
+    log check_header "$@"
+    header=$1
+    shift
+    check_cpp "$@" <<EOF
+#include <$header>
+int x;
+EOF
+}
+
+check_func(){
+    local func
+    log check_func "$@"
+    func=$1
+    shift
+    check_ld "$@" <<EOF
+extern int $func();
+int main(){
+    $func();
+    return 0;
+}
+EOF
+}
+
+check_lib(){
+    local header func err
+    log check_lib "$@"
+    header="$1"
+    func="$2"
+    shift 2
+    temp_extralibs "$@"
+    check_header $header && check_func $func && add_extralibs "$@"
+    err=$?
+    restore_flags
+    return $err
+}
+
+check_libconfig(){
+    local config func ccflags clibs err
+    log check_libconfig "$@"
+    config="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which "$config" 1>/dev/null 2>&1`; then
+      cflags=`$config $ccflags`
+      [ -n "$cflags" ] && check_cflags "$cflags"
+      libs=`$config $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func && add_extralibs "$libs"
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
+check_lib_version() {
+    check_cmd pkg-config "$1" --atleast-version="$2"
+    err=$?
+    return $err
+}
+
+append_config(){
+    echo "$@" >> $CONFIGFILE
+}
+
+pkgconfig_generate(){
+    name=$1
+    comment=$2
+    version=$3
+    libs=$4
+    libs_private=$5
+    cflags=$6
+    requires=$7
+    requires_private=$8
+
+    cat <<EOF >$name.pc
+PREFIX=$PREFIX
+libdir=$libdir
+includedir=$includedir
+
+Name: $name
+Description: $comment
+Version: $version
+Requires: $requires
+Requires.private: $requires_private
+Conflicts:
+Libs: -L\${libdir} $libs
+Libs.private: $libs_private
+Cflags: -I\${includedir} $cflags
+EOF
+}
+
+add_pkgconfig_deps() {
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      add_cflags `pkg-config "$1" --cflags`
+      add_extralibs `pkg-config "$1" --libs`
+    fi
+}
+
+# set temporary file name
+if test ! -z "$TMPDIR" ; then
+    TMPDIR1="${TMPDIR}"
+elif test ! -z "$TEMPDIR" ; then
+    TMPDIR1="${TEMPDIR}"
+else
+    TMPDIR1="/tmp"
+fi
+
+TMPC="${TMPDIR1}/libvalhalla-${RANDOM}-$$-${RANDOM}.c"
+TMPO="${TMPDIR1}/libvalhalla-${RANDOM}-$$-${RANDOM}.o"
+TMPE="${TMPDIR1}/libvalhalla-${RANDOM}-$$-${RANDOM}"
+TMPS="${TMPDIR1}/libvalhalla-${RANDOM}-$$-${RANDOM}.S"
+
+CONFIGFILE="config.mak"
+
+#################################################
+#   set default parameters
+#################################################
+logging="yes"
+logfile="config.log"
+PREFIX="/usr/local"
+bindir='${PREFIX}/bin'
+libdir='${PREFIX}/lib'
+includedir='${PREFIX}/include'
+static="yes"
+shared="yes"
+cc="gcc"
+host_cc="gcc"
+ar="ar"
+ranlib="ranlib"
+make="make"
+strip="strip"
+arch=`uname -m`
+cpu="generic"
+optimize="yes"
+debug="yes"
+dostrip="yes"
+extralibs=""
+installstrip="-s"
+cross_compile="no"
+INSTALL="/usr/bin/install -c"
+VERSION=""
+pkgconfig_requires=""
+logcolor="yes"
+doc="no"
+
+#################################################
+#   check options
+#################################################
+for opt do
+  optval="${opt#*=}"
+  case "$opt" in
+  --log)
+  ;;
+  --log=*) logging="$optval"
+  ;;
+  --prefix=*) PREFIX="$optval"; force_prefix=yes
+  ;;
+  --bindir=*) bindir="$optval"
+  ;;
+  --libdir=*) libdir="$optval"; force_libdir=yes
+  ;;
+  --includedir=*) includedir="$optval"
+  ;;
+  --enable-static) static="yes"
+  ;;
+  --disable-static) static="no"
+  ;;
+  --enable-shared) shared="yes"
+  ;;
+  --disable-shared) shared="no"
+  ;;
+  --disable-debug) debug="no"
+  ;;
+  --disable-strip) dostrip="no"
+  ;;
+  --disable-optimize) optimize="no"
+  ;;
+  --cross-prefix=*) cross_prefix="$optval"
+  ;;
+  --cross-compile) cross_compile="yes"
+  ;;
+  --with-lavf=*) lavfdir="$optval";
+  ;;
+  --with-lavf-inc=*) lavfincdir="$optval";
+  ;;
+  --with-lavf-lib=*) lavflibdir="$optval";
+  ;;
+  --with-sqlite3-dir=*) sqlite3dir="$optval";
+  ;;
+  --enable-logcolor) logcolor="yes";
+  ;;
+  --disable-logcolor) logcolor="no";
+  ;;
+  --enable-doc) doc="yes";
+  ;;
+  --disable-doc) doc="no";
+  ;;
+  --help) show_help
+  ;;
+  *)
+  echo "Unknown option \"$opt\"."
+  echo "See $0 --help for available options."
+  exit 1
+  ;;
+  esac
+done
+
+# Check for conflictual build options
+if [ "$shared" = no -a "$static" = no ]; then
+  echo "At least one library type must be built."
+  echo "Specify --enable-static to build the static libraries or"
+  echo "--enable-shared to build the shared libraries as well."
+  exit 1
+fi
+
+if [ -n "$cross_prefix" ]; then
+  cross_compile="yes"
+  cc="${cross_prefix}${cc}"
+  ar="${cross_prefix}${ar}"
+  ranlib="${cross_prefix}${ranlib}"
+  strip="${cross_prefix}${strip}"
+else
+  [ -n "$CC" ] && cc="$CC"
+  [ -n "$AR" ] && ar="$AR"
+  [ -n "$RANLIB" ] && ranlib="$RANLIB"
+  [ -n "$STRIP" ] && strip="$STRIP"
+fi
+[ -n "$MAKE" ] && make="$MAKE"
+
+[ -n "$HOST_CC" ] && HOST_CC="$HOST_CC"
+[ -n "$HOST_CFLAGS" ] && HOST_CFLAGS="$HOST_CFLAGS"
+[ -n "$HOST_LDFLAGS" ] && HOST_LDFLAGS="$HOST_LDFLAGS"
+
+#################################################
+#   set arch variable and specific cpu flags
+#################################################
+if enabled cross_compile; then
+  arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+fi
+
+case "$arch" in
+  i386|i486|i586|i686|i86pc|BePC)
+    arch="x86_32"
+  ;;
+  x86_64|amd64)
+    arch="x86_32"
+    canon_arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+    if [ x"$canon_arch" = x"x86_64" -o x"$canon_arch" = x"amd64" ]; then
+      if [ -z "`echo $CFLAGS | grep -- -m32`"  ]; then
+        arch="x86_64"
+      fi
+    fi
+  ;;
+# armv4l is a subset of armv5tel
+  arm|armv4l|armv5tel)
+    arch="armv4l"
+  ;;
+  alpha)
+    arch="alpha"
+  ;;
+  "Power Macintosh"|ppc|ppc64|powerpc)
+    arch="powerpc"
+  ;;
+  mips|mipsel|IP*)
+    arch="mips"
+  ;;
+  sun4u|sparc64)
+    arch="sparc64"
+  ;;
+  sparc)
+    arch="sparc"
+  ;;
+  sh4)
+    arch="sh4"
+  ;;
+  parisc|parisc64)
+    arch="parisc"
+  ;;
+  s390|s390x)
+    arch="s390"
+  ;;
+  m68k)
+    arch="m68k"
+  ;;
+  ia64)
+    arch="ia64"
+  ;;
+  bfin)
+    arch="bfin"
+  ;;
+  *)
+    arch="unknown"
+  ;;
+esac
+
+# Add processor-specific flags
+if test $cpu != "generic"; then
+  case $cpu in
+    601|ppc601|PowerPC601)
+      add_cflags "-mcpu=601"
+    ;;
+    603*|ppc603*|PowerPC603*)
+      add_cflags "-mcpu=603"
+    ;;
+    604*|ppc604*|PowerPC604*)
+      add_cflags "-mcpu=604"
+    ;;
+    G3|g3|75*|ppc75*|PowerPC75*)
+      add_cflags "-mcpu=750 -mpowerpc-gfxopt"
+    ;;
+    G4|g4|745*|ppc745*|PowerPC745*)
+      add_cflags "-mcpu=7450 -mpowerpc-gfxopt"
+    ;;
+    74*|ppc74*|PowerPC74*)
+      add_cflags "-mcpu=7400 -mpowerpc-gfxopt"
+    ;;
+    G5|g5|970|ppc970|PowerPC970|power4*|Power4*)
+      add_cflags "-mcpu=970 -mpowerpc-gfxopt -mpowerpc64"
+    ;;
+    Cell|CELL|cell)
+      add_cflags "-mcpu=cell"
+    ;;
+    i[3456]86|pentium|pentium-mmx|pentiumpro|pentium[23]|pentium-m|k6|k6-[23]|winchip-c6|winchip2|c3|athlon|athlon-tbird|athlon-4|athlon-[mx]p|athlon64|k8|opteron|athlon-fx|core2|pentium4|pentium4m|prescott|nocona)
+      add_cflags "-march=$cpu"
+    ;;
+    sparc64)
+      add_cflags "-mcpu=v9"
+    ;;
+    arm*|cortex*)
+      add_cflags "-mcpu=$cpu"
+    ;;
+    *)
+      die "WARNING: Unknown CPU \"$cpu\", ignored."
+    ;;
+  esac
+fi
+
+#################################################
+#   create logging file
+#################################################
+if test "$logging" != no; then
+  enabled logging || logfile="$logging"
+  echo "# $0 $@" >$logfile
+  set >>$logfile
+else
+  logfile=/dev/null
+fi
+
+#################################################
+#   compiler sanity check
+#################################################
+echolog "Checking for compiler available..."
+check_exec <<EOF
+int main(){
+    return 0;
+}
+EOF
+if test "$?" != 0; then
+  echo "$cc is unable to create an executable file."
+  if test -z "$cross_prefix" -a "$cross_compile" = no; then
+    echo "If $cc is a cross-compiler, use the --cross-compile option."
+  fi
+  die "C compiler test failed."
+fi
+
+if test -n "`$cc -v 2>&1 | grep version | grep Apple`"; then
+  dylib="yes"
+else
+  dylib="no"
+fi
+
+#################################################
+#   check for target specific flags
+#################################################
+# check for SIMD availability
+
+# mmi only available on mips
+if [ "$mmi" = "default" ]; then
+  if [ "$arch" = "mips" ]; then
+    mmi="yes"
+  else
+    mmi="no"
+  fi
+fi
+
+# check if our compiler supports mmi
+enabled mmi && check_cc <<EOF || mmi="no"
+int main(void) {
+    __asm__ ("lq \$2, 0(\$2)");
+    return 0;
+}
+EOF
+
+# test gcc version to see if vector builtins can be used
+# currently only used on i386 for MMX builtins
+check_cc -msse <<EOF && builtin_vector=yes || builtin_vector=no
+#include <xmmintrin.h>
+int main(void) {
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 2)
+return 0;
+#else
+#error no vector builtins
+#endif
+}
+EOF
+
+# test for mm3dnow.h
+test "$arch" = "x86_64" && march=k8 || march=athlon
+check_cc -march=$march <<EOF && mm3dnow=yes || mm3dnow=no
+#include <mm3dnow.h>
+int main(void) {
+__m64 b1;
+b1 = _m_pswapd(b1);
+_m_femms();
+return 0;
+}
+EOF
+
+# ---
+# big/little-endian test
+check_cc <<EOF || die "endian test failed"
+unsigned int endian = 'B' << 24 | 'I' << 16 | 'G' << 8 | 'E';
+EOF
+od -A n -t x1 $TMPO | grep -q '42 *49 *47 *45' && enable bigendian
+
+# add some useful compiler flags if supported
+check_cflags -Wall
+check_cflags -D_LARGEFILE_SOURCE
+check_cflags -D_FILE_OFFSET_BITS=64
+check_cflags -D_REENTRANT
+
+# default extralibs
+add_extralibs -lpthread
+
+#################################################
+#   check for debug symbols
+#################################################
+if enabled debug; then
+  add_cflags -g3 -O0
+  add_cflags -DHAVE_DEBUG
+  optimize="no"
+fi
+
+if enabled optimize; then
+  if test -n "`$cc -v 2>&1 | grep xlc`"; then
+    add_cflags  "-O5"
+    add_ldflags "-O5"
+  else
+    add_cflags "-O3"
+  fi
+fi
+
+#################################################
+#   check for shared library build
+#################################################
+if enabled shared; then
+  case "$arch" in
+    x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
+  esac
+fi
+
+
+#################################################
+#   check for FFmpeg libavformat
+#################################################
+if [ -n "$lavfdir" ]; then
+  check_cflags -I${lavfdir}/include
+  check_ldflags -L${lavfdir}/lib
+fi
+if [ -n "$lavfincdir" ]; then
+  check_cflags -I${lavfincdir}
+fi
+if [ -n "$lavflibdir" ]; then
+  check_cflags -L${lavflibdir}
+fi
+if [ -z  "$lavfdir" -a -z "$lavfincdir" -a -z "$lavflibdir" ]; then
+  add_pkgconfig_deps libavformat
+fi
+
+echolog "Checking for libavformat ..."
+check_lib libavformat/avformat.h av_register_all -lavformat || die "Error, can't find libavformat !"
+add_pkgconfig_requires libavformat
+
+
+#################################################
+#   check for SQLite sqlite3
+#################################################
+if [ -n "$sqlite3dir" ]; then
+  check_cflags -I$sqlite3dir
+  check_ldflags -L$sqlite3dir
+fi
+
+echolog "Checking for sqlite3 ..."
+check_lib sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 !"
+add_pkgconfig_deps sqlite3
+add_pkgconfig_requires sqlite3
+
+
+#################################################
+#   version
+#################################################
+temp_host_cflags "-Isrc"
+check_host_ld <<EOF
+#include <stdio.h>
+#include <valhalla.h>
+int main(){
+  printf("LIBVALHALLA_VERSION:"LIBVALHALLA_VERSION_STR);
+  printf("\n");
+  return 0;
+}
+EOF
+VERSION=`strings $TMPE | sed -n -e 's,LIBVALHALLA_VERSION:,,p'`
+restore_flags
+
+
+#################################################
+#   Miscellaneous
+#################################################
+if enabled logcolor; then
+  add_cflags -DUSE_LOGCOLOR
+fi
+
+# Doxygen
+if enabled doc; then
+  doc="no"
+  which doxygen 2>&1 > /dev/null
+  [ "$?" = 0 ] && doc="yes"
+fi
+
+#################################################
+#   logging result
+#################################################
+echolog ""
+echolog "libvalhalla: configure is OK"
+echolog "  version            $VERSION"
+echolog "configuration:"
+echolog "  install prefix     $PREFIX"
+echolog "  C compiler         $cc"
+echolog "  AR                 $ar"
+echolog "  RANLIB             $ranlib"
+echolog "  STRIP              $strip"
+echolog "  make               $make"
+echolog "  Architecture       $arch ($cpu)"
+echolog "  big-endian         ${bigendian-no}"
+echolog "  debug symbols      $debug"
+echolog "  strip symbols      $dostrip"
+echolog "  optimize           $optimize"
+echolog "  static             ${static}"
+echolog "  shared             ${shared}"
+echolog ""
+echolog "  CFLAGS             $CFLAGS $extracflags"
+echolog "  LDFLAGS            $LDFLAGS"
+echolog "  extralibs          $extralibs"
+echolog ""
+
+#################################################
+#   save configs attributes
+#################################################
+echolog "Creating config.mak ..."
+
+echo "# Automatically generated by configure - do not modify!" > $CONFIGFILE
+
+append_config "PREFIX=$PREFIX"
+append_config "prefix=\$(DESTDIR)\$(PREFIX)"
+append_config "bindir=\$(DESTDIR)$bindir"
+append_config "libdir=\$(DESTDIR)$libdir"
+append_config "includedir=\$(DESTDIR)$includedir"
+
+append_config "MAKE=$make"
+append_config "CC=$cc"
+append_config "AR=$ar"
+append_config "RANLIB=$ranlib"
+append_config "LN=ln"
+
+append_config "BUILD_STATIC=$static"
+append_config "BUILD_SHARED=$shared"
+append_config "BUILD_DYLIB=$dylib"
+
+append_config "VERSION=$VERSION"
+
+if enabled dostrip; then
+  append_config "STRIP=$strip"
+  append_config "INSTALLSTRIP=$installstrip"
+else
+  append_config "STRIP=echo ignoring strip"
+  append_config "INSTALLSTRIP="
+fi
+append_config "EXTRALIBS=$extralibs"
+
+append_config "OPTFLAGS=$CFLAGS"
+append_config "LDFLAGS=$LDFLAGS"
+append_config "INSTALL=$INSTALL"
+
+if enabled bigendian; then
+  append_config "WORDS_BIGENDIAN=yes"
+fi
+
+append_config "DEBUG=$debug"
+append_config "DOC=$doc"
+
+#################################################
+#   make pkg-config files
+#################################################
+echolog "Creating libvalhalla.pc ..."
+
+pkgconfig_generate libvalhalla \
+                   "A tiny media scanner library" \
+                   "$VERSION" \
+                   "-lvalhalla" \
+                   "$extralibs" \
+                   "" \
+                   "" \
+                   "$pkgconfig_requires"
+
+clean
+exit 0

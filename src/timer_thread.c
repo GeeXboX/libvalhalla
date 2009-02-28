@@ -1,0 +1,106 @@
+/*
+ * GeeXboX Valhalla: tiny media scanner API.
+ * Copyright (C) 2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ *
+ * This file is part of libvalhalla.
+ *
+ * libvalhalla is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * libvalhalla is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with libvalhalla; if not, write to the Free Software
+ * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#include <pthread.h>
+#include <sys/time.h>
+#include <stdlib.h>
+
+#include "timer_thread.h"
+
+struct timer_thread_s {
+  pthread_cond_t  cond;
+  pthread_mutex_t mutex;
+  int             run;
+};
+
+
+void
+timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
+{
+  struct timespec ts;
+  struct timeval  tp;
+
+  pthread_mutex_lock (&timer->mutex);
+  if (timer->run)
+  {
+    gettimeofday (&tp, NULL);
+
+    /* Convert from timeval to timespec. */
+    ts.tv_sec  = tp.tv_sec;
+    ts.tv_nsec = tp.tv_usec * 1000;
+    ts.tv_sec += timeout;
+
+    pthread_cond_timedwait (&timer->cond, &timer->mutex, &ts);
+  }
+  pthread_mutex_unlock (&timer->mutex);
+}
+
+void
+timer_thread_stop (timer_thread_t *timer)
+{
+  if (!timer)
+    return;
+
+  pthread_mutex_lock (&timer->mutex);
+  if (timer->run)
+  {
+    pthread_cond_signal (&timer->cond);
+    timer->run = 0;
+  }
+  pthread_mutex_unlock (&timer->mutex);
+}
+
+void
+timer_thread_start (timer_thread_t *timer)
+{
+  if (!timer)
+    return;
+
+  pthread_mutex_lock (&timer->mutex);
+  timer->run = 1;
+  pthread_mutex_unlock (&timer->mutex);
+}
+
+void
+timer_thread_delete (timer_thread_t *timer)
+{
+  if (!timer)
+    return;
+
+  pthread_mutex_destroy (&timer->mutex);
+  pthread_cond_destroy (&timer->cond);
+  free (timer);
+}
+
+timer_thread_t *
+timer_thread_create (void)
+{
+  timer_thread_t *timer;
+
+  timer = calloc (1, sizeof (timer_thread_t));
+  if (!timer)
+    return NULL;
+
+  pthread_mutex_init (&timer->mutex, NULL);
+  pthread_cond_init (&timer->cond, NULL);
+
+  return timer;
+}
