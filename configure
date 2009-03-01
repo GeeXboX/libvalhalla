@@ -727,7 +727,7 @@ if [ -n "$lavfincdir" ]; then
   check_cflags -I${lavfincdir}
 fi
 if [ -n "$lavflibdir" ]; then
-  check_cflags -L${lavflibdir}
+  check_ldflags -L${lavflibdir}
 fi
 if [ -z  "$lavfdir" -a -z "$lavfincdir" -a -z "$lavflibdir" ]; then
   add_pkgconfig_deps libavformat
