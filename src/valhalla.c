@@ -1098,6 +1098,7 @@ valhalla_init (const char *db,
 
   if (!preinit)
   {
+    av_log_set_level (AV_LOG_ERROR);
     av_register_all ();
     preinit = 1;
   }
