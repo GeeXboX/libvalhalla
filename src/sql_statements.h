@@ -47,7 +47,7 @@
  "  file_mtime       INTEGER NOT NULL, "                  \
  "  file_meta_title  TEXT    NULL, "                      \
  "  file_meta_year   INTEGER NULL, "                      \
- "  file_meta_track  INTEGER NULL, "                     \
+ "  file_meta_track  INTEGER NULL, "                      \
  "  checked__        INTEGER NOT NULL, "                  \
  "  _author_id       INTEGER NULL, "                      \
  "  _album_id        INTEGER NULL, "                      \
