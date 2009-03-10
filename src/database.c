@@ -353,14 +353,14 @@ database_file_insert (database_t *database, parser_data_t *data,
   res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 4,
                            data->meta ? data->meta->year : NULL,
                            -1, SQLITE_STATIC);
-    if (res != SQLITE_OK)
-      goto out_clear;
+  if (res != SQLITE_OK)
+    goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 5,
                            data->meta ? data->meta->track : NULL,
                            -1, SQLITE_STATIC);
-    if (res != SQLITE_OK)
-      goto out_clear;
+  if (res != SQLITE_OK)
+    goto out_clear;
 
   if (author_id)
   {
@@ -436,14 +436,14 @@ database_file_update (database_t *database, parser_data_t *data,
   res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 4,
                            data->meta ? data->meta->year : NULL,
                            -1, SQLITE_STATIC);
-    if (res != SQLITE_OK)
-      goto out_clear;
+  if (res != SQLITE_OK)
+    goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 5,
                            data->meta ? data->meta->track : NULL,
                            -1, SQLITE_STATIC);
-    if (res != SQLITE_OK)
-      goto out_clear;
+  if (res != SQLITE_OK)
+    goto out_clear;
 
   if (author_id)
   {
