@@ -23,6 +23,5 @@
 #define VALHALLA_LAVF_UTILS
 
 const char *lavf_utils_fmtname_get (const char *suffix);
-const char *lavf_utils_id3v1_genre (unsigned int id);
 
 #endif /* VALHALLA_LAVF_UTILS */

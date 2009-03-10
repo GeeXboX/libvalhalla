@@ -279,33 +279,11 @@ parser_data_free (parser_data_t *data)
   free (data);
 }
 
-static char *
-parser_trim (char *str)
-{
-  char *its, *ite;
-
-  its = str;
-  ite = strchr (str, '\0');
-
-  /* remove whitespaces at the right */
-  while (ite > its && isspace (*(ite - 1)))
-    ite--;
-  *ite = '\0';
-
-  /* remove whitespaces at the left */
-  while (isspace (*its))
-    its++;
-
-  return its;
-}
-
 static parser_metadata_t *
-parser_metadata_get (AVFormatContext *ctx, AVInputFormat *fmt)
+parser_metadata_get (AVFormatContext *ctx)
 {
   parser_metadata_t *meta;
-  char *title, *author, *album, *genre;
-  const char *genre_name = NULL;
-  char buf[32];
+  AVMetadataTag *title, *author, *album, *genre, *track, *year;
 
   if (!ctx)
     return NULL;
@@ -314,40 +292,22 @@ parser_metadata_get (AVFormatContext *ctx, AVInputFormat *fmt)
   if (!meta)
     return NULL;
 
+  av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
+
   /* remove whitespaces */
-  title  = parser_trim (ctx->title);
-  author = parser_trim (ctx->author);
-  album  = parser_trim (ctx->album);
-  genre  = parser_trim (ctx->genre);
+  title  = av_metadata_get (ctx->metadata, "title" , NULL, 0);
+  author = av_metadata_get (ctx->metadata, "author", NULL, 0);
+  album  = av_metadata_get (ctx->metadata, "album" , NULL, 0);
+  genre  = av_metadata_get (ctx->metadata, "genre" , NULL, 0);
+  track  = av_metadata_get (ctx->metadata, "track" , NULL, 0);
+  year   = av_metadata_get (ctx->metadata, "year"  , NULL, 0);
 
-  /*
-   * Sometimes with crappy MP3, ID3v1 genre number is returned
-   * instead of the name.
-   */
-  if (fmt && *genre && !strcmp (fmt->name, "mp3"))
-  {
-    int res, id;
-
-    res = sscanf (genre, "%i", &id);
-    if (res != 1)
-      res = sscanf (genre, "(%i)", &id);
-    if (res == 1)
-      genre_name = lavf_utils_id3v1_genre (id);
-  }
-
-  meta->title  = *title  ? strdup (title)  : NULL;
-  meta->author = *author ? strdup (author) : NULL;
-  meta->album  = *album  ? strdup (album)  : NULL;
-
-  if (genre_name)
-    meta->genre = strdup (genre_name);
-  else
-    meta->genre = *genre ? strdup (genre) : NULL;
-
-  snprintf (buf, sizeof (buf), "%i", ctx->year);
-  meta->year  = strdup (buf);
-  snprintf (buf, sizeof (buf), "%i", ctx->track);
-  meta->track = strdup (buf);
+  meta->title  = title  ? strdup (title->value)  : NULL;
+  meta->author = author ? strdup (author->value) : NULL;
+  meta->album  = album  ? strdup (album->value)  : NULL;
+  meta->genre  = genre  ? strdup (genre->value)  : NULL;
+  meta->track  = track  ? strdup (track->value)  : NULL;
+  meta->year   = year   ? strdup (year->value)   : NULL;
 
   return meta;
 }
@@ -464,7 +424,7 @@ parser_metadata (const char *file)
   else
 #endif /* 0 */
 
-  metadata = parser_metadata_get (ctx, fmt);
+  metadata = parser_metadata_get (ctx);
 
   av_close_input_file (ctx);
   return metadata;

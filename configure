@@ -734,7 +734,7 @@ if [ -z  "$lavfdir" -a -z "$lavfincdir" -a -z "$lavflibdir" ]; then
 fi
 
 echolog "Checking for libavformat ..."
-check_lib libavformat/avformat.h av_register_all -lavformat || die "Error, can't find libavformat !"
+check_lib libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can't find libavformat !"
 add_pkgconfig_requires libavformat
 
 
