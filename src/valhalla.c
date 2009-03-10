@@ -259,6 +259,10 @@ parser_metadata_free (parser_metadata_t *meta)
     free (meta->album);
   if (meta->genre)
     free (meta->genre);
+  if (meta->year)
+    free (meta->year);
+  if (meta->track)
+    free (meta->track);
   free (meta);
 }
 
@@ -301,6 +305,7 @@ parser_metadata_get (AVFormatContext *ctx, AVInputFormat *fmt)
   parser_metadata_t *meta;
   char *title, *author, *album, *genre;
   const char *genre_name = NULL;
+  char buf[32];
 
   if (!ctx)
     return NULL;
@@ -339,8 +344,10 @@ parser_metadata_get (AVFormatContext *ctx, AVInputFormat *fmt)
   else
     meta->genre = *genre ? strdup (genre) : NULL;
 
-  meta->year  = ctx->year;
-  meta->track = ctx->track;
+  snprintf (buf, sizeof (buf), "%i", ctx->year);
+  meta->year  = strdup (buf);
+  snprintf (buf, sizeof (buf), "%i", ctx->track);
+  meta->track = strdup (buf);
 
   return meta;
 }

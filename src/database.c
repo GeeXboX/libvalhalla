@@ -350,19 +350,17 @@ database_file_insert (database_t *database, parser_data_t *data,
   if (res != SQLITE_OK)
     goto out_clear;
 
-  if (data->meta && data->meta->year)
-  {
-    res = sqlite3_bind_int (STMT_GET (STMT_INSERT_FILE), 4, data->meta->year);
+  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 4,
+                           data->meta ? data->meta->year : NULL,
+                           -1, SQLITE_STATIC);
     if (res != SQLITE_OK)
       goto out_clear;
-  }
 
-  if (data->meta && data->meta->track)
-  {
-    res = sqlite3_bind_int (STMT_GET (STMT_INSERT_FILE), 5, data->meta->track);
+  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 5,
+                           data->meta ? data->meta->track : NULL,
+                           -1, SQLITE_STATIC);
     if (res != SQLITE_OK)
       goto out_clear;
-  }
 
   if (author_id)
   {
@@ -435,19 +433,17 @@ database_file_update (database_t *database, parser_data_t *data,
   if (res != SQLITE_OK)
     goto out_clear;
 
-  if (data->meta && data->meta->year)
-  {
-    res = sqlite3_bind_int (STMT_GET (STMT_UPDATE_FILE), 3, data->meta->year);
+  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 4,
+                           data->meta ? data->meta->year : NULL,
+                           -1, SQLITE_STATIC);
     if (res != SQLITE_OK)
       goto out_clear;
-  }
 
-  if (data->meta && data->meta->track)
-  {
-    res = sqlite3_bind_int (STMT_GET (STMT_UPDATE_FILE), 4, data->meta->track);
+  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 5,
+                           data->meta ? data->meta->track : NULL,
+                           -1, SQLITE_STATIC);
     if (res != SQLITE_OK)
       goto out_clear;
-  }
 
   if (author_id)
   {
@@ -919,8 +915,8 @@ database_select_file (database_t *database, valhalla_db_file_t *file,
     file->id    = sqlite3_column_int64 (database->stmt_file, 0);
     file->path  = (const char *) sqlite3_column_text (database->stmt_file, 1);
     file->title = (const char *) sqlite3_column_text (database->stmt_file, 2);
-    file->year  = sqlite3_column_int (database->stmt_file, 3);
-    file->track = sqlite3_column_int (database->stmt_file, 4);
+    file->year  = (const char *) sqlite3_column_text (database->stmt_file, 3);
+    file->track = (const char *) sqlite3_column_text (database->stmt_file, 4);
     return 0;
   }
   else if (res == SQLITE_DONE)

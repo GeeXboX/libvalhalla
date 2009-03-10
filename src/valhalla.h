@@ -221,8 +221,8 @@ typedef struct valhalla_db_file_s {
   int64_t     id;
   const char *path;
   const char *title;
-  int         year;
-  int         track;
+  const char *year;
+  const char *track;
 } valhalla_db_file_t;
 
 /** \brief Types of condition for the query. */

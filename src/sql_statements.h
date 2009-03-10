@@ -46,8 +46,8 @@
  "  file_path        TEXT    NOT NULL UNIQUE, "           \
  "  file_mtime       INTEGER NOT NULL, "                  \
  "  file_meta_title  TEXT    NULL, "                      \
- "  file_meta_year   INTEGER NULL, "                      \
- "  file_meta_track  INTEGER NULL, "                      \
+ "  file_meta_year   TEXT    NULL, "                      \
+ "  file_meta_track  TEXT    NULL, "                      \
  "  checked__        INTEGER NOT NULL, "                  \
  "  _author_id       INTEGER NULL, "                      \
  "  _album_id        INTEGER NULL, "                      \
@@ -129,7 +129,7 @@
 #define SELECT_FILE_WHERE_AUTHOR_NOTEQUAL "(_author_id != ? OR _author_id IS NULL) "
 #define SELECT_FILE_WHERE_ALBUM_NOTEQUAL  "(_album_id != ? OR _album_id IS NULL) "
 #define SELECT_FILE_WHERE_GENRE_NOTEQUAL  "(_genre_id != ? OR _genre_id IS NULL) "
-#define SELECT_FILE_ORDER                 "ORDER BY file_meta_track, " \
+#define SELECT_FILE_ORDER                 "ORDER BY CAST(file_meta_track AS INT), " \
                                           "file_meta_title;"
 
 

@@ -30,8 +30,8 @@ typedef struct parser_metadata_s {
   char *author;
   char *album;
   char *genre;
-  int   year;
-  int   track;
+  char *year;
+  char *track;
 } parser_metadata_t;
 
 typedef struct parser_data_s {
