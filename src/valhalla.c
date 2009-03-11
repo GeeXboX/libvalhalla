@@ -294,7 +294,6 @@ parser_metadata_get (AVFormatContext *ctx)
 
   av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
 
-  /* remove whitespaces */
   title  = av_metadata_get (ctx->metadata, "title" , NULL, 0);
   author = av_metadata_get (ctx->metadata, "author", NULL, 0);
   album  = av_metadata_get (ctx->metadata, "album" , NULL, 0);
