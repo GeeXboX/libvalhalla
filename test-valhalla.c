@@ -175,7 +175,7 @@ main (int argc, char **argv)
   printf ("Run: parser=%i loop=%i wait=%i priority=%i commit-int=%i\n",
           parser_nb, loop_nb, loop_wait, priority, commit);
 
-  gettimeofday(&tvs, NULL);
+  gettimeofday (&tvs, NULL);
 
   rc = valhalla_run (handle, loop_nb, loop_wait, priority);
   if (rc)
@@ -187,7 +187,7 @@ main (int argc, char **argv)
 
   valhalla_wait (handle);
 
-  gettimeofday(&tve, NULL);
+  gettimeofday (&tve, NULL);
 
   valhalla_uninit (handle);
 
