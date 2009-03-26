@@ -405,9 +405,12 @@ database_file_data_insert (database_t *database, parser_data_t *data)
 
   if (data->meta)
   {
-    author_id = database_author_insert (database, metadata_get (data->meta, "author"));
-    album_id = database_album_insert (database, metadata_get (data->meta, "album"));
-    genre_id = database_genre_insert (database, metadata_get (data->meta, "genre"));
+    author_id =
+      database_author_insert (database, metadata_get (data->meta, "author"));
+    album_id =
+      database_album_insert (database, metadata_get (data->meta, "album"));
+    genre_id =
+      database_genre_insert (database, metadata_get (data->meta, "genre"));
 
     if (author_id && album_id)
       database_alloc_insert (STMT_GET (STMT_INSERT_ALLOC_AUTHOR_ALBUM),
@@ -493,9 +496,12 @@ database_file_data_update (database_t *database, parser_data_t *data)
 
   if (data->meta)
   {
-    author_id = database_author_insert (database, metadata_get (data->meta, "author"));
-    album_id = database_album_insert (database, metadata_get (data->meta, "album"));
-    genre_id = database_genre_insert (database, metadata_get (data->meta, "genre"));
+    author_id =
+      database_author_insert (database, metadata_get (data->meta, "author"));
+    album_id =
+      database_album_insert (database, metadata_get (data->meta, "album"));
+    genre_id =
+      database_genre_insert (database, metadata_get (data->meta, "genre"));
 
     if (author_id && album_id)
       database_alloc_insert (STMT_GET (STMT_INSERT_ALLOC_AUTHOR_ALBUM),

@@ -28,8 +28,8 @@
 #include "metadata.h"
 
 typedef struct parser_data_s {
-  char              *file;
-  time_t             mtime;
+  char       *file;
+  time_t      mtime;
   metadata_t *meta;
 } parser_data_t;
 
