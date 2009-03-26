@@ -237,6 +237,9 @@ database_insert_name (database_t *database,
   int res, err = -1;
   int64_t val = 0, val_tmp;
 
+  if (!name)
+    return 0;
+
   res = sqlite3_bind_text (stmt, 1, name, -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out;
