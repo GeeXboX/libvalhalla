@@ -22,7 +22,6 @@
 #ifndef VALHALLA_INTERNALS_H
 #define VALHALLA_INTERNALS_H
 
-#include <inttypes.h>
 #include <time.h>
 
 #include "metadata.h"
