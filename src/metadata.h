@@ -19,20 +19,13 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef VALHALLA_INTERNALS_H
-#define VALHALLA_INTERNALS_H
+#ifndef VALHALLA_METADATA
+#define VALHALLA_METADATA
 
-#include <inttypes.h>
-#include <time.h>
+typedef struct metadata_s metadata_t;
 
-#include "metadata.h"
+const char *metadata_get (metadata_t *meta, const char *name);
+void metadata_free (metadata_t *meta);
+void metadata_add (metadata_t **meta, const char *name, const char *value);
 
-typedef struct parser_data_s {
-  char              *file;
-  time_t             mtime;
-  metadata_t *meta;
-} parser_data_t;
-
-#define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
-
-#endif /* VALHALLA_INTERNALS_H */
+#endif /* VALHALLA_METADATA */

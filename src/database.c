@@ -345,19 +345,19 @@ database_file_insert (database_t *database, parser_data_t *data,
     goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 3,
-                           data->meta ? data->meta->title : NULL,
+                           metadata_get (data->meta, "title"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 4,
-                           data->meta ? data->meta->year : NULL,
+                           metadata_get (data->meta, "year"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 5,
-                           data->meta ? data->meta->track : NULL,
+                           metadata_get (data->meta, "track"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
@@ -402,9 +402,9 @@ database_file_data_insert (database_t *database, parser_data_t *data)
 
   if (data->meta)
   {
-    author_id = database_author_insert (database, data->meta->author);
-    album_id = database_album_insert (database, data->meta->album);
-    genre_id = database_genre_insert (database, data->meta->genre);
+    author_id = database_author_insert (database, metadata_get (data->meta, "author"));
+    album_id = database_album_insert (database, metadata_get (data->meta, "album"));
+    genre_id = database_genre_insert (database, metadata_get (data->meta, "genre"));
 
     if (author_id && album_id)
       database_alloc_insert (STMT_GET (STMT_INSERT_ALLOC_AUTHOR_ALBUM),
@@ -428,19 +428,19 @@ database_file_update (database_t *database, parser_data_t *data,
     goto out_reset;
 
   res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 2,
-                           data->meta ? data->meta->title : NULL,
+                           metadata_get (data->meta, "title"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 4,
-                           data->meta ? data->meta->year : NULL,
+                           metadata_get (data->meta, "year"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
 
   res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 5,
-                           data->meta ? data->meta->track : NULL,
+                           metadata_get (data->meta, "track"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
@@ -490,9 +490,9 @@ database_file_data_update (database_t *database, parser_data_t *data)
 
   if (data->meta)
   {
-    author_id = database_author_insert (database, data->meta->author);
-    album_id = database_album_insert (database, data->meta->album);
-    genre_id = database_genre_insert (database, data->meta->genre);
+    author_id = database_author_insert (database, metadata_get (data->meta, "author"));
+    album_id = database_album_insert (database, metadata_get (data->meta, "album"));
+    genre_id = database_genre_insert (database, metadata_get (data->meta, "genre"));
 
     if (author_id && album_id)
       database_alloc_insert (STMT_GET (STMT_INSERT_ALLOC_AUTHOR_ALBUM),
