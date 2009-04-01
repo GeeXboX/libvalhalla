@@ -20,6 +20,7 @@ SRCS =  database.c \
 	fifo_queue.c \
 	lavf_utils.c \
 	logs.c \
+	metadata.c \
 	timer_thread.c \
 	valhalla.c
 

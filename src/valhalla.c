@@ -246,27 +246,6 @@ my_setpriority (int prio)
 /******************************************************************************/
 
 static void
-parser_metadata_free (parser_metadata_t *meta)
-{
-  if (!meta)
-    return;
-
-  if (meta->title)
-    free (meta->title);
-  if (meta->author)
-    free (meta->author);
-  if (meta->album)
-    free (meta->album);
-  if (meta->genre)
-    free (meta->genre);
-  if (meta->year)
-    free (meta->year);
-  if (meta->track)
-    free (meta->track);
-  free (meta);
-}
-
-static void
 parser_data_free (parser_data_t *data)
 {
   if (!data)
@@ -275,21 +254,17 @@ parser_data_free (parser_data_t *data)
   if (data->file)
     free (data->file);
   if (data->meta)
-    parser_metadata_free (data->meta);
+    metadata_free (data->meta);
   free (data);
 }
 
-static parser_metadata_t *
+static metadata_t *
 parser_metadata_get (AVFormatContext *ctx)
 {
-  parser_metadata_t *meta;
+  metadata_t *meta;
   AVMetadataTag *title, *author, *album, *genre, *track, *year;
 
   if (!ctx)
-    return NULL;
-
-  meta = calloc (1, sizeof (parser_metadata_t));
-  if (!meta)
     return NULL;
 
   av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
@@ -301,12 +276,18 @@ parser_metadata_get (AVFormatContext *ctx)
   track  = av_metadata_get (ctx->metadata, "track" , NULL, 0);
   year   = av_metadata_get (ctx->metadata, "year"  , NULL, 0);
 
-  meta->title  = title  ? strdup (title->value)  : NULL;
-  meta->author = author ? strdup (author->value) : NULL;
-  meta->album  = album  ? strdup (album->value)  : NULL;
-  meta->genre  = genre  ? strdup (genre->value)  : NULL;
-  meta->track  = track  ? strdup (track->value)  : NULL;
-  meta->year   = year   ? strdup (year->value)   : NULL;
+  if (title)
+    metadata_add (&meta, "title" , title->value);
+  if (author)
+    metadata_add (&meta, "author", author->value);
+  if (album)
+    metadata_add (&meta, "album" , album->value);
+  if (genre)
+    metadata_add (&meta, "genre" , genre->value);
+  if (track)
+    metadata_add (&meta, "track" , track->value);
+  if (year)
+    metadata_add (&meta, "year"  , year->value);
 
   return meta;
 }
@@ -378,14 +359,14 @@ parser_probe (AVInputFormat *fmt, const char *file)
   return rc;
 }
 
-static parser_metadata_t *
+static metadata_t *
 parser_metadata (const char *file)
 {
   int res;
   const char *name;
   AVFormatContext   *ctx;
   AVInputFormat     *fmt = NULL;
-  parser_metadata_t *metadata;
+  metadata_t *metadata;
 
   /*
    * Try a format in function of the suffix.
