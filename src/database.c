@@ -390,9 +390,9 @@ database_file_insert (database_t *database, parser_data_t *data,
  out_clear:
   sqlite3_clear_bindings (STMT_GET (STMT_INSERT_FILE));
  out_reset:
+  sqlite3_reset (STMT_GET (STMT_INSERT_FILE));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (STMT_GET (STMT_INSERT_FILE));
 }
 
 void
