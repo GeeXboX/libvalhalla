@@ -261,7 +261,7 @@ parser_data_free (parser_data_t *data)
 static metadata_t *
 parser_metadata_get (AVFormatContext *ctx)
 {
-  metadata_t *meta;
+  metadata_t *meta = NULL;
   AVMetadataTag *title, *author, *album, *genre, *track, *year;
 
   if (!ctx)
