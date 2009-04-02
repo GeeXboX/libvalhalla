@@ -224,9 +224,9 @@ database_table_get_id (database_t *database,
   err = 0;
 
  out:
+  sqlite3_reset (stmt);
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (stmt);
   return val;
 }
 
@@ -257,9 +257,9 @@ database_insert_name (database_t *database,
   err = 0;
 
  out:
+  sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (stmt);
   return val;
 }
 
@@ -326,10 +326,10 @@ database_alloc_insert (sqlite3_stmt *stmt,
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
+  sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     valhalla_log (VALHALLA_MSG_ERROR,
                   "%s", sqlite3_errmsg (sqlite3_db_handle (stmt)));
-  sqlite3_reset (stmt);
 }
 
 static void
@@ -484,9 +484,9 @@ database_file_update (database_t *database, parser_data_t *data,
  out_clear:
   sqlite3_clear_bindings (STMT_GET (STMT_UPDATE_FILE));
  out_reset:
+  sqlite3_reset (STMT_GET (STMT_UPDATE_FILE));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (STMT_GET (STMT_UPDATE_FILE));
 }
 
 void
@@ -531,9 +531,9 @@ database_file_data_delete (database_t *database, const char *file)
   sqlite3_clear_bindings (STMT_GET (STMT_DELETE_FILE));
 
  out:
+  sqlite3_reset (STMT_GET (STMT_DELETE_FILE));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (STMT_GET (STMT_DELETE_FILE));
 }
 
 void
@@ -542,10 +542,10 @@ database_file_checked_clear (database_t *database)
   int res;
 
   res = sqlite3_step (STMT_GET (STMT_UPDATE_FILE_CHECKED_CLEAR));
-  if (res != SQLITE_DONE)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 
   sqlite3_reset (STMT_GET (STMT_UPDATE_FILE_CHECKED_CLEAR));
+  if (res != SQLITE_DONE)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 const char *
@@ -558,10 +558,10 @@ database_file_get_checked_clear (database_t *database)
     return (const char *) sqlite3_column_text (
                             STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR), 0);
 
+  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
   if (res != SQLITE_DONE)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 
-  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
   return NULL;
 }
 
@@ -586,9 +586,9 @@ database_file_get_mtime (database_t *database, const char *file)
   err = 0;
 
  out:
+  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_MTIME));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
-  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_MTIME));
   return val;
 }
 
@@ -620,14 +620,14 @@ database_cleanup (database_t *database)
     err = 0;
 
  out:
-  if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   val = sqlite3_total_changes (database->db);
   sqlite3_reset (STMT_GET (STMT_CLEANUP_GENRE));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_AUTHOR));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_ALBUM));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_ALLOC_AUTHOR_ALBUM));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_ALLOC_GENRE_ALBUM));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val - val_tmp;
 }
 
@@ -732,10 +732,10 @@ database_common_simple_select (sqlite3_stmt *stmt,
   err = 0;
 
  out:
+  sqlite3_reset (stmt);
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR,
                   "%s", sqlite3_errmsg (sqlite3_db_handle (stmt)));
-  sqlite3_reset (stmt);
   bind = 0;
   return rc;
 }
