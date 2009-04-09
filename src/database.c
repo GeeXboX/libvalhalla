@@ -439,13 +439,13 @@ database_file_update (database_t *database, parser_data_t *data,
   if (res != SQLITE_OK)
     goto out_clear;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 4,
+  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 3,
                            metadata_get (data->meta, "year"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
     goto out_clear;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 5,
+  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 4,
                            metadata_get (data->meta, "track"),
                            -1, SQLITE_STATIC);
   if (res != SQLITE_OK)
