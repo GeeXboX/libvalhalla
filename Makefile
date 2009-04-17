@@ -27,7 +27,7 @@ all: lib test $(DOXYGEN)
 lib:
 	$(MAKE) -C src
 
-test:
+test: lib
 	$(CC) $(TESTVALHALLA_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVALHALLA)
 
 doxygen:
