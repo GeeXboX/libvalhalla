@@ -379,6 +379,8 @@ parser_metadata (const char *file)
   if (fmt)
   {
     int score = parser_probe (fmt, file);
+    valhalla_log (VALHALLA_MSG_VERBOSE,
+                  "Probe score (%i) [%s] : %s", score, name, file);
     if (!score) /* Bad score? */
       fmt = NULL;
   }
@@ -386,7 +388,8 @@ parser_metadata (const char *file)
   res = av_open_input_file (&ctx, file, fmt, 0, NULL);
   if (res)
   {
-    valhalla_log (VALHALLA_MSG_WARNING, "FFmpeg can't open file : %s", file);
+    valhalla_log (VALHALLA_MSG_WARNING,
+                  "FFmpeg can't open file (%i) : %s", res, file);
     return NULL;
   }
 
