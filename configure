@@ -808,6 +808,9 @@ echolog "  CFLAGS             $CFLAGS $extracflags"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
+echolog "Miscellaneous:"
+echolog "  Documentation:     $doc"
+echolog ""
 
 #################################################
 #   save configs attributes
