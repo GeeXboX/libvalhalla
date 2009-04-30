@@ -243,8 +243,8 @@ db_manage_queue (valhalla_t *handle,
       if (mtime < 0 || (int) pdata->mtime != mtime)
       {
         parser_action_send (handle->parser,
-                          mtime < 0 ? ACTION_DB_INSERT : ACTION_DB_UPDATE,
-                          pdata);
+                            mtime < 0 ? ACTION_DB_INSERT : ACTION_DB_UPDATE,
+                            pdata);
         continue;
       }
 
