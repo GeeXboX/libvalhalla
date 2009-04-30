@@ -25,8 +25,8 @@
 typedef struct parser_s parser_t;
 
 enum parser_errno {
-  PARSER_ERROR_THREAD  = -2,
-  PARSER_ERROR_HANDLER = -1,
+  PARSER_ERROR_HANDLER = -2,
+  PARSER_ERROR_THREAD  = -1,
   PARSER_SUCCESS       =  0,
 };
 
