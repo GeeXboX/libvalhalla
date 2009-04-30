@@ -323,7 +323,7 @@ parser_uninit (parser_t *parser)
   if (!parser)
     return;
 
-  if (parser->run)
+  if (!parser_is_stopped (parser))
     parser_stop (parser);
 
   fifo_queue_free (parser->fifo);
