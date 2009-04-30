@@ -366,7 +366,7 @@ parser_init (valhalla_t *handle, unsigned int nb)
 }
 
 void
-parser_file_send (parser_t *parser, int action, parser_data_t *data)
+parser_action_send (parser_t *parser, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 

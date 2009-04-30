@@ -35,6 +35,6 @@ void parser_stop (parser_t *parser);
 void parser_uninit (parser_t *parser);
 parser_t *parser_init (valhalla_t *handle, unsigned int nb);
 
-void parser_file_send (parser_t *parser, int action, parser_data_t *data);
+void parser_action_send (parser_t *parser, int action, void *data);
 
 #endif /* VALHALLA_PARSER_H */
