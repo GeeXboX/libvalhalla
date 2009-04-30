@@ -22,9 +22,31 @@
 #ifndef VALHALLA_INTERNALS_H
 #define VALHALLA_INTERNALS_H
 
+#include <inttypes.h>
+#include <pthread.h>
 #include <time.h>
 
 #include "metadata.h"
+
+#ifndef PARSER_NB_MAX
+#define PARSER_NB_MAX 8
+#endif /* PARSER_NB_MAX */
+
+struct parser_s;
+struct database_s;
+struct fifo_queue_s;
+struct timer_thread_s;
+
+typedef enum action_list {
+  ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
+  ACTION_NO_OPERATION =  0, /* wake-up for nothing */
+  ACTION_DB_INSERT,         /* parser: metadata okay, then insert in the DB */
+  ACTION_DB_UPDATE,         /* parser: metadata okay, then update in the DB */
+  ACTION_DB_NEWFILE,        /* scanner: new file to handle */
+  ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
+  ACTION_ACKNOWLEDGE,       /* database: ack scanner for each file handled */
+  ACTION_CLEANUP_END,       /* special case for garbage collector */
+} action_list_t;
 
 typedef struct parser_data_s {
   char       *file;
@@ -32,6 +54,36 @@ typedef struct parser_data_s {
   metadata_t *meta;
 } parser_data_t;
 
+struct valhalla_s {
+  struct parser_s *parser;
+  pthread_t     th_scanner;
+  pthread_t     th_database;
+  struct database_s   *database;
+  struct fifo_queue_s *fifo_scanner;
+  struct fifo_queue_s *fifo_database;
+
+  unsigned int commit_int;
+
+  int priority; /* priority of all threads */
+  int run;      /* prevent a bug if valhalla_run() is called two times */
+  int alive;    /* used for killing all threads with uninit */
+  pthread_mutex_t mutex_alive;
+
+  int loop;
+  uint16_t timeout;
+  struct timer_thread_s *timer;
+
+  struct path_s {
+    struct path_s *next;
+    char *location;
+    int recursive;
+    int nb_files;
+  } *paths;
+  char **suffix;
+};
+
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
+
+void valhalla_queue_cleanup (struct fifo_queue_s *queue);
 
 #endif /* VALHALLA_INTERNALS_H */

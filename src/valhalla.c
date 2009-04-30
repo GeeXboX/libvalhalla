@@ -30,71 +30,23 @@
 #include <ctype.h>
 #include <unistd.h>
 
-/* handle thread (process) priorities */
-#include <sys/resource.h>
-#include <sys/syscall.h>
-
 #include <libavformat/avformat.h>
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
+#include "parser.h"
 #include "fifo_queue.h"
 #include "timer_thread.h"
 #include "database.h"
+#include "thread_utils.h"
 #include "logs.h"
-#include "lavf_utils.h"
 
-
-#ifndef PARSER_NB_MAX
-#define PARSER_NB_MAX 8
-#endif /* PARSER_NB_MAX */
 
 #ifndef PATH_RECURSIVENESS_MAX
 #define PATH_RECURSIVENESS_MAX 42
 #endif /* PATH_RECURSIVENESS_MAX */
 
 #define COMMIT_INTERVAL_DEFAULT 128
-
-typedef enum action_list {
-  ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
-  ACTION_NO_OPERATION =  0, /* wake-up for nothing */
-  ACTION_DB_INSERT,         /* parser: metadata okay, then insert in the DB */
-  ACTION_DB_UPDATE,         /* parser: metadata okay, then update in the DB */
-  ACTION_DB_NEWFILE,        /* scanner: new file to handle */
-  ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
-  ACTION_ACKNOWLEDGE,       /* database: ack scanner for each file handled */
-  ACTION_CLEANUP_END,       /* special case for garbage collector */
-} action_list_t;
-
-struct valhalla_s {
-  pthread_t     th_scanner;
-  pthread_t     th_parser[PARSER_NB_MAX];
-  pthread_t     th_database;
-  database_t   *database;
-  fifo_queue_t *fifo_scanner;
-  fifo_queue_t *fifo_parser;
-  fifo_queue_t *fifo_database;
-
-  unsigned int parser_nb;
-  unsigned int commit_int;
-
-  int priority; /* priority of all threads */
-  int run;      /* prevent a bug if valhalla_run() is called two times */
-  int alive;    /* used for killing all threads with uninit */
-  pthread_mutex_t mutex_alive;
-
-  int loop;
-  uint16_t timeout;
-  timer_thread_t *timer;
-
-  struct path_s {
-    struct path_s *next;
-    char *location;
-    int recursive;
-    int nb_files;
-  } *paths;
-  char **suffix;
-};
 
 
 static int
@@ -207,21 +159,6 @@ suffix_cmp (char **suffix, const char *file)
   return -1;
 }
 
-static const char *
-suffix_fmt_guess (const char *file)
-{
-  const char *it;
-
-  if (!file)
-    return NULL;
-
-  it = strrchr (file, '.');
-  if (it)
-    it++;
-
-  return lavf_utils_fmtname_get (it);
-}
-
 static inline int
 valhalla_is_stopped (valhalla_t *handle)
 {
@@ -231,19 +168,6 @@ valhalla_is_stopped (valhalla_t *handle)
   pthread_mutex_unlock (&handle->mutex_alive);
   return !alive;
 }
-
-static inline void
-my_setpriority (int prio)
-{
-  pid_t pid = syscall (__NR_gettid); /* gettid() is not available with glibc */
-  setpriority (PRIO_PROCESS, pid, prio);
-}
-
-/******************************************************************************/
-/*                                                                            */
-/*                                  Parser                                    */
-/*                                                                            */
-/******************************************************************************/
 
 static void
 parser_data_free (parser_data_t *data)
@@ -256,198 +180,6 @@ parser_data_free (parser_data_t *data)
   if (data->meta)
     metadata_free (data->meta);
   free (data);
-}
-
-static metadata_t *
-parser_metadata_get (AVFormatContext *ctx)
-{
-  metadata_t *meta = NULL;
-  AVMetadataTag *title, *author, *album, *genre, *track, *year;
-
-  if (!ctx)
-    return NULL;
-
-  av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
-
-  title  = av_metadata_get (ctx->metadata, "title" , NULL, 0);
-  author = av_metadata_get (ctx->metadata, "author", NULL, 0);
-  album  = av_metadata_get (ctx->metadata, "album" , NULL, 0);
-  genre  = av_metadata_get (ctx->metadata, "genre" , NULL, 0);
-  track  = av_metadata_get (ctx->metadata, "track" , NULL, 0);
-  year   = av_metadata_get (ctx->metadata, "year"  , NULL, 0);
-
-  if (title)
-    metadata_add (&meta, "title" , title->value);
-  if (author)
-    metadata_add (&meta, "author", author->value);
-  if (album)
-    metadata_add (&meta, "album" , album->value);
-  if (genre)
-    metadata_add (&meta, "genre" , genre->value);
-  if (track)
-    metadata_add (&meta, "track" , track->value);
-  if (year)
-    metadata_add (&meta, "year"  , year->value);
-
-  return meta;
-}
-
-#define PROBE_BUF_MIN 2048
-#define PROBE_BUF_MAX (1 << 20)
-
-/*
- * This function is fully inspired of (libavformat/utils.c v52.28.0
- * "av_open_input_file()") to probe data in order to test if *ftm argument
- * is the right fmt or not.
- *
- * The original function from avformat "av_probe_input_format2()" is really
- * slow because it probes the fmt of _all_ demuxers for each probe_data
- * buffer. Here, the test is only for _one_ fmt and returns the score
- * (if > score_max) provided by fmt->probe().
- *
- * WARNING: this function depends of some internal behaviours of libavformat
- *          and can be "broken" with future versions of FFmpeg.
- */
-static int
-parser_probe (AVInputFormat *fmt, const char *file)
-{
-  FILE *fd;
-  int rc = 0;
-  int p_size;
-  AVProbeData p_data;
-
-  if ((fmt->flags & AVFMT_NOFILE) || !fmt->read_probe)
-    return 0;
-
-  fd = fopen (file, "r");
-  if (!fd)
-    return 0;
-
-  p_data.filename = file;
-  p_data.buf = NULL;
-
-  for (p_size = PROBE_BUF_MIN; p_size <= PROBE_BUF_MAX; p_size <<= 1)
-  {
-    int score;
-    int score_max = p_size < PROBE_BUF_MAX ? AVPROBE_SCORE_MAX / 4 : 0;
-
-    p_data.buf = realloc (p_data.buf, p_size + AVPROBE_PADDING_SIZE);
-    if (!p_data.buf)
-      break;
-
-    p_data.buf_size = fread (p_data.buf, 1, p_size, fd);
-    if (p_data.buf_size != p_size) /* EOF is reached? */
-      break;
-
-    memset (p_data.buf + p_data.buf_size, 0, AVPROBE_PADDING_SIZE);
-
-    if (fseek (fd, 0, SEEK_SET))
-      break;
-
-    score = fmt->read_probe (&p_data);
-    if (score > score_max)
-    {
-      rc = score;
-      break;
-    }
-  }
-
-  if (p_data.buf)
-    free (p_data.buf);
-
-  fclose (fd);
-  return rc;
-}
-
-static metadata_t *
-parser_metadata (const char *file)
-{
-  int res;
-  const char *name;
-  AVFormatContext   *ctx;
-  AVInputFormat     *fmt = NULL;
-  metadata_t *metadata;
-
-  /*
-   * Try a format in function of the suffix.
-   * We gain a lot of speed if the fmt is already the right.
-   */
-  name = suffix_fmt_guess (file);
-  if (name)
-    fmt = av_find_input_format (name);
-
-  if (fmt)
-  {
-    int score = parser_probe (fmt, file);
-    valhalla_log (VALHALLA_MSG_VERBOSE,
-                  "Probe score (%i) [%s] : %s", score, name, file);
-    if (!score) /* Bad score? */
-      fmt = NULL;
-  }
-
-  res = av_open_input_file (&ctx, file, fmt, 0, NULL);
-  if (res)
-  {
-    valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't open file (%i) : %s", res, file);
-    return NULL;
-  }
-
-#if 0
-  /*
-   * Can be useful in the future in order to detect if the file
-   * is audio or video.
-   */
-  res = av_find_stream_info (ctx);
-  if (res < 0)
-  {
-    valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't find stream info: %s", file);
-  }
-  else
-#endif /* 0 */
-
-  metadata = parser_metadata_get (ctx);
-
-  av_close_input_file (ctx);
-  return metadata;
-}
-
-static void *
-thread_parser (void *arg)
-{
-  int res;
-  int e;
-  void *data = NULL;
-  parser_data_t *pdata;
-  valhalla_t *handle = arg;
-
-  if (!handle)
-    pthread_exit (NULL);
-
-  my_setpriority (handle->priority);
-
-  do
-  {
-    e = ACTION_NO_OPERATION;
-    data = NULL;
-
-    res = fifo_queue_pop (handle->fifo_parser, &e, &data);
-    if (res || e == ACTION_NO_OPERATION)
-      continue;
-
-    if (e == ACTION_KILL_THREAD)
-      break;
-
-    pdata = data;
-    if (pdata)
-      pdata->meta = parser_metadata (pdata->file);
-
-    fifo_queue_push (handle->fifo_database, e, pdata);
-  }
-  while (!valhalla_is_stopped (handle));
-
-  pthread_exit (NULL);
 }
 
 /******************************************************************************/
@@ -510,7 +242,7 @@ db_manage_queue (valhalla_t *handle,
        */
       if (mtime < 0 || (int) pdata->mtime != mtime)
       {
-        fifo_queue_push (handle->fifo_parser,
+        parser_file_send (handle->parser,
                          mtime < 0 ? ACTION_DB_INSERT : ACTION_DB_UPDATE,
                          pdata);
         continue;
@@ -766,8 +498,6 @@ thread_scanner (void *arg)
 void
 valhalla_wait (valhalla_t *handle)
 {
-  int i;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
@@ -778,18 +508,14 @@ valhalla_wait (valhalla_t *handle)
   fifo_queue_push (handle->fifo_database, ACTION_KILL_THREAD, NULL);
   pthread_join (handle->th_database, NULL);
 
-  for (i = 0; i < handle->parser_nb; i++)
-    fifo_queue_push (handle->fifo_parser, ACTION_KILL_THREAD, NULL);
-
-  for (i = 0; i < handle->parser_nb; i++)
-    pthread_join (handle->th_parser[i], NULL);
+  parser_stop (handle->parser);
 
   pthread_mutex_lock (&handle->mutex_alive);
   handle->alive = 0;
   pthread_mutex_unlock (&handle->mutex_alive);
 }
 
-static void
+void
 valhalla_queue_cleanup (fifo_queue_t *queue)
 {
   int e;
@@ -822,8 +548,6 @@ valhalla_queue_cleanup (fifo_queue_t *queue)
 static void
 valhalla_force_stop (valhalla_t *handle)
 {
-  int i;
-
   valhalla_log (VALHALLA_MSG_WARNING, "force to stop all threads");
 
   /* force everybody to be killed on the next wake up */
@@ -834,20 +558,17 @@ valhalla_force_stop (valhalla_t *handle)
   /* ask to auto-kill (force wake-up) */
   fifo_queue_push (handle->fifo_scanner, ACTION_KILL_THREAD, NULL);
   fifo_queue_push (handle->fifo_database, ACTION_KILL_THREAD, NULL);
-  for (i = 0; i < handle->parser_nb; i++)
-    fifo_queue_push (handle->fifo_parser, ACTION_KILL_THREAD, NULL);
 
   timer_thread_stop (handle->timer);
 
   pthread_join (handle->th_scanner, NULL);
   pthread_join (handle->th_database, NULL);
-  for (i = 0; i < handle->parser_nb; i++)
-    pthread_join (handle->th_parser[i], NULL);
 
   /* cleanup all queues to prevent memleaks */
   valhalla_queue_cleanup (handle->fifo_scanner);
   valhalla_queue_cleanup (handle->fifo_database);
-  valhalla_queue_cleanup (handle->fifo_parser);
+
+  parser_stop (handle->parser);
 }
 
 void
@@ -877,8 +598,8 @@ valhalla_uninit (valhalla_t *handle)
   }
 
   fifo_queue_free (handle->fifo_scanner);
-  fifo_queue_free (handle->fifo_parser);
   fifo_queue_free (handle->fifo_database);
+  parser_uninit (handle->parser);
 
   if (handle->database)
     database_uninit (handle->database);
@@ -891,7 +612,7 @@ valhalla_uninit (valhalla_t *handle)
 int
 valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 {
-  int i, res = VALHALLA_SUCCESS;
+  int res = VALHALLA_SUCCESS;
   pthread_attr_t attr;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -936,15 +657,9 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
     goto out;
   }
 
-  for (i = 0; i < handle->parser_nb; i++)
-  {
-    res = pthread_create (&handle->th_parser[i], &attr, thread_parser, handle);
-    if (res)
-    {
-      res = VALHALLA_ERROR_THREAD;
-      break;
-    }
-  }
+  res = parser_run (handle->parser, priority);
+  if (res)
+    res = VALHALLA_ERROR_THREAD;
 
  out:
   pthread_attr_destroy (&attr);
@@ -1015,15 +730,12 @@ valhalla_init (const char *db,
   if (!handle)
     return NULL;
 
-  if (!parser_nb || parser_nb > ARRAY_NB_ELEMENTS (handle->th_parser))
+  handle->parser = parser_init (handle, parser_nb);
+  if (!handle->parser)
     goto err;
 
   handle->fifo_scanner = fifo_queue_new ();
   if (!handle->fifo_scanner)
-    goto err;
-
-  handle->fifo_parser = fifo_queue_new ();
-  if (!handle->fifo_parser)
     goto err;
 
   handle->fifo_database = fifo_queue_new ();
@@ -1037,8 +749,6 @@ valhalla_init (const char *db,
   handle->timer = timer_thread_create ();
   if (!handle->timer)
     goto err;
-
-  handle->parser_nb = parser_nb;
 
   if (commit_int <= 0)
     commit_int = COMMIT_INTERVAL_DEFAULT;
