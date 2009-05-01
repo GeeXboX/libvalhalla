@@ -302,6 +302,9 @@ parser_stop (parser_t *parser)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
+  if (!parser)
+    return;
+
   pthread_mutex_lock (&parser->mutex_run);
   parser->run = 0;
   pthread_mutex_unlock (&parser->mutex_run);
