@@ -28,10 +28,6 @@
 
 #include "metadata.h"
 
-#ifndef PARSER_NB_MAX
-#define PARSER_NB_MAX 8
-#endif /* PARSER_NB_MAX */
-
 struct scanner_s;
 struct parser_s;
 struct database_s;

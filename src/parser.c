@@ -33,6 +33,9 @@
 #include "thread_utils.h"
 #include "parser.h"
 
+#ifndef PARSER_NB_MAX
+#define PARSER_NB_MAX 8
+#endif /* PARSER_NB_MAX */
 
 struct parser_s {
   valhalla_t   *valhalla;
