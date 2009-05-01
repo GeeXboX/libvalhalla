@@ -22,6 +22,7 @@ SRCS =  database.c \
 	logs.c \
 	metadata.c \
 	parser.c \
+	scanner.c \
 	thread_utils.c \
 	timer_thread.c \
 	valhalla.c

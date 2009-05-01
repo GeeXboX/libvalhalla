@@ -19,14 +19,11 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <dirent.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <ctype.h>
 #include <unistd.h>
 
@@ -35,129 +32,14 @@
 #include "valhalla.h"
 #include "valhalla_internals.h"
 #include "parser.h"
+#include "scanner.h"
 #include "fifo_queue.h"
-#include "timer_thread.h"
 #include "database.h"
 #include "thread_utils.h"
 #include "logs.h"
 
-
-#ifndef PATH_RECURSIVENESS_MAX
-#define PATH_RECURSIVENESS_MAX 42
-#endif /* PATH_RECURSIVENESS_MAX */
-
 #define COMMIT_INTERVAL_DEFAULT 128
 
-
-static int
-get_list_length (void *list)
-{
-  void **l = list;
-  int n = 0;
-
-  while (l && *l++)
-    n++;
-  return n;
-}
-
-static char *
-my_strrcasestr (const char *buf, const char *str)
-{
-  char *ptr, *res = NULL;
-
-  while ((ptr = strcasestr (buf, str)))
-  {
-    res = ptr;
-    buf = ptr + strlen (str);
-  }
-
-  return res;
-}
-
-static void
-path_free (struct path_s *path)
-{
-  struct path_s *path_tmp;
-
-  while (path)
-  {
-    free (path->location);
-    path_tmp = path->next;
-    free (path);
-    path = path_tmp;
-  }
-}
-
-static struct path_s *
-path_new (const char *location, int recursive)
-{
-  char *it;
-  struct path_s *path;
-
-  if (!location)
-    return NULL;
-
-  path = calloc (1, sizeof (struct path_s));
-  if (!path)
-    return NULL;
-
-  path->location = strdup (location);
-  it = strrchr (path->location, '/');
-  if (*(it + 1) == '\0')
-    *it = '\0';
-
-  path->recursive = recursive ? PATH_RECURSIVENESS_MAX : 0;
-  return path;
-}
-
-static int
-path_cmp (struct path_s *path, const char *file)
-{
-  for (; path; path = path->next)
-    if (strstr (file, path->location) == file)
-    {
-      int sf = 0;
-      const char *it;
-
-      if (!path->recursive)
-        return -1;
-
-      it = file + strlen (path->location);
-      while ((it = strchr (it, '/')))
-      {
-        it++;
-        sf++;
-      }
-
-      if (path->recursive < sf)
-        return -1;
-      return 0;
-    }
-
-  return -1;
-}
-
-static int
-suffix_cmp (char **suffix, const char *file)
-{
-  const char *it;
-
-  if (!file)
-    return -1;
-
-  if (!suffix) /* always accepted */
-    return 0;
-
-  for (; *suffix; suffix++)
-  {
-    it = my_strrcasestr (file, *suffix);
-    if (it && (it > file)
-        && *(it + strlen (*suffix)) == '\0' && *(it - 1) == '.')
-      return 0;
-  }
-
-  return -1;
-}
 
 static inline int
 valhalla_is_stopped (valhalla_t *handle)
@@ -253,7 +135,7 @@ db_manage_queue (valhalla_t *handle,
     }
 
     parser_data_free (pdata);
-    fifo_queue_push (handle->fifo_scanner, ACTION_ACKNOWLEDGE, NULL);
+    scanner_action_send (handle->scanner, ACTION_ACKNOWLEDGE, NULL);
   }
   while (!valhalla_is_stopped (handle));
 
@@ -294,8 +176,8 @@ thread_database (void *arg)
      */
     database_begin_transaction (handle->database);
     while ((file = database_file_get_checked_clear (handle->database)))
-      if (path_cmp (handle->paths, file)
-          || suffix_cmp (handle->suffix, file)
+      if (scanner_path_cmp (handle->scanner, file)
+          || scanner_suffix_cmp (handle->scanner, file)
           || access (file, R_OK))
       {
         /* Manage BEGIN / COMMIT transactions */
@@ -330,167 +212,6 @@ thread_database (void *arg)
 
 /******************************************************************************/
 /*                                                                            */
-/*                                  Scanner                                   */
-/*                                                                            */
-/******************************************************************************/
-
-static void
-valhalla_readdir (valhalla_t *handle,
-                  const char *path, const char *dir, int recursive, int *files)
-{
-  DIR *dirp;
-  struct dirent dp;
-  struct dirent *dp_n = NULL;
-  struct stat st;
-  char *file;
-  char *new_path;
-  size_t size;
-
-  if (!handle || !path)
-    return;
-
-  if (dir)
-  {
-    size_t size = strlen (path) + strlen (dir) + 2;
-    new_path = malloc (size);
-    if (!new_path)
-      return;
-
-    snprintf (new_path, size, "%s/%s", path, dir);
-  }
-  else
-    new_path = strdup (path);
-
-  dirp = opendir (new_path);
-  if (!dirp)
-  {
-    free (new_path);
-    return;
-  }
-
-  if (recursive > 0)
-  {
-    recursive--;
-    if (!recursive)
-      valhalla_log (VALHALLA_MSG_WARNING,
-                    "[thread_scanner] Max recursiveness reached : %s", new_path);
-  }
-
-  do
-  {
-    readdir_r (dirp, &dp, &dp_n);
-    if (!dp_n)
-      break;
-
-    if (!strcmp (dp.d_name, ".") || !strcmp (dp.d_name, ".."))
-      continue;
-
-    size = strlen (new_path) + strlen (dp.d_name) + 2;
-
-    file = malloc (size);
-    if (!file)
-      continue;
-
-    snprintf (file, size, "%s/%s", new_path, dp.d_name);
-    if (lstat (file, &st))
-    {
-      free (file);
-      continue;
-    }
-
-    if (S_ISREG (st.st_mode) && !suffix_cmp (handle->suffix, dp.d_name))
-    {
-      parser_data_t *data = calloc (1, sizeof (parser_data_t));
-      if (data)
-      {
-        data->file = file;
-        data->mtime = st.st_mtime;
-        fifo_queue_push (handle->fifo_database, ACTION_DB_NEWFILE, data);
-        (*files)++;
-        continue;
-      }
-    }
-    else if (S_ISDIR (st.st_mode) && recursive)
-      valhalla_readdir (handle, new_path, dp.d_name, recursive, files);
-
-    free (file);
-  }
-  while (!valhalla_is_stopped (handle));
-
-  closedir (dirp);
-  free (new_path);
-}
-
-static void *
-thread_scanner (void *arg)
-{
-  int i;
-  valhalla_t *handle = arg;
-  struct path_s *path;
-
-  if (!handle)
-    pthread_exit (NULL);
-
-  my_setpriority (handle->priority);
-
-  valhalla_log (VALHALLA_MSG_INFO,
-                "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
-                __FUNCTION__, handle->loop, handle->timeout);
-
-  for (i = handle->loop; i; i = i > 0 ? i - 1 : i)
-  {
-    for (path = handle->paths; path; path = path->next)
-    {
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Start scanning : %s",
-                    __FUNCTION__, path->location);
-
-      path->nb_files = 0;
-      valhalla_readdir (handle,
-                        path->location, NULL, path->recursive, &path->nb_files);
-
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
-                    __FUNCTION__, path->nb_files);
-    }
-
-    /*
-     * Wait until that all files are parsed and inserted in the database
-     * for each path (wait all ACKs).
-     */
-    for (path = handle->paths; path; path = path->next)
-    {
-      int files = path->nb_files;
-      while (files)
-      {
-        int e;
-        fifo_queue_pop (handle->fifo_scanner, &e, NULL);
-        if (e == ACTION_ACKNOWLEDGE)
-          files--;
-
-        if (valhalla_is_stopped (handle))
-          goto kill;
-      }
-    }
-
-    /* It is not the last loop ?  */
-    if (i != 1)
-    {
-      fifo_queue_push (handle->fifo_database, ACTION_DB_NEXT_LOOP, NULL);
-      timer_thread_sleep (handle->timer, handle->timeout);
-    }
-
-    if (valhalla_is_stopped (handle))
-      goto kill;
-  }
-
-  pthread_exit (NULL);
-
- kill:
-  valhalla_log (VALHALLA_MSG_WARNING, "[%s] Kill forced", __FUNCTION__);
-  pthread_exit (NULL);
-}
-
-/******************************************************************************/
-/*                                                                            */
 /*                             Valhalla Handling                              */
 /*                                                                            */
 /******************************************************************************/
@@ -503,7 +224,7 @@ valhalla_wait (valhalla_t *handle)
   if (!handle)
     return;
 
-  pthread_join (handle->th_scanner, NULL);
+  scanner_wait (handle->scanner);
 
   fifo_queue_push (handle->fifo_database, ACTION_KILL_THREAD, NULL);
   pthread_join (handle->th_database, NULL);
@@ -555,17 +276,13 @@ valhalla_force_stop (valhalla_t *handle)
   handle->alive = 0;
   pthread_mutex_unlock (&handle->mutex_alive);
 
+  scanner_stop (handle->scanner);
+
   /* ask to auto-kill (force wake-up) */
-  fifo_queue_push (handle->fifo_scanner, ACTION_KILL_THREAD, NULL);
   fifo_queue_push (handle->fifo_database, ACTION_KILL_THREAD, NULL);
-
-  timer_thread_stop (handle->timer);
-
-  pthread_join (handle->th_scanner, NULL);
   pthread_join (handle->th_database, NULL);
 
   /* cleanup all queues to prevent memleaks */
-  valhalla_queue_cleanup (handle->fifo_scanner);
   valhalla_queue_cleanup (handle->fifo_database);
 
   parser_stop (handle->parser);
@@ -581,23 +298,8 @@ valhalla_uninit (valhalla_t *handle)
 
   if (!valhalla_is_stopped (handle))
     valhalla_force_stop (handle);
-  else
-    timer_thread_stop (handle->timer);
 
-  timer_thread_delete (handle->timer);
-
-  if (handle->paths)
-    path_free (handle->paths);
-
-  if (handle->suffix)
-  {
-    char **it;
-    for (it = handle->suffix; *it; it++)
-      free (*it);
-    free (handle->suffix);
-  }
-
-  fifo_queue_free (handle->fifo_scanner);
+  scanner_uninit (handle->scanner);
   fifo_queue_free (handle->fifo_database);
   parser_uninit (handle->parser);
 
@@ -620,21 +322,8 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
   if (!handle)
     return VALHALLA_ERROR_HANDLER;
 
-  if (!handle->paths)
-    return VALHALLA_ERROR_PATH;
-
   if (handle->run)
     return VALHALLA_ERROR_DEAD;
-
-  /* -1 for infinite loop */
-  handle->loop = loop < 1 ? -1 : loop;
-
-  /* if timeout is 0, there is no sleep between loops */
-  if (timeout)
-  {
-    handle->timeout = timeout;
-    timer_thread_start (handle->timer);
-  }
 
   handle->priority = priority;
   handle->alive = 1;
@@ -643,7 +332,7 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  res = pthread_create (&handle->th_scanner, &attr, thread_scanner, handle);
+  res = scanner_run (handle->scanner, loop, timeout, priority);
   if (res)
   {
     res = VALHALLA_ERROR_THREAD;
@@ -669,43 +358,23 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 void
 valhalla_path_add (valhalla_t *handle, const char *location, int recursive)
 {
-  struct path_s *path;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, location);
 
   if (!handle || !location)
     return;
 
-  if (!handle->paths)
-  {
-    handle->paths = path_new (location, recursive);
-    return;
-  }
-
-  for (path = handle->paths; path->next; path = path->next)
-    ;
-
-  path->next = path_new (location, recursive);
+  scanner_path_add (handle->scanner, location, recursive);
 }
 
 void
 valhalla_suffix_add (valhalla_t *handle, const char *suffix)
 {
-  int n;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, suffix);
 
   if (!handle || !suffix)
     return;
 
-  n = get_list_length (handle->suffix) + 1;
-
-  handle->suffix = realloc (handle->suffix, (n + 1) * sizeof (*handle->suffix));
-  if (!handle->suffix)
-    return;
-
-  handle->suffix[n] = NULL;
-  handle->suffix[n - 1] = strdup (suffix);
+  scanner_suffix_add (handle->scanner, suffix);
 }
 
 void
@@ -734,8 +403,8 @@ valhalla_init (const char *db,
   if (!handle->parser)
     goto err;
 
-  handle->fifo_scanner = fifo_queue_new ();
-  if (!handle->fifo_scanner)
+  handle->scanner = scanner_init (handle);
+  if (!handle->scanner)
     goto err;
 
   handle->fifo_database = fifo_queue_new ();
@@ -744,10 +413,6 @@ valhalla_init (const char *db,
 
   handle->database = database_init (db);
   if (!handle->database)
-    goto err;
-
-  handle->timer = timer_thread_create ();
-  if (!handle->timer)
     goto err;
 
   if (commit_int <= 0)
