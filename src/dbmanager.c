@@ -135,7 +135,7 @@ db_manage_queue (dbmanager_t *dbmanager,
 }
 
 static void *
-thread_database (void *arg)
+dbmanager_thread (void *arg)
 {
   int rc;
   const char *file;
@@ -219,7 +219,7 @@ dbmanager_run (dbmanager_t *dbmanager, int priority)
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  res = pthread_create (&dbmanager->thread, &attr, thread_database, dbmanager);
+  res = pthread_create (&dbmanager->thread, &attr, dbmanager_thread, dbmanager);
   if (res)
   {
     res = DBMANAGER_ERROR_THREAD;

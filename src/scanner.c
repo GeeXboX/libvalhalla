@@ -223,7 +223,7 @@ valhalla_readdir (scanner_t *scanner,
     recursive--;
     if (!recursive)
       valhalla_log (VALHALLA_MSG_WARNING,
-                    "[thread_scanner] Max recursiveness reached : %s", new_path);
+                    "[scanner_thread] Max recursiveness reached : %s", new_path);
   }
 
   do
@@ -273,7 +273,7 @@ valhalla_readdir (scanner_t *scanner,
 }
 
 static void *
-thread_scanner (void *arg)
+scanner_thread (void *arg)
 {
   int i;
   scanner_t *scanner = arg;
@@ -370,7 +370,7 @@ scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  res = pthread_create (&scanner->thread, &attr, thread_scanner, scanner);
+  res = pthread_create (&scanner->thread, &attr, scanner_thread, scanner);
   if (res)
   {
     res = SCANNER_ERROR_THREAD;

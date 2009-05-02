@@ -232,7 +232,7 @@ parser_metadata (const char *file)
 }
 
 static void *
-thread_parser (void *arg)
+parser_thread (void *arg)
 {
   int res;
   int e;
@@ -287,7 +287,7 @@ parser_run (parser_t *parser, int priority)
 
   for (i = 0; i < parser->nb; i++)
   {
-    res = pthread_create (&parser->thread[i], &attr, thread_parser, parser);
+    res = pthread_create (&parser->thread[i], &attr, parser_thread, parser);
     if (res)
     {
       res = PARSER_ERROR_THREAD;
