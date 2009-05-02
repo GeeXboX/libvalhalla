@@ -185,7 +185,7 @@ scanner_is_stopped (scanner_t *scanner)
 }
 
 static void
-valhalla_readdir (scanner_t *scanner,
+scanner_readdir (scanner_t *scanner,
                   const char *path, const char *dir, int recursive, int *files)
 {
   DIR *dirp;
@@ -262,7 +262,7 @@ valhalla_readdir (scanner_t *scanner,
       }
     }
     else if (S_ISDIR (st.st_mode) && recursive)
-      valhalla_readdir (scanner, new_path, dp.d_name, recursive, files);
+      scanner_readdir (scanner, new_path, dp.d_name, recursive, files);
 
     free (file);
   }
@@ -296,7 +296,7 @@ scanner_thread (void *arg)
                     __FUNCTION__, path->location);
 
       path->nb_files = 0;
-      valhalla_readdir (scanner,
+      scanner_readdir (scanner,
                         path->location, NULL, path->recursive, &path->nb_files);
 
       valhalla_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
