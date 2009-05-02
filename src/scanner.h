@@ -33,6 +33,7 @@ enum scanner_errno {
 
 int scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority);
 void scanner_wait (scanner_t *scanner);
+void scanner_cleanup (scanner_t *scanner);
 void scanner_stop (scanner_t *scanner);
 void scanner_uninit (scanner_t *scanner);
 scanner_t *scanner_init (valhalla_t *handle);

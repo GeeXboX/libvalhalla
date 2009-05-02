@@ -395,12 +395,28 @@ scanner_wait (scanner_t *scanner)
 }
 
 void
+scanner_cleanup (scanner_t *scanner)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!scanner)
+    return;
+
+  valhalla_queue_cleanup (scanner->fifo);
+}
+
+void
 scanner_stop (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
+
+  if (scanner_is_stopped (scanner))
+    return;
+
+  timer_thread_stop (scanner->timer);
 
   pthread_mutex_lock (&scanner->mutex_run);
   scanner->run = 0;
@@ -409,8 +425,6 @@ scanner_stop (scanner_t *scanner)
   fifo_queue_push (scanner->fifo, ACTION_KILL_THREAD, NULL);
   timer_thread_stop (scanner->timer);
   pthread_join (scanner->thread, NULL);
-
-//  valhalla_queue_cleanup (scanner->fifo);
 }
 
 void
@@ -420,11 +434,6 @@ scanner_uninit (scanner_t *scanner)
 
   if (!scanner)
     return;
-
-  if (!scanner_is_stopped (scanner))
-    scanner_stop (scanner);
-  else
-    timer_thread_stop (scanner->timer);
 
   timer_thread_delete (scanner->timer);
 

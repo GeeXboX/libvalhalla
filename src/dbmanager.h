@@ -31,6 +31,7 @@ enum dbmanager_errno {
 };
 
 int dbmanager_run (dbmanager_t *dbmanager, int priority);
+void dbmanager_cleanup (dbmanager_t *dbmanager);
 void dbmanager_stop (dbmanager_t *dbmanager);
 void dbmanager_uninit (dbmanager_t *dbmanager);
 dbmanager_t *dbmanager_init (valhalla_t *handle,

@@ -301,6 +301,17 @@ parser_run (parser_t *parser, int priority)
 }
 
 void
+parser_cleanup (parser_t *parser)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!parser)
+    return;
+
+  valhalla_queue_cleanup (parser->fifo);
+}
+
+void
 parser_stop (parser_t *parser)
 {
   int i;
@@ -308,6 +319,9 @@ parser_stop (parser_t *parser)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
+    return;
+
+  if (parser_is_stopped (parser))
     return;
 
   pthread_mutex_lock (&parser->mutex_run);
@@ -319,8 +333,6 @@ parser_stop (parser_t *parser)
 
   for (i = 0; i < parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
-
-  //valhalla_queue_cleanup (parser->fifo);
 }
 
 void
@@ -330,9 +342,6 @@ parser_uninit (parser_t *parser)
 
   if (!parser)
     return;
-
-  if (!parser_is_stopped (parser))
-    parser_stop (parser);
 
   fifo_queue_free (parser->fifo);
   pthread_mutex_destroy (&parser->mutex_run);

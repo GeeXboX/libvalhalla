@@ -31,6 +31,7 @@ enum parser_errno {
 };
 
 int parser_run (parser_t *parser, int priority);
+void parser_cleanup (parser_t *parser);
 void parser_stop (parser_t *parser);
 void parser_uninit (parser_t *parser);
 parser_t *parser_init (valhalla_t *handle, unsigned int nb);

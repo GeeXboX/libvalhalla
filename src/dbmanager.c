@@ -231,11 +231,25 @@ dbmanager_run (dbmanager_t *dbmanager, int priority)
 }
 
 void
+dbmanager_cleanup (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  valhalla_queue_cleanup (dbmanager->fifo);
+}
+
+void
 dbmanager_stop (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
+    return;
+
+  if (dbmanager_is_stopped (dbmanager))
     return;
 
   pthread_mutex_lock (&dbmanager->mutex_run);
@@ -244,8 +258,6 @@ dbmanager_stop (dbmanager_t *dbmanager)
 
   fifo_queue_push (dbmanager->fifo, ACTION_KILL_THREAD, NULL);
   pthread_join (dbmanager->thread, NULL);
-
-//  valhalla_queue_cleanup (dbmanager->fifo);
 }
 
 void
@@ -255,9 +267,6 @@ dbmanager_uninit (dbmanager_t *dbmanager)
 
   if (!dbmanager)
     return;
-
-  if (!dbmanager_is_stopped (dbmanager))
-    dbmanager_stop (dbmanager);
 
   if (dbmanager->database)
     database_uninit (dbmanager->database);

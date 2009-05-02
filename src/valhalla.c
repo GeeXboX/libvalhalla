@@ -67,6 +67,9 @@ valhalla_wait (valhalla_t *handle)
 
   dbmanager_stop (handle->dbmanager);
   parser_stop (handle->parser);
+
+  dbmanager_cleanup (handle->dbmanager);
+  parser_cleanup (handle->parser);
 }
 
 void
@@ -105,6 +108,10 @@ valhalla_force_stop (valhalla_t *handle)
   scanner_stop (handle->scanner);
   dbmanager_stop (handle->dbmanager);
   parser_stop (handle->parser);
+
+  scanner_cleanup (handle->scanner);
+  dbmanager_cleanup (handle->dbmanager);
+  parser_cleanup (handle->parser);
 }
 
 void
