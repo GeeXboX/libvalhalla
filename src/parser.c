@@ -19,6 +19,7 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,6 +32,7 @@
 #include "lavf_utils.h"
 #include "metadata.h"
 #include "thread_utils.h"
+#include "dbmanager.h"
 #include "parser.h"
 
 #ifndef PARSER_NB_MAX
@@ -259,7 +261,7 @@ thread_parser (void *arg)
     if (pdata)
       pdata->meta = parser_metadata (pdata->file);
 
-    fifo_queue_push (parser->valhalla->fifo_database, e, pdata); /* FIXME */
+    dbmanager_action_send (parser->valhalla->dbmanager, e, pdata);
   }
   while (!parser_is_stopped (parser));
 
@@ -318,7 +320,7 @@ parser_stop (parser_t *parser)
   for (i = 0; i < parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
 
-  valhalla_queue_cleanup (parser->fifo);
+  //valhalla_queue_cleanup (parser->fifo);
 }
 
 void

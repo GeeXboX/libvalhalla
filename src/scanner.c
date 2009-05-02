@@ -20,6 +20,7 @@
  */
 
 #define _GNU_SOURCE
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -33,6 +34,7 @@
 #include "logs.h"
 #include "thread_utils.h"
 #include "timer_thread.h"
+#include "dbmanager.h"
 #include "scanner.h"
 
 #ifndef PATH_RECURSIVENESS_MAX
@@ -253,7 +255,8 @@ valhalla_readdir (scanner_t *scanner,
       {
         data->file = file;
         data->mtime = st.st_mtime;
-        fifo_queue_push (scanner->valhalla->fifo_database, ACTION_DB_NEWFILE, data); /* FIXME */
+        dbmanager_action_send (scanner->valhalla->dbmanager,
+                               ACTION_DB_NEWFILE, data);
         (*files)++;
         continue;
       }
@@ -322,7 +325,7 @@ thread_scanner (void *arg)
     /* It is not the last loop ?  */
     if (i != 1)
     {
-      fifo_queue_push (scanner->valhalla->fifo_database, ACTION_DB_NEXT_LOOP, NULL);
+      dbmanager_action_send (scanner->valhalla->dbmanager, ACTION_DB_NEXT_LOOP, NULL);
       timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 
@@ -407,7 +410,7 @@ scanner_stop (scanner_t *scanner)
   timer_thread_stop (scanner->timer);
   pthread_join (scanner->thread, NULL);
 
-  valhalla_queue_cleanup (scanner->fifo);
+//  valhalla_queue_cleanup (scanner->fifo);
 }
 
 void

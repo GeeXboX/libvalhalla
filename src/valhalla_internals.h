@@ -22,17 +22,14 @@
 #ifndef VALHALLA_INTERNALS_H
 #define VALHALLA_INTERNALS_H
 
-#include <inttypes.h>
-#include <pthread.h>
 #include <time.h>
 
 #include "metadata.h"
 
+struct fifo_queue_s;
 struct scanner_s;
 struct parser_s;
-struct database_s;
-struct fifo_queue_s;
-struct timer_thread_s;
+struct dbmanager_s;
 
 typedef enum action_list {
   ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
@@ -54,20 +51,14 @@ typedef struct parser_data_s {
 struct valhalla_s {
   struct scanner_s *scanner;
   struct parser_s *parser;
-  pthread_t     th_database;
-  struct database_s   *database;
-  struct fifo_queue_s *fifo_database;
+  struct dbmanager_s *dbmanager;
 
-  unsigned int commit_int;
-
-  int priority; /* priority of all threads */
   int run;      /* prevent a bug if valhalla_run() is called two times */
-  int alive;    /* used for killing all threads with uninit */
-  pthread_mutex_t mutex_alive;
 };
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
 void valhalla_queue_cleanup (struct fifo_queue_s *queue);
+void parser_data_free (parser_data_t *data);
 
 #endif /* VALHALLA_INTERNALS_H */
