@@ -206,7 +206,8 @@ scanner_readdir (scanner_t *scanner,
     if (!new_path)
       return;
 
-    snprintf (new_path, size, "%s/%s", path, dir);
+    snprintf (new_path, size, "%s%s%s",
+              path, *path == '/' && *(path + 1) == '\0' ? "" : "/", dir);
   }
   else
     new_path = strdup (path);
