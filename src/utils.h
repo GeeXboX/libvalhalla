@@ -28,8 +28,8 @@
 #include "fifo_queue.h"
 
 typedef struct file_data_s {
-  char              *file;
-  time_t             mtime;
+  char       *file;
+  time_t      mtime;
   metadata_t *meta;
 } file_data_t;
 
