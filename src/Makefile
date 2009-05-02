@@ -26,6 +26,7 @@ SRCS =  database.c \
 	scanner.c \
 	thread_utils.c \
 	timer_thread.c \
+	utils.c \
 	valhalla.c
 
 OBJS = $(SRCS:.c=.o)

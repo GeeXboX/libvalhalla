@@ -22,10 +22,6 @@
 #ifndef VALHALLA_INTERNALS_H
 #define VALHALLA_INTERNALS_H
 
-#include <time.h>
-
-struct fifo_queue_s;
-struct metadata_s;
 struct scanner_s;
 struct parser_s;
 struct dbmanager_s;
@@ -41,12 +37,6 @@ typedef enum action_list {
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
-typedef struct file_data_s {
-  char              *file;
-  time_t             mtime;
-  struct metadata_s *meta;
-} file_data_t;
-
 struct valhalla_s {
   struct scanner_s   *scanner;
   struct parser_s    *parser;
@@ -56,8 +46,5 @@ struct valhalla_s {
 };
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
-
-void queue_cleanup (struct fifo_queue_s *queue);
-void file_data_free (file_data_t *data);
 
 #endif /* VALHALLA_INTERNALS_H */

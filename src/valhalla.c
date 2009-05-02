@@ -35,19 +35,6 @@
 #include "logs.h"
 
 
-void
-file_data_free (file_data_t *data)
-{
-  if (!data)
-    return;
-
-  if (data->file)
-    free (data->file);
-  if (data->meta)
-    metadata_free (data->meta);
-  free (data);
-}
-
 /******************************************************************************/
 /*                                                                            */
 /*                             Valhalla Handling                              */
@@ -69,36 +56,6 @@ valhalla_wait (valhalla_t *handle)
 
   dbmanager_cleanup (handle->dbmanager);
   parser_cleanup (handle->parser);
-}
-
-void
-queue_cleanup (fifo_queue_t *queue)
-{
-  int e;
-  void *data;
-
-  fifo_queue_push (queue, ACTION_CLEANUP_END, NULL);
-
-  do
-  {
-    e = ACTION_NO_OPERATION;
-    data = NULL;
-    fifo_queue_pop (queue, &e, &data);
-
-    switch (e)
-    {
-    default:
-      break;
-
-    case ACTION_DB_INSERT:
-    case ACTION_DB_UPDATE:
-    case ACTION_DB_NEWFILE:
-      if (data)
-        file_data_free (data);
-      break;
-    }
-  }
-  while (e != ACTION_CLEANUP_END);
 }
 
 static void

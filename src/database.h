@@ -22,6 +22,8 @@
 #ifndef VALHALLA_DATABASE_H
 #define VALHALLA_DATABASE_H
 
+#include "utils.h"
+
 typedef struct database_s database_t;
 
 void database_file_data_insert (database_t *database, file_data_t *data);
