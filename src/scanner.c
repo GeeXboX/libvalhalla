@@ -118,7 +118,7 @@ path_new (const char *location, int recursive)
 
   path->location = strdup (location);
   it = strrchr (path->location, '/');
-  if (*(it + 1) == '\0')
+  if (it && it != path->location && *(it + 1) == '\0')
     *it = '\0';
 
   path->recursive = recursive ? PATH_RECURSIVENESS_MAX : 0;
