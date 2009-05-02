@@ -63,7 +63,7 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
 }
 
 static int
-db_manage_queue (dbmanager_t *dbmanager,
+dbmanager_queue (dbmanager_t *dbmanager,
                  int *stats_insert, int *stats_update, int *stats_nochange)
 {
   int res;
@@ -159,7 +159,7 @@ dbmanager_thread (void *arg)
 
     database_begin_transaction (dbmanager->database);
     rc =
-      db_manage_queue (dbmanager, &stats_insert, &stats_update, &stats_nochange);
+      dbmanager_queue (dbmanager, &stats_insert, &stats_update, &stats_nochange);
     database_end_transaction (dbmanager->database);
 
     /*
