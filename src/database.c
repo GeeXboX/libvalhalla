@@ -27,6 +27,7 @@
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
+#include "metadata.h"
 #include "sql_statements.h"
 #include "database.h"
 #include "logs.h"

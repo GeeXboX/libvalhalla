@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "valhalla_internals.h"
+#include "metadata.h"
 
 struct metadata_s {
   struct metadata_s *next;

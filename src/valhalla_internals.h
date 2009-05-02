@@ -24,9 +24,8 @@
 
 #include <time.h>
 
-#include "metadata.h"
-
 struct fifo_queue_s;
+struct metadata_s;
 struct scanner_s;
 struct parser_s;
 struct dbmanager_s;
@@ -45,7 +44,7 @@ typedef enum action_list {
 typedef struct file_data_s {
   char       *file;
   time_t      mtime;
-  metadata_t *meta;
+  struct metadata_s *meta;
 } file_data_t;
 
 struct valhalla_s {
