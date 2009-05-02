@@ -42,17 +42,17 @@ typedef enum action_list {
 } action_list_t;
 
 typedef struct file_data_s {
-  char       *file;
-  time_t      mtime;
+  char              *file;
+  time_t             mtime;
   struct metadata_s *meta;
 } file_data_t;
 
 struct valhalla_s {
-  struct scanner_s *scanner;
-  struct parser_s *parser;
+  struct scanner_s   *scanner;
+  struct parser_s    *parser;
   struct dbmanager_s *dbmanager;
 
-  int run;      /* prevent a bug if valhalla_run() is called two times */
+  int run; /* prevent a bug if valhalla_run() is called two times */
 };
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
