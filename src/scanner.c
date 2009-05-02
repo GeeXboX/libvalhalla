@@ -186,7 +186,7 @@ scanner_is_stopped (scanner_t *scanner)
 
 static void
 scanner_readdir (scanner_t *scanner,
-                  const char *path, const char *dir, int recursive, int *files)
+                 const char *path, const char *dir, int recursive, int *files)
 {
   DIR *dirp;
   struct dirent dp;
@@ -297,7 +297,7 @@ scanner_thread (void *arg)
 
       path->nb_files = 0;
       scanner_readdir (scanner,
-                        path->location, NULL, path->recursive, &path->nb_files);
+                       path->location, NULL, path->recursive, &path->nb_files);
 
       valhalla_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
                     __FUNCTION__, path->nb_files);
