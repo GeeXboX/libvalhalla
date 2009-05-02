@@ -419,8 +419,6 @@ scanner_stop (scanner_t *scanner)
   if (scanner_is_stopped (scanner))
     return;
 
-  timer_thread_stop (scanner->timer);
-
   pthread_mutex_lock (&scanner->mutex_run);
   scanner->run = 0;
   pthread_mutex_unlock (&scanner->mutex_run);
