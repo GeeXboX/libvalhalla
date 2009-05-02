@@ -325,7 +325,8 @@ scanner_thread (void *arg)
     /* It is not the last loop ?  */
     if (i != 1)
     {
-      dbmanager_action_send (scanner->valhalla->dbmanager, ACTION_DB_NEXT_LOOP, NULL);
+      dbmanager_action_send (scanner->valhalla->dbmanager,
+                             ACTION_DB_NEXT_LOOP, NULL);
       timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 
