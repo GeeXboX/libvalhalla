@@ -1,0 +1,42 @@
+
+ * Valhalla
+     -> Implement a system to support an "on-demand" scan. The goal is
+        to retrieve in priority the metadata for a specific file.
+
+ * Database
+     -> Add a new SQLite table to store some informations related to the
+        library and to the version of the db file.
+     -> Rewrite the whole structure of the database in order to handle
+        generic metadata and new filetypes (video, pictures, ...).
+     -> Add a public function to get the data for only one file.
+
+ * Scanner
+     -> Implement a system to add filters (to ignore some directories)
+        for a path.
+     -> Rewrite a bit the scanner in order to support several scanners
+        in parallel (for the same valhalla object). It will be useful
+        when some paths are not on the same device because it can
+        increase a lot the speed.
+        It is already possible to do that but it needs to create a
+        valhalla object for each path.
+
+
+ Ideas
+ ~~~~~
+
+ -> Implement a structure to add grabbers in Valhalla. The idea is to
+    have 3 steps for a file.
+
+     #1 the file is parsed by FFmpeg and saved in the database.
+     #2 the file is sent to the grabbers to retrieve new informations
+        exactly like the grabbers of Enna (with the metadata retrieved
+        by FFmpeg).
+     #3 the files (like images) retrieved by some grabbers are downloaded
+        and saved somewhere on the disk.
+
+    A first draft of this new architecture is visible at this link:
+     http://www.geexbox.org/~schroeterm/valhalla/new_valhalla.png
+
+    The goal is to move the grabbers of Enna in Valhalla and to fix
+    definitively the problem of concurrency. Of course, it must be easy
+    to add new grabbers.
