@@ -237,7 +237,7 @@ parser_thread (void *arg)
   int res;
   int e;
   void *data = NULL;
-  parser_data_t *pdata;
+  file_data_t *pdata;
   parser_t *parser = arg;
 
   if (!parser)

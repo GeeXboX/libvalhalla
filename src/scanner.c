@@ -251,7 +251,7 @@ scanner_readdir (scanner_t *scanner,
 
     if (S_ISREG (st.st_mode) && !suffix_cmp (scanner->suffix, dp.d_name))
     {
-      parser_data_t *data = calloc (1, sizeof (parser_data_t));
+      file_data_t *data = calloc (1, sizeof (file_data_t));
       if (data)
       {
         data->file = file;

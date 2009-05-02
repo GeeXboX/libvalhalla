@@ -42,11 +42,11 @@ typedef enum action_list {
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
-typedef struct parser_data_s {
+typedef struct file_data_s {
   char       *file;
   time_t      mtime;
   metadata_t *meta;
-} parser_data_t;
+} file_data_t;
 
 struct valhalla_s {
   struct scanner_s *scanner;
@@ -59,6 +59,6 @@ struct valhalla_s {
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
 void valhalla_queue_cleanup (struct fifo_queue_s *queue);
-void parser_data_free (parser_data_t *data);
+void file_data_free (file_data_t *data);
 
 #endif /* VALHALLA_INTERNALS_H */

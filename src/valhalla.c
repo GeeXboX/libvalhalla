@@ -35,7 +35,7 @@
 
 
 void
-parser_data_free (parser_data_t *data)
+file_data_free (file_data_t *data)
 {
   if (!data)
     return;
@@ -93,7 +93,7 @@ valhalla_queue_cleanup (fifo_queue_t *queue)
     case ACTION_DB_UPDATE:
     case ACTION_DB_NEWFILE:
       if (data)
-        parser_data_free (data);
+        file_data_free (data);
       break;
     }
   }

@@ -69,7 +69,7 @@ db_manage_queue (dbmanager_t *dbmanager,
   int res;
   int e;
   void *data = NULL;
-  parser_data_t *pdata;
+  file_data_t *pdata;
 
   do
   {
@@ -126,7 +126,7 @@ db_manage_queue (dbmanager_t *dbmanager,
     }
     }
 
-    parser_data_free (pdata);
+    file_data_free (pdata);
     scanner_action_send (dbmanager->valhalla->scanner, ACTION_ACKNOWLEDGE, NULL);
   }
   while (!dbmanager_is_stopped (dbmanager));

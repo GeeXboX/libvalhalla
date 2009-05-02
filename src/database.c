@@ -333,7 +333,7 @@ database_alloc_insert (sqlite3_stmt *stmt,
 }
 
 static void
-database_file_insert (database_t *database, parser_data_t *data,
+database_file_insert (database_t *database, file_data_t *data,
                       int64_t author_id, int64_t album_id, int64_t genre_id)
 {
   int res, err = -1;
@@ -399,7 +399,7 @@ database_file_insert (database_t *database, parser_data_t *data,
 }
 
 void
-database_file_data_insert (database_t *database, parser_data_t *data)
+database_file_data_insert (database_t *database, file_data_t *data)
 {
   int64_t author_id = 0, album_id = 0, genre_id = 0;
 
@@ -424,7 +424,7 @@ database_file_data_insert (database_t *database, parser_data_t *data)
 }
 
 static void
-database_file_update (database_t *database, parser_data_t *data,
+database_file_update (database_t *database, file_data_t *data,
                       int64_t author_id, int64_t album_id, int64_t genre_id)
 {
   int res, err = -1;
@@ -490,7 +490,7 @@ database_file_update (database_t *database, parser_data_t *data,
 }
 
 void
-database_file_data_update (database_t *database, parser_data_t *data)
+database_file_data_update (database_t *database, file_data_t *data)
 {
   int64_t author_id = 0, album_id = 0, genre_id = 0;
 
