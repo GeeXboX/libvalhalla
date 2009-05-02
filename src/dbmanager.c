@@ -238,7 +238,7 @@ dbmanager_cleanup (dbmanager_t *dbmanager)
   if (!dbmanager)
     return;
 
-  valhalla_queue_cleanup (dbmanager->fifo);
+  queue_cleanup (dbmanager->fifo);
 }
 
 void

@@ -72,7 +72,7 @@ valhalla_wait (valhalla_t *handle)
 }
 
 void
-valhalla_queue_cleanup (fifo_queue_t *queue)
+queue_cleanup (fifo_queue_t *queue)
 {
   int e;
   void *data;

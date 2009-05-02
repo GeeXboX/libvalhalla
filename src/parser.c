@@ -308,7 +308,7 @@ parser_cleanup (parser_t *parser)
   if (!parser)
     return;
 
-  valhalla_queue_cleanup (parser->fifo);
+  queue_cleanup (parser->fifo);
 }
 
 void

@@ -57,7 +57,7 @@ struct valhalla_s {
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
-void valhalla_queue_cleanup (struct fifo_queue_s *queue);
+void queue_cleanup (struct fifo_queue_s *queue);
 void file_data_free (file_data_t *data);
 
 #endif /* VALHALLA_INTERNALS_H */

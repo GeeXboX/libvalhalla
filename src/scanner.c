@@ -404,7 +404,7 @@ scanner_cleanup (scanner_t *scanner)
   if (!scanner)
     return;
 
-  valhalla_queue_cleanup (scanner->fifo);
+  queue_cleanup (scanner->fifo);
 }
 
 void
