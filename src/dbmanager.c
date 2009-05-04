@@ -20,10 +20,8 @@
  */
 
 #include <pthread.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
-#include <string.h>
 #include <unistd.h>
 
 #include "valhalla.h"
