@@ -112,28 +112,28 @@ typedef enum database_stmt {
 } database_stmt_t;
 
 static const stmt_list_t g_stmts[] = {
-  [STMT_SELECT_FILE_MTIME]          = { SELECT_FILE_MTIME,          NULL },
-  [STMT_SELECT_TYPE_ID]             = { SELECT_TYPE_ID,             NULL },
-  [STMT_SELECT_META_ID]             = { SELECT_META_ID,             NULL },
-  [STMT_SELECT_DATA_ID]             = { SELECT_DATA_ID,             NULL },
-  [STMT_SELECT_GROUP_ID]            = { SELECT_GROUP_ID,            NULL },
-  [STMT_INSERT_FILE]                = { INSERT_FILE,                NULL },
-  [STMT_INSERT_TYPE]                = { INSERT_TYPE,                NULL },
-  [STMT_INSERT_META]                = { INSERT_META,                NULL },
-  [STMT_INSERT_DATA]                = { INSERT_DATA,                NULL },
-  [STMT_INSERT_GROUP]               = { INSERT_GROUP,               NULL },
-  [STMT_INSERT_ASSOC_FILE_METADATA] = { INSERT_ASSOC_FILE_METADATA, NULL },
-  [STMT_UPDATE_FILE]                = { UPDATE_FILE,                NULL },
-  [STMT_DELETE_FILE]                = { DELETE_FILE,                NULL },
+  [STMT_SELECT_FILE_MTIME]           = { SELECT_FILE_MTIME,           NULL },
+  [STMT_SELECT_TYPE_ID]              = { SELECT_TYPE_ID,              NULL },
+  [STMT_SELECT_META_ID]              = { SELECT_META_ID,              NULL },
+  [STMT_SELECT_DATA_ID]              = { SELECT_DATA_ID,              NULL },
+  [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
+  [STMT_INSERT_FILE]                 = { INSERT_FILE,                 NULL },
+  [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
+  [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
+  [STMT_INSERT_DATA]                 = { INSERT_DATA,                 NULL },
+  [STMT_INSERT_GROUP]                = { INSERT_GROUP,                NULL },
+  [STMT_INSERT_ASSOC_FILE_METADATA]  = { INSERT_ASSOC_FILE_METADATA,  NULL },
+  [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
+  [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
-  [STMT_CLEANUP_META]               = { CLEANUP_META,               NULL },
-  [STMT_CLEANUP_DATA]               = { CLEANUP_DATA,               NULL },
+  [STMT_CLEANUP_META]                = { CLEANUP_META,                NULL },
+  [STMT_CLEANUP_DATA]                = { CLEANUP_DATA,                NULL },
 
-  [STMT_UPDATE_FILE_CHECKED_CLEAR]  = { UPDATE_FILE_CHECKED_CLEAR,  NULL },
-  [STMT_SELECT_FILE_CHECKED_CLEAR]  = { SELECT_FILE_CHECKED_CLEAR,  NULL },
-  [STMT_BEGIN_TRANSACTION]          = { BEGIN_TRANSACTION,          NULL },
-  [STMT_END_TRANSACTION]            = { END_TRANSACTION,            NULL },
+  [STMT_UPDATE_FILE_CHECKED_CLEAR]   = { UPDATE_FILE_CHECKED_CLEAR,   NULL },
+  [STMT_SELECT_FILE_CHECKED_CLEAR]   = { SELECT_FILE_CHECKED_CLEAR,   NULL },
+  [STMT_BEGIN_TRANSACTION]           = { BEGIN_TRANSACTION,           NULL },
+  [STMT_END_TRANSACTION]             = { END_TRANSACTION,             NULL },
 };
 
 #define STMT_GET(id) database->stmts[id].stmt
