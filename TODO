@@ -9,7 +9,6 @@
      -> Add a new SQLite table to store some informations related to the
         library and to the version of the db file.
      -> Add support for file properties (codec, length, bitrate, etc, ...).
-     -> Add a public function to get the data for only one file.
 
  * Scanner
      -> Implement a system to add filters (to ignore some directories)
