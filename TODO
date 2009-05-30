@@ -8,8 +8,6 @@
  * Database
      -> Add a new SQLite table to store some informations related to the
         library and to the version of the db file.
-     -> Rewrite the whole structure of the database in order to handle
-        generic metadata and new filetypes (video, pictures, ...).
      -> Add a public function to get the data for only one file.
 
  * Scanner
