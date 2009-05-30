@@ -20,8 +20,8 @@
         It is already possible to do that but it needs to create a
         valhalla object for each path.
 
-  * Parser
-     -> Fix file type assignment (audio, video, picture, ...).
+ * Parser
+     -> Fix file type attribution (audio, video, picture, ...).
      -> Retrieve all sort of metadata and not only some fields.
      -> Retrieve all properties (codec, length, bitrate, etc, ...).
 
