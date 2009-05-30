@@ -30,6 +30,7 @@
 typedef struct file_data_s {
   char       *file;
   time_t      mtime;
+  valhalla_file_type_t type;
   metadata_t *meta;
 } file_data_t;
 

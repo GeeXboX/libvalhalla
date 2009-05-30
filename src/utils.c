@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 
+#include "valhalla.h"
 #include "valhalla_internals.h"
 #include "metadata.h"
 #include "fifo_queue.h"

@@ -324,50 +324,49 @@ dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
 }
 
 int
-dbmanager_db_author (dbmanager_t *dbmanager,
-                     valhalla_db_author_t *author, int64_t album)
+dbmanager_db_metalist_get (dbmanager_t *dbmanager,
+                           valhalla_db_item_t *search,
+                           valhalla_db_restrict_t *restriction,
+                           int (*select_cb) (void *data,
+                                             valhalla_db_metares_t *res),
+                           void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;
 
-  return database_select_author (dbmanager->database,
-                                 &author->id, &author->name, album);
+  return database_metalist_get (dbmanager->database,
+                                search, restriction, select_cb, data);
 }
 
 int
-dbmanager_db_album (dbmanager_t *dbmanager,
-                    valhalla_db_album_t *album, int64_t where_id, int what)
+dbmanager_db_filelist_get (dbmanager_t *dbmanager,
+                           valhalla_file_type_t filetype,
+                           valhalla_db_restrict_t *restriction,
+                           int (*select_cb) (void *data,
+                                             valhalla_db_fileres_t *res),
+                           void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;
 
-  return database_select_album (dbmanager->database,
-                                &album->id, &album->name, where_id, what);
+  return database_filelist_get (dbmanager->database,
+                                filetype, restriction, select_cb, data);
 }
 
 int
-dbmanager_db_genre (dbmanager_t *dbmanager, valhalla_db_genre_t *genre)
+dbmanager_db_file_get (dbmanager_t *dbmanager,
+                       int64_t id, const char *path,
+                       valhalla_db_restrict_t *restriction,
+                       valhalla_db_filemeta_t **res)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;
 
-  return database_select_genre (dbmanager->database, &genre->id, &genre->name);
-}
-
-int
-dbmanager_db_file (dbmanager_t *dbmanager, valhalla_db_file_t *file,
-                   valhalla_db_file_where_t *where)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  if (!dbmanager)
-    return -1;
-
-  return database_select_file (dbmanager->database, file, where);
+  return database_file_get (dbmanager->database, id, path, restriction, res);
 }

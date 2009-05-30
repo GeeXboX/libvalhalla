@@ -39,12 +39,24 @@ dbmanager_t *dbmanager_init (valhalla_t *handle,
 
 void dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data);
 
-int dbmanager_db_author (dbmanager_t *dbmanager,
-                         valhalla_db_author_t *author, int64_t album);
-int dbmanager_db_album (dbmanager_t *dbmanager,
-                        valhalla_db_album_t *album, int64_t where_id, int what);
-int dbmanager_db_genre (dbmanager_t *dbmanager, valhalla_db_genre_t *genre);
-int dbmanager_db_file (dbmanager_t *dbmanager, valhalla_db_file_t *file,
-                       valhalla_db_file_where_t *where);
+
+int dbmanager_db_metalist_get (dbmanager_t *dbmanager,
+                               valhalla_db_item_t *search,
+                               valhalla_db_restrict_t *restriction,
+                               int (*select_cb) (void *data,
+                                                 valhalla_db_metares_t *res),
+                               void *data);
+
+int dbmanager_db_filelist_get (dbmanager_t *dbmanager,
+                               valhalla_file_type_t filetype,
+                               valhalla_db_restrict_t *restriction,
+                               int (*select_cb) (void *data,
+                                                 valhalla_db_fileres_t *res),
+                               void *data);
+
+int dbmanager_db_file_get (dbmanager_t *dbmanager,
+                           int64_t id, const char *path,
+                           valhalla_db_restrict_t *restriction,
+                           valhalla_db_filemeta_t **res);
 
 #endif /* VALHALLA_DBMANAGER_H */

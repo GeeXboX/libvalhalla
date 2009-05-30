@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "valhalla.h"
 #include "valhalla_internals.h"
 #include "metadata.h"
 
@@ -29,17 +30,28 @@ struct metadata_s {
   struct metadata_s *next;
   char *name;
   char *value;
+  valhalla_meta_grp_t group;
 };
 
 
-const char *
-metadata_get (metadata_t *meta, const char *name)
+int
+metadata_get (metadata_t *meta, int id,
+              const char **name, const char **value, valhalla_meta_grp_t *group)
 {
-  for (; meta; meta = meta->next)
-    if (!strcasecmp (meta->name, name))
-      return meta->value;
+  for (; meta && id > 0; id--)
+    meta = meta->next;
 
-  return NULL;
+  if (!meta || id)
+    return -1;
+
+  if (name)
+    *name = meta->name;
+  if (value)
+    *value = meta->value;
+  if (group)
+    *group = meta->group;
+
+  return 0;
 }
 
 void
@@ -58,7 +70,8 @@ metadata_free (metadata_t *meta)
 }
 
 void
-metadata_add (metadata_t **meta, const char *name, const char *value)
+metadata_add (metadata_t **meta,
+              const char *name, const char *value, valhalla_meta_grp_t group)
 {
   metadata_t *it;
 
@@ -83,4 +96,5 @@ metadata_add (metadata_t **meta, const char *name, const char *value)
 
   it->name  = strdup (name);
   it->value = strdup (value);
+  it->group = group;
 }

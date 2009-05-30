@@ -95,18 +95,23 @@ parser_metadata_get (AVFormatContext *ctx)
   track  = av_metadata_get (ctx->metadata, "track" , NULL, 0);
   year   = av_metadata_get (ctx->metadata, "year"  , NULL, 0);
 
+  /*
+   * FIXME: retrieve all metadata and fix group attribution
+   *        according to the file formats
+   * see http://age.hobba.nl/audio/tag_frame_reference.html
+   */
   if (title)
-    metadata_add (&meta, "title" , title->value);
+    metadata_add (&meta, "title", title->value, VALHALLA_META_GRP_TITLES);
   if (author)
-    metadata_add (&meta, "author", author->value);
+    metadata_add (&meta, "author", author->value, VALHALLA_META_GRP_ENTITIES);
   if (album)
-    metadata_add (&meta, "album" , album->value);
+    metadata_add (&meta, "album", album->value, VALHALLA_META_GRP_TITLES);
   if (genre)
-    metadata_add (&meta, "genre" , genre->value);
+    metadata_add (&meta, "genre", genre->value, VALHALLA_META_GRP_CLASSIFICATION);
   if (track)
-    metadata_add (&meta, "track" , track->value);
+    metadata_add (&meta, "track", track->value, VALHALLA_META_GRP_ORGANIZATIONAL);
   if (year)
-    metadata_add (&meta, "year"  , year->value);
+    metadata_add (&meta, "year", year->value, VALHALLA_META_GRP_TEMPORAL);
 
   return meta;
 }

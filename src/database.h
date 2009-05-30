@@ -44,13 +44,23 @@ void database_uninit (database_t *database);
 int database_cleanup (database_t *database);
 
 
-int database_select_author (database_t *database,
-                            int64_t *id, const char **name, int64_t album);
-int database_select_album (database_t *database, int64_t *id,
-                           const char **name, int64_t where_id, int what);
-int database_select_genre (database_t *database,
-                           int64_t *id, const char **name);
-int database_select_file (database_t *database, valhalla_db_file_t *file,
-                          valhalla_db_file_where_t *where);
+int database_metalist_get (database_t *database,
+                           valhalla_db_item_t *search,
+                           valhalla_db_restrict_t *restriction,
+                           int (*select_cb) (void *data,
+                                             valhalla_db_metares_t *res),
+                           void *data);
+
+int database_filelist_get (database_t *database,
+                           valhalla_file_type_t filetype,
+                           valhalla_db_restrict_t *restriction,
+                           int (*select_cb) (void *data,
+                                             valhalla_db_fileres_t *res),
+                           void *data);
+
+int database_file_get (database_t *database,
+                       int64_t id, const char *path,
+                       valhalla_db_restrict_t *restriction,
+                       valhalla_db_filemeta_t **res);
 
 #endif /* VALHALLA_DATABASE_H */

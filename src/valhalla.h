@@ -198,105 +198,286 @@ void valhalla_wait (valhalla_t *handle);
 /*                                                                            */
 /******************************************************************************/
 
-/** \brief Author structure for valhalla_db_author(). */
-typedef struct valhalla_db_author_s {
-  int64_t     id;
-  const char *name;
-} valhalla_db_author_t;
+typedef enum valhalla_file_type {
+  VALHALLA_FILE_TYPE_NULL = 0,
+  VALHALLA_FILE_TYPE_AUDIO,
+  VALHALLA_FILE_TYPE_IMAGE,
+  VALHALLA_FILE_TYPE_PLAYLIST,
+  VALHALLA_FILE_TYPE_VIDEO,
+} valhalla_file_type_t;
 
-/** \brief Album structure for valhalla_db_album(). */
-typedef struct valhalla_db_album_s {
-  int64_t     id;
-  const char *name;
-} valhalla_db_album_t;
+typedef enum valhalla_meta_grp {
+  /**
+   * NULL value for a group attribution.
+   */
+  VALHALLA_META_GRP_NULL = 0,
 
-/** \brief Genre structure for valhalla_db_genre(). */
-typedef struct valhalla_db_genre_s {
-  int64_t     id;
-  const char *name;
-} valhalla_db_genre_t;
+  /**
+   * genre, mood, subject, synopsis, summary, description, keywords,
+   * mediatype, period, ...
+   */
+  VALHALLA_META_GRP_CLASSIFICATION,
 
-/** \brief File structure for valhalla_db_file(). */
-typedef struct valhalla_db_file_s {
+  /**
+   * commercial, payment, purchase info, purchase price, purchase item,
+   * purchase owner, purchase currency, file owner, ...
+   */
+  VALHALLA_META_GRP_COMMERCIAL,
+
+  /**
+   * url, email, address, phone, fax, ...
+   */
+  VALHALLA_META_GRP_CONTACT,
+
+  /**
+   * artist, url, performer, accompaniment, band, ensemble, composer,
+   * arranger, lyricist, conductor, actor, character, author, director,
+   * producer, coproducer, executive producer, costume designer, label,
+   * choregrapher, sound engineer, production studio, publisher, ...
+   */
+  VALHALLA_META_GRP_ENTITIES,
+
+  /**
+   * isrc, mcdi, isbn, barcode, lccn, cdid, ufid, ...
+   */
+  VALHALLA_META_GRP_IDENTIFIER,
+
+  /**
+   * copyright, terms of use, url, ownership, license, rights, ...
+   */
+  VALHALLA_META_GRP_LEGAL,
+
+  /**
+   * user text, orig filename, picture, lyrics, ...
+   */
+  VALHALLA_META_GRP_MISCELLANEOUS,
+
+  /**
+   * bmp, measure, tunning, initial key, ...
+   */
+  VALHALLA_META_GRP_MUSICAL,
+
+  /**
+   * track, disk, part number, track number, disc number, total tracks,
+   * total parts, ...
+   */
+  VALHALLA_META_GRP_ORGANIZATIONAL,
+
+  /**
+   * comment, rating, play count, ...
+   */
+  VALHALLA_META_GRP_PERSONAL,
+
+  /**
+   * composition location, recording location, composer nationality, ...
+   */
+  VALHALLA_META_GRP_SPACIAL,
+
+  /**
+   * encoder, playlist delay, buffer size, ...
+   */
+  VALHALLA_META_GRP_TECHNICAL,
+
+  /**
+   * date written, date recorded, date released, date digitized, date encoded,
+   * date tagged, date purchased, year, ...
+   */
+  VALHALLA_META_GRP_TEMPORAL,
+
+  /**
+   * title, album, subtitle, title sort order, album sort order, part ...
+   */
+  VALHALLA_META_GRP_TITLES,
+
+} valhalla_meta_grp_t;
+
+typedef enum valhalla_db_type {
+  VALHALLA_DB_TYPE_ID,
+  VALHALLA_DB_TYPE_TEXT,
+  VALHALLA_DB_TYPE_GROUP,
+} valhalla_db_type_t;
+
+typedef enum valhalla_db_operator {
+  VALHALLA_DB_OPERATOR_IN,
+  VALHALLA_DB_OPERATOR_NOTIN,
+  VALHALLA_DB_OPERATOR_EQUAL,
+} valhalla_db_operator_t;
+
+typedef struct valhalla_db_item_s {
+  valhalla_db_type_t type;
+  int64_t     id;
+  const char *text;
+  valhalla_meta_grp_t group;
+} valhalla_db_item_t;
+
+typedef struct valhalla_db_metares_s {
+  int64_t     meta_id,    data_id;
+  const char *meta_name, *data_value;
+  valhalla_meta_grp_t group;
+} valhalla_db_metares_t;
+
+typedef struct valhalla_db_fileres_s {
   int64_t     id;
   const char *path;
-  const char *title;
-  const char *year;
-  const char *track;
-} valhalla_db_file_t;
+  valhalla_file_type_t type;
+} valhalla_db_fileres_t;
 
-/** \brief Types of condition for the query. */
-typedef enum valhalla_db_cond {
-  VALHALLA_DB_IGNORE = 0, /**< No condition in the query.           */
-  VALHALLA_DB_NULL,       /**< foobar_id IS NULL.                   */
-  VALHALLA_DB_EQUAL,      /**< foobar_id = ?.                       */
-  VALHALLA_DB_NOTEQUAL,   /**< foobar_id != ? OR foobar_id IS NULL. */
-} valhalla_db_cond_t;
+typedef struct valhalla_db_restrict_s {
+  struct valhalla_db_restrict_s *next;
+  valhalla_db_operator_t op;
+  valhalla_db_item_t meta;
+  valhalla_db_item_t data;
+} valhalla_db_restrict_t;
 
-/** \brief Conditions for WHERE in the query. */
-typedef struct valhalla_db_file_where_s {
-  struct valhalla_db_file_where_s *next;
-  int64_t author_id;
-  valhalla_db_cond_t author_w;
-  int64_t album_id;
-  valhalla_db_cond_t album_w;
-  int64_t genre_id;
-  valhalla_db_cond_t genre_w;
-} valhalla_db_file_where_t;
+typedef struct valhalla_db_filemeta_s {
+  struct valhalla_db_filemeta_s *next;
+  int64_t  meta_id;
+  int64_t  data_id;
+  char    *meta_name;
+  char    *data_value;
+  valhalla_meta_grp_t group;
+} valhalla_db_filemeta_t;
+
+#define VALHALLA_DB_SEARCH(_id, _text, _group, _type) \
+  {.type = VALHALLA_DB_TYPE_##_type,                  \
+   .id = _id, .text = _text, .group = VALHALLA_META_GRP_##_group}
+
+#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id,                  \
+                             _m_text, _d_text, _m_type, _d_type) \
+  {.next = NULL, .op = VALHALLA_DB_OPERATOR_##_op,               \
+   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NULL, _m_type),   \
+   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NULL, _d_type)}
+
 
 /**
+ * \name Macros for selection functions handling.
+ * @{
+ */
+
+/** \brief Set valhalla_db_item_t local variable for an id. */
+#define VALHALLA_DB_SEARCH_ID(meta_id, group) \
+  VALHALLA_DB_SEARCH (meta_id, NULL, group, ID)
+/** \brief Set valhalla_db_item_t local variable for a text. */
+#define VALHALLA_DB_SEARCH_TEXT(meta_name, group) \
+  VALHALLA_DB_SEARCH (0, meta_name, group, TEXT)
+/** \brief Set valhalla_db_item_t local variable for a group. */
+#define VALHALLA_DB_SEARCH_GRP(group) \
+  VALHALLA_DB_SEARCH (0, NULL, group, GROUP)
+
+/** \brief Set valhalla_db_restrict_t local variable for meta.id, data.id. */
+#define VALHALLA_DB_RESTRICT_INT(op, meta, data) \
+  VALHALLA_DB_RESTRICT (op, meta, data, NULL, NULL, ID, ID)
+/** \brief Set valhalla_db_restrict_t local variable for meta.text, data.text. */
+#define VALHALLA_DB_RESTRICT_STR(op, meta, data) \
+  VALHALLA_DB_RESTRICT (op, 0, 0, meta, data, TEXT, TEXT)
+/** \brief Set valhalla_db_restrict_t local variable for meta.id, data.text. */
+#define VALHALLA_DB_RESTRICT_INTSTR(op, meta, data) \
+  VALHALLA_DB_RESTRICT (op, meta, 0, NULL, data, ID, TEXT)
+/** \brief Set valhalla_db_restrict_t local variable for meta.text, data.id. */
+#define VALHALLA_DB_RESTRICT_STRINT(op, meta, data) \
+  VALHALLA_DB_RESTRICT (op, 0, data, meta, NULL, TEXT, ID)
+/** \brief Link two valhalla_db_restrict_t variables together. */
+#define VALHALLA_DB_RESTRICT_LINK(from, to) \
+  do {(to).next = &(from);} while (0)
+
+/** \brief Free a valhalla_db_filemeta_t pointer. */
+#define VALHALLA_DB_FILEMETA_FREE(meta)                  \
+  do {                                                   \
+    typeof (meta) tmp;                                   \
+    while (meta) {                                       \
+      if ((meta)->meta_name)  free ((meta)->meta_name);  \
+      if ((meta)->data_value) free ((meta)->data_value); \
+      tmp = (meta)->next; free (meta); meta = tmp;}      \
+  } while (0)
+
+/**
+ * @}
  * \name Database selections.
  * @{
  */
 
 /**
- * \brief Retrieve authors from the database.
+ * \brief Retrieve a list of metadata according to a condition.
+ *
+ * It is possible to retrieve a list of metadata according to
+ * restrictions on metadata and values.
+ *
+ * Example (to list all albums of an author):
+ *  \code
+ *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES);
+ *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe");
+ *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
- * \param[out] author     Structure to populate.
- * \param[in] album       List author by this album ID, 0 otherwise.
- * \return !=0 on error or if no more rows are available.
+ * \param[in] search      Condition for the search.
+ * \param[in] restriction Restrictions on the list.
+ * \param[out] result_cb  Result callback.
+ * \param[in,out] data    Data for the first callback argument.
+ * \return !=0 on error.
  */
-int valhalla_db_author (valhalla_t *handle,
-                        valhalla_db_author_t *author, int64_t album);
+int valhalla_db_metalist_get (valhalla_t *handle,
+                              valhalla_db_item_t *search,
+                              valhalla_db_restrict_t *restriction,
+                              int (*result_cb) (void *data,
+                                                valhalla_db_metares_t *res),
+                              void *data);
 
 /**
- * \brief Retrieve albums from the database.
+ * \brief Retrieve a list of files.
+ *
+ * It is possible to retrieve a list of files according to
+ * restrictions on metadata and values.
+ *
+ * Example (to list all files of an author, without album):
+ *  \code
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe");
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL);
+ *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
+ *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
- * \param[out] album      Structure to populate.
- * \param[in] where_id    List album by this ID, 0 otherwise.
- * \param[in] what        0 for author ID, !=0 for genre ID.
- * \return !=0 on error or if no more rows are available.
+ * \param[in] filetype    File type.
+ * \param[in] restriction Restrictions on the list.
+ * \param[out] result_cb  Result callback.
+ * \param[in,out] data    Data for the first callback argument.
+ * \return !=0 on error.
  */
-int valhalla_db_album (valhalla_t *handle, valhalla_db_album_t *album,
-                       int64_t where_id, int what);
+int valhalla_db_filelist_get (valhalla_t *handle,
+                              valhalla_file_type_t filetype,
+                              valhalla_db_restrict_t *restriction,
+                              int (*result_cb) (void *data,
+                                                valhalla_db_fileres_t *res),
+                              void *data);
 
 /**
- * \brief Retrieve genres from the database.
+ * \brief Retrieve all metadata of a file.
+ *
+ * Only one parameter (\p id or \p path) must be set in order to retrieve
+ * a file. If both parameters are not null, then the \p path is ignored.
+ *
+ * \p *res must be freed by VALHALLA_DB_FILEMETA_FREE().
+ *
+ * Example (to retrieve only the track and the title):
+ *  \code
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (EQUAL, "track", NULL);
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (EQUAL, "title", NULL);
+ *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
+ *  \endcode
+ *
+ *  If several tracks and(or) titles are returned, you must use the group id
+ *  in the result, in order to know what metadata is the right.
  *
  * \param[in] handle      Handle on the scanner.
- * \param[out] genre      Structure to populate.
- * \return !=0 on error or if no more rows are available.
+ * \param[in] id          File ID or 0.
+ * \param[in] path        Path or NULL.
+ * \param[in] restriction Restrictions on the list of meta.
+ * \param[out] res        Pointer on the linked list to populate.
+ * \return !=0 on error.
  */
-int valhalla_db_genre (valhalla_t *handle, valhalla_db_genre_t *genre);
-
-/**
- * \brief Retrieve files from the database.
- *
- * This function must be called until the result is different of 0, otherwise
- * the SQL statement will not be finalized.
- *
- * \p where can be used to give some conditions for the query. All
- * conditions are seperated by AND.
- *
- * \param[in] handle      Handle on the scanner.
- * \param[out] file       Structure to populate.
- * \param[in] where       Conditions for WHERE in the SQL query.
- * \return !=0 on error or if no more rows are available.
- */
-int valhalla_db_file (valhalla_t *handle, valhalla_db_file_t *file,
-                      valhalla_db_file_where_t *where);
+int valhalla_db_file_get (valhalla_t *handle,
+                          int64_t id, const char *path,
+                          valhalla_db_restrict_t *restriction,
+                          valhalla_db_filemeta_t **res);
 
 /**
  * @}

@@ -24,8 +24,10 @@
 
 typedef struct metadata_s metadata_t;
 
-const char *metadata_get (metadata_t *meta, const char *name);
+int metadata_get (metadata_t *meta, int id, const char **name,
+                  const char **value, valhalla_meta_grp_t *group);
 void metadata_free (metadata_t *meta);
-void metadata_add (metadata_t **meta, const char *name, const char *value);
+void metadata_add (metadata_t **meta, const char *name,
+                   const char *value, valhalla_meta_grp_t group);
 
 #endif /* VALHALLA_METADATA */

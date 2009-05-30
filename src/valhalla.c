@@ -189,49 +189,48 @@ valhalla_init (const char *db,
 /*                                                                            */
 /******************************************************************************/
 
-int
-valhalla_db_author (valhalla_t *handle,
-                    valhalla_db_author_t *author, int64_t album)
+int valhalla_db_metalist_get (valhalla_t *handle,
+                              valhalla_db_item_t *search,
+                              valhalla_db_restrict_t *restriction,
+                              int (*result_cb) (void *data,
+                                                valhalla_db_metares_t *res),
+                              void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!handle || !author)
+  if (!handle || !search || !result_cb)
     return -1;
 
-  return dbmanager_db_author (handle->dbmanager, author, album);
+  return dbmanager_db_metalist_get (handle->dbmanager,
+                                    search, restriction, result_cb, data);
+}
+
+int valhalla_db_filelist_get (valhalla_t *handle,
+                              valhalla_file_type_t filetype,
+                              valhalla_db_restrict_t *restriction,
+                              int (*result_cb) (void *data,
+                                                valhalla_db_fileres_t *res),
+                              void *data)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !result_cb)
+    return -1;
+
+  return dbmanager_db_filelist_get (handle->dbmanager,
+                                    filetype, restriction, result_cb, data);
 }
 
 int
-valhalla_db_album (valhalla_t *handle,
-                   valhalla_db_album_t *album, int64_t where_id, int what)
+valhalla_db_file_get (valhalla_t *handle,
+                      int64_t id, const char *path,
+                      valhalla_db_restrict_t *restriction,
+                      valhalla_db_filemeta_t **res)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!handle || !album)
+  if (!handle || !res)
     return -1;
 
-  return dbmanager_db_album (handle->dbmanager, album, where_id, what);
-}
-
-int
-valhalla_db_genre (valhalla_t *handle, valhalla_db_genre_t *genre)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  if (!handle || !genre)
-    return -1;
-
-  return dbmanager_db_genre (handle->dbmanager, genre);
-}
-
-int
-valhalla_db_file (valhalla_t *handle, valhalla_db_file_t *file,
-                  valhalla_db_file_where_t *where)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  if (!handle || !file)
-    return -1;
-
-  return dbmanager_db_file (handle->dbmanager, file, where);
+  return dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
 }
