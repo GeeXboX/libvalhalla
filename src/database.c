@@ -958,7 +958,7 @@ database_filelist_get (database_t *database,
   char sql[SQL_BUFFER] = SELECT_LIST_FILE_FROM;
 
   if (restriction || filetype)
-  SQL_CONCAT (sql, SELECT_LIST_WHERE);
+    SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
   if (restriction)
     database_list_get_restriction (restriction, sql);
@@ -966,7 +966,7 @@ database_filelist_get (database_t *database,
   if (filetype)
   {
     if (restriction)
-    SQL_CONCAT (sql, SELECT_LIST_AND);
+      SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT (sql, SELECT_LIST_WHERE_TYPE_ID,
                 database->file_type[filetype].id);
   }
