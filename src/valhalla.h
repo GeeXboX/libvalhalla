@@ -210,7 +210,7 @@ typedef enum valhalla_meta_grp {
   /**
    * NULL value for a group attribution.
    */
-  VALHALLA_META_GRP_NULL = 0,
+  VALHALLA_META_GRP_NIL = 0,
 
   /**
    * genre, mood, subject, synopsis, summary, description, keywords,
@@ -345,8 +345,8 @@ typedef struct valhalla_db_filemeta_s {
 #define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id,                  \
                              _m_text, _d_text, _m_type, _d_type) \
   {.next = NULL, .op = VALHALLA_DB_OPERATOR_##_op,               \
-   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NULL, _m_type),   \
-   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NULL, _d_type)}
+   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type),   \
+   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type)}
 
 
 /**

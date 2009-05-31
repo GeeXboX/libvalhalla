@@ -69,7 +69,7 @@ static const item_list_t g_file_type[] = {
 };
 
 static const item_list_t g_meta_group[] = {
-  [VALHALLA_META_GRP_NULL]            = { 0, "null"           },
+  [VALHALLA_META_GRP_NIL]             = { 0, "null"           },
   [VALHALLA_META_GRP_MISCELLANEOUS]   = { 0, "miscellaneous"  },
   [VALHALLA_META_GRP_CLASSIFICATION]  = { 0, "classification" },
   [VALHALLA_META_GRP_COMMERCIAL]      = { 0, "commercial"     },
@@ -175,13 +175,13 @@ database_group_get (database_t *database, int64_t id)
   int i;
 
   if (!database)
-    return VALHALLA_META_GRP_NULL;
+    return VALHALLA_META_GRP_NIL;
 
   for (i = 0; i < ARRAY_NB_ELEMENTS (g_meta_group); i++)
     if (database->meta_group[i].id == id)
       return i;
 
-  return VALHALLA_META_GRP_NULL;
+  return VALHALLA_META_GRP_NIL;
 }
 
 static valhalla_file_type_t
