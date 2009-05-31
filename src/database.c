@@ -896,20 +896,20 @@ database_metalist_get (database_t *database,
   char sql[SQL_BUFFER] = SELECT_LIST_METADATA_FROM;
 
   if (restriction || search->id || search->text || search->group)
-  SQL_CONCAT (sql, SELECT_LIST_WHERE);
+    SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
   if (restriction)
   {
     database_list_get_restriction (restriction, sql);
     if (search->id || search->text)
-    SQL_CONCAT (sql, SELECT_LIST_AND);
+      SQL_CONCAT (sql, SELECT_LIST_AND);
   }
 
   SQL_CONCAT_TYPE (sql, *search, META);
   if (search->group)
   {
     if (search->id || search->text)
-    SQL_CONCAT (sql, SELECT_LIST_AND);
+      SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT (sql, SELECT_LIST_WHERE_GROUP_ID,
                 database->meta_group[search->group].id);
   }
