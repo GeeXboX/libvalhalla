@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
@@ -27,6 +28,16 @@
 #include "fifo_queue.h"
 #include "utils.h"
 
+
+void
+my_strtolower (char *str)
+{
+  if (!str)
+    return;
+
+  for (; *str; str++)
+    *str = (char) tolower ((int) *str);
+}
 
 void
 file_data_free (file_data_t *data)

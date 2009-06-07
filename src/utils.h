@@ -35,6 +35,7 @@ typedef struct file_data_s {
 } file_data_t;
 
 
+void my_strtolower (char *str);
 void file_data_free (file_data_t *data);
 void queue_cleanup (fifo_queue_t *queue);
 
