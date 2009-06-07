@@ -36,7 +36,7 @@ my_strtolower (char *str)
     return;
 
   for (; *str; str++)
-    *str = (char) tolower ((int) *str);
+    *str = (char) tolower ((int) (unsigned char) *str);
 }
 
 void
