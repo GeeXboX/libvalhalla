@@ -77,41 +77,77 @@ parser_is_stopped (parser_t *parser)
   return !run;
 }
 
+static void
+parser_metadata_group (metadata_t **meta,
+                       const char *fmtname, const char *key, const char *value)
+{
+  /*
+   * This array provides a list of keys for the attribution of group. The name
+   * of the fmt is used for special cases where a key must be used with a group
+   * different of the default attribution (default attributions are identified
+   * by fmtname to NULL).
+   * If the key can't be identified in the list, the default group is set.
+   *
+   * FIXME: the list must be completed.
+   *        http://age.hobba.nl/audio/tag_frame_reference.html
+   */
+  static const struct metagrp_s {
+    const char *key;
+    const char *fmtname; /* special case for a specific AVInputFormat */
+    const valhalla_meta_grp_t grp;
+  } metagrp[] = {
+    /* special attributions */
+    /* ... */
+
+    /* default attributions */
+    { "album",      NULL,         VALHALLA_META_GRP_TITLES         },
+    { "artist",     NULL,         VALHALLA_META_GRP_ENTITIES       },
+    { "author",     NULL,         VALHALLA_META_GRP_ENTITIES       },
+    { "date",       NULL,         VALHALLA_META_GRP_TEMPORAL       },
+    { "genre",      NULL,         VALHALLA_META_GRP_CLASSIFICATION },
+    { "title",      NULL,         VALHALLA_META_GRP_TITLES         },
+    { "track",      NULL,         VALHALLA_META_GRP_ORGANIZATIONAL },
+    { "year",       NULL,         VALHALLA_META_GRP_TEMPORAL       },
+
+    /* default group */
+    { NULL,         NULL,         VALHALLA_META_GRP_MISCELLANEOUS  }
+  };
+  int i;
+
+  if (!key || !value)
+    return;
+
+  for (i = 0; i < ARRAY_NB_ELEMENTS (metagrp); i++)
+  {
+    char str[32];
+
+    if (metagrp[i].key && strcasecmp (metagrp[i].key, key))
+      continue;
+
+    if (fmtname
+        && metagrp[i].fmtname && strcasecmp (metagrp[i].fmtname, fmtname))
+      continue;
+
+    snprintf (str, sizeof (str), "%s", key);
+    my_strtolower (str);
+    metadata_add (meta, str, value, metagrp[i].grp);
+  }
+}
+
 static metadata_t *
 parser_metadata_get (AVFormatContext *ctx)
 {
   metadata_t *meta = NULL;
-  AVMetadataTag *title, *author, *album, *genre, *track, *year;
+  AVMetadataTag *tag = NULL;
 
   if (!ctx)
     return NULL;
 
   av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
 
-  title  = av_metadata_get (ctx->metadata, "title" , NULL, 0);
-  author = av_metadata_get (ctx->metadata, "author", NULL, 0);
-  album  = av_metadata_get (ctx->metadata, "album" , NULL, 0);
-  genre  = av_metadata_get (ctx->metadata, "genre" , NULL, 0);
-  track  = av_metadata_get (ctx->metadata, "track" , NULL, 0);
-  year   = av_metadata_get (ctx->metadata, "year"  , NULL, 0);
-
-  /*
-   * FIXME: retrieve all metadata and fix group attribution
-   *        according to the file formats
-   * see http://age.hobba.nl/audio/tag_frame_reference.html
-   */
-  if (title)
-    metadata_add (&meta, "title", title->value, VALHALLA_META_GRP_TITLES);
-  if (author)
-    metadata_add (&meta, "author", author->value, VALHALLA_META_GRP_ENTITIES);
-  if (album)
-    metadata_add (&meta, "album", album->value, VALHALLA_META_GRP_TITLES);
-  if (genre)
-    metadata_add (&meta, "genre", genre->value, VALHALLA_META_GRP_CLASSIFICATION);
-  if (track)
-    metadata_add (&meta, "track", track->value, VALHALLA_META_GRP_ORGANIZATIONAL);
-  if (year)
-    metadata_add (&meta, "year", year->value, VALHALLA_META_GRP_TEMPORAL);
+  while ((tag = av_metadata_get (ctx->metadata,
+                                 "", tag, AV_METADATA_IGNORE_SUFFIX)))
+    parser_metadata_group (&meta, ctx->iformat->name, tag->key, tag->value);
 
   return meta;
 }
