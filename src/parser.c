@@ -131,6 +131,7 @@ parser_metadata_group (metadata_t **meta,
     snprintf (str, sizeof (str), "%s", key);
     my_strtolower (str);
     metadata_add (meta, str, value, metagrp[i].grp);
+    break;
   }
 }
 
