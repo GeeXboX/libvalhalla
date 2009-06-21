@@ -22,7 +22,6 @@
 
  * Parser
      -> Fix file type attribution (audio, video, picture, ...).
-     -> Retrieve all sort of metadata and not only some fields.
      -> Retrieve all properties (codec, length, bitrate, etc, ...).
 
 
