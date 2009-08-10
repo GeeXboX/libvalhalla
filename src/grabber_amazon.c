@@ -276,8 +276,8 @@ grabber_amazon_grab (void *priv, file_data_t *data)
    * Try with the album's name, or with the title and finally with the
    * filename if nothing better is available.
    */
-  if (   !metadata_get (data->meta, "album", 0, &tag)
-      || !metadata_get (data->meta, "title", 0, &tag))
+  if (   !metadata_get (data->meta_parser, "album", 0, &tag)
+      || !metadata_get (data->meta_parser, "title", 0, &tag))
     keywords = tag->value;
   else
     /* FIXME: get keywords from filename (decrapifier ??) */

@@ -109,8 +109,8 @@ file_data_free (file_data_t *data)
 
   if (data->file)
     free (data->file);
-  if (data->meta)
-    metadata_free (data->meta);
+  if (data->meta_parser)
+    metadata_free (data->meta_parser);
   if (data->meta_grabber)
     metadata_free (data->meta_grabber);
   if (data->list_downloader)
