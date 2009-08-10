@@ -36,7 +36,7 @@ typedef enum action_list {
   ACTION_DB_END,            /* dispatcher: end metadata */
   ACTION_DB_NEWFILE,        /* scanner: new file to handle */
   ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
-  ACTION_ACKNOWLEDGE,       /* database: ack scanner for each file handled */
+  ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
