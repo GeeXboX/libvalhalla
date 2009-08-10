@@ -501,10 +501,9 @@ database_file_data (database_t *database, file_data_t *data, int insert)
             ? database_file_insert (database, data, type_id)
             : database_file_update (database, data, type_id);
 
-  if (!file_id)
+  if (!file_id || !data->meta)
     return;
 
-  if (data->meta)
     while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
     {
       meta_id  = database_meta_insert (database, tag->name);
