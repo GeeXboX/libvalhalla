@@ -786,6 +786,7 @@ restore_flags
 #   Grabber
 #################################################
 grabber="no"
+md5="no"
 if enabled grabber_dummy; then
   add_cflags -DHAVE_GRABBER_DUMMY
   grabber="yes"
@@ -899,6 +900,7 @@ if enabled bigendian; then
   append_config "WORDS_BIGENDIAN=yes"
 fi
 
+append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 

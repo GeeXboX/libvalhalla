@@ -35,6 +35,9 @@ ifeq ($(GRABBER),yes)
           downloader.c \
           url_utils.c \
           list.c
+ifeq ($(MD5),yes)
+  SRCS += md5.c
+endif
 ifeq ($(GRABBER_DUMMY),yes)
   SRCS += grabber_dummy.c
 endif
