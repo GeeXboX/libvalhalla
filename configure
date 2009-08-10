@@ -39,6 +39,9 @@ show_help(){
   echo "  --enable-shared             build shared libraries [default=yes]"
   echo "  --disable-shared            do not build shared libraries [default=no]"
   echo ""
+  echo "Grabbers options:"
+  echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
+  echo ""
   echo "Search paths:"
   echo "  --with-lavf=PATH            specify prefix directory for libavformat package."
   echo "                              Equivalent to --with-lavf-inc=PATH/include"
@@ -397,6 +400,7 @@ cross_compile="no"
 INSTALL="/usr/bin/install"
 VERSION=""
 pkgconfig_requires=""
+grabber_dummy="no"
 logcolor="yes"
 doc="no"
 
@@ -445,6 +449,10 @@ for opt do
   --with-sqlite3-dir=*) sqlite3dir="$optval";
   ;;
   --width-curl-dir=*) curldir="$optval";
+  ;;
+  --enable-grabber-dummy) grabber_dummy="yes";
+  ;;
+  --disable-grabber-dummy) grabber_dummy="no";
   ;;
   --enable-logcolor) logcolor="yes";
   ;;
@@ -778,6 +786,11 @@ restore_flags
 #   Grabber
 #################################################
 grabber="no"
+if enabled grabber_dummy; then
+  add_cflags -DHAVE_GRABBER_DUMMY
+  grabber="yes"
+fi
+
 if enabled grabber; then
   add_cflags -DUSE_GRABBER
 
@@ -838,6 +851,7 @@ echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
 echolog "  Grabbers support:  $grabber"
+echolog "    Dummy            $grabber_dummy"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  Documentation:     $doc"
@@ -886,6 +900,7 @@ if enabled bigendian; then
 fi
 
 append_config "GRABBER=$grabber"
+append_config "GRABBER_DUMMY=$grabber_dummy"
 
 append_config "DEBUG=$debug"
 append_config "DOC=$doc"

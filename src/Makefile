@@ -34,6 +34,9 @@ ifeq ($(GRABBER),yes)
   SRCS += grabber.c \
           downloader.c \
           url_utils.c
+ifeq ($(GRABBER_DUMMY),yes)
+  SRCS += grabber_dummy.c
+endif
 endif
 
 OBJS = $(SRCS:.c=.o)

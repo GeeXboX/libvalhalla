@@ -35,6 +35,10 @@
 #include "dbmanager.h"
 #include "dispatcher.h"
 
+#ifdef HAVE_GRABBER_DUMMY
+#include "grabber_dummy.h"
+#endif /* HAVE_GRABBER_DUMMY */
+
 struct grabber_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -53,6 +57,9 @@ struct grabber_s {
  * The first grabber is the prioritate.
  */
 static grabber_list_t *(*g_grabber_register[]) (void) = {
+#ifdef HAVE_GRABBER_DUMMY
+  grabber_dummy_register,
+#endif /* HAVE_GRABBER_DUMMY */
   NULL
 };
 
