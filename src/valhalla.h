@@ -206,6 +206,7 @@ typedef enum valhalla_file_type {
   VALHALLA_FILE_TYPE_VIDEO,
 } valhalla_file_type_t;
 
+/** \brief Groups for metadata. */
 typedef enum valhalla_meta_grp {
   /**
    * NULL value for a group attribution.
