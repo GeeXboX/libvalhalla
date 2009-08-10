@@ -41,6 +41,7 @@
   " -t --timewait           time to wait between loops [sec]\n" \
   " -a --priority           priority for the threads\n" \
   " -d --database           path for the database\n" \
+  " -f --download           path for the downloader destination\n" \
   " -c --commit-int         commits interval\n" \
   " -p --parser             number of parsers\n" \
   " -s --suffix             file suffix (extension)\n" \
@@ -64,13 +65,14 @@ main (int argc, char **argv)
   valhalla_t *handle;
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
   const char *database = "./valhalla.db";
+  const char *download = NULL;
   int parser_nb = 2, sid = 0;
   const char *suffix[SUFFIX_MAX];
   struct timeval tvs, tve;
   long long diff;
 
   int c, index;
-  const char *const short_options = "hvl:t:a:d:c:p:s:";
+  const char *const short_options = "hvl:t:a:d:f:c:p:s:";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -78,6 +80,7 @@ main (int argc, char **argv)
     { "timewait",   required_argument, 0, 't'  },
     { "priority",   required_argument, 0, 'a'  },
     { "database",   required_argument, 0, 'd'  },
+    { "download",   required_argument, 0, 'f'  },
     { "commit-int", required_argument, 0, 'c'  },
     { "parser",     required_argument, 0, 'p'  },
     { "suffix",     required_argument, 0, 's'  },
@@ -124,6 +127,10 @@ main (int argc, char **argv)
       database = optarg;
       break;
 
+    case 'f':
+      download = optarg;
+      break;
+
     case 'c':
       commit = atoi (optarg);
       break;
@@ -164,6 +171,12 @@ main (int argc, char **argv)
     valhalla_suffix_add (handle, "wav");
     valhalla_suffix_add (handle, "wma");
     printf ("Default suffixes: ogg,mp3,m4a,flac,wav,wma\n");
+  }
+
+  if (download)
+  {
+    printf ("Destination directory for downloaded files: %s\n", download);
+    valhalla_download_dest_set (handle, VALHALLA_DL_DEFAULT, download);
   }
 
   while (optind < argc)
