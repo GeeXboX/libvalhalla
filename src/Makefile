@@ -35,6 +35,9 @@ ifeq ($(GRABBER),yes)
           downloader.c \
           url_utils.c \
           list.c
+ifeq ($(XML),yes)
+  SRCS += xml_utils.c
+endif
 ifeq ($(MD5),yes)
   SRCS += md5.c
 endif

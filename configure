@@ -50,6 +50,7 @@ show_help(){
   echo "  --with-lavf-lib=PATH        specify directory for libavformat library"
   echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
   echo "  --with-curl-dir=DIR         check for cURL installed in DIR"
+  echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -450,6 +451,8 @@ for opt do
   ;;
   --width-curl-dir=*) curldir="$optval";
   ;;
+  --width-xml2-dir=*) xml2dir="$optval";
+  ;;
   --enable-grabber-dummy) grabber_dummy="yes";
   ;;
   --disable-grabber-dummy) grabber_dummy="no";
@@ -786,6 +789,7 @@ restore_flags
 #   Grabber
 #################################################
 grabber="no"
+xml="no"
 md5="no"
 if enabled grabber_dummy; then
   add_cflags -DHAVE_GRABBER_DUMMY
@@ -809,6 +813,23 @@ if enabled grabber; then
   echolog "Checking for cURL ..."
   check_lib curl/curl.h curl_global_init -lcurl || die "Error, can't find cURL !"
   add_pkgconfig_requires libcurl
+fi
+
+if enabled xml; then
+  ###############################################
+  #   check for libxml2
+  ###############################################
+  if [ -n "$xml2dir" ]; then
+    check_cflags -I$xml2dir
+    check_ldflags -L$xml2dir
+  fi
+  if [ -z  "$xmldir" ]; then
+    add_pkgconfig_deps libxml-2.0
+  fi
+
+  echolog "Checking for libxml2 ..."
+  check_lib libxml/parser.h xmlReadMemory -lxml2 || die "Error, can't find libxml2 !"
+  add_pkgconfig_requires libxml-2.0
 fi
 
 
@@ -900,6 +921,7 @@ if enabled bigendian; then
   append_config "WORDS_BIGENDIAN=yes"
 fi
 
+append_config "XML=$xml"
 append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
