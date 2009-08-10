@@ -65,8 +65,6 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_COVER
 
-#define GRABBER_NAME "amazon"
-
 /*
  * This name can be used with the public API (db selections) in order
  * to retrieve the cover's name linked to a file.

@@ -32,8 +32,6 @@
   GRABBER_CAP_IMAGE | \
   GRABBER_CAP_COVER
 
-#define GRABBER_NAME "dummy"
-
 typedef struct grabber_dummy_s {
   int dummy;
 } grabber_dummy_t;
