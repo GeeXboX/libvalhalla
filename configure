@@ -41,6 +41,7 @@ show_help(){
   echo ""
   echo "Grabbers options:"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
+  echo "  --enable-grabber-amazon     build amazon grabber [default=no]"
   echo ""
   echo "Search paths:"
   echo "  --with-lavf=PATH            specify prefix directory for libavformat package."
@@ -402,6 +403,7 @@ INSTALL="/usr/bin/install"
 VERSION=""
 pkgconfig_requires=""
 grabber_dummy="no"
+grabber_amazon="no"
 logcolor="yes"
 doc="no"
 
@@ -456,6 +458,10 @@ for opt do
   --enable-grabber-dummy) grabber_dummy="yes";
   ;;
   --disable-grabber-dummy) grabber_dummy="no";
+  ;;
+  --enable-grabber-amazon) grabber_amazon="yes";
+  ;;
+  --disable-grabber-amazon) grabber_amazon="no";
   ;;
   --enable-logcolor) logcolor="yes";
   ;;
@@ -796,6 +802,13 @@ if enabled grabber_dummy; then
   grabber="yes"
 fi
 
+if enabled grabber_amazon; then
+  add_cflags -DHAVE_GRABBER_AMAZON
+  grabber="yes"
+  xml="yes"
+  md5="yes"
+fi
+
 if enabled grabber; then
   add_cflags -DUSE_GRABBER
 
@@ -874,6 +887,7 @@ echolog "  extralibs          $extralibs"
 echolog ""
 echolog "  Grabbers support:  $grabber"
 echolog "    Dummy            $grabber_dummy"
+echolog "    Amazon           $grabber_amazon"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  Documentation:     $doc"
@@ -925,6 +939,7 @@ append_config "XML=$xml"
 append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
+append_config "GRABBER_AMAZON=$grabber_amazon"
 
 append_config "DEBUG=$debug"
 append_config "DOC=$doc"

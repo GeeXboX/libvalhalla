@@ -44,6 +44,9 @@ endif
 ifeq ($(GRABBER_DUMMY),yes)
   SRCS += grabber_dummy.c
 endif
+ifeq ($(GRABBER_AMAZON),yes)
+  SRCS += grabber_amazon.c
+endif
 endif
 
 OBJS = $(SRCS:.c=.o)

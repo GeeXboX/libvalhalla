@@ -38,6 +38,9 @@
 #ifdef HAVE_GRABBER_DUMMY
 #include "grabber_dummy.h"
 #endif /* HAVE_GRABBER_DUMMY */
+#ifdef HAVE_GRABBER_AMAZON
+#include "grabber_amazon.h"
+#endif /* HAVE_GRABBER_AMAZON */
 
 struct grabber_s {
   valhalla_t   *valhalla;
@@ -60,6 +63,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
   grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
+#ifdef HAVE_GRABBER_AMAZON
+  grabber_amazon_register,
+#endif /* HAVE_GRABBER_AMAZON */
   NULL
 };
 
