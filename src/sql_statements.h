@@ -227,6 +227,11 @@
  "FROM grp "             \
  "WHERE grp_name = ?;"
 
+#define SELECT_FILE_ID   \
+ "SELECT file_id "       \
+ "FROM file "            \
+ "WHERE file_path = ?;"
+
 #define SELECT_FILE_CHECKED_CLEAR \
  "SELECT file_path "              \
  "FROM file "                     \
