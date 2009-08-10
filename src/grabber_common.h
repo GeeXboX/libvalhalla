@@ -122,8 +122,8 @@ typedef struct grabber_list_s {
    * \p list_downloader attribute. The files will be downloaded after the
    * grabbing step.
    *
-   * To read \p meta (attribute populated by the parser), you must use the
-   * function metadata_get().
+   * To read \p meta_parser (attribute populated by the parser), you must use
+   * the function metadata_get().
    *
    * \param[in] priv      Private structure registered with the grabber.
    * \param[in] data      File structure where some data must be populated.
