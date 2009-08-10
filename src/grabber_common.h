@@ -52,7 +52,7 @@
  *
  * Main header for all grabbers:
  *  - grabber_common.h
- *    - metadata.h to save metadata retrieved by grab()
+ *    - metadata.h to save metadata retrieved by grabber_list_t::grab()
  *    - utils.h    to prepare files (images, ...) for downloading
  *
  * \see grabber_list_t for details on the functions.
@@ -160,10 +160,10 @@ typedef struct grabber_list_s {
  * \param[in] p_name      Grabber's name.
  * \param[in] p_caps      Capabilities flags.
  * \param[in] fct_priv    Function to retrieve the private data pointer.
- * \param[in] fct_init    Function to init the grabber.
- * \param[in] fct_uninit  Function to uninit the grabber.
- * \param[in] fct_grab    Function to grab metadata.
- * \param[in] fct_loop    Function for scan loop.
+ * \param[in] fct_init    grabber_list_t::init().
+ * \param[in] fct_uninit  grabber_list_t::uninit().
+ * \param[in] fct_grab    grabber_list_t::grab().
+ * \param[in] fct_loop    grabber_list_t::loop().
  */
 #define GRABBER_REGISTER(p_name, p_caps,                                      \
                          fct_priv, fct_init, fct_uninit, fct_grab, fct_loop)  \
