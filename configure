@@ -745,10 +745,12 @@ if [ -n "$sqlite3dir" ]; then
   check_cflags -I$sqlite3dir
   check_ldflags -L$sqlite3dir
 fi
+if [ -z "$sqlite3dir" ]; then
+  add_pkgconfig_deps sqlite3
+fi
 
 echolog "Checking for sqlite3 ..."
 check_lib sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 !"
-add_pkgconfig_deps sqlite3
 add_pkgconfig_requires sqlite3
 
 
