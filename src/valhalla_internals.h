@@ -37,14 +37,14 @@ typedef enum action_list {
 } action_list_t;
 
 struct valhalla_s {
-  struct scanner_s   *scanner;
+  struct scanner_s    *scanner;
   struct dispatcher_s *dispatcher;
-  struct parser_s    *parser;
+  struct parser_s     *parser;
 #ifdef USE_GRABBER
   struct grabber_s    *grabber;
   struct downloader_s *downloader;
 #endif /* USE_GRABBER */
-  struct dbmanager_s *dbmanager;
+  struct dbmanager_s  *dbmanager;
 
   int run; /* prevent a bug if valhalla_run() is called two times */
 };
