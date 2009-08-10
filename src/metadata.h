@@ -22,10 +22,19 @@
 #ifndef VALHALLA_METADATA
 #define VALHALLA_METADATA
 
-typedef struct metadata_s metadata_t;
+#include "valhalla.h"
 
-int metadata_get (metadata_t *meta, int id, const char **name,
-                  const char **value, valhalla_meta_grp_t *group);
+typedef struct metadata_s {
+  struct metadata_s *next;
+  char *name;
+  char *value;
+  valhalla_meta_grp_t group;
+} metadata_t;
+
+#define METADATA_IGNORE_SUFFIX (1 << 0)
+
+int metadata_get (metadata_t *meta,
+                  const char *name, int flags, metadata_t **tag);
 void metadata_free (metadata_t *meta);
 void metadata_add (metadata_t **meta, const char *name,
                    const char *value, valhalla_meta_grp_t group);

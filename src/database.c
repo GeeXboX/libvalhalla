@@ -495,6 +495,7 @@ static void
 database_file_data (database_t *database, file_data_t *data, int insert)
 {
   int64_t file_id, type_id, meta_id = 0, data_id = 0, group_id = 0;
+  metadata_t *tag = NULL;
   type_id = database->file_type[data->type].id;
   file_id = insert
             ? database_file_insert (database, data, type_id)
@@ -504,21 +505,15 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     return;
 
   if (data->meta)
-  {
-    int id = 0;
-    const char *name, *value;
-    valhalla_meta_grp_t group;
-
-    while (!metadata_get (data->meta, id++, &name, &value, &group))
+    while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
     {
-      meta_id  = database_meta_insert (database, name);
-      data_id  = database_data_insert (database, value);
-      group_id = database->meta_group[group].id;
+      meta_id  = database_meta_insert (database, tag->name);
+      data_id  = database_data_insert (database, tag->value);
+      group_id = database->meta_group[tag->group].id;
 
       database_assoc_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
                              file_id, meta_id, data_id, group_id);
     }
-  }
 }
 
 void

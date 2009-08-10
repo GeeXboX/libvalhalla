@@ -26,31 +26,27 @@
 #include "valhalla_internals.h"
 #include "metadata.h"
 
-struct metadata_s {
-  struct metadata_s *next;
-  char *name;
-  char *value;
-  valhalla_meta_grp_t group;
-};
-
 
 int
-metadata_get (metadata_t *meta, int id,
-              const char **name, const char **value, valhalla_meta_grp_t *group)
+metadata_get (metadata_t *meta,
+              const char *name, int flags, metadata_t **tag)
 {
-  for (; meta && id > 0; id--)
-    meta = meta->next;
-
-  if (!meta || id)
+  if (!meta || !tag || !name)
     return -1;
 
-  if (name)
-    *name = meta->name;
-  if (value)
-    *value = meta->value;
-  if (group)
-    *group = meta->group;
+  if (*tag)
+    meta = (*tag)->next;
 
+  for (; meta; meta = meta->next)
+    if (flags & METADATA_IGNORE_SUFFIX
+        ? !strncmp (name, meta->name, strlen (name))
+        : !strcmp (name, meta->name))
+      break;
+
+  if (!meta)
+    return -1;
+
+  *tag = meta;
   return 0;
 }
 
