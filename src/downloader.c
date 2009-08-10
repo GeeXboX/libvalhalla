@@ -94,6 +94,10 @@ downloader_thread (void *arg)
         char *dest;
         size_t len;
         valhalla_dl_t dst = it->dst;
+
+        if (downloader_is_stopped (downloader))
+          break;
+
         if (!it->url || dst >= VALHALLA_DL_LAST || dst < 0)
           continue;
 
