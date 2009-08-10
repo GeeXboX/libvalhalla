@@ -29,6 +29,8 @@ typedef struct database_s database_t;
 void database_file_data_insert (database_t *database, file_data_t *data);
 void database_file_data_update (database_t *database, file_data_t *data);
 void database_file_data_delete (database_t *database, const char *file);
+void database_file_grab_insert (database_t *database, file_data_t *data);
+void database_file_grab_update (database_t *database, file_data_t *data);
 int database_file_get_mtime (database_t *db, const char *file);
 
 void database_file_checked_clear (database_t *database);

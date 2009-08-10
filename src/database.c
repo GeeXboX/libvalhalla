@@ -525,6 +525,16 @@ database_file_data (database_t *database, file_data_t *data, int insert)
   database_file_metadata (database, file_id, data->meta);
 }
 
+static void
+database_file_grab (database_t *database, file_data_t *data)
+{
+  int64_t file_id;
+
+  file_id = database_table_get_id (database,
+                                   STMT_GET (STMT_SELECT_FILE_ID), data->file);
+  database_file_metadata (database, file_id, data->meta_grabber);
+}
+
 void
 database_file_data_insert (database_t *database, file_data_t *data)
 {
@@ -535,6 +545,25 @@ void
 database_file_data_update (database_t *database, file_data_t *data)
 {
   database_file_data (database, data, 0);
+}
+
+void
+database_file_grab_insert (database_t *database, file_data_t *data)
+{
+  database_file_grab (database, data);
+}
+
+/*
+ * FIXME: old associations are not deleted, no update is performed. The right
+ *        behaviour is to remove all associations different of the fields set
+ *        by the parser.
+ *        The current behaviour adds new associations with each update and
+ *        keeps previous 'as it'.
+ */
+void
+database_file_grab_update (database_t *database, file_data_t *data)
+{
+  database_file_grab (database, data);
 }
 
 void

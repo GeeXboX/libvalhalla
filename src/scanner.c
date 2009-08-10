@@ -21,6 +21,7 @@
 
 #define _GNU_SOURCE
 #include <pthread.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -257,6 +258,8 @@ scanner_readdir (scanner_t *scanner,
       {
         data->file = file;
         data->mtime = st.st_mtime;
+        data->step = STEP_PARSING;
+        sem_init (&data->sem_grabber, 0, 0);
         dbmanager_action_send (scanner->valhalla->dbmanager,
                                ACTION_DB_NEWFILE, data);
         (*files)++;
@@ -397,15 +400,15 @@ scanner_wait (scanner_t *scanner)
   scanner->run = 0;
 }
 
-void
-scanner_cleanup (scanner_t *scanner)
+fifo_queue_t *
+scanner_fifo_get (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
-    return;
+    return NULL;
 
-  queue_cleanup (scanner->fifo);
+  return scanner->fifo;
 }
 
 void

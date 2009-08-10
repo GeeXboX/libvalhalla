@@ -19,25 +19,25 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef VALHALLA_PARSER_H
-#define VALHALLA_PARSER_H
+#ifndef VALHALLA_DISPATCHER_H
+#define VALHALLA_DISPATCHER_H
 
 #include "fifo_queue.h"
 
-typedef struct parser_s parser_t;
+typedef struct dispatcher_s dispatcher_t;
 
-enum parser_errno {
-  PARSER_ERROR_HANDLER = -2,
-  PARSER_ERROR_THREAD  = -1,
-  PARSER_SUCCESS       =  0,
+enum dispatcher_errno {
+  DISPATCHER_ERROR_HANDLER = -2,
+  DISPATCHER_ERROR_THREAD  = -1,
+  DISPATCHER_SUCCESS       =  0,
 };
 
-int parser_run (parser_t *parser, int priority);
-fifo_queue_t *parser_fifo_get (parser_t *parser);
-void parser_stop (parser_t *parser);
-void parser_uninit (parser_t *parser);
-parser_t *parser_init (valhalla_t *handle, unsigned int nb);
+int dispatcher_run (dispatcher_t *dispatcher, int priority);
+fifo_queue_t *dispatcher_fifo_get (dispatcher_t *dispatcher);
+void dispatcher_stop (dispatcher_t *dispatcher);
+void dispatcher_uninit (dispatcher_t *dispatcher);
+dispatcher_t *dispatcher_init (valhalla_t *handle);
 
-void parser_action_send (parser_t *parser, int action, void *data);
+void dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data);
 
-#endif /* VALHALLA_PARSER_H */
+#endif /* VALHALLA_DISPATCHER_H */

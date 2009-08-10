@@ -35,6 +35,7 @@
 #include "thread_utils.h"
 #include "dbmanager.h"
 #include "parser.h"
+#include "dispatcher.h"
 
 #ifndef PARSER_NB_MAX
 #define PARSER_NB_MAX 8
@@ -304,7 +305,8 @@ parser_thread (void *arg)
     if (pdata)
       pdata->meta = parser_metadata (pdata->file);
 
-    dbmanager_action_send (parser->valhalla->dbmanager, e, pdata);
+    file_data_step_increase (pdata, &e);
+    dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
   }
   while (!parser_is_stopped (parser));
 
@@ -343,15 +345,15 @@ parser_run (parser_t *parser, int priority)
   return res;
 }
 
-void
-parser_cleanup (parser_t *parser)
+fifo_queue_t *
+parser_fifo_get (parser_t *parser)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
-    return;
+    return NULL;
 
-  queue_cleanup (parser->fifo);
+  return parser->fifo;
 }
 
 void

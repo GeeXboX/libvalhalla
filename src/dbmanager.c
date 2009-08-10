@@ -20,6 +20,7 @@
  */
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <unistd.h>
@@ -30,9 +31,9 @@
 #include "logs.h"
 #include "thread_utils.h"
 #include "database.h"
-#include "parser.h"
 #include "scanner.h"
 #include "dbmanager.h"
+#include "dispatcher.h"
 
 #define COMMIT_INTERVAL_DEFAULT 128
 
@@ -60,6 +61,12 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
   return !run;
 }
 
+#define METADATA_GRABBER_POST           \
+  metadata_free (pdata->meta_grabber);  \
+  pdata->meta_grabber = NULL;           \
+  if (pdata->wait)                      \
+    sem_post (&pdata->sem_grabber);
+
 static int
 dbmanager_queue (dbmanager_t *dbmanager,
                  int *stats_insert, int *stats_update, int *stats_nochange)
@@ -78,8 +85,14 @@ dbmanager_queue (dbmanager_t *dbmanager,
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
-    if (e == ACTION_KILL_THREAD || e == ACTION_DB_NEXT_LOOP)
+    if (e == ACTION_KILL_THREAD)
       return e;
+
+    if (e == ACTION_DB_NEXT_LOOP)
+    {
+      dispatcher_action_send (dbmanager->valhalla->dispatcher, e, NULL);
+      return e;
+    }
 
     pdata = data;
 
@@ -89,20 +102,34 @@ dbmanager_queue (dbmanager_t *dbmanager,
 
     switch (e)
     {
+    /* received from the dispatcher */
+    case ACTION_DB_END:
     default:
       break;
 
-    /* received from the parser */
-    case ACTION_DB_INSERT:
+    /* received from the dispatcher (parsed data) */
+    case ACTION_DB_INSERT_P:
       database_file_data_insert (dbmanager->database, pdata);
       (*stats_insert)++;
-      break;
+      continue;
 
-    /* received from the parser */
-    case ACTION_DB_UPDATE:
+    /* received from the dispatcher (grabbed data) */
+    case ACTION_DB_INSERT_G:
+      database_file_grab_insert (dbmanager->database, pdata);
+      METADATA_GRABBER_POST
+      continue;
+
+    /* received from the dispatcher (parsed data) */
+    case ACTION_DB_UPDATE_P:
       database_file_data_update (dbmanager->database, pdata);
       (*stats_update)++;
-      break;
+      continue;
+
+    /* received from the dispatcher (grabbed data) */
+    case ACTION_DB_UPDATE_G:
+      database_file_grab_update (dbmanager->database, pdata);
+      METADATA_GRABBER_POST
+      continue;
 
     /* received from the scanner */
     case ACTION_DB_NEWFILE:
@@ -114,9 +141,10 @@ dbmanager_queue (dbmanager_t *dbmanager,
        */
       if (mtime < 0 || (int) pdata->mtime != mtime)
       {
-        parser_action_send (dbmanager->valhalla->parser,
-                            mtime < 0 ? ACTION_DB_INSERT : ACTION_DB_UPDATE,
-                            pdata);
+        dispatcher_action_send (dbmanager->valhalla->dispatcher,
+                                mtime < 0
+                                ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
+                                pdata);
         continue;
       }
 
@@ -228,15 +256,15 @@ dbmanager_run (dbmanager_t *dbmanager, int priority)
   return res;
 }
 
-void
-dbmanager_cleanup (dbmanager_t *dbmanager)
+fifo_queue_t *
+dbmanager_fifo_get (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
-    return;
+    return NULL;
 
-  queue_cleanup (dbmanager->fifo);
+  return dbmanager->fifo;
 }
 
 void

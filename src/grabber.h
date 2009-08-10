@@ -19,25 +19,27 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef VALHALLA_PARSER_H
-#define VALHALLA_PARSER_H
+#ifndef VALHALLA_GRABBER_H
+#define VALHALLA_GRABBER_H
 
 #include "fifo_queue.h"
+#include "grabber_common.h"
 
-typedef struct parser_s parser_t;
+typedef struct grabber_s grabber_t;
 
-enum parser_errno {
-  PARSER_ERROR_HANDLER = -2,
-  PARSER_ERROR_THREAD  = -1,
-  PARSER_SUCCESS       =  0,
+enum grabber_errno {
+  GRABBER_ERROR_HANDLER = -2,
+  GRABBER_ERROR_THREAD  = -1,
+  GRABBER_SUCCESS       =  0,
 };
 
-int parser_run (parser_t *parser, int priority);
-fifo_queue_t *parser_fifo_get (parser_t *parser);
-void parser_stop (parser_t *parser);
-void parser_uninit (parser_t *parser);
-parser_t *parser_init (valhalla_t *handle, unsigned int nb);
 
-void parser_action_send (parser_t *parser, int action, void *data);
+int grabber_run (grabber_t *grabber, int priority);
+fifo_queue_t *grabber_fifo_get (grabber_t *grabber);
+void grabber_stop (grabber_t *grabber);
+void grabber_uninit (grabber_t *grabber);
+grabber_t *grabber_init (valhalla_t *handle);
 
-#endif /* VALHALLA_PARSER_H */
+void grabber_action_send (grabber_t *grabber, int action, void *data);
+
+#endif /* VALHALLA_GRABBER_H */

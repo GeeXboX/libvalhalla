@@ -22,6 +22,8 @@
 #ifndef VALHALLA_SCANNER_H
 #define VALHALLA_SCANNER_H
 
+#include "fifo_queue.h"
+
 typedef struct scanner_s scanner_t;
 
 enum scanner_errno {
@@ -33,7 +35,7 @@ enum scanner_errno {
 
 int scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority);
 void scanner_wait (scanner_t *scanner);
-void scanner_cleanup (scanner_t *scanner);
+fifo_queue_t *scanner_fifo_get (scanner_t *scanner);
 void scanner_stop (scanner_t *scanner);
 void scanner_uninit (scanner_t *scanner);
 scanner_t *scanner_init (valhalla_t *handle);

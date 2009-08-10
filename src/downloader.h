@@ -19,25 +19,30 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef VALHALLA_PARSER_H
-#define VALHALLA_PARSER_H
+#ifndef VALHALLA_DOWNLOADER_H
+#define VALHALLA_DOWNLOADER_H
 
+#include "valhalla.h"
 #include "fifo_queue.h"
 
-typedef struct parser_s parser_t;
+typedef struct downloader_s downloader_t;
 
-enum parser_errno {
-  PARSER_ERROR_HANDLER = -2,
-  PARSER_ERROR_THREAD  = -1,
-  PARSER_SUCCESS       =  0,
+enum downloader_errno {
+  DOWNLOADER_ERROR_HANDLER = -2,
+  DOWNLOADER_ERROR_THREAD  = -1,
+  DOWNLOADER_SUCCESS       =  0,
 };
 
-int parser_run (parser_t *parser, int priority);
-fifo_queue_t *parser_fifo_get (parser_t *parser);
-void parser_stop (parser_t *parser);
-void parser_uninit (parser_t *parser);
-parser_t *parser_init (valhalla_t *handle, unsigned int nb);
+int downloader_run (downloader_t *downloader, int priority);
+fifo_queue_t *downloader_fifo_get (downloader_t *downloader);
+void downloader_stop (downloader_t *downloader);
+void downloader_uninit (downloader_t *downloader);
+downloader_t *downloader_init (valhalla_t *handle);
 
-void parser_action_send (parser_t *parser, int action, void *data);
+void downloader_destination_set (downloader_t *downloader,
+                                 valhalla_dl_t dl, const char *dst);
+const char *downloader_destination_get (downloader_t *downloader,
+                                        valhalla_dl_t dl);
+void downloader_action_send (downloader_t *downloader, int action, void *data);
 
-#endif /* VALHALLA_PARSER_H */
+#endif /* VALHALLA_DOWNLOADER_H */

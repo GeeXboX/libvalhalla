@@ -29,8 +29,11 @@ struct dbmanager_s;
 typedef enum action_list {
   ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
   ACTION_NO_OPERATION =  0, /* wake-up for nothing */
-  ACTION_DB_INSERT,         /* parser: metadata okay, then insert in the DB */
-  ACTION_DB_UPDATE,         /* parser: metadata okay, then update in the DB */
+  ACTION_DB_INSERT_P,       /* dispatcher: parser  metadata ok, insert in DB */
+  ACTION_DB_INSERT_G,       /* dispatcher: grabber metadata ok, insert in DB */
+  ACTION_DB_UPDATE_P,       /* dispatcher: parser  metadata ok, update in DB */
+  ACTION_DB_UPDATE_G,       /* dispatcher: grabber metadata ok, update in DB */
+  ACTION_DB_END,            /* dispatcher: end metadata */
   ACTION_DB_NEWFILE,        /* scanner: new file to handle */
   ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
   ACTION_ACKNOWLEDGE,       /* database: ack scanner for each file handled */
@@ -39,7 +42,12 @@ typedef enum action_list {
 
 struct valhalla_s {
   struct scanner_s   *scanner;
+  struct dispatcher_s *dispatcher;
   struct parser_s    *parser;
+#ifdef USE_GRABBER
+  struct grabber_s    *grabber;
+  struct downloader_s *downloader;
+#endif /* USE_GRABBER */
   struct dbmanager_s *dbmanager;
 
   int run; /* prevent a bug if valhalla_run() is called two times */

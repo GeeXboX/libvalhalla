@@ -83,6 +83,15 @@ typedef enum valhalla_verb {
   VALHALLA_MSG_CRITICAL, /**< Prevents lib from working.                */
 } valhalla_verb_t;
 
+/** \brief Destinations for downloading. */
+typedef enum valhalla_dl {
+  VALHALLA_DL_DEFAULT = 0,
+  VALHALLA_DL_COVER,
+  VALHALLA_DL_THUMB,
+  VALHALLA_DL_BACKDROP,
+  VALHALLA_DL_LAST
+} valhalla_dl_t;
+
 /**
  * \name Valhalla Handling.
  * @{
@@ -155,6 +164,21 @@ void valhalla_path_add (valhalla_t *handle,
  * \param[in] suffix      File suffix to add.
  */
 void valhalla_suffix_add (valhalla_t *handle, const char *suffix);
+
+/**
+ * \brief Set a destination for the downloader.
+ *
+ * The default destination is used when a specific destination is NULL.
+ * VALHALLA_DL_LAST is only used for internal purposes.
+ *
+ * \warning This function must be called before valhalla_run()!
+ *          There is no effect if the grabber support is not compiled.
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] dl          Type of destination to set.
+ * \param[in] dst         Path for the destination.
+ */
+void valhalla_download_dest_set (valhalla_t *handle,
+                                 valhalla_dl_t dl, const char *dst);
 
 /**
  * \brief Run the scanner, the database manager and all parsers.

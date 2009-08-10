@@ -22,6 +22,8 @@
 #ifndef VALHALLA_DBMANAGER_H
 #define VALHALLA_DBMANAGER_H
 
+#include "fifo_queue.h"
+
 typedef struct dbmanager_s dbmanager_t;
 
 enum dbmanager_errno {
@@ -31,7 +33,7 @@ enum dbmanager_errno {
 };
 
 int dbmanager_run (dbmanager_t *dbmanager, int priority);
-void dbmanager_cleanup (dbmanager_t *dbmanager);
+fifo_queue_t *dbmanager_fifo_get (dbmanager_t *dbmanager);
 void dbmanager_stop (dbmanager_t *dbmanager);
 void dbmanager_uninit (dbmanager_t *dbmanager);
 dbmanager_t *dbmanager_init (valhalla_t *handle,

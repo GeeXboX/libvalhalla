@@ -46,6 +46,7 @@ show_help(){
   echo "  --with-lavf-inc=PATH        specify directory for libavformat include files"
   echo "  --with-lavf-lib=PATH        specify directory for libavformat library"
   echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
+  echo "  --with-curl-dir=DIR         check for cURL installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -443,6 +444,8 @@ for opt do
   ;;
   --with-sqlite3-dir=*) sqlite3dir="$optval";
   ;;
+  --width-curl-dir=*) curldir="$optval";
+  ;;
   --enable-logcolor) logcolor="yes";
   ;;
   --disable-logcolor) logcolor="no";
@@ -772,6 +775,30 @@ restore_flags
 
 
 #################################################
+#   Grabber
+#################################################
+grabber="no"
+if enabled grabber; then
+  add_cflags -DUSE_GRABBER
+
+  ###############################################
+  #   check for cURL
+  ###############################################
+  if [ -n "$curldir" ]; then
+    check_cflags -I$curldir
+    check_ldflags -L$curldir
+  fi
+  if [ -z  "$curldir" ]; then
+    add_pkgconfig_deps libcurl
+  fi
+
+  echolog "Checking for cURL ..."
+  check_lib curl/curl.h curl_global_init -lcurl || die "Error, can't find cURL !"
+  add_pkgconfig_requires libcurl
+fi
+
+
+#################################################
 #   Miscellaneous
 #################################################
 if enabled logcolor; then
@@ -809,6 +836,8 @@ echolog ""
 echolog "  CFLAGS             $CFLAGS $extracflags"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
+echolog ""
+echolog "  Grabbers support:  $grabber"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  Documentation:     $doc"
@@ -855,6 +884,8 @@ append_config "INSTALL=$INSTALL"
 if enabled bigendian; then
   append_config "WORDS_BIGENDIAN=yes"
 fi
+
+append_config "GRABBER=$grabber"
 
 append_config "DEBUG=$debug"
 append_config "DOC=$doc"

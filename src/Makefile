@@ -18,6 +18,7 @@ SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
 
 SRCS =  database.c \
 	dbmanager.c \
+	dispatcher.c \
 	fifo_queue.c \
 	lavf_utils.c \
 	logs.c \
@@ -28,6 +29,12 @@ SRCS =  database.c \
 	timer_thread.c \
 	utils.c \
 	valhalla.c
+
+ifeq ($(GRABBER),yes)
+  SRCS += grabber.c \
+          downloader.c \
+          url_utils.c
+endif
 
 OBJS = $(SRCS:.c=.o)
 
