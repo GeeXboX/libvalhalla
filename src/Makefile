@@ -33,7 +33,8 @@ SRCS =  database.c \
 ifeq ($(GRABBER),yes)
   SRCS += grabber.c \
           downloader.c \
-          url_utils.c
+          url_utils.c \
+          list.c
 ifeq ($(GRABBER_DUMMY),yes)
   SRCS += grabber_dummy.c
 endif
