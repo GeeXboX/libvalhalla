@@ -492,16 +492,12 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
 }
 
 static void
-database_file_data (database_t *database, file_data_t *data, int insert)
+database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
 {
-  int64_t file_id, type_id, meta_id = 0, data_id = 0, group_id = 0;
+  int64_t meta_id = 0, data_id = 0, group_id = 0;
   metadata_t *tag = NULL;
-  type_id = database->file_type[data->type].id;
-  file_id = insert
-            ? database_file_insert (database, data, type_id)
-            : database_file_update (database, data, type_id);
 
-  if (!file_id || !data->meta)
+  if (!file_id || !meta)
     return;
 
   while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
@@ -513,6 +509,18 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     database_assoc_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
                            file_id, meta_id, data_id, group_id);
   }
+}
+
+static void
+database_file_data (database_t *database, file_data_t *data, int insert)
+{
+  int64_t file_id, type_id;
+  type_id = database->file_type[data->type].id;
+  file_id = insert
+            ? database_file_insert (database, data, type_id)
+            : database_file_update (database, data, type_id);
+
+  database_file_metadata (database, file_id, data->meta);
 }
 
 void
