@@ -22,10 +22,6 @@
 #ifndef VALHALLA_INTERNALS_H
 #define VALHALLA_INTERNALS_H
 
-struct scanner_s;
-struct parser_s;
-struct dbmanager_s;
-
 typedef enum action_list {
   ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
   ACTION_NO_OPERATION =  0, /* wake-up for nothing */
