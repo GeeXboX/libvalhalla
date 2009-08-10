@@ -504,15 +504,15 @@ database_file_data (database_t *database, file_data_t *data, int insert)
   if (!file_id || !data->meta)
     return;
 
-    while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
-    {
-      meta_id  = database_meta_insert (database, tag->name);
-      data_id  = database_data_insert (database, tag->value);
-      group_id = database->meta_group[tag->group].id;
+  while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
+  {
+    meta_id  = database_meta_insert (database, tag->name);
+    data_id  = database_data_insert (database, tag->value);
+    group_id = database->meta_group[tag->group].id;
 
-      database_assoc_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
-                             file_id, meta_id, data_id, group_id);
-    }
+    database_assoc_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
+                           file_id, meta_id, data_id, group_id);
+  }
 }
 
 void
