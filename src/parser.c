@@ -303,7 +303,7 @@ parser_thread (void *arg)
 
     pdata = data;
     if (pdata)
-      pdata->meta_grabber = parser_metadata (pdata->file);
+      pdata->meta_parser = parser_metadata (pdata->file);
 
     file_data_step_increase (pdata, &e);
     dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
