@@ -40,6 +40,7 @@ show_help(){
   echo "  --disable-shared            do not build shared libraries [default=no]"
   echo ""
   echo "Grabbers options:"
+  echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
   echo "  --enable-grabber-amazon     build amazon grabber [default=no]"
   echo ""
@@ -402,6 +403,7 @@ cross_compile="no"
 INSTALL="/usr/bin/install"
 VERSION=""
 pkgconfig_requires=""
+grabber_all="no"
 grabber_dummy="no"
 grabber_amazon="no"
 logcolor="yes"
@@ -454,6 +456,10 @@ for opt do
   --width-curl-dir=*) curldir="$optval";
   ;;
   --width-xml2-dir=*) xml2dir="$optval";
+  ;;
+  --enable-grabbers) grabber_all="yes";
+  ;;
+  --disable-grabbers) grabber_all="no";
   ;;
   --enable-grabber-dummy) grabber_dummy="yes";
   ;;
@@ -797,6 +803,11 @@ restore_flags
 grabber="no"
 xml="no"
 md5="no"
+
+if enabled grabber_all; then
+  grabber_amazon="yes"
+fi
+
 if enabled grabber_dummy; then
   add_cflags -DHAVE_GRABBER_DUMMY
   grabber="yes"
