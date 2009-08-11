@@ -50,6 +50,11 @@ show_help(){
   echo "                                       plus --with-lavf-lib=PATH/lib"
   echo "  --with-lavf-inc=PATH        specify directory for libavformat include files"
   echo "  --with-lavf-lib=PATH        specify directory for libavformat library"
+  echo "  --with-lavu=PATH            specify prefix directory for libavutil package."
+  echo "                              Equivalent to --with-lavu-inc=PATH/include"
+  echo "                                       plus --with-lavu-lib=PATH/lib"
+  echo "  --with-lavu-inc=PATH        specify directory for libavutil include files"
+  echo "  --with-lavu-lib=PATH        specify directory for libavutil library"
   echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
   echo "  --with-curl-dir=DIR         check for cURL installed in DIR"
   echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
@@ -450,6 +455,12 @@ for opt do
   --with-lavf-inc=*) lavfincdir="$optval";
   ;;
   --with-lavf-lib=*) lavflibdir="$optval";
+  ;;
+  --with-lavu=*) lavudir="$optval";
+  ;;
+  --with-lavu-inc=*) lavuincdir="$optval";
+  ;;
+  --with-lavu-lib=*) lavulibdir="$optval";
   ;;
   --with-sqlite3-dir=*) sqlite3dir="$optval";
   ;;
@@ -854,6 +865,29 @@ if enabled xml; then
   echolog "Checking for libxml2 ..."
   check_lib libxml/parser.h xmlReadMemory -lxml2 || die "Error, can't find libxml2 !"
   add_pkgconfig_requires libxml-2.0
+fi
+
+if enabled md5; then
+  #################################################
+  #   check for FFmpeg libavutil
+  #################################################
+  if [ -n "$lavudir" ]; then
+    check_cflags -I${lavudir}/include
+    check_ldflags -L${lavudir}/lib
+  fi
+  if [ -n "$lavuincdir" ]; then
+    check_cflags -I${lavuincdir}
+  fi
+  if [ -n "$lavulibdir" ]; then
+    check_ldflags -L${lavulibdir}
+  fi
+  if [ -z "$lavudir" -a -z "$lavuincdir" -a -z "$lavulibdir" ]; then
+    add_pkgconfig_deps libavutil
+  fi
+
+  echolog "Checking for libavutil ..."
+  check_lib libavutil/md5.h av_md5_sum -lavutil || die "Error, can't find libavutil !"
+  add_pkgconfig_requires libavutil
 fi
 
 
