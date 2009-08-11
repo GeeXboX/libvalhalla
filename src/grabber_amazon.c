@@ -343,9 +343,7 @@ grabber_amazon_loop (void *priv)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
-  if (amazon->list)
-    list_free (amazon->list, NULL);
-  amazon->list = NULL;
+  LIST_FREE (amazon->list, NULL);
 }
 
 /******************************************************************************/
