@@ -30,4 +30,12 @@ void list_free (list_t *list, void (*free_fct) (void *data));
 void *list_search (list_t *list, const void *tocmp,
                    int (*cmp_fct) (const void *tocmp, const void *data));
 
+#define LIST_FREE(list, free_fct) \
+  do                              \
+  {                               \
+    list_free (list, free_fct);   \
+    list = NULL;                  \
+  }                               \
+  while (0)
+
 #endif /* VALHALLA_LIST_H */
