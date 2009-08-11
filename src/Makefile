@@ -28,13 +28,14 @@ SRCS =  database.c \
 	thread_utils.c \
 	timer_thread.c \
 	utils.c \
-	valhalla.c
+	valhalla.c \
 
 ifeq ($(GRABBER),yes)
-  SRCS += grabber.c \
-          downloader.c \
+  SRCS += downloader.c \
+          grabber.c \
+          list.c \
           url_utils.c \
-          list.c
+
 ifeq ($(XML),yes)
   SRCS += xml_utils.c
 endif
