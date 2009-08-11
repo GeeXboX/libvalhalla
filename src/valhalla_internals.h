@@ -36,6 +36,15 @@ typedef enum action_list {
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
+typedef enum processing_step {
+  STEP_PARSING = 0,
+#ifdef USE_GRABBER
+  STEP_GRABBING,
+  STEP_DOWNLOADING,
+#endif /* USE_GRABBER */
+  STEP_ENDING,
+} processing_step_t;
+
 struct valhalla_s {
   struct scanner_s    *scanner;
   struct dispatcher_s *dispatcher;

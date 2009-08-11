@@ -30,15 +30,6 @@
 #include "metadata.h"
 #include "fifo_queue.h"
 
-typedef enum processing_step {
-  STEP_PARSING = 0,
-#ifdef USE_GRABBER
-  STEP_GRABBING,
-  STEP_DOWNLOADING,
-#endif /* USE_GRABBER */
-  STEP_ENDING,
-} processing_step_t;
-
 typedef struct file_dl_s {
   struct file_dl_s *next;
   char         *url;
