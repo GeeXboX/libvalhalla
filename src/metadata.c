@@ -25,6 +25,7 @@
 #include "valhalla.h"
 #include "valhalla_internals.h"
 #include "metadata.h"
+#include "logs.h"
 
 
 int
@@ -93,4 +94,8 @@ metadata_add (metadata_t **meta,
   it->name  = strdup (name);
   it->value = strdup (value);
   it->group = group;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE,
+                "Adding new metadata '%s' with value '%s'.\n",
+                it->name, it->value);
 }
