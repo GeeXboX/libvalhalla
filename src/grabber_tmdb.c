@@ -158,7 +158,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   if (udata.status != 0)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s\n", udata.buffer);
+  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = get_xml_doc_from_memory (udata.buffer);

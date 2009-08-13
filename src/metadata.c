@@ -96,6 +96,6 @@ metadata_add (metadata_t **meta,
   it->group = group;
 
   valhalla_log (VALHALLA_MSG_VERBOSE,
-                "Adding new metadata '%s' with value '%s'.\n",
+                "Adding new metadata '%s' with value '%s'.",
                 it->name, it->value);
 }
