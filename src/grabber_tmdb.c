@@ -31,7 +31,6 @@
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
-#include "list.h"
 
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_COVER
@@ -59,7 +58,6 @@
 
 typedef struct grabber_tmdb_s {
   url_t  *handler;
-  list_t *list;
 } grabber_tmdb_t;
 
 static const struct {
@@ -367,7 +365,6 @@ grabber_tmdb_uninit (void *priv)
     return;
 
   url_free (tmdb->handler);
-  list_free (tmdb->list, NULL);
   free (tmdb);
 }
 
@@ -407,17 +404,6 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
   return res;
 }
 
-static void
-grabber_tmdb_loop (void *priv)
-{
-  grabber_tmdb_t *tmdb = priv;
-
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  /* Hash cover list cleanup */
-  LIST_FREE (tmdb->list, NULL);
-}
-
 /*****************************************************************************/
 /* Public Grabber API                                                        */
 /*****************************************************************************/
@@ -429,4 +415,4 @@ GRABBER_REGISTER (tmdb,
                   grabber_tmdb_init,
                   grabber_tmdb_uninit,
                   grabber_tmdb_grab,
-                  grabber_tmdb_loop)
+                  NULL)
