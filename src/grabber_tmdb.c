@@ -47,7 +47,7 @@
 #define TMDB_QUERY_SEARCH "http://%s/2.0/Movie.search?title=%s&api_key=%s"
 #define TMDB_QUERY_INFO   "http://%s/2.0/Movie.getInfo?id=%s&api_key=%s"
 
-#define tmdb_parse(nd,tag,name,group)                             \
+#define tmdb_parse(nd, tag, name, group)                          \
   xml_search_str (nd, tag, &res_str);                             \
   if (res_str)                                                    \
   {                                                               \
