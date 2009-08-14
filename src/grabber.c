@@ -95,11 +95,11 @@ file_type_supported (int caps_flag, valhalla_file_type_t type)
     return 1;
 
   case VALHALLA_FILE_TYPE_AUDIO:
-    if (caps_flag & (GRABBER_CAP_AUDIO | GRABBER_CAP_COVER))
+    if (caps_flag & GRABBER_CAP_AUDIO)
       return 1;
 
   case VALHALLA_FILE_TYPE_VIDEO:
-    if (caps_flag & (GRABBER_CAP_VIDEO | GRABBER_CAP_COVER))
+    if (caps_flag & GRABBER_CAP_VIDEO)
       return 1;
 
   case VALHALLA_FILE_TYPE_IMAGE:

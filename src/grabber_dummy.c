@@ -29,8 +29,7 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO | \
   GRABBER_CAP_VIDEO | \
-  GRABBER_CAP_IMAGE | \
-  GRABBER_CAP_COVER
+  GRABBER_CAP_IMAGE
 
 typedef struct grabber_dummy_s {
   int dummy;

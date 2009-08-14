@@ -63,7 +63,8 @@
 #include "list.h"
 
 #define GRABBER_CAP_FLAGS \
-  GRABBER_CAP_COVER
+  GRABBER_CAP_VIDEO | \
+  GRABBER_CAP_AUDIO
 
 /*
  * This name can be used with the public API (db selections) in order

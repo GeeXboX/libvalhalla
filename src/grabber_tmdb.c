@@ -33,7 +33,7 @@
 #include "md5.h"
 
 #define GRABBER_CAP_FLAGS \
-  GRABBER_CAP_COVER
+  GRABBER_CAP_VIDEO
 
 #define MAX_URL_SIZE      1024
 

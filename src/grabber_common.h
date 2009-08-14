@@ -66,7 +66,6 @@
 #define GRABBER_CAP_AUDIO  (1 << 0) /**< \brief audio metadata: id3tags,...   */
 #define GRABBER_CAP_VIDEO  (1 << 1) /**< \brief video metadata: fourccs,...   */
 #define GRABBER_CAP_IMAGE  (1 << 2) /**< \brief photo metadata: exif,...      */
-#define GRABBER_CAP_COVER  (1 << 3) /**< \brief covers, thumbs, snapshots,... */
 /**
  *@}
  */
