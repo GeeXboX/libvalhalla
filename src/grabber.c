@@ -86,7 +86,7 @@ grabber_is_stopped (grabber_t *grabber)
   return !run;
 }
 
-static int
+static inline int
 file_type_supported (int caps_flag, valhalla_file_type_t type)
 {
   switch (type)
