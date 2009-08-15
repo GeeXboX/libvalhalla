@@ -384,13 +384,11 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
     return -1;
 
   /*
-   * Try with the video's title and finally with the
-   * filename if nothing better is available.
+   * Try with the video's title.
    */
   if (!metadata_get (data->meta_parser, "title", 0, &tag))
     keywords = tag->value;
   else
-    /* FIXME: get keywords from filename (decrapifier ??) */
     return -1;
 
   /* Format the keywords */

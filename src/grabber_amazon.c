@@ -272,14 +272,12 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /*
-   * Try with the album's name, or with the title and finally with the
-   * filename if nothing better is available.
+   * Try with the album's name, or with the title.
    */
   if (   !metadata_get (data->meta_parser, "album", 0, &tag)
       || !metadata_get (data->meta_parser, "title", 0, &tag))
     keywords = tag->value;
   else
-    /* FIXME: get keywords from filename (decrapifier ??) */
     return -1;
 
   cover = md5sum (keywords);
