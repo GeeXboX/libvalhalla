@@ -28,8 +28,15 @@ static const struct fileext_s {
   const char *fmtname;
   const char *suffix;
 } g_fileext[] = {
+  { "ape",                     "apl"  },
+  { "ape",                     "mac"  },
+  { "daud",                    "302"  },
+  { "dv",                      "dif"  },
   { "flic",                    "fli"  },
   { "flic",                    "flc"  },
+  { "h264",                    "264"  },
+  { "h264",                    "h26l" },
+  { "ingenient",               "cgi"  },
   { "matroska",                "mkv"  },
   { "mjpeg",                   "mjpg" },
   { "mov,mp4,m4a,3gp,3g2,mj2", "3g2"  },
@@ -49,6 +56,9 @@ static const struct fileext_s {
   { "rawvideo",                "qcif" },
   { "rawvideo",                "rgb"  },
   { "rawvideo",                "yuv"  },
+  { "siff",                    "son"  },
+  { "siff",                    "vb"   },
+  { "truehd",                  "thd"  },
   { "yuv4mpegpipe",            "y4m"  },
   { NULL,                      NULL   },
 };
