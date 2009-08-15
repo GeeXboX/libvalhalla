@@ -249,13 +249,13 @@
 /*                                                                            */
 /******************************************************************************/
 
-#define INSERT_FILE        \
- "INSERT "                 \
- "INTO file (file_path, "  \
- "           file_mtime, " \
- "           checked__, "  \
+#define INSERT_FILE           \
+ "INSERT "                    \
+ "INTO file (file_path, "     \
+ "           file_mtime, "    \
+ "           checked__, "     \
  "           interrupted__, " \
- "           _type_id) "   \
+ "           _type_id) "      \
  "VALUES (?, ?, 1, 1, ?);"
 
 #define INSERT_TYPE        \
