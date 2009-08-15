@@ -87,6 +87,7 @@ static const item_list_t g_meta_group[] = {
 };
 
 typedef enum database_stmt {
+  STMT_SELECT_FILE_INTERRUP,
   STMT_SELECT_FILE_MTIME,
   STMT_SELECT_TYPE_ID,
   STMT_SELECT_META_ID,
@@ -108,11 +109,13 @@ typedef enum database_stmt {
 
   STMT_UPDATE_FILE_CHECKED_CLEAR,
   STMT_SELECT_FILE_CHECKED_CLEAR,
+  STMT_UPDATE_FILE_INTERRUP_CLEAR,
   STMT_BEGIN_TRANSACTION,
   STMT_END_TRANSACTION,
 } database_stmt_t;
 
 static const stmt_list_t g_stmts[] = {
+  [STMT_SELECT_FILE_INTERRUP]        = { SELECT_FILE_INTERRUP,        NULL },
   [STMT_SELECT_FILE_MTIME]           = { SELECT_FILE_MTIME,           NULL },
   [STMT_SELECT_TYPE_ID]              = { SELECT_TYPE_ID,              NULL },
   [STMT_SELECT_META_ID]              = { SELECT_META_ID,              NULL },
@@ -134,6 +137,7 @@ static const stmt_list_t g_stmts[] = {
 
   [STMT_UPDATE_FILE_CHECKED_CLEAR]   = { UPDATE_FILE_CHECKED_CLEAR,   NULL },
   [STMT_SELECT_FILE_CHECKED_CLEAR]   = { SELECT_FILE_CHECKED_CLEAR,   NULL },
+  [STMT_UPDATE_FILE_INTERRUP_CLEAR]  = { UPDATE_FILE_INTERRUP_CLEAR,  NULL },
   [STMT_BEGIN_TRANSACTION]           = { BEGIN_TRANSACTION,           NULL },
   [STMT_END_TRANSACTION]             = { END_TRANSACTION,             NULL },
 };
@@ -615,6 +619,58 @@ database_file_get_checked_clear (database_t *database)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 
   return NULL;
+}
+
+void
+database_file_interrupted_clear (database_t *database, const char *file)
+{
+  int res, err = -1;
+
+  if (!file)
+    return;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR),
+                           1, file, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out;
+
+  res = sqlite3_step (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR));
+  if (res == SQLITE_DONE)
+    err = 0;
+
+  sqlite3_clear_bindings (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR));
+
+ out:
+  sqlite3_reset (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+int
+database_file_get_interrupted (database_t *database, const char *file)
+{
+  int res, err = -1, val = -1;
+
+  if (!file)
+    return -1;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_INTERRUP),
+                           1, file, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out;
+
+  res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_INTERRUP));
+  if (res == SQLITE_ROW)
+    val = sqlite3_column_int (STMT_GET (STMT_SELECT_FILE_INTERRUP), 0);
+
+  sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_INTERRUP));
+  err = 0;
+
+ out:
+  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_INTERRUP));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return val;
 }
 
 int

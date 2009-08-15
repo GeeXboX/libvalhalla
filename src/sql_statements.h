@@ -46,6 +46,7 @@
    "file_path        TEXT    NOT NULL UNIQUE, "           \
    "file_mtime       INTEGER NOT NULL, "                  \
    "checked__        INTEGER NOT NULL, "                  \
+   "interrupted__    INTEGER NOT NULL, "                  \
    "_type_id         INTEGER NULL "                       \
  ");"
 
@@ -202,6 +203,11 @@
 
 /* Internal */
 
+#define SELECT_FILE_INTERRUP \
+ "SELECT interrupted__ "     \
+ "FROM file "                \
+ "WHERE file_path = ?;"
+
 #define SELECT_FILE_MTIME \
  "SELECT file_mtime "     \
  "FROM file "             \
@@ -248,8 +254,9 @@
  "INTO file (file_path, "  \
  "           file_mtime, " \
  "           checked__, "  \
+ "           interrupted__, " \
  "           _type_id) "   \
- "VALUES (?, ?, 1, ?);"
+ "VALUES (?, ?, 1, 1, ?);"
 
 #define INSERT_TYPE        \
  "INSERT "                 \
@@ -286,12 +293,18 @@
  "UPDATE file "              \
  "SET file_mtime      = ?, " \
  "    checked__       = 1, " \
+ "    interrupted__   = 1, " \
  "    _type_id        = ?  " \
  "WHERE file_path = ?;"
 
 #define UPDATE_FILE_CHECKED_CLEAR \
  "UPDATE file "                   \
  "SET checked__ = 0;"
+
+#define UPDATE_FILE_INTERRUP_CLEAR \
+ "UPDATE file "                    \
+ "SET interrupted__ = 0 "          \
+ "WHERE file_path = ?;"
 
 /******************************************************************************/
 /*                                                                            */

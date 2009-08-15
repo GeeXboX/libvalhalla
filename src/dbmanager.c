@@ -102,9 +102,12 @@ dbmanager_queue (dbmanager_t *dbmanager,
 
     switch (e)
     {
+    default:
+      break;
+
     /* received from the dispatcher */
     case ACTION_DB_END:
-    default:
+      database_file_interrupted_clear (dbmanager->database, pdata->file);
       break;
 
     /* received from the dispatcher (parsed data) */
@@ -136,10 +139,11 @@ dbmanager_queue (dbmanager_t *dbmanager,
     {
       int mtime = database_file_get_mtime (dbmanager->database, pdata->file);
       /*
-       * File is parsed only if mtime has changed or if it is unexistant
-       * in the database.
+       * File is parsed only if mtime has changed, if the grabbing/downloading
+       * was interrupted or if it is unexistant in the database.
        */
-      if (mtime < 0 || (int) pdata->mtime != mtime)
+      if (mtime < 0 || (int) pdata->mtime != mtime
+          || database_file_get_interrupted (dbmanager->database, pdata->file))
       {
         dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                 mtime < 0
