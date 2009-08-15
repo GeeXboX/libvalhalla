@@ -246,6 +246,17 @@ valhalla_suffix_add (valhalla_t *handle, const char *suffix)
 }
 
 void
+valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, keyword);
+
+  if (!handle || !keyword)
+    return;
+
+  parser_bl_keyword_add (handle->parser, keyword);
+}
+
+void
 valhalla_download_dest_set (valhalla_t *handle,
                             valhalla_dl_t dl, const char *dst)
 {
@@ -270,7 +281,7 @@ valhalla_verbosity (valhalla_verb_t level)
 
 valhalla_t *
 valhalla_init (const char *db,
-               unsigned int parser_nb, unsigned int commit_int)
+               unsigned int parser_nb, int decrapifier, unsigned int commit_int)
 {
   static int preinit = 0;
   valhalla_t *handle;
@@ -292,7 +303,7 @@ valhalla_init (const char *db,
   if (!handle->dispatcher)
     goto err;
 
-  handle->parser = parser_init (handle, parser_nb);
+  handle->parser = parser_init (handle, parser_nb, decrapifier);
   if (!handle->parser)
     goto err;
 

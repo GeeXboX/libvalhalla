@@ -106,17 +106,24 @@ typedef enum valhalla_dl {
  *
  * Several parsers (\p parser_nb) for metadata can be created in parallel.
  *
+ * If the "title" metadata is not available with a file, the decrapifier can
+ * be used to create this metadata by using the filename.
+ * This feature is very useful when the grabber support is compiled because
+ * the title is used as keywords in a lot of grabbers.
+ *
  * The interval for \p commit_int is the number of files to be inserted or
  * updated in one pass. A value between 100 and 200 is a good choice. If the
  * value is <=0, then the default interval is used (128).
  *
  * \param[in] db          Path on the database.
  * \param[in] parser_nb   Number of parsers to create.
+ * \param[in] decrapifier Use the decrapifier, !=0 to enable.
  * \param[in] commit_int  File Interval between database commits.
  * \return The handle.
  */
 valhalla_t *valhalla_init (const char *db,
-                           unsigned int parser_nb, unsigned int commit_int);
+                           unsigned int parser_nb, int decrapifier,
+                           unsigned int commit_int);
 
 /**
  * \brief Uninit an handle.
@@ -164,6 +171,26 @@ void valhalla_path_add (valhalla_t *handle,
  * \param[in] suffix      File suffix to add.
  */
 void valhalla_suffix_add (valhalla_t *handle, const char *suffix);
+
+/**
+ * \brief Add a keyword in the blacklist for the decrapifier.
+ *
+ * This function is useful only if the decrapifier is enabled with
+ * valhalla_init().
+ *
+ * The blacklisted keywords are case insensitive. Sometimes it is useful to
+ * blacklist a keyword composed with a number. you can specify the pattern
+ * with NUM where a number is located.
+ * For example:
+ *   Filename  : "{XvID-Foobar}.My_Movie.s01e02.avi"
+ *   Blacklist : "xvid", "foobar", "sNUMeNUM"
+ *   Result    : "My Movie"
+ *
+ * \warning This function must be called before valhalla_run()!
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] keyword     Keyword to blacklist.
+ */
+void valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword);
 
 /**
  * \brief Set a destination for the downloader.

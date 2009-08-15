@@ -36,7 +36,9 @@ int parser_run (parser_t *parser, int priority);
 fifo_queue_t *parser_fifo_get (parser_t *parser);
 void parser_stop (parser_t *parser);
 void parser_uninit (parser_t *parser);
-parser_t *parser_init (valhalla_t *handle, unsigned int nb);
+parser_t *parser_init (valhalla_t *handle, unsigned int nb, int decrapifier);
+
+void parser_bl_keyword_add (parser_t *parser, const char *keyword);
 
 void parser_action_send (parser_t *parser, int action, void *data);
 
