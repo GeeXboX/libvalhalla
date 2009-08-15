@@ -606,8 +606,8 @@ parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
   if (!parser->fifo)
     goto err;
 
-  parser->valhalla = handle;
-  parser->nb       = nb;
+  parser->valhalla    = handle;
+  parser->nb          = nb;
   parser->decrapifier = !!decrapifier;
 
   pthread_mutex_init (&parser->mutex_run, NULL);
