@@ -44,6 +44,7 @@
   " -f --download           path for the downloader destination\n" \
   " -c --commit-int         commits interval\n" \
   " -p --parser             number of parsers\n" \
+  " -k --keyword            keyword for the decrapifier\n" \
   " -s --suffix             file suffix (extension)\n" \
   "\n" \
   "Example:\n" \
@@ -55,6 +56,7 @@
   "\n"
 
 #define SUFFIX_MAX 16
+#define KEYWORD_MAX 16
 
 int
 main (int argc, char **argv)
@@ -66,13 +68,14 @@ main (int argc, char **argv)
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
   const char *database = "./valhalla.db";
   const char *download = NULL;
-  int parser_nb = 2, sid = 0;
+  int parser_nb = 2, sid = 0, kid = 0;
   const char *suffix[SUFFIX_MAX];
+  const char *keyword[KEYWORD_MAX];
   struct timeval tvs, tve;
   long long diff;
 
   int c, index;
-  const char *const short_options = "hvl:t:a:d:f:c:p:s:";
+  const char *const short_options = "hvl:t:a:d:f:c:p:k:s:";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -83,6 +86,7 @@ main (int argc, char **argv)
     { "download",   required_argument, 0, 'f'  },
     { "commit-int", required_argument, 0, 'c'  },
     { "parser",     required_argument, 0, 'p'  },
+    { "keyword",    required_argument, 0, 'k'  },
     { "suffix",     required_argument, 0, 's'  },
     { NULL,         0,                 0, '\0' },
   };
@@ -144,6 +148,11 @@ main (int argc, char **argv)
         suffix[sid++] = optarg;
       break;
 
+    case 'k':
+      if (kid < KEYWORD_MAX)
+        keyword[kid++] = optarg;
+      break;
+
     default:
       printf (TESTVALHALLA_HELP);
       return -1;
@@ -152,7 +161,7 @@ main (int argc, char **argv)
 
   valhalla_verbosity (verbosity);
 
-  handle = valhalla_init (database, parser_nb, commit);
+  handle = valhalla_init (database, parser_nb, kid, commit);
   if (!handle)
     return -1;
 
@@ -171,6 +180,12 @@ main (int argc, char **argv)
     valhalla_suffix_add (handle, "wav");
     valhalla_suffix_add (handle, "wma");
     printf ("Default suffixes: ogg,mp3,m4a,flac,wav,wma\n");
+  }
+
+  for (i = 0; i < kid; i++)
+  {
+    valhalla_bl_keyword_add (handle, keyword[i]);
+    printf ("Add keyword in the blacklist: %s\n", keyword[i]);
   }
 
   if (download)
