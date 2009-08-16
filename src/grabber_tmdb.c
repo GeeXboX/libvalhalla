@@ -45,7 +45,7 @@
 #define TMDB_QUERY_INFO   "http://%s/2.0/Movie.getInfo?id=%s&api_key=%s"
 
 typedef struct grabber_tmdb_s {
-  url_t  *handler;
+  url_t *handler;
 } grabber_tmdb_t;
 
 static const struct {
