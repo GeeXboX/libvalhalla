@@ -47,15 +47,6 @@
 #define TMDB_QUERY_SEARCH "http://%s/2.0/Movie.search?title=%s&api_key=%s"
 #define TMDB_QUERY_INFO   "http://%s/2.0/Movie.getInfo?id=%s&api_key=%s"
 
-#define tmdb_parse(nd, tag, name, group)                          \
-  xml_search_str (nd, tag, &res_str);                             \
-  if (res_str)                                                    \
-  {                                                               \
-    metadata_add (&fdata->meta_grabber, name, res_str, group);    \
-    free (res_str);                                               \
-    res_str = NULL;                                               \
-  }
-
 typedef struct grabber_tmdb_s {
   url_t  *handler;
 } grabber_tmdb_t;
@@ -74,6 +65,24 @@ static const struct {
   { "producer",                     "producer"                    },
   { NULL,                           NULL                          }
 };
+
+static void
+tmdb_parse (file_data_t *fdata, xmlNode *nd, const char *tag,
+            const char *name, valhalla_meta_grp_t group)
+{
+  char *res = NULL;
+
+  if (!fdata || !nd || !tag || !name)
+    return;
+
+  xml_search_str (nd, tag, &res);
+  if (res)
+  {
+    metadata_add (&fdata->meta_grabber, name, res, group);
+    free (res);
+    res = NULL;
+  }
+}
 
 static void
 grabber_tmdb_add_person (file_data_t *fdata, xmlNode *node, const char *cat)
@@ -138,7 +147,6 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   xmlChar *tmp;
   xmlNode *n, *node;
 
-  char *res_str;
   int res_int;
   int i;
 
@@ -211,11 +219,12 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch movie overview description */
-  tmdb_parse (n, "short_overview",
+  tmdb_parse (fdata, n, "short_overview",
               "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie runtime (in minutes) */
-  tmdb_parse (n, "runtime", "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+  tmdb_parse (fdata, n, "runtime",
+              "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
   xml_search_int (n, "release", &res_int);
@@ -242,10 +251,10 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch movie budget */
-  tmdb_parse (n, "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
+  tmdb_parse (fdata, n, "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie revenue */
-  tmdb_parse (n, "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
+  tmdb_parse (fdata, n, "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie country */
   node = get_node_xml_tree (n, "country");
