@@ -111,7 +111,7 @@ typedef enum valhalla_dl {
  * This feature is very useful when the grabber support is compiled because
  * the title is used as keywords in a lot of grabbers.
  *
- * The interval for \p commit_int is the number of files to be inserted or
+ * The interval for \p commit_int is the number of data to be inserted or
  * updated in one pass. A value between 100 and 200 is a good choice. If the
  * value is <=0, then the default interval is used (128).
  *
