@@ -37,9 +37,6 @@
 
 #define MAX_URL_SIZE      1024
 
-#define PATH_BACKDROPS    "backdrops"
-#define PATH_COVERS       "covers"
-
 #define TMDB_HOSTNAME     "api.themoviedb.org"
 
 #define TMDB_API_KEY      "5401cd030990fba60e1c23d2832de62e"
