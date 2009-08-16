@@ -53,7 +53,7 @@
   "Default values are loop=1, timewait=0, database=./valhalla.db,\n" \
   "                   commit-int=128, parser=2, priority=19,\n" \
   "                   suffix=ogg,mp3,m4a,flac,wav,wma\n" \
-  "                          avi,mkv,mpg,wmv\n" \
+  "                          avi,mkv,mpg,wmv,mov\n" \
   "\n"
 
 #define SUFFIX_MAX 16
@@ -187,9 +187,10 @@ main (int argc, char **argv)
     valhalla_suffix_add (handle, "mkv");
     valhalla_suffix_add (handle, "mpg");
     valhalla_suffix_add (handle, "wmv");
+    valhalla_suffix_add (handle, "mov");
 
     printf ("Default suffixes: ogg,mp3,m4a,flac,wav,wma\n"
-            "                  avi,mkv,mpg,wmv\n");
+            "                  avi,mkv,mpg,wmv,mov\n");
   }
 
   for (i = 0; i < kid; i++)
