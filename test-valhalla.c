@@ -53,6 +53,7 @@
   "Default values are loop=1, timewait=0, database=./valhalla.db,\n" \
   "                   commit-int=128, parser=2, priority=19,\n" \
   "                   suffix=ogg,mp3,m4a,flac,wav,wma\n" \
+  "                          avi,mkv,mpg,wmv\n" \
   "\n"
 
 #define SUFFIX_MAX 16
