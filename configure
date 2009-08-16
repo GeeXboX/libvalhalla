@@ -414,6 +414,7 @@ grabber_all="no"
 grabber_dummy="no"
 grabber_amazon="no"
 grabber_lyricwiki="no"
+grabber_tmdb="no"
 logcolor="yes"
 doc="no"
 
