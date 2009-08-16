@@ -331,7 +331,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   }
   free (cover);
 
-  return 0;
+  return res;
 }
 
 static void
