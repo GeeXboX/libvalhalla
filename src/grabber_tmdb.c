@@ -224,7 +224,8 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
     char v[64] = { 0 };
 
     snprintf (v, 64, "%d", res_int);
-    metadata_add (&fdata->meta_grabber, "year", v, VALHALLA_META_GRP_TEMPORAL);
+    metadata_add (&fdata->meta_grabber, "year",
+                  v, VALHALLA_META_GRP_TEMPORAL);
     res_int = 0;
   }
 
@@ -328,9 +329,9 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   return -1;
 }
 
-/*****************************************************************************/
-/* Private Grabber API                                                       */
-/*****************************************************************************/
+/****************************************************************************/
+/* Private Grabber API                                                      */
+/****************************************************************************/
 
 static void *
 grabber_tmdb_priv (void)
@@ -398,9 +399,9 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
   return res;
 }
 
-/*****************************************************************************/
-/* Public Grabber API                                                        */
-/*****************************************************************************/
+/****************************************************************************/
+/* Public Grabber API                                                       */
+/****************************************************************************/
 
 /* grabber_tmdb_register () */
 GRABBER_REGISTER (tmdb,
