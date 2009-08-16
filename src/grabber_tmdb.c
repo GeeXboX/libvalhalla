@@ -379,10 +379,6 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  /* ensure we're handling a video file */
-  if (data->type != VALHALLA_FILE_TYPE_VIDEO)
-    return -1;
-
   /*
    * Try with the video's title.
    */
