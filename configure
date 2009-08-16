@@ -43,6 +43,7 @@ show_help(){
   echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
   echo "  --enable-grabber-amazon     build amazon grabber [default=no]"
+  echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=no]"
   echo ""
   echo "Search paths:"
@@ -412,6 +413,7 @@ pkgconfig_requires=""
 grabber_all="no"
 grabber_dummy="no"
 grabber_amazon="no"
+grabber_lyricwiki="no"
 logcolor="yes"
 doc="no"
 
@@ -480,6 +482,10 @@ for opt do
   --enable-grabber-amazon) grabber_amazon="yes";
   ;;
   --disable-grabber-amazon) grabber_amazon="no";
+  ;;
+  --enable-grabber-lyricwiki) grabber_lyricwiki="yes";
+  ;;
+  --disable-grabber-lyricwiki) grabber_lyricwiki="no";
   ;;
   --enable-grabber-tmdb) grabber_tmdb="yes";
   ;;
@@ -823,6 +829,7 @@ md5="no"
 if enabled grabber_all; then
   grabber_amazon="yes"
   grabber_tmdb="yes"
+  grabber_lyricwiki="yes"
 fi
 
 if enabled grabber_dummy; then
@@ -835,6 +842,12 @@ if enabled grabber_amazon; then
   grabber="yes"
   xml="yes"
   md5="yes"
+fi
+
+if enabled grabber_lyricwiki; then
+  add_cflags -DHAVE_GRABBER_LYRICWIKI
+  grabber="yes"
+  xml="yes"
 fi
 
 if enabled grabber_tmdb; then
@@ -946,6 +959,7 @@ echolog ""
 echolog "  Grabbers support:  $grabber"
 echolog "    Dummy            $grabber_dummy"
 echolog "    Amazon           $grabber_amazon"
+echolog "    LyricWiki        $grabber_lyricwiki"
 echolog "    TheMovieDB       $grabber_tmdb"
 echolog ""
 echolog "Miscellaneous:"
@@ -999,6 +1013,7 @@ append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_AMAZON=$grabber_amazon"
+append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
 append_config "GRABBER_TMDB=$grabber_tmdb"
 
 append_config "DEBUG=$debug"

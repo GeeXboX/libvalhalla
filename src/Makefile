@@ -48,6 +48,9 @@ endif
 ifeq ($(GRABBER_AMAZON),yes)
   SRCS += grabber_amazon.c
 endif
+ifeq ($(GRABBER_LYRICWIKI),yes)
+  SRCS += grabber_lyricwiki.c
+endif
 ifeq ($(GRABBER_TMDB),yes)
   SRCS += grabber_tmdb.c
 endif
