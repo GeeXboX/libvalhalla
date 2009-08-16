@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "grabber_common.h"
-#include "grabber_tmdb.h"
+#include "grabber_lyricwiki.h"
 #include "metadata.h"
 #include "xml_utils.h"
 #include "url_utils.h"
