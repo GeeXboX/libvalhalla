@@ -195,7 +195,8 @@ grabber_thread (void *arg)
       res = it->grab (it->priv, pdata);
       if (res)
         valhalla_log (VALHALLA_MSG_WARNING,
-                      "[%s] grabbing failed (%i)", it->name, res);
+                      "[%s] grabbing failed (%i): %s",
+                      it->name, res, pdata->file);
 
       /* at least still one grabber for this file ? */
       GRABBER_IS_AVAILABLE
