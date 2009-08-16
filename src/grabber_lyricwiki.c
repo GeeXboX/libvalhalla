@@ -19,6 +19,7 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,6 +40,9 @@
 #define LYRICWIKI_HOSTNAME     "lyricwiki.org"
 #define LYRICWIKI_QUERY_SEARCH "http://%s/api.php?artist=%s&song=%s&fmt=xml"
 
+#define LYRICWIKI_BOX_START    "<div class='lyricbox' >"
+#define LYRICWIKI_BOX_END      "<p>"
+
 typedef struct grabber_lyricwiki_s {
   url_t *handler;
 } grabber_lyricwiki_t;
@@ -49,7 +53,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
-  char *lyrics = NULL;
+  char *html = NULL;
 
   xmlDocPtr doc;
 
@@ -73,19 +77,53 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
   if (!doc)
     return -1;
 
-  /* fetch lyrics */
-  xml_search_str (xmlDocGetRootElement (doc), "lyrics", &lyrics);
+  /* fetch lyrics URL */
+  xml_search_str (xmlDocGetRootElement (doc), "url", &html);
+  xmlFreeDoc (doc);
 
-  /* check if lyrics have been found */
-  if (lyrics)
+  if (html)
   {
-    if (strcmp (lyrics, "Not found"))
-      metadata_add (&fdata->meta_grabber, "lyrics",
-                    lyrics, VALHALLA_META_GRP_MISCELLANEOUS);
+    char *start, *end, *txt, *lyrics;
+    int len, i, j;
+
+    udata = url_get_data (handler, html);
+    free (html);
+    if (udata.status != 0)
+      return -1;
+
+    /* parse HTML page */
+    start = strstr (udata.buffer, LYRICWIKI_BOX_START);
+    if (!start)
+      return -1;
+
+    end = strstr (start + strlen (LYRICWIKI_BOX_START), LYRICWIKI_BOX_END);
+    if (!end)
+      return -1;
+
+    len = strlen (start) - strlen (LYRICWIKI_BOX_START) - strlen (end);
+    txt = strndup (start + strlen (LYRICWIKI_BOX_START), len);
+
+    lyrics = calloc (1, strlen (txt));
+    for (i = 0, j = 0; i < strlen (txt); i++)
+    {
+      if (txt[i] == '<') /* escape <br /> */
+      {
+        i += 5;
+        lyrics[j] = '\n';
+      }
+      else
+        lyrics[j] = txt[i];
+      j++;
+    }
+
+    metadata_add (&fdata->meta_grabber, "lyrics",
+                  lyrics, VALHALLA_META_GRP_MISCELLANEOUS);
+
+    free (txt);
     free (lyrics);
+    free (udata.buffer);
   }
 
-  xmlFreeDoc (doc);
   return 0;
 }
 
