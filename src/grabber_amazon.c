@@ -133,7 +133,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
 
   if (!asin)
   {
-    valhalla_log (VALHALLA_MSG_WARNING,
+    valhalla_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
     return -1;
   }
@@ -176,7 +176,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   cover_url = get_prop_value_from_xml_tree (img, "URL");
   if (!cover_url)
   {
-    valhalla_log (VALHALLA_MSG_WARNING,
+    valhalla_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the cover for %s", escaped_keywords);
     xmlFreeDoc(doc);
     return -1;
