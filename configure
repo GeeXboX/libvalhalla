@@ -42,7 +42,8 @@ show_help(){
   echo "Grabbers options:"
   echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
-  echo "  --enable-grabber-amazon     build Amazon grabber [default=no]"
+  echo "  --enable-grabber-amazon     build amazon grabber [default=no]"
+  echo "  --enable-grabber-exif       build EXIF grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=no]"
   echo ""
@@ -60,6 +61,7 @@ show_help(){
   echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
   echo "  --with-curl-dir=DIR         check for cURL installed in DIR"
   echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
+  echo "  --with-exif-dir=DIR         check for libexif installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -413,6 +415,7 @@ pkgconfig_requires=""
 grabber_all="no"
 grabber_dummy="no"
 grabber_amazon="no"
+grabber_exif="no"
 grabber_lyricwiki="no"
 grabber_tmdb="no"
 logcolor="yes"
@@ -472,6 +475,8 @@ for opt do
   ;;
   --width-xml2-dir=*) xml2dir="$optval";
   ;;
+  --width-exif-dir=*) exifdir="$optval";
+  ;;
   --enable-grabbers) grabber_all="yes";
   ;;
   --disable-grabbers) grabber_all="no";
@@ -483,6 +488,10 @@ for opt do
   --enable-grabber-amazon) grabber_amazon="yes";
   ;;
   --disable-grabber-amazon) grabber_amazon="no";
+  ;;
+  --enable-grabber-exif) grabber_exif="yes";
+  ;;
+  --disable-grabber-exif) grabber_exif="no";
   ;;
   --enable-grabber-lyricwiki) grabber_lyricwiki="yes";
   ;;
@@ -826,9 +835,11 @@ restore_flags
 grabber="no"
 xml="no"
 md5="no"
+exif="no"
 
 if enabled grabber_all; then
   grabber_amazon="yes"
+  grabber_exif="yes"
   grabber_tmdb="yes"
   grabber_lyricwiki="yes"
 fi
@@ -843,6 +854,12 @@ if enabled grabber_amazon; then
   grabber="yes"
   xml="yes"
   md5="yes"
+fi
+
+if enabled grabber_exif; then
+  add_cflags -DHAVE_GRABBER_EXIF
+  grabber="yes"
+  exif="yes"
 fi
 
 if enabled grabber_lyricwiki; then
@@ -892,6 +909,23 @@ if enabled xml; then
   echolog "Checking for libxml2 ..."
   check_lib libxml/parser.h xmlReadMemory -lxml2 || die "Error, can't find libxml2 !"
   add_pkgconfig_requires libxml-2.0
+fi
+
+if enabled exif; then
+  ###############################################
+  #   check for libexif
+  ###############################################
+  if [ -n "$exifdir" ]; then
+    check_cflags -I$exifdir
+    check_ldflags -L$exifdir
+  fi
+  if [ -z  "$exifdir" ]; then
+    add_pkgconfig_deps libexif
+  fi
+
+  echolog "Checking for libexif ..."
+  check_lib libexif/exif-data.h exif_entry_get_value -lexif || die "Error, can't find libexif !"
+  add_pkgconfig_requires libexif
 fi
 
 if enabled md5; then
@@ -960,6 +994,7 @@ echolog ""
 echolog "  Grabbers support:  $grabber"
 echolog "    Dummy            $grabber_dummy"
 echolog "    Amazon           $grabber_amazon"
+echolog "    EXIF             $grabber_exif"
 echolog "    LyricWiki        $grabber_lyricwiki"
 echolog "    TheMovieDB       $grabber_tmdb"
 echolog ""
@@ -1010,10 +1045,12 @@ if enabled bigendian; then
 fi
 
 append_config "XML=$xml"
+append_config "EXIF=$exif"
 append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_AMAZON=$grabber_amazon"
+append_config "GRABBER_EXIF=$grabber_exif"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
 append_config "GRABBER_TMDB=$grabber_tmdb"
 
