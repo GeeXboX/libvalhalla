@@ -50,6 +50,11 @@ struct dbmanager_s {
   unsigned int  commit_int;
 };
 
+typedef struct dbmanager_stats_s {
+  int file_insert, file_update, file_nochange;
+  int grab_insert, grab_update;
+} dbmanager_stats_t;
+
 
 static inline int
 dbmanager_is_stopped (dbmanager_t *dbmanager)
@@ -68,8 +73,7 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
     sem_post (&pdata->sem_grabber);
 
 static int
-dbmanager_queue (dbmanager_t *dbmanager,
-                 int *stats_insert, int *stats_update, int *stats_nochange)
+dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 {
   int res;
   int e;
@@ -98,7 +102,8 @@ dbmanager_queue (dbmanager_t *dbmanager,
 
     /* Manage BEGIN / COMMIT transactions */
     database_step_transaction (dbmanager->database, dbmanager->commit_int,
-                               *stats_insert + *stats_update);
+                               stats->file_insert + stats->file_update +
+                               stats->grab_insert + stats->grab_update);
 
     switch (e)
     {
@@ -113,25 +118,27 @@ dbmanager_queue (dbmanager_t *dbmanager,
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_INSERT_P:
       database_file_data_insert (dbmanager->database, pdata);
-      (*stats_insert)++;
+      stats->file_insert++;
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       database_file_grab_insert (dbmanager->database, pdata);
       METADATA_GRABBER_POST
+      stats->grab_insert++;
       continue;
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_UPDATE_P:
       database_file_data_update (dbmanager->database, pdata);
-      (*stats_update)++;
+      stats->file_update++;
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_UPDATE_G:
       database_file_grab_update (dbmanager->database, pdata);
       METADATA_GRABBER_POST
+      stats->grab_update++;
       continue;
 
     /* received from the scanner */
@@ -152,7 +159,7 @@ dbmanager_queue (dbmanager_t *dbmanager,
         continue;
       }
 
-      (*stats_nochange)++;
+      stats->file_nochange++;
     }
     }
 
@@ -178,18 +185,17 @@ dbmanager_thread (void *arg)
 
   do
   {
-    int stats_insert   = 0;
-    int stats_update   = 0;
+    dbmanager_stats_t stats = {
+      0, 0, 0, 0, 0
+    };
     int stats_delete   = 0;
-    int stats_nochange = 0;
     int stats_cleanup  = 0;
 
     /* Clear all checked__ files */
     database_file_checked_clear (dbmanager->database);
 
     database_begin_transaction (dbmanager->database);
-    rc =
-      dbmanager_queue (dbmanager, &stats_insert, &stats_update, &stats_nochange);
+    rc = dbmanager_queue (dbmanager, &stats);
     database_end_transaction (dbmanager->database);
 
     /*
@@ -212,18 +218,18 @@ dbmanager_thread (void *arg)
     database_end_transaction (dbmanager->database);
 
     /* Clean all relations */
-    if (stats_update || stats_delete)
+    if (stats.file_update || stats.grab_update || stats_delete)
       stats_cleanup = database_cleanup (dbmanager->database);
 
     /* Statistics */
     valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files inserted    : %i", __FUNCTION__, stats_insert);
+                  "[%s] Files inserted    : %i", __FUNCTION__, stats.file_insert);
     valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files updated     : %i", __FUNCTION__, stats_update);
+                  "[%s] Files updated     : %i", __FUNCTION__, stats.file_update);
     valhalla_log (VALHALLA_MSG_INFO,
                   "[%s] Files deleted     : %i", __FUNCTION__, stats_delete);
     valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files unchanged   : %i", __FUNCTION__, stats_nochange);
+                  "[%s] Files unchanged   : %i", __FUNCTION__, stats.file_nochange);
     valhalla_log (VALHALLA_MSG_INFO,
                   "[%s] Relations cleanup : %i", __FUNCTION__, stats_cleanup);
   }
