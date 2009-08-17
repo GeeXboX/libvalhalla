@@ -94,11 +94,17 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     /* parse HTML page */
     start = strstr (udata.buffer, LYRICWIKI_BOX_START);
     if (!start)
+    {
+      free (udata.buffer);
       return -1;
+    }
 
     end = strstr (start + strlen (LYRICWIKI_BOX_START), LYRICWIKI_BOX_END);
     if (!end)
+    {
+      free (udata.buffer);
       return -1;
+    }
 
     len = strlen (start) - strlen (LYRICWIKI_BOX_START) - strlen (end);
     txt = strndup (start + strlen (LYRICWIKI_BOX_START), len);
