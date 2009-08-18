@@ -42,7 +42,7 @@ show_help(){
   echo "Grabbers options:"
   echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
-  echo "  --enable-grabber-amazon     build amazon grabber [default=no]"
+  echo "  --enable-grabber-amazon     build Amazon grabber [default=no]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=no]"
