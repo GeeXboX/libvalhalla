@@ -46,6 +46,7 @@ show_help(){
   echo "  --enable-grabber-exif       build EXIF grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=no]"
+  echo "  --enable-grabber-tvrage     build TVRage.com grabber [default=no]"
   echo ""
   echo "Search paths:"
   echo "  --with-lavf=PATH            specify prefix directory for libavformat package."
@@ -418,6 +419,7 @@ grabber_amazon="no"
 grabber_exif="no"
 grabber_lyricwiki="no"
 grabber_tmdb="no"
+grabber_tvrage="no"
 logcolor="yes"
 doc="no"
 
@@ -500,6 +502,10 @@ for opt do
   --enable-grabber-tmdb) grabber_tmdb="yes";
   ;;
   --disable-grabber-tmdb) grabber_tmdb="no";
+  ;;
+  --enable-grabber-tvrage) grabber_tvrage="yes";
+  ;;
+  --disable-grabber-tvrage) grabber_tvrage="no";
   ;;
   --enable-logcolor) logcolor="yes";
   ;;
@@ -841,6 +847,7 @@ if enabled grabber_all; then
   grabber_amazon="yes"
   grabber_exif="yes"
   grabber_tmdb="yes"
+  grabber_tvrage="yes"
   grabber_lyricwiki="yes"
 fi
 
@@ -870,6 +877,13 @@ fi
 
 if enabled grabber_tmdb; then
   add_cflags -DHAVE_GRABBER_TMDB
+  grabber="yes"
+  xml="yes"
+  md5="yes"
+fi
+
+if enabled grabber_tvrage; then
+  add_cflags -DHAVE_GRABBER_TVRAGE
   grabber="yes"
   xml="yes"
   md5="yes"
@@ -997,6 +1011,7 @@ echolog "    Amazon           $grabber_amazon"
 echolog "    EXIF             $grabber_exif"
 echolog "    LyricWiki        $grabber_lyricwiki"
 echolog "    TheMovieDB       $grabber_tmdb"
+echolog "    TVRage           $grabber_tvrage"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  Documentation:     $doc"
@@ -1053,6 +1068,7 @@ append_config "GRABBER_AMAZON=$grabber_amazon"
 append_config "GRABBER_EXIF=$grabber_exif"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
 append_config "GRABBER_TMDB=$grabber_tmdb"
+append_config "GRABBER_TVRAGE=$grabber_tvrage"
 
 append_config "DEBUG=$debug"
 append_config "DOC=$doc"

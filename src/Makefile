@@ -57,6 +57,9 @@ endif
 ifeq ($(GRABBER_TMDB),yes)
   SRCS += grabber_tmdb.c
 endif
+ifeq ($(GRABBER_TVRAGE),yes)
+  SRCS += grabber_tvrage.c
+endif
 endif
 
 OBJS = $(SRCS:.c=.o)

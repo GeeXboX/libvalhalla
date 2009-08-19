@@ -50,6 +50,9 @@
 #ifdef HAVE_GRABBER_TMDB
 #include "grabber_tmdb.h"
 #endif /* HAVE_GRABBER_TMDB */
+#ifdef HAVE_GRABBER_TVRAGE
+#include "grabber_tvrage.h"
+#endif /* HAVE_GRABBER_TVRAGE */
 
 struct grabber_s {
   valhalla_t   *valhalla;
@@ -84,6 +87,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_TMDB
   grabber_tmdb_register,
 #endif /* HAVE_GRABBER_TMDB */
+#ifdef HAVE_GRABBER_TVRAGE
+  grabber_tvrage_register,
+#endif /* HAVE_GRABBER_TVRAGE */
   NULL
 };
 
