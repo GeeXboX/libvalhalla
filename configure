@@ -846,9 +846,9 @@ exif="no"
 if enabled grabber_all; then
   grabber_amazon="yes"
   grabber_exif="yes"
+  grabber_lyricwiki="yes"
   grabber_tmdb="yes"
   grabber_tvrage="yes"
-  grabber_lyricwiki="yes"
 fi
 
 if enabled grabber_dummy; then
