@@ -30,7 +30,6 @@
 #include "url_utils.h"
 #include "utils.h"
 #include "logs.h"
-#include "md5.h"
 
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
