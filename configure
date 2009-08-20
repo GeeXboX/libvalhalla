@@ -886,7 +886,6 @@ if enabled grabber_tvrage; then
   add_cflags -DHAVE_GRABBER_TVRAGE
   grabber="yes"
   xml="yes"
-  md5="yes"
 fi
 
 if enabled grabber; then
