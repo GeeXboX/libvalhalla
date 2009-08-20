@@ -28,6 +28,7 @@
 #include "metadata.h"
 #include "xml_utils.h"
 #include "url_utils.h"
+#include "grabber_utils.h"
 #include "utils.h"
 #include "logs.h"
 
@@ -45,24 +46,6 @@
 typedef struct grabber_tvrage_s {
   url_t *handler;
 } grabber_tvrage_t;
-
-static void
-tvrage_parse (file_data_t *fdata, xmlNode *nd, const char *tag,
-              const char *name, valhalla_meta_grp_t group)
-{
-  char *res = NULL;
-
-  if (!fdata || !nd || !tag || !name)
-    return;
-
-  xml_search_str (nd, tag, &res);
-  if (res)
-  {
-    metadata_add (&fdata->meta_grabber, name, res, group);
-    free (res);
-    res = NULL;
-  }
-}
 
 static int
 grabber_tvrage_get (url_t *handler, file_data_t *fdata,
@@ -148,16 +131,16 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show country */
-  tvrage_parse (fdata, n, "origin_country",
-                "country", VALHALLA_META_GRP_COMMERCIAL);
+  grabber_parse_str (fdata, n, "origin_country",
+                     "country", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch tv show studio */
-  tvrage_parse (fdata, n, "network",
-                "studio", VALHALLA_META_GRP_COMMERCIAL);
+  grabber_parse_str (fdata, n, "network",
+                     "studio", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch tv show runtime (in minutes) */
-  tvrage_parse (fdata, n, "runtime",
-                "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+  grabber_parse_str (fdata, n, "runtime",
+                     "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie categories */
   node = get_node_xml_tree (n, "genre");
