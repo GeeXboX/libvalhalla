@@ -45,6 +45,9 @@ endif
 ifeq ($(GRABBER_DUMMY),yes)
   SRCS += grabber_dummy.c
 endif
+ifeq ($(GRABBER_ALLOCINE),yes)
+  SRCS += grabber_allocine.c
+endif
 ifeq ($(GRABBER_AMAZON),yes)
   SRCS += grabber_amazon.c
 endif

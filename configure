@@ -42,6 +42,7 @@ show_help(){
   echo "Grabbers options:"
   echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
+  echo "  --enable-grabber-allocine   build Allocine grabber [default=no]"
   echo "  --enable-grabber-amazon     build Amazon grabber [default=no]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
@@ -415,6 +416,7 @@ VERSION=""
 pkgconfig_requires=""
 grabber_all="no"
 grabber_dummy="no"
+grabber_allocine="no"
 grabber_amazon="no"
 grabber_exif="no"
 grabber_lyricwiki="no"
@@ -486,6 +488,10 @@ for opt do
   --enable-grabber-dummy) grabber_dummy="yes";
   ;;
   --disable-grabber-dummy) grabber_dummy="no";
+  ;;
+  --enable-grabber-allocine) grabber_allocine="yes";
+  ;;
+  --disable-grabber-allocine) grabber_allocine="no";
   ;;
   --enable-grabber-amazon) grabber_amazon="yes";
   ;;
@@ -844,6 +850,7 @@ md5="no"
 exif="no"
 
 if enabled grabber_all; then
+  grabber_allocine="yes"
   grabber_amazon="yes"
   grabber_exif="yes"
   grabber_lyricwiki="yes"
@@ -854,6 +861,12 @@ fi
 if enabled grabber_dummy; then
   add_cflags -DHAVE_GRABBER_DUMMY
   grabber="yes"
+fi
+
+if enabled grabber_allocine; then
+  add_cflags -DHAVE_GRABBER_ALLOCINE
+  grabber="yes"
+  xml="yes"
 fi
 
 if enabled grabber_amazon; then
@@ -1007,6 +1020,7 @@ echolog "  extralibs          $extralibs"
 echolog ""
 echolog "  Grabbers support:  $grabber"
 echolog "    Dummy            $grabber_dummy"
+echolog "    Allocine         $grabber_allocine"
 echolog "    Amazon           $grabber_amazon"
 echolog "    EXIF             $grabber_exif"
 echolog "    LyricWiki        $grabber_lyricwiki"
@@ -1064,6 +1078,7 @@ append_config "EXIF=$exif"
 append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
+append_config "GRABBER_ALLOCINE=$grabber_allocine"
 append_config "GRABBER_AMAZON=$grabber_amazon"
 append_config "GRABBER_EXIF=$grabber_exif"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
