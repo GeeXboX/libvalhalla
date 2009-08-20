@@ -28,6 +28,7 @@
 #include "metadata.h"
 #include "xml_utils.h"
 #include "url_utils.h"
+#include "grabber_utils.h"
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
@@ -47,66 +48,6 @@
 typedef struct grabber_tmdb_s {
   url_t *handler;
 } grabber_tmdb_t;
-
-static const struct {
-  const char *tag;
-  const char *name;
-} tmdb_person_mapping[] = {
-  { "actor",                        "actor"                       },
-  { "author",                       "author"                      },
-  { "casting",                      "casting"                     },
-  { "director",                     "director"                    },
-  { "director_of_photography",      "director_of_photography"     },
-  { "editor",                       "editor"                      },
-  { "original_music_composer",      "composer"                    },
-  { "producer",                     "producer"                    },
-  { NULL,                           NULL                          }
-};
-
-static void
-tmdb_parse (file_data_t *fdata, xmlNode *nd, const char *tag,
-            const char *name, valhalla_meta_grp_t group)
-{
-  char *res = NULL;
-
-  if (!fdata || !nd || !tag || !name)
-    return;
-
-  xml_search_str (nd, tag, &res);
-  if (res)
-  {
-    metadata_add (&fdata->meta_grabber, name, res, group);
-    free (res);
-    res = NULL;
-  }
-}
-
-static void
-grabber_tmdb_add_person (file_data_t *fdata, xmlNode *node, const char *cat)
-{
-  char *name = NULL, *role = NULL;
-
-  if (!fdata || !node || !cat)
-    return;
-
-  xml_search_str (node, "name", &name);
-  xml_search_str (node, "role", &role);
-
-  if (name)
-  {
-    char str[128] = { 0 };
-
-    if (role && strcmp (role, ""))
-      snprintf (str, sizeof (str), "%s (%s)", name, role);
-    else
-      snprintf (str, sizeof (str), "%s", name);
-    free (name);
-    metadata_add (&fdata->meta_grabber, cat, str, VALHALLA_META_GRP_ENTITIES);
-  }
-
-  if (role)
-    free (role);
-}
 
 static void
 grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
@@ -145,7 +86,6 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   xmlNode *n, *node;
 
   int res_int;
-  int i;
 
   if (!keywords || !escaped_keywords)
     return -1;
@@ -216,22 +156,18 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch movie overview description */
-  tmdb_parse (fdata, n, "short_overview",
-              "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
+  grabber_parse_str (fdata, n, "short_overview",
+                     "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie runtime (in minutes) */
-  tmdb_parse (fdata, n, "runtime",
-              "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+  grabber_parse_str (fdata, n, "runtime",
+                     "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
   xml_search_int (n, "release", &res_int);
   if (res_int)
   {
-    char v[64] = { 0 };
-
-    snprintf (v, 64, "%d", res_int);
-    metadata_add (&fdata->meta_grabber, "year",
-                  v, VALHALLA_META_GRP_TEMPORAL);
+    grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
     res_int = 0;
   }
 
@@ -239,19 +175,18 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   xml_search_int (n, "rating", &res_int);
   if (res_int)
   {
-    char v[64] = { 0 };
-
-    snprintf (v, 64, "%d", res_int / 2);
-    metadata_add (&fdata->meta_grabber, "rating",
-                  v, VALHALLA_META_GRP_PERSONAL);
+    grabber_parse_int (fdata, res_int / 2,
+                       "rating", VALHALLA_META_GRP_PERSONAL);
     res_int = 0;
   }
 
   /* fetch movie budget */
-  tmdb_parse (fdata, n, "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
+  grabber_parse_str (fdata, n,
+                     "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie revenue */
-  tmdb_parse (fdata, n, "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
+  grabber_parse_str (fdata, n,
+                     "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie country */
   node = get_node_xml_tree (n, "country");
@@ -267,45 +202,10 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch movie categories */
-  node = get_node_xml_tree (n, "category");
-  for (i = 0; i < 5; i++)
-  {
-    if (!node)
-      break;
-
-    tmp = get_prop_value_from_xml_tree (node, "name");
-    if (tmp)
-    {
-      metadata_add (&fdata->meta_grabber, "category",
-                    (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
-      xmlFree (tmp);
-    }
-    node = node->next;
-  }
+  grabber_parse_categories (fdata, n);
 
   /* fetch movie people */
-  node = get_node_xml_tree (n, "person");
-  while (node)
-  {
-    xmlChar *ch;
-
-    ch = get_attr_value_from_node (node, "job");
-    if (!ch)
-    {
-      node = node->next;
-      continue;
-    }
-
-    for (i = 0; tmdb_person_mapping[i].tag; i++)
-      if (!strcmp ((char *) ch, tmdb_person_mapping[i].tag))
-      {
-        grabber_tmdb_add_person (fdata, node, tmdb_person_mapping[i].name);
-        break;
-      }
-
-    xmlFree (ch);
-    node = node->next;
-  }
+  grabber_parse_casting (fdata, n);
 
   /* fetch movie poster */
   tmp = get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "cover");
