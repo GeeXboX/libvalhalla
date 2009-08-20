@@ -30,41 +30,23 @@ SRCS =  database.c \
 	utils.c \
 	valhalla.c \
 
-ifeq ($(GRABBER),yes)
-  SRCS += downloader.c \
-          grabber.c \
-          grabber_utils.c \
-          list.c \
-          url_utils.c \
+SRCS_GRABBER-$(GRABBER)			+= downloader.c \
+					   grabber.c \
+					   grabber_utils.c \
+					   list.c \
+					   url_utils.c \
 
-ifeq ($(XML),yes)
-  SRCS += xml_utils.c
-endif
-ifeq ($(MD5),yes)
-  SRCS += md5.c
-endif
-ifeq ($(GRABBER_DUMMY),yes)
-  SRCS += grabber_dummy.c
-endif
-ifeq ($(GRABBER_ALLOCINE),yes)
-  SRCS += grabber_allocine.c
-endif
-ifeq ($(GRABBER_AMAZON),yes)
-  SRCS += grabber_amazon.c
-endif
-ifeq ($(GRABBER_EXIF),yes)
-  SRCS += grabber_exif.c
-endif
-ifeq ($(GRABBER_LYRICWIKI),yes)
-  SRCS += grabber_lyricwiki.c
-endif
-ifeq ($(GRABBER_TMDB),yes)
-  SRCS += grabber_tmdb.c
-endif
-ifeq ($(GRABBER_TVRAGE),yes)
-  SRCS += grabber_tvrage.c
-endif
-endif
+SRCS_GRABBER-$(XML)			+= xml_utils.c
+SRCS_GRABBER-$(MD5)			+= md5.c
+SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c
+SRCS_GRABBER-$(GRABBER_ALLOCINE)	+= grabber_allocine.c
+SRCS_GRABBER-$(GRABBER_AMAZON)		+= grabber_amazon.c
+SRCS_GRABBER-$(GRABBER_EXIF)		+= grabber_exif.c
+SRCS_GRABBER-$(GRABBER_LYRICWIKI)	+= grabber_lyricwiki.c
+SRCS_GRABBER-$(GRABBER_TMDB)		+= grabber_tmdb.c
+SRCS_GRABBER-$(GRABBER_TVRAGE)		+= grabber_tvrage.c
+
+SRCS += $(SRCS_GRABBER-yes)
 
 OBJS = $(SRCS:.c=.o)
 
