@@ -147,6 +147,9 @@ typedef struct grabber_list_s {
    * The data is registered at the same time that the grabber.
    */
   void *priv;
+
+  /** \brief Different of 0 if the grabber is enabled. */
+  int enable;
 } grabber_list_t;
 
 
@@ -179,6 +182,7 @@ typedef struct grabber_list_s {
                                                                               \
     grabber->name      = #p_name;                                             \
     grabber->caps_flag = p_caps;                                              \
+    grabber->enable    = 1;                                                   \
     grabber->priv      = fct_priv ();                                         \
                                                                               \
     grabber->init      = fct_init;                                            \

@@ -138,7 +138,7 @@ file_type_supported (int caps_flag, valhalla_file_type_t type)
 #define GRABBER_IS_AVAILABLE                                  \
   grab = 0;                                                   \
   for (it = grabber->list, cnt = 0; it; it = it->next, cnt++) \
-    if (cnt >= pdata->grabber_cnt                             \
+    if (it->enable && cnt >= pdata->grabber_cnt               \
         && file_type_supported (it->caps_flag, pdata->type))  \
     {                                                         \
       grab = 1;                                               \
