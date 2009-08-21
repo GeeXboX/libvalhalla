@@ -36,6 +36,7 @@ enum grabber_errno {
 
 int grabber_run (grabber_t *grabber, int priority);
 fifo_queue_t *grabber_fifo_get (grabber_t *grabber);
+void grabber_state_set (grabber_t *grabber, const char *id, int enable);
 const char *grabber_list_get (grabber_t *grabber, const char *id);
 void grabber_stop (grabber_t *grabber);
 void grabber_uninit (grabber_t *grabber);

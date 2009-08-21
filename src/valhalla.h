@@ -208,6 +208,20 @@ void valhalla_download_dest_set (valhalla_t *handle,
                                  valhalla_dl_t dl, const char *dst);
 
 /**
+ * \brief Set the state of a grabber.
+ *
+ * By default, all grabbers are enabled.
+ *
+ * \warning This function must be called before valhalla_run()!
+ *          There is no effect if the grabber support is not compiled.
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] id          Grabber ID.
+ * \param[in] enable      0 to disable, !=0 to enable.
+ */
+void valhalla_grabber_state_set (valhalla_t *handle,
+                                 const char *id, int enable);
+
+/**
  * \brief Retrieve the ID of all grabbers compiled in Valhalla.
  *
  * The function returns the ID after \p id, or the first grabber ID if \p id

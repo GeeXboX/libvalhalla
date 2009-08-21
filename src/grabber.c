@@ -277,6 +277,24 @@ grabber_fifo_get (grabber_t *grabber)
   return grabber->fifo;
 }
 
+void
+grabber_state_set (grabber_t *grabber, const char *id, int enable)
+{
+  grabber_list_t *it;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!grabber)
+    return;
+
+  for (it = grabber->list; it; it = it->next)
+    if (!strcmp (it->name, id))
+    {
+      it->enable = enable;
+      break;
+    }
+}
+
 const char *
 grabber_list_get (grabber_t *grabber, const char *id)
 {
