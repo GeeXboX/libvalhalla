@@ -15,6 +15,10 @@
         grabbing when a file is updated.
         When files are downloaded and the reference on this file is no longer
         available in the DB, the file must be removed (covers, etc, ...).
+     -> Save in the database the state of all interrupted files in order
+        to avoid the calling of all grabbers. The list for the downloader
+        must be saved too. It will allow to save a lot of time for the next
+        scan.
 
  * Scanner
      -> Implement a system to add filters (to ignore some directories)
