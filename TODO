@@ -32,5 +32,3 @@
 
  * Grabber
      -> Import more grabbers from Enna.
-     -> Add an option in the public API to disable a grabber even if this one
-        is compiled in the library.
