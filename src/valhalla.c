@@ -302,6 +302,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 #else
   valhalla_log (VALHALLA_MSG_WARNING,
                 "This function is usable only with grabbing support!");
+  return NULL;
 #endif /* USE_GRABBER */
 }
 
