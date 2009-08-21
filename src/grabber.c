@@ -277,6 +277,30 @@ grabber_fifo_get (grabber_t *grabber)
   return grabber->fifo;
 }
 
+const char *
+grabber_list_get (grabber_t *grabber, const char *id)
+{
+  grabber_list_t *it;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!grabber)
+    return NULL;
+
+  if (!id) /* first grabber? */
+    return grabber->list ? grabber->list->name : NULL;
+
+  for (it = grabber->list; it; it = it->next)
+    if (!strcmp (it->name, id))
+      break;
+
+  if (!it)
+    return NULL;
+
+  it = it->next;
+  return it ? it->name : NULL;
+}
+
 void
 grabber_stop (grabber_t *grabber)
 {

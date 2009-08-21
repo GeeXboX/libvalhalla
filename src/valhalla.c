@@ -273,6 +273,22 @@ valhalla_download_dest_set (valhalla_t *handle,
 #endif /* USE_GRABBER */
 }
 
+const char *
+valhalla_grabber_list_get (valhalla_t *handle, const char *id)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return NULL;
+
+#ifdef USE_GRABBER
+  return grabber_list_get (handle->grabber, id);
+#else
+  valhalla_log (VALHALLA_MSG_WARNING,
+                "This function is usable only with grabbing support!");
+#endif /* USE_GRABBER */
+}
+
 void
 valhalla_verbosity (valhalla_verb_t level)
 {

@@ -208,6 +208,20 @@ void valhalla_download_dest_set (valhalla_t *handle,
                                  valhalla_dl_t dl, const char *dst);
 
 /**
+ * \brief Retrieve the ID of all grabbers compiled in Valhalla.
+ *
+ * The function returns the ID after \p id, or the first grabber ID if \p id
+ * is NULL.
+ *
+ * \warning This function must be called before valhalla_run()!
+ *          There is no effect if the grabber support is not compiled.
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] id          Grabber ID or NULL to retrieve the first.
+ * \return the next ID or NULL if \p id is the last (or on error).
+ */
+const char *valhalla_grabber_list_get (valhalla_t *handle, const char *id);
+
+/**
  * \brief Run the scanner, the database manager and all parsers.
  *
  * The \p priority can be set to all thread especially to run the system
