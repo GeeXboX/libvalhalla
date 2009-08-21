@@ -78,9 +78,6 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
   grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
-#ifdef HAVE_GRABBER_ALLOCINE
-  grabber_allocine_register,
-#endif /* HAVE_GRABBER_ALLOCINE */
 #ifdef HAVE_GRABBER_AMAZON
   grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */
@@ -96,6 +93,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_TVRAGE
   grabber_tvrage_register,
 #endif /* HAVE_GRABBER_TVRAGE */
+#ifdef HAVE_GRABBER_ALLOCINE
+  grabber_allocine_register,
+#endif /* HAVE_GRABBER_ALLOCINE */
   NULL
 };
 
