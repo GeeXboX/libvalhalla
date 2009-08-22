@@ -52,8 +52,8 @@
   "\n" \
   "Default values are loop=1, timewait=0, database=./valhalla.db,\n" \
   "                   commit-int=128, parser=2, priority=19,\n" \
-  "                   suffix=ogg,mp3,m4a,flac,wav,wma\n" \
-  "                          avi,mkv,mpg,wmv,mov\n" \
+  "                   suffix=flac,m4a,mp3,ogg,wav,wma\n" \
+  "                          avi,mkv,mov,mpg,wmv\n" \
   "                          bmp,gif,jpeg,jpg,png,tga,tif,tiff\n" \
   "\n"
 
@@ -179,19 +179,19 @@ main (int argc, char **argv)
   if (!sid)
   {
     /* audio */
-    valhalla_suffix_add (handle, "ogg");
-    valhalla_suffix_add (handle, "mp3");
-    valhalla_suffix_add (handle, "m4a");
     valhalla_suffix_add (handle, "flac");
+    valhalla_suffix_add (handle, "m4a");
+    valhalla_suffix_add (handle, "mp3");
+    valhalla_suffix_add (handle, "ogg");
     valhalla_suffix_add (handle, "wav");
     valhalla_suffix_add (handle, "wma");
 
     /* video */
     valhalla_suffix_add (handle, "avi");
     valhalla_suffix_add (handle, "mkv");
+    valhalla_suffix_add (handle, "mov");
     valhalla_suffix_add (handle, "mpg");
     valhalla_suffix_add (handle, "wmv");
-    valhalla_suffix_add (handle, "mov");
 
     /* image */
     valhalla_suffix_add (handle, "bmp");
@@ -203,8 +203,8 @@ main (int argc, char **argv)
     valhalla_suffix_add (handle, "tif");
     valhalla_suffix_add (handle, "tiff");
 
-    printf ("Default suffixes: ogg,mp3,m4a,flac,wav,wma\n"
-            "                  avi,mkv,mpg,wmv,mov\n"
+    printf ("Default suffixes: flac,m4a,mp3,ogg,wav,wma\n"
+            "                  avi,mkv,mov,mpg,wmv\n"
             "                  bmp,gif,jpeg,jpg,png,tga,tif,tiff\n");
   }
 
