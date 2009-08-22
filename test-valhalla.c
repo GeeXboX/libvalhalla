@@ -54,6 +54,7 @@
   "                   commit-int=128, parser=2, priority=19,\n" \
   "                   suffix=ogg,mp3,m4a,flac,wav,wma\n" \
   "                          avi,mkv,mpg,wmv,mov\n" \
+  "                          bmp,gif,jpeg,jpg,png,tga,tif,tiff\n" \
   "\n"
 
 #define SUFFIX_MAX 16
@@ -192,8 +193,19 @@ main (int argc, char **argv)
     valhalla_suffix_add (handle, "wmv");
     valhalla_suffix_add (handle, "mov");
 
+    /* image */
+    valhalla_suffix_add (handle, "bmp");
+    valhalla_suffix_add (handle, "gif");
+    valhalla_suffix_add (handle, "jpeg");
+    valhalla_suffix_add (handle, "jpg");
+    valhalla_suffix_add (handle, "png");
+    valhalla_suffix_add (handle, "tga");
+    valhalla_suffix_add (handle, "tif");
+    valhalla_suffix_add (handle, "tiff");
+
     printf ("Default suffixes: ogg,mp3,m4a,flac,wav,wma\n"
-            "                  avi,mkv,mpg,wmv,mov\n");
+            "                  avi,mkv,mpg,wmv,mov\n"
+            "                  bmp,gif,jpeg,jpg,png,tga,tif,tiff\n");
   }
 
   for (i = 0; i < kid; i++)
