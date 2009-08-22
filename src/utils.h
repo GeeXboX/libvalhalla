@@ -58,6 +58,7 @@ typedef struct file_data_s {
 
 
 void my_strtolower (char *str);
+char *my_strrcasestr (const char *buf, const char *str);
 int file_exists (const char *file);
 void file_dl_add (file_dl_t **dl,
                   const char *url, const char *name, valhalla_dl_t dst);

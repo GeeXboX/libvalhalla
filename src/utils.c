@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#define _GNU_SOURCE
 #include <semaphore.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -41,6 +42,20 @@ my_strtolower (char *str)
 
   for (; *str; str++)
     *str = (char) tolower ((int) (unsigned char) *str);
+}
+
+char *
+my_strrcasestr (const char *buf, const char *str)
+{
+  char *ptr, *res = NULL;
+
+  while ((ptr = strcasestr (buf, str)))
+  {
+    res = ptr;
+    buf = ptr + strlen (str);
+  }
+
+  return res;
 }
 
 int

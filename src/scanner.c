@@ -77,20 +77,6 @@ get_list_length (void *list)
   return n;
 }
 
-static char *
-my_strrcasestr (const char *buf, const char *str)
-{
-  char *ptr, *res = NULL;
-
-  while ((ptr = strcasestr (buf, str)))
-  {
-    res = ptr;
-    buf = ptr + strlen (str);
-  }
-
-  return res;
-}
-
 static void
 path_free (struct path_s *path)
 {
