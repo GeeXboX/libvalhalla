@@ -388,7 +388,7 @@ parser_stream_info (AVFormatContext *ctx)
 
     if (st->codec->codec_type == CODEC_TYPE_VIDEO)
       video_st = 1;
-    if (st->codec->codec_type == CODEC_TYPE_AUDIO)
+    else if (st->codec->codec_type == CODEC_TYPE_AUDIO)
       audio_st = 1;
   }
 
