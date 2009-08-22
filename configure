@@ -955,9 +955,9 @@ if enabled exif; then
 fi
 
 if enabled md5; then
-  #################################################
+  ###############################################
   #   check for FFmpeg libavutil
-  #################################################
+  ###############################################
   if [ -n "$lavudir" ]; then
     check_cflags -I${lavudir}/include
     check_ldflags -L${lavudir}/lib

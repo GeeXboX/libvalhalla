@@ -40,6 +40,7 @@ typedef struct grabber_exif_s {
   /* dummy structure */
 } grabber_exif_t;
 
+
 static void
 exif_content_foreach_func (ExifEntry *entry, void *data)
 {

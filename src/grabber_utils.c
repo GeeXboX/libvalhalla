@@ -40,6 +40,7 @@ static const struct {
   { NULL,                           NULL                          }
 };
 
+
 void
 grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
                    const char *name, valhalla_meta_grp_t group)

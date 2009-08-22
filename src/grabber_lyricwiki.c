@@ -47,6 +47,7 @@ typedef struct grabber_lyricwiki_s {
   url_t *handler;
 } grabber_lyricwiki_t;
 
+
 static int
 grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
                        const char *artist, const char *song)

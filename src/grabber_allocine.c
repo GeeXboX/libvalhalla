@@ -45,6 +45,7 @@ typedef struct grabber_allocine_s {
   url_t *handler;
 } grabber_allocine_t;
 
+
 static int
 grabber_allocine_get (url_t *handler, file_data_t *fdata,
                     const char *keywords, char *escaped_keywords)
