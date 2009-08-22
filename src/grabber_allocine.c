@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "grabber_common.h"
 #include "grabber_allocine.h"
