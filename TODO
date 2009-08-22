@@ -31,7 +31,6 @@
         valhalla object for each path.
 
  * Parser
-     -> Fix file type attribution (audio, video, picture, ...).
      -> Retrieve all properties (codec, length, bitrate, etc, ...).
 
  * Grabber
