@@ -164,7 +164,8 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
 
     file_data_free (pdata);
-    scanner_action_send (dbmanager->valhalla->scanner, ACTION_ACKNOWLEDGE, NULL);
+    scanner_action_send (dbmanager->valhalla->scanner,
+                         ACTION_ACKNOWLEDGE, NULL);
   }
   while (!dbmanager_is_stopped (dbmanager));
 
@@ -222,16 +223,16 @@ dbmanager_thread (void *arg)
       stats_cleanup = database_cleanup (dbmanager->database);
 
     /* Statistics */
-    valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files inserted    : %i", __FUNCTION__, stats.file_insert);
-    valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files updated     : %i", __FUNCTION__, stats.file_update);
-    valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files deleted     : %i", __FUNCTION__, stats_delete);
-    valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Files unchanged   : %i", __FUNCTION__, stats.file_nochange);
-    valhalla_log (VALHALLA_MSG_INFO,
-                  "[%s] Relations cleanup : %i", __FUNCTION__, stats_cleanup);
+    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
+                  __FUNCTION__, stats.file_insert);
+    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
+                  __FUNCTION__, stats.file_update);
+    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
+                  __FUNCTION__, stats_delete);
+    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
+                  __FUNCTION__, stats.file_nochange);
+    valhalla_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
+                  __FUNCTION__, stats_cleanup);
   }
   while (rc == ACTION_DB_NEXT_LOOP);
 
