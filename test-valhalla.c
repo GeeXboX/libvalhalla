@@ -217,7 +217,7 @@ main (int argc, char **argv)
   if (download)
   {
     printf ("Destination directory for downloaded files: %s\n", download);
-    valhalla_download_dest_set (handle, VALHALLA_DL_DEFAULT, download);
+    valhalla_downloader_dest_set (handle, VALHALLA_DL_DEFAULT, download);
   }
 
   while (optind < argc)
