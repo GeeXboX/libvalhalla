@@ -374,40 +374,73 @@ parser_probe (AVInputFormat *fmt, const char *file)
   return rc;
 }
 
-static metadata_t *
-parser_metadata (parser_t *parser, const char *file)
+static valhalla_file_type_t
+parser_stream_info (AVFormatContext *ctx)
+{
+  int i, video_st = 0, audio_st = 0;
+
+  if (!ctx)
+    return VALHALLA_FILE_TYPE_NULL;
+
+  for (i = 0; i < ctx->nb_streams; i++)
+  {
+    AVStream *st = ctx->streams[i];
+
+    if (st->codec->codec_type == CODEC_TYPE_VIDEO)
+      video_st = 1;
+    if (st->codec->codec_type == CODEC_TYPE_AUDIO)
+      audio_st = 1;
+  }
+
+  if (video_st)
+  {
+    if (!audio_st && ctx->nb_streams == 1
+        && !strcmp (ctx->iformat->name, "image2"))
+      return VALHALLA_FILE_TYPE_IMAGE;
+
+    return VALHALLA_FILE_TYPE_VIDEO;
+  }
+
+  if (audio_st)
+    return VALHALLA_FILE_TYPE_AUDIO;
+
+  return VALHALLA_FILE_TYPE_NULL;
+}
+
+static void
+parser_metadata (parser_t *parser, file_data_t *data)
 {
   int res;
   const char *name;
   AVFormatContext   *ctx;
   AVInputFormat     *fmt = NULL;
-  metadata_t *metadata;
 
   /*
    * Try a format in function of the suffix.
    * We gain a lot of speed if the fmt is already the right.
    */
-  name = suffix_fmt_guess (file);
+  name = suffix_fmt_guess (data->file);
   if (name)
     fmt = av_find_input_format (name);
 
   if (fmt)
   {
-    int score = parser_probe (fmt, file);
+    int score = parser_probe (fmt, data->file);
     valhalla_log (VALHALLA_MSG_VERBOSE,
-                  "Probe score (%i) [%s] : %s", score, name, file);
+                  "Probe score (%i) [%s] : %s", score, name, data->file);
     if (!score) /* Bad score? */
       fmt = NULL;
   }
 
-  res = av_open_input_file (&ctx, file, fmt, 0, NULL);
+  res = av_open_input_file (&ctx, data->file, fmt, 0, NULL);
   if (res)
   {
     valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't open file (%i) : %s", res, file);
-    return NULL;
+                  "FFmpeg can't open file (%i) : %s", res, data->file);
+    return;
   }
 
+  data->type = parser_stream_info (ctx);
 #if 0
   /*
    * Can be useful in the future in order to detect if the file
@@ -417,15 +450,14 @@ parser_metadata (parser_t *parser, const char *file)
   if (res < 0)
   {
     valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't find stream info: %s", file);
+                  "FFmpeg can't find stream info: %s", data->file);
   }
   else
 #endif /* 0 */
 
-  metadata = parser_metadata_get (parser, ctx, file);
+  data->meta_parser = parser_metadata_get (parser, ctx, data->file);
 
   av_close_input_file (ctx);
-  return metadata;
 }
 
 static void *
@@ -456,7 +488,7 @@ parser_thread (void *arg)
 
     pdata = data;
     if (pdata)
-      pdata->meta_parser = parser_metadata (parser, pdata->file);
+      parser_metadata (parser, pdata);
 
     file_data_step_increase (pdata, &e);
     dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
