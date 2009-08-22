@@ -258,7 +258,7 @@ valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword)
 
 void
 valhalla_downloader_dest_set (valhalla_t *handle,
-                            valhalla_dl_t dl, const char *dst)
+                              valhalla_dl_t dl, const char *dst)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, "%s : (%i) %s", __FUNCTION__, dl, dst);
 

@@ -205,7 +205,7 @@ void valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword);
  * \param[in] dst         Path for the destination.
  */
 void valhalla_downloader_dest_set (valhalla_t *handle,
-                                 valhalla_dl_t dl, const char *dst);
+                                   valhalla_dl_t dl, const char *dst);
 
 /**
  * \brief Set the state of a grabber.
