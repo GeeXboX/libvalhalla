@@ -61,7 +61,7 @@ show_help(){
   echo "  --with-lavu-inc=PATH        specify directory for libavutil include files"
   echo "  --with-lavu-lib=PATH        specify directory for libavutil library"
   echo "  --with-sqlite3-dir=DIR      check for SQLite installed in DIR"
-  echo "  --with-curl-dir=DIR         check for cURL installed in DIR"
+  echo "  --with-curl-dir=DIR         check for libcurl installed in DIR"
   echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
   echo "  --with-exif-dir=DIR         check for libexif installed in DIR"
   echo ""
@@ -915,8 +915,8 @@ if enabled grabber; then
     add_pkgconfig_deps libcurl
   fi
 
-  echolog "Checking for cURL ..."
-  check_lib curl/curl.h curl_global_init -lcurl || die "Error, can't find cURL !"
+  echolog "Checking for libcurl ..."
+  check_lib curl/curl.h curl_global_init -lcurl || die "Error, can't find libcurl !"
   add_pkgconfig_requires libcurl
 fi
 
