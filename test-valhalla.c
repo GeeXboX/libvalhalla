@@ -69,7 +69,9 @@ main (int argc, char **argv)
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
   const char *database = "./valhalla.db";
   const char *download = NULL;
+#ifdef USE_GRABBER
   const char *grabber = NULL;
+#endif /* USE_GRABBER */
   int parser_nb = 2, sid = 0, kid = 0;
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
@@ -215,9 +217,11 @@ main (int argc, char **argv)
   printf ("Run: parser=%i loop=%i wait=%i priority=%i commit-int=%i\n",
           parser_nb, loop_nb, loop_wait, priority, commit);
 
+#ifdef USE_GRABBER
   printf ("Grabbers available:\n");
   while ((grabber = valhalla_grabber_list_get (handle, grabber)))
     printf ("  %s\n", grabber);
+#endif /* USE_GRABBER */
 
   gettimeofday (&tvs, NULL);
 
