@@ -47,6 +47,9 @@
 #ifdef HAVE_GRABBER_EXIF
 #include "grabber_exif.h"
 #endif /* HAVE_GRABBER_EXIF */
+#ifdef HAVE_GRABBER_IMDB
+#include "grabber_imdb.h"
+#endif /* HAVE_GRABBER_IMDB */
 #ifdef HAVE_GRABBER_LYRICWIKI
 #include "grabber_lyricwiki.h"
 #endif /* HAVE_GRABBER_LYRICWIKI */
@@ -93,6 +96,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_TVRAGE
   grabber_tvrage_register,
 #endif /* HAVE_GRABBER_TVRAGE */
+#ifdef HAVE_GRABBER_IMDB
+  grabber_imdb_register,
+#endif /* HAVE_GRABBER_IMDB */
 #ifdef HAVE_GRABBER_ALLOCINE
   grabber_allocine_register,
 #endif /* HAVE_GRABBER_ALLOCINE */
