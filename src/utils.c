@@ -35,7 +35,7 @@
 
 
 void
-my_strtolower (char *str)
+vh_strtolower (char *str)
 {
   if (!str)
     return;
@@ -45,7 +45,7 @@ my_strtolower (char *str)
 }
 
 char *
-my_strrcasestr (const char *buf, const char *str)
+vh_strrcasestr (const char *buf, const char *str)
 {
   char *ptr, *res = NULL;
 

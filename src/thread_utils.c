@@ -27,7 +27,7 @@
 
 
 inline void
-my_setpriority (int prio)
+vh_setpriority (int prio)
 {
   pid_t pid = syscall (__NR_gettid); /* gettid() is not available with glibc */
   setpriority (PRIO_PROCESS, pid, prio);

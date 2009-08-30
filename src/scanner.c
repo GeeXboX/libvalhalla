@@ -152,7 +152,7 @@ suffix_cmp (char **suffix, const char *file)
 
   for (; *suffix; suffix++)
   {
-    it = my_strrcasestr (file, *suffix);
+    it = vh_strrcasestr (file, *suffix);
     if (it && (it > file)
         && *(it + strlen (*suffix)) == '\0' && *(it - 1) == '.')
       return 0;
@@ -272,7 +272,7 @@ scanner_thread (void *arg)
   if (!scanner)
     pthread_exit (NULL);
 
-  my_setpriority (scanner->priority);
+  vh_setpriority (scanner->priority);
 
   valhalla_log (VALHALLA_MSG_INFO,
                 "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
