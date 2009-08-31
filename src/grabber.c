@@ -56,6 +56,9 @@
 #ifdef HAVE_GRABBER_TMDB
 #include "grabber_tmdb.h"
 #endif /* HAVE_GRABBER_TMDB */
+#ifdef HAVE_GRABBER_TVDB
+#include "grabber_tvdb.h"
+#endif /* HAVE_GRABBER_TVDB */
 #ifdef HAVE_GRABBER_TVRAGE
 #include "grabber_tvrage.h"
 #endif /* HAVE_GRABBER_TVRAGE */
@@ -93,6 +96,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_TMDB
   grabber_tmdb_register,
 #endif /* HAVE_GRABBER_TMDB */
+#ifdef HAVE_GRABBER_TVDB
+  grabber_tvdb_register,
+#endif /* HAVE_GRABBER_TVDB */
 #ifdef HAVE_GRABBER_TVRAGE
   grabber_tvrage_register,
 #endif /* HAVE_GRABBER_TVRAGE */

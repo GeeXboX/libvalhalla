@@ -45,6 +45,7 @@ SRCS_GRABBER-$(GRABBER_EXIF)		+= grabber_exif.c
 SRCS_GRABBER-$(GRABBER_IMDB)		+= grabber_imdb.c
 SRCS_GRABBER-$(GRABBER_LYRICWIKI)	+= grabber_lyricwiki.c
 SRCS_GRABBER-$(GRABBER_TMDB)		+= grabber_tmdb.c
+SRCS_GRABBER-$(GRABBER_TVDB)		+= grabber_tvdb.c
 SRCS_GRABBER-$(GRABBER_TVRAGE)		+= grabber_tvrage.c
 
 SRCS += $(SRCS_GRABBER-yes)
