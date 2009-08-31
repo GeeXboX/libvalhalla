@@ -134,7 +134,7 @@ parser_metadata_group (metadata_t **meta,
       continue;
 
     snprintf (str, sizeof (str), "%s", key);
-    my_strtolower (str);
+    vh_strtolower (str);
     metadata_add (meta, str, value, metagrp[i].grp);
     break;
   }
@@ -472,7 +472,7 @@ parser_thread (void *arg)
   if (!parser)
     pthread_exit (NULL);
 
-  my_setpriority (parser->priority);
+  vh_setpriority (parser->priority);
 
   do
   {

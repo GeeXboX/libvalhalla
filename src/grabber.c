@@ -174,7 +174,7 @@ grabber_thread (void *arg)
   if (!grabber)
     pthread_exit (NULL);
 
-  my_setpriority (grabber->priority);
+  vh_setpriority (grabber->priority);
 
   do
   {

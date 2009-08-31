@@ -22,6 +22,6 @@
 #ifndef VALHALLA_THREAD_UTILS_H
 #define VALHALLA_THREAD_UTILS_H
 
-inline void my_setpriority (int prio);
+inline void vh_setpriority (int prio);
 
 #endif /* VALHALLA_THREAD_UTILS_H */

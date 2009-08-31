@@ -84,7 +84,7 @@ dispatcher_thread (void *arg)
   if (!dispatcher)
     pthread_exit (NULL);
 
-  my_setpriority (dispatcher->priority);
+  vh_setpriority (dispatcher->priority);
 
   send[STEP_PARSING].handler     = dispatcher->valhalla->parser;
 #ifdef USE_GRABBER

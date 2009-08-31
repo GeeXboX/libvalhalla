@@ -70,7 +70,7 @@ downloader_thread (void *arg)
   if (!downloader)
     pthread_exit (NULL);
 
-  my_setpriority (downloader->priority);
+  vh_setpriority (downloader->priority);
 
   do
   {

@@ -57,8 +57,8 @@ typedef struct file_data_s {
 } file_data_t;
 
 
-void my_strtolower (char *str);
-char *my_strrcasestr (const char *buf, const char *str);
+void vh_strtolower (char *str);
+char *vh_strrcasestr (const char *buf, const char *str);
 int file_exists (const char *file);
 void file_dl_add (file_dl_t **dl,
                   const char *url, const char *name, valhalla_dl_t dst);

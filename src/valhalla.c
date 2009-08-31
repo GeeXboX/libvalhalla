@@ -330,7 +330,7 @@ valhalla_init (const char *db,
 
 #ifdef USE_GRABBER
   url_init ();
-#endif
+#endif /* USE_GRABBER */
 
   handle->dispatcher = dispatcher_init (handle);
   if (!handle->dispatcher)

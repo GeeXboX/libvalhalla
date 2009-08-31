@@ -182,7 +182,7 @@ dbmanager_thread (void *arg)
   if (!dbmanager)
     pthread_exit (NULL);
 
-  my_setpriority (dbmanager->priority);
+  vh_setpriority (dbmanager->priority);
 
   do
   {
