@@ -108,12 +108,11 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
-  int i;
   int res_int;
 
   xmlDocPtr doc;
   xmlChar *tmp = NULL;
-  xmlNode *n, *node;
+  xmlNode *n;
 
   if (!keywords || !escaped_keywords)
     return -1;
