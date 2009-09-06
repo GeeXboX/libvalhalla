@@ -61,7 +61,7 @@ grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
 
   if (!fdata || !genre)
     return;
- 
+
   category = strtok_r ((char *) genre, "|", &saveptr);
   while (category)
   {
