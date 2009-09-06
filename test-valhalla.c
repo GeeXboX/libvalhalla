@@ -46,6 +46,7 @@
   " -p --parser             number of parsers\n" \
   " -k --keyword            keyword for the decrapifier\n" \
   " -s --suffix             file suffix (extension)\n" \
+  " -g --grabber            grabber to be used\n" \
   "\n" \
   "Example:\n" \
   " $ test-valhalla -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
@@ -59,6 +60,7 @@
 
 #define SUFFIX_MAX 16
 #define KEYWORD_MAX 16
+#define GRABBER_MAX 16
 
 int
 main (int argc, char **argv)
@@ -73,14 +75,15 @@ main (int argc, char **argv)
 #ifdef USE_GRABBER
   const char *grabber = NULL;
 #endif /* USE_GRABBER */
-  int parser_nb = 2, sid = 0, kid = 0;
+  int parser_nb = 2, sid = 0, kid = 0, gid = 0;
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
+  const char *grabbers[GRABBER_MAX];
   struct timeval tvs, tve;
   long long diff;
 
   int c, index;
-  const char *const short_options = "hvl:t:a:d:f:c:p:k:s:";
+  const char *const short_options = "hvl:t:a:d:f:c:p:k:s:g:";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -93,6 +96,7 @@ main (int argc, char **argv)
     { "parser",     required_argument, 0, 'p'  },
     { "keyword",    required_argument, 0, 'k'  },
     { "suffix",     required_argument, 0, 's'  },
+    { "grabber",    required_argument, 0, 'g'  },
     { NULL,         0,                 0, '\0' },
   };
 
@@ -156,6 +160,11 @@ main (int argc, char **argv)
     case 'k':
       if (kid < KEYWORD_MAX)
         keyword[kid++] = optarg;
+      break;
+
+    case 'g':
+      if (gid < KEYWORD_MAX)
+        grabbers[gid++] = optarg;
       break;
 
     default:
@@ -232,7 +241,23 @@ main (int argc, char **argv)
 #ifdef USE_GRABBER
   printf ("Grabbers available:\n");
   while ((grabber = valhalla_grabber_list_get (handle, grabber)))
-    printf ("  %s\n", grabber);
+  {
+    if (gid == 0) /* no grabber has been specified */
+      printf ("  %s\n", grabber);
+    else
+    {
+      valhalla_grabber_state_set (handle, grabber, 0);
+      for (i = 0; i < gid; i++)
+      {
+        if (!strcmp (grabber, grabbers[i]))
+        {
+          valhalla_grabber_state_set (handle, grabber, 1);
+          printf ("  %s\n", grabber);
+          break;
+        }
+      }
+    }
+  }
 #endif /* USE_GRABBER */
 
   gettimeofday (&tvs, NULL);
