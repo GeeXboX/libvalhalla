@@ -25,7 +25,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
@@ -63,6 +66,61 @@ file_exists (const char *file)
 {
   struct stat st;
   return !stat (file, &st);
+}
+
+int
+file_copy (const char *src, const char *dst)
+{
+  struct stat st_src, st_dst;
+  int fd_src, fd_dst;
+  ssize_t r, w;
+  char *b = NULL;
+  int err, res = 1;
+
+  if (!src || !dst)
+    goto end;
+
+  /* ensure that source file exists and is readable */
+  err = stat (src, &st_src);
+  if (err || !S_ISREG (st_src.st_mode))
+    goto end;
+
+  /* ensure that destination file does not already exists */
+  err = stat (dst, &st_dst);
+  if (!err)
+    goto end;
+
+  /* open the corresponding file descriptors */
+  fd_src = open (src, O_RDONLY);
+  if (fd_src == -1)
+    goto end;
+
+  fd_dst = open (dst, O_CREAT | O_WRONLY, 0644);
+  if (fd_dst == -1)
+    goto end;
+
+  /* alloc a buffer and proceed with the file copy */
+  b = calloc (1, st_src.st_size);
+
+  r = read (fd_src, b, st_src.st_size);
+  if (r == -1)
+    goto end;
+
+  w = write (fd_dst, b, r);
+  if (w == -1)
+    goto end;
+
+  res = 0;
+
+ end:
+  if (b)
+    free (b);
+  if (fd_src)
+    close (fd_src);
+  if (fd_dst)
+    close (fd_dst);
+
+  return res;
 }
 
 void

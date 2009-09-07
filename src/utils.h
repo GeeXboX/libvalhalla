@@ -60,6 +60,7 @@ typedef struct file_data_s {
 void vh_strtolower (char *str);
 char *vh_strrcasestr (const char *buf, const char *str);
 int file_exists (const char *file);
+int file_copy (const char *src, const char *dst);
 void file_dl_add (file_dl_t **dl,
                   const char *url, const char *name, valhalla_dl_t dst);
 void file_data_free (file_data_t *data);
