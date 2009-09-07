@@ -9,3 +9,5 @@ config.mak
 test-valhalla$
 ^libvalhalla.pc
 ^DOCS/doxygen
+^TAGS
+^valhalla.db
