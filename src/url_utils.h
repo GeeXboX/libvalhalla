@@ -66,6 +66,6 @@ url_t *url_new (void);
 void url_free (url_t *url);
 url_data_t url_get_data (url_t *handler, char *url);
 char *url_escape_string (url_t *handler, const char *buf);
-void url_save_to_disk (url_t *handler, char *src, char *dst);
+int url_save_to_disk (url_t *handler, char *src, char *dst);
 
 #endif /* VALHALLA_URL_UTILS_H */

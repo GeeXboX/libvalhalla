@@ -144,7 +144,7 @@ url_escape_string (url_t *handler, const char *buf)
   return curl_easy_escape (curl, buf, strlen (buf));
 }
 
-void
+int
 url_save_to_disk (url_t *handler, char *src, char *dst)
 {
   url_data_t data;
@@ -152,11 +152,11 @@ url_save_to_disk (url_t *handler, char *src, char *dst)
   CURL *curl = (CURL *) handler;
 
   if (!curl || !src || !dst)
-    return;
+    return 1;
 
   /* no need to download again an already existing file */
   if (file_exists (dst))
-    return;
+    return 1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Saving %s to %s", src, dst);
 
@@ -165,7 +165,7 @@ url_save_to_disk (url_t *handler, char *src, char *dst)
   {
     valhalla_log (VALHALLA_MSG_WARNING,
                   "Unable to download requested file");
-    return;
+    return 1;
   }
 
   fd = open (dst, O_WRONLY | O_CREAT, 0666);
@@ -175,9 +175,11 @@ url_save_to_disk (url_t *handler, char *src, char *dst)
               "Unable to open stream to save file");
 
     free (data.buffer);
-    return;
+    return 1;
   }
 
   n = write (fd, data.buffer, data.size);
   free (data.buffer);
+
+  return 0;
 }
