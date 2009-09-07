@@ -46,6 +46,7 @@ show_help(){
   echo "  --enable-grabber-amazon     build Amazon grabber [default=no]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=no]"
   echo "  --enable-grabber-imdb       build ImDB grabber [default=no]"
+  echo "  --enable-grabber-lastfm     build Last.fm grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
   echo "  --enable-grabber-tvdb       build TheTVDB.org grabber [default=no]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=no]"
@@ -422,6 +423,7 @@ grabber_allocine="yes"
 grabber_amazon="no"
 grabber_exif="yes"
 grabber_imdb="yes"
+grabber_lastfm="yes"
 grabber_lyricwiki="no"
 grabber_tmdb="yes"
 grabber_tvdb="yes"
@@ -508,6 +510,10 @@ for opt do
   --enable-grabber-imdb) grabber_imdb="yes";
   ;;
   --disable-grabber-imdb) grabber_imdb="no";
+  ;;
+  --enable-grabber-lastfm) grabber_lastfm="yes";
+  ;;
+  --disable-grabber-lastfm) grabber_lastfm="no";
   ;;
   --enable-grabber-lyricwiki) grabber_lyricwiki="yes";
   ;;
@@ -866,6 +872,7 @@ if enabled grabber_all; then
   grabber_amazon="yes"
   grabber_exif="yes"
   grabber_imdb="yes"
+  grabber_lastfm="yes"
   grabber_lyricwiki="yes"
   grabber_tmdb="yes"
   grabber_tvdb="yes"
@@ -898,6 +905,12 @@ fi
 
 if enabled grabber_imdb; then
   add_cflags -DHAVE_GRABBER_IMDB
+  grabber="yes"
+  xml="yes"
+fi
+
+if enabled grabber_lastfm; then
+  add_cflags -DHAVE_GRABBER_LASTFM
   grabber="yes"
   xml="yes"
 fi
@@ -1050,6 +1063,7 @@ echolog "    Allocine         $grabber_allocine"
 echolog "    Amazon           $grabber_amazon"
 echolog "    EXIF             $grabber_exif"
 echolog "    ImDB             $grabber_imdb"
+echolog "    Last.fm          $grabber_lastfm"
 echolog "    LyricWiki        $grabber_lyricwiki"
 echolog "    TheMovieDB       $grabber_tmdb"
 echolog "    TheTVDB          $grabber_tvdb"
@@ -1110,6 +1124,7 @@ append_config "GRABBER_ALLOCINE=$grabber_allocine"
 append_config "GRABBER_AMAZON=$grabber_amazon"
 append_config "GRABBER_EXIF=$grabber_exif"
 append_config "GRABBER_IMDB=$grabber_imdb"
+append_config "GRABBER_LASTFM=$grabber_lastfm"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
 append_config "GRABBER_TMDB=$grabber_tmdb"
 append_config "GRABBER_TVDB=$grabber_tvdb"

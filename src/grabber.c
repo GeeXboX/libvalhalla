@@ -50,6 +50,9 @@
 #ifdef HAVE_GRABBER_IMDB
 #include "grabber_imdb.h"
 #endif /* HAVE_GRABBER_IMDB */
+#ifdef HAVE_GRABBER_LASTFM
+#include "grabber_lastfm.h"
+#endif /* HAVE_GRABBER_LASTFM */
 #ifdef HAVE_GRABBER_LYRICWIKI
 #include "grabber_lyricwiki.h"
 #endif /* HAVE_GRABBER_LYRICWIKI */
@@ -87,6 +90,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_AMAZON
   grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */
+#ifdef HAVE_GRABBER_LASTFM
+  grabber_lastfm_register,
+#endif /* HAVE_GRABBER_LASTFM */
 #ifdef HAVE_GRABBER_EXIF
   grabber_exif_register,
 #endif /* HAVE_GRABBER_EXIF */
