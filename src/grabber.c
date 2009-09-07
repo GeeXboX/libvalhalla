@@ -53,6 +53,9 @@
 #ifdef HAVE_GRABBER_LASTFM
 #include "grabber_lastfm.h"
 #endif /* HAVE_GRABBER_LASTFM */
+#ifdef HAVE_GRABBER_LYRICSFLY
+#include "grabber_lyricsfly.h"
+#endif /* HAVE_GRABBER_LYRICSFLY */
 #ifdef HAVE_GRABBER_LYRICWIKI
 #include "grabber_lyricwiki.h"
 #endif /* HAVE_GRABBER_LYRICWIKI */
@@ -96,6 +99,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_EXIF
   grabber_exif_register,
 #endif /* HAVE_GRABBER_EXIF */
+#ifdef HAVE_GRABBER_LYRICSFLY
+  grabber_lyricsfly_register,
+#endif /* HAVE_GRABBER_LYRICSFLY */
 #ifdef HAVE_GRABBER_LYRICWIKI
   grabber_lyricwiki_register,
 #endif /* HAVE_GRABBER_LYRICWIKI */
