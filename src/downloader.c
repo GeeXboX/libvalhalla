@@ -118,7 +118,11 @@ downloader_thread (void *arg)
                   *(strrchr (downloader->dl_list[dst], '\0') - 1) == '/'
                   ? "" : "/",
                   it->name);
-        err = url_save_to_disk (downloader->url_handler, it->url, dest);
+
+        if (*it->url == '/')
+          err = file_copy (it->url, dest);
+        else
+          err = url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
           valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
                         __FUNCTION__, it->url, downloader->dl_list[dst]);
