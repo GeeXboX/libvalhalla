@@ -30,8 +30,6 @@
 #include "grabber_common.h"
 #include "grabber_local.h"
 #include "metadata.h"
-#include "xml_utils.h"
-#include "url_utils.h"
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
