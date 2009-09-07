@@ -101,7 +101,7 @@ grabber_local_get (const char *filename)
       }
     }
 
-get_end:
+ get_end:
   if (dir)
     free (dir);
   if (file)
