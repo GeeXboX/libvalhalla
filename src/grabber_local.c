@@ -149,8 +149,13 @@ grabber_local_grab (void *priv, file_data_t *data)
   cover = grabber_local_get (data->file);
   if (cover)
   {
+    char *cv;
+
+    cv = md5sum (cover);
     metadata_add (&data->meta_grabber, "cover",
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                  cv, VALHALLA_META_GRP_MISCELLANEOUS);
+    file_dl_add (&data->list_downloader, cover, cv, VALHALLA_DL_COVER);
+    free (cv);
     free (cover);
   }
 
