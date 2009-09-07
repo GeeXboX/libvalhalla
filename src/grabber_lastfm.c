@@ -158,7 +158,7 @@ grabber_lastfm_uninit (void *priv)
 static int
 grabber_lastfm_grab (void *priv, file_data_t *data)
 {
-  grabber_lastfm_t *lyricwiki = priv;
+  grabber_lastfm_t *lastfm = priv;
   metadata_t *album = NULL, *author = NULL;
   char *artist, *alb;
   char *cover, *url = NULL;
@@ -186,8 +186,8 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
     return -3;
 
   /* get HTTP compliant keywords */
-  artist = url_escape_string (lyricwiki->handler, author->value);
-  alb = url_escape_string (lyricwiki->handler, album->value);
+  artist = url_escape_string (lastfm->handler, author->value);
+  alb = url_escape_string (lastfm->handler, album->value);
 
   snprintf (name, sizeof (name), "%s-%s", artist, alb);
   cover = md5sum (name);
@@ -196,7 +196,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
    * If yes, then only the association on the available cover is added.
    * Otherwise, the cover will be searched on Last.fm.
    */
-  res = grabber_lastfm_check (lyricwiki, cover);
+  res = grabber_lastfm_check (lastfm, cover);
   if (!res)
   {
     metadata_add (&data->meta_grabber, "cover",
@@ -204,7 +204,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
     goto out;
   }
 
-  res = grabber_lastfm_get (lyricwiki->handler, &url, artist, alb, cover);
+  res = grabber_lastfm_get (lastfm->handler, &url, artist, alb, cover);
   if (!res)
   {
     metadata_add (&data->meta_grabber, "cover",
