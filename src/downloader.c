@@ -94,6 +94,7 @@ downloader_thread (void *arg)
         char *dest;
         size_t len;
         valhalla_dl_t dst = it->dst;
+        int err;
 
         if (downloader_is_stopped (downloader))
           break;
@@ -117,9 +118,10 @@ downloader_thread (void *arg)
                   *(strrchr (downloader->dl_list[dst], '\0') - 1) == '/'
                   ? "" : "/",
                   it->name);
-        url_save_to_disk (downloader->url_handler, it->url, dest);
-        valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
-                      __FUNCTION__, it->url, downloader->dl_list[dst]);
+        err = url_save_to_disk (downloader->url_handler, it->url, dest);
+        if (!err)
+          valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
+                        __FUNCTION__, it->url, downloader->dl_list[dst]);
         free (dest);
       }
     }
