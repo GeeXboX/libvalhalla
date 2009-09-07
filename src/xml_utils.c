@@ -126,8 +126,12 @@ get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
       continue;
 
     if (xmlStrcmp ((unsigned char *) attr_value, content))
+    {
+      xmlFree (content);
       continue;
+    }
 
+    xmlFree (content);
     return xmlNodeGetContent (n);
   }
 
