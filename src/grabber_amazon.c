@@ -71,7 +71,7 @@
  * to retrieve the cover's name linked to a file.
  * The directory is defined by VALHALLA_DL_COVER.
  */
-#define METADATA_COVER "vh_cover"
+#define METADATA_COVER "cover"
 
 
 #define MAX_URL_SIZE        1024
