@@ -163,7 +163,7 @@ main (int argc, char **argv)
       break;
 
     case 'g':
-      if (gid < KEYWORD_MAX)
+      if (gid < GRABBER_MAX)
         grabbers[gid++] = optarg;
       break;
 
