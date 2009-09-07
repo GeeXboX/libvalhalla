@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
+#include "list.h"
 
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO
@@ -43,11 +44,12 @@
 
 typedef struct grabber_lastfm_s {
   url_t  *handler;
+  list_t *list;
 } grabber_lastfm_t;
 
 static int
-grabber_lastfm_get (url_t *handler, file_data_t *fdata,
-                    const char *artist, const char *album)
+grabber_lastfm_get (url_t *handler, char **dl_url,
+                    const char *artist, const char *album, const char *cover)
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
@@ -77,24 +79,39 @@ grabber_lastfm_get (url_t *handler, file_data_t *fdata,
 
   cv = get_prop_value_from_xml_tree_by_attr (xmlDocGetRootElement (doc),
                                              "image", "size", "extralarge");
-  if (cv)
-  {
-    char name[1024] = { 0 };
-    char *cover;
-
-    snprintf (name, sizeof (name), "%s-%s", artist, album);
-    cover = md5sum (name);
-    metadata_add (&fdata->meta_grabber, "cover",
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
-    file_dl_add (&fdata->list_downloader,
-                 (char *) cv, cover, VALHALLA_DL_COVER);
-    free (cover);
-    xmlFree (cv);
-  }
-
   xmlFreeDoc (doc);
+  if (!cv)
+    return -1;
+
+  *dl_url = strdup ((const char *) cv);
+  xmlFree (cv);
 
   return 0;
+}
+
+static int
+grabber_lastfm_cmp_fct (const void *tocmp, const void *data)
+{
+  if (!tocmp || !data)
+    return -1;
+
+  return strcmp (tocmp, data);
+}
+
+static int
+grabber_lastfm_check (grabber_lastfm_t *lastfm, const char *cover)
+{
+  char *data = NULL;
+
+  if (lastfm->list)
+  {
+    data = list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
+    if (data)
+      return 0;
+  }
+
+  list_append (&lastfm->list, cover, strlen (cover) + 1);
+  return -1;
 }
 
 /****************************************************************************/
@@ -134,6 +151,7 @@ grabber_lastfm_uninit (void *priv)
     return;
 
   url_free (lastfm->handler);
+  list_free (lastfm->list, NULL);
   free (lastfm);
 }
 
@@ -143,6 +161,8 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   grabber_lastfm_t *lyricwiki = priv;
   metadata_t *album = NULL, *author = NULL;
   char *artist, *alb;
+  char *cover, *url = NULL;
+  char name[1024] = { 0 };
   int res, err;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -169,12 +189,47 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   artist = url_escape_string (lyricwiki->handler, author->value);
   alb = url_escape_string (lyricwiki->handler, album->value);
 
-  res = grabber_lastfm_get (lyricwiki->handler, data, artist, alb);
+  snprintf (name, sizeof (name), "%s-%s", artist, alb);
+  cover = md5sum (name);
+  /*
+   * Check if these keywords were already used for retrieving a cover.
+   * If yes, then only the association on the available cover is added.
+   * Otherwise, the cover will be searched on Last.fm.
+   */
+  res = grabber_lastfm_check (lyricwiki, cover);
+  if (!res)
+  {
+    metadata_add (&data->meta_grabber, "cover",
+                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    goto out;
+  }
 
+  res = grabber_lastfm_get (lyricwiki->handler, &url, artist, alb, cover);
+  if (!res)
+  {
+    metadata_add (&data->meta_grabber, "cover",
+                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
+    free (url);
+  }
+
+ out:
+  free (cover);
   free (artist);
   free (alb);
 
   return res;
+}
+
+static void
+grabber_lastfm_loop (void *priv)
+{
+  grabber_lastfm_t *lastfm = priv;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  /* Hash cover list cleanup */
+  LIST_FREE (lastfm->list, NULL);
 }
 
 /****************************************************************************/
@@ -188,4 +243,4 @@ GRABBER_REGISTER (lastfm,
                   grabber_lastfm_init,
                   grabber_lastfm_uninit,
                   grabber_lastfm_grab,
-                  NULL)
+                  grabber_lastfm_loop)
