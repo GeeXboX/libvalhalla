@@ -169,7 +169,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
 
   if (!img)
   {
-    xmlFreeDoc(doc);
+    xmlFreeDoc (doc);
     return -1;
   }
 
@@ -178,7 +178,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the cover for %s", escaped_keywords);
-    xmlFreeDoc(doc);
+    xmlFreeDoc (doc);
     return -1;
   }
   xmlFreeDoc (doc);
