@@ -53,6 +53,9 @@
 #ifdef HAVE_GRABBER_LASTFM
 #include "grabber_lastfm.h"
 #endif /* HAVE_GRABBER_LASTFM */
+#ifdef HAVE_GRABBER_LOCAL
+#include "grabber_local.h"
+#endif /* HAVE_GRABBER_LOCAL */
 #ifdef HAVE_GRABBER_LYRICSFLY
 #include "grabber_lyricsfly.h"
 #endif /* HAVE_GRABBER_LYRICSFLY */
@@ -90,6 +93,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
   grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
+#ifdef HAVE_GRABBER_LOCAL
+  grabber_local_register,
+#endif /* HAVE_GRABBER_LOCAL */
 #ifdef HAVE_GRABBER_AMAZON
   grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */
