@@ -419,8 +419,8 @@ database_grabber_insert (database_t *database, const char *name)
 
 static void
 database_assoc_filemd_insert (sqlite3_stmt *stmt,
-                       int64_t file_id, int64_t meta_id,
-                       int64_t data_id, int64_t group_id)
+                              int64_t file_id, int64_t meta_id,
+                              int64_t data_id, int64_t group_id)
 {
   int res, err = -1;
 
@@ -576,7 +576,7 @@ database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
     group_id = database->meta_group[tag->group].id;
 
     database_assoc_filemd_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
-                           file_id, meta_id, data_id, group_id);
+                                  file_id, meta_id, data_id, group_id);
   }
 }
 
