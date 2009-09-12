@@ -109,6 +109,7 @@ file_copy (const char *src, const char *dst)
       goto end;
   }
 
+  if (!r)
   res = 0;
 
  end:
