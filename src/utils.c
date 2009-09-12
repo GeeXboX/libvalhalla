@@ -68,13 +68,15 @@ file_exists (const char *file)
   return !stat (file, &st);
 }
 
+#define BUFFER_SIZE 512
+
 int
 file_copy (const char *src, const char *dst)
 {
   struct stat st_src, st_dst;
   int fd_src, fd_dst;
   ssize_t r, w;
-  char *b = NULL;
+  char b[BUFFER_SIZE];
   int err, res = 1;
 
   if (!src || !dst)
@@ -99,22 +101,17 @@ file_copy (const char *src, const char *dst)
   if (fd_dst == -1)
     goto end;
 
-  /* alloc a buffer and proceed with the file copy */
-  b = calloc (1, st_src.st_size);
-
-  r = read (fd_src, b, st_src.st_size);
-  if (r == -1)
-    goto end;
-
+  /* proceed with the file copy */
+  while ((r = read (fd_src, b, sizeof (b))) > 0)
+  {
   w = write (fd_dst, b, r);
   if (w == -1)
     goto end;
+  }
 
   res = 0;
 
  end:
-  if (b)
-    free (b);
   if (fd_src)
     close (fd_src);
   if (fd_dst)
