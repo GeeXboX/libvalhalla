@@ -883,30 +883,18 @@ xml="no"
 md5="no"
 exif="no"
 
-if enabled grabber_all; then
-  grabber_allocine="yes"
-  grabber_amazon="yes"
-  grabber_exif="yes"
-  grabber_imdb="yes"
-  grabber_lastfm="yes"
-  grabber_local="yes"
-  grabber_lyricsfly="yes"
-  grabber_lyricwiki="yes"
-  grabber_tmdb="yes"
-  grabber_tvdb="yes"
-  grabber_tvrage="yes"
-elif disabled grabber_all; then
-  grabber_allocine="no"
-  grabber_amazon="no"
-  grabber_exif="no"
-  grabber_imdb="no"
-  grabber_lastfm="no"
-  grabber_local="no"
-  grabber_lyricsfly="no"
-  grabber_lyricwiki="no"
-  grabber_tmdb="no"
-  grabber_tvdb="no"
-  grabber_tvrage="no"
+if [ "$grabber_all" != "auto" ]; then
+  grabber_allocine=$grabber_all
+  grabber_amazon=$grabber_all
+  grabber_exif=$grabber_all
+  grabber_imdb=$grabber_all
+  grabber_lastfm=$grabber_all
+  grabber_local=$grabber_all
+  grabber_lyricsfly=$grabber_all
+  grabber_lyricwiki=$grabber_all
+  grabber_tmdb=$grabber_all
+  grabber_tvdb=$grabber_all
+  grabber_tvrage=$grabber_all
 fi
 
 if enabled grabber_dummy; then
