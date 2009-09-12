@@ -783,8 +783,7 @@ database_file_get_grabber (database_t *database, const char *file, list_t **l)
   if (res != SQLITE_OK)
     goto out;
 
-  while ((res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME)))
-         == SQLITE_ROW)
+  while (sqlite3_step (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME)) == SQLITE_ROW)
   {
     const char *grabber_name = (const char *)
       sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME), 0);
