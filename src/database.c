@@ -95,6 +95,7 @@ typedef enum database_stmt {
   STMT_SELECT_GROUP_ID,
   STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
+  STMT_SELECT_FILE_GRABBER_NAME,
   STMT_INSERT_FILE,
   STMT_INSERT_TYPE,
   STMT_INSERT_META,
@@ -128,6 +129,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
   [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
+  [STMT_SELECT_FILE_GRABBER_NAME]    = { SELECT_FILE_GRABBER_NAME,    NULL },
   [STMT_INSERT_FILE]                 = { INSERT_FILE,                 NULL },
   [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
   [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
@@ -759,6 +761,37 @@ database_file_get_mtime (database_t *database, const char *file)
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
+}
+
+void
+database_file_get_grabber (database_t *database, const char *file, list_t **l)
+{
+  int res, err = -1;
+
+  if (!file || !l)
+    return;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME),
+                           1, file, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out;
+
+  while ((res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME)))
+         == SQLITE_ROW)
+  {
+    const char *grabber_name = (const char *)
+      sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME), 0);
+    if (grabber_name)
+      list_append (l, grabber_name, strlen (grabber_name));
+  }
+
+  sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME));
+  err = 0;
+
+ out:
+  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 int

@@ -168,11 +168,21 @@ file_type_supported (int caps_flag, valhalla_file_type_t type)
   }
 }
 
+static int
+grabber_cmp_fct (const void *tocmp, const void *data)
+{
+  if (!tocmp || !data)
+    return -1;
+
+  return strcmp (tocmp, data);
+}
+
 #define GRABBER_IS_AVAILABLE                                  \
   grab = 0;                                                   \
   for (it = grabber->list, cnt = 0; it; it = it->next, cnt++) \
     if (it->enable && cnt >= pdata->grabber_cnt               \
-        && file_type_supported (it->caps_flag, pdata->type))  \
+        && file_type_supported (it->caps_flag, pdata->type)   \
+        && !list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
     {                                                         \
       grab = 1;                                               \
       break;                                                  \

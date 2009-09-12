@@ -186,6 +186,8 @@ file_data_free (file_data_t *data)
     metadata_free (data->meta_grabber);
   if (data->list_downloader)
     file_dl_free (data->list_downloader);
+  if (data->grabber_list)
+    list_free (data->grabber_list, NULL);
 
   sem_destroy (&data->sem_grabber);
 

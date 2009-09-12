@@ -29,6 +29,7 @@
 #include "valhalla_internals.h"
 #include "metadata.h"
 #include "fifo_queue.h"
+#include "list.h"
 
 typedef struct file_dl_s {
   struct file_dl_s *next;
@@ -50,6 +51,7 @@ typedef struct file_data_s {
   const char *grabber_name;
   sem_t       sem_grabber;
   int         grabber_cnt;
+  list_t     *grabber_list; /* grabbers already handled before interruption */
 
   /* downloading attribute */
   file_dl_t  *list_downloader;

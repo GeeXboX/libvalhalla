@@ -144,13 +144,23 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     /* received from the scanner */
     case ACTION_DB_NEWFILE:
     {
+      int interrup = 0;
       int mtime = database_file_get_mtime (dbmanager->database, pdata->file);
       /*
        * File is parsed only if mtime has changed, if the grabbing/downloading
        * was interrupted or if it is unexistant in the database.
        */
-      if (mtime < 0 || (int) pdata->mtime != mtime
-          || database_file_get_interrupted (dbmanager->database, pdata->file))
+      if (mtime >= 0)
+      {
+        interrup =
+          database_file_get_interrupted (dbmanager->database, pdata->file);
+        /* retrieve the list of all grabbers already handled for this file */
+        if (interrup)
+          database_file_get_grabber (dbmanager->database,
+                                     pdata->file, &pdata->grabber_list);
+      }
+
+      if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
       {
         dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                 mtime < 0

@@ -265,6 +265,15 @@
  "FROM file "                     \
  "WHERE checked__ = 0;"
 
+#define SELECT_FILE_GRABBER_NAME                      \
+ "SELECT grabber.grabber_name "                       \
+ "FROM ( "                                            \
+   "grabber INNER JOIN assoc_file_grabber AS assoc "  \
+   "ON grabber.grabber_id = assoc.grabber_id "        \
+ ") INNER JOIN file "                                 \
+ "ON assoc.file_id = file.file_id "                   \
+ "WHERE file.file_path = ?;"
+
 /******************************************************************************/
 /*                                                                            */
 /*                                  Insert                                    */
