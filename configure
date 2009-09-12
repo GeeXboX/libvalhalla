@@ -489,11 +489,11 @@ for opt do
   ;;
   --with-sqlite3-dir=*) sqlite3dir="$optval";
   ;;
-  --width-curl-dir=*) curldir="$optval";
+  --with-curl-dir=*) curldir="$optval";
   ;;
-  --width-xml2-dir=*) xml2dir="$optval";
+  --with-xml2-dir=*) xml2dir="$optval";
   ;;
-  --width-exif-dir=*) exifdir="$optval";
+  --with-exif-dir=*) exifdir="$optval";
   ;;
   --enable-grabbers) grabber_all="yes";
   ;;
