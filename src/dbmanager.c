@@ -154,7 +154,10 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       {
         interrup =
           database_file_get_interrupted (dbmanager->database, pdata->file);
-        /* retrieve the list of all grabbers already handled for this file */
+        /*
+         * Retrieve the list of all grabbers already handled for this file
+         * and search if there are files to download since the interruption.
+         */
         if (interrup)
         {
           database_file_get_grabber (dbmanager->database,
