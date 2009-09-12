@@ -110,7 +110,7 @@ file_copy (const char *src, const char *dst)
   }
 
   if (!r)
-  res = 0;
+    res = 0;
 
  end:
   if (fd_src)
