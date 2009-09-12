@@ -104,9 +104,9 @@ file_copy (const char *src, const char *dst)
   /* proceed with the file copy */
   while ((r = read (fd_src, b, sizeof (b))) > 0)
   {
-  w = write (fd_dst, b, r);
-  if (w == -1)
-    goto end;
+    w = write (fd_dst, b, r);
+    if (w == -1)
+      goto end;
   }
 
   res = 0;
