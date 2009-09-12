@@ -93,7 +93,10 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
 
   /* if there is no result goto error */
   if (!xmlStrcmp ((unsigned char *) tmp, (unsigned char *) "0"))
+  {
+    xmlFree (tmp);
     goto error;
+  }
 
   xmlFree (tmp);
 
