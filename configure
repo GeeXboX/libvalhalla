@@ -131,6 +131,10 @@ enabled(){
     eval test "x\$$1" = "xyes"
 }
 
+disabled(){
+    eval test "x\$$1" = "xno"
+}
+
 flags_saved(){
     (: ${SAVE_CFLAGS?}) 2>/dev/null
 }
@@ -419,7 +423,7 @@ cross_compile="no"
 INSTALL="/usr/bin/install"
 VERSION=""
 pkgconfig_requires=""
-grabber_all="no"
+grabber_all="auto"
 grabber_dummy="no"
 grabber_allocine="yes"
 grabber_amazon="no"
@@ -891,6 +895,18 @@ if enabled grabber_all; then
   grabber_tmdb="yes"
   grabber_tvdb="yes"
   grabber_tvrage="yes"
+elif disabled grabber_all; then
+  grabber_allocine="no"
+  grabber_amazon="no"
+  grabber_exif="no"
+  grabber_imdb="no"
+  grabber_lastfm="no"
+  grabber_local="no"
+  grabber_lyricsfly="no"
+  grabber_lyricwiki="no"
+  grabber_tmdb="no"
+  grabber_tvdb="no"
+  grabber_tvrage="no"
 fi
 
 if enabled grabber_dummy; then
