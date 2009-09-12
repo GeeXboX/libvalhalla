@@ -73,6 +73,8 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
   metadata_add (&fdata->meta_grabber, type,
                 cover, VALHALLA_META_GRP_MISCELLANEOUS);
   file_dl_add (&fdata->list_downloader, (char *) url, cover, dl);
+
+  free (cover);
 }
 
 static int
