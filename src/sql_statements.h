@@ -74,6 +74,12 @@
    "grp_name         TEXT    NOT NULL UNIQUE "            \
  ");"
 
+#define CREATE_TABLE_GRABBER                              \
+ "CREATE TABLE IF NOT EXISTS grabber ( "                  \
+   "grabber_id       INTEGER PRIMARY KEY AUTOINCREMENT, " \
+   "grabber_name     INTEGER NOT NULL UNIQUE "            \
+ ");"
+
 #define CREATE_TABLE_ASSOC_FILE_METADATA                  \
  "CREATE TABLE IF NOT EXISTS assoc_file_metadata ( "      \
    "file_id          INTEGER NOT NULL, "                  \
@@ -81,6 +87,13 @@
    "data_id          INTEGER NOT NULL, "                  \
    "_grp_id          INTEGER NOT NULL, "                  \
    "PRIMARY KEY (file_id, meta_id, data_id) "             \
+ ");"
+
+#define CREATE_TABLE_ASSOC_FILE_GRABBER                   \
+ "CREATE TABLE IF NOT EXISTS assoc_file_grabber ( "       \
+   "file_id          INTEGER NOT NULL, "                  \
+   "grabber_id       INTEGER NOT NULL, "                  \
+   "PRIMARY KEY (file_id, grabber_id) "                   \
  ");"
 
 /******************************************************************************/
@@ -108,6 +121,10 @@
 #define CREATE_INDEX_GROUP_NAME        \
  "CREATE UNIQUE INDEX IF NOT EXISTS "  \
  "grp_name_idx ON grp (grp_name);"
+
+#define CREATE_INDEX_GRABBER_NAME      \
+ "CREATE UNIQUE INDEX IF NOT EXISTS "  \
+ "grabber_name_idx ON grabber (grabber_name);"
 
 #define CREATE_INDEX_ASSOC             \
  "CREATE INDEX IF NOT EXISTS "         \
@@ -233,6 +250,11 @@
  "FROM grp "             \
  "WHERE grp_name = ?;"
 
+#define SELECT_GRABBER_ID \
+ "SELECT grabber_id "     \
+ "FROM grabber "          \
+ "WHERE grabber_name = ?;"
+
 #define SELECT_FILE_ID   \
  "SELECT file_id "       \
  "FROM file "            \
@@ -278,10 +300,20 @@
  "INTO grp (grp_name) "    \
  "VALUES (?);"
 
+#define INSERT_GRABBER     \
+ "INSERT "                 \
+ "INTO grabber (grabber_name) " \
+ "VALUES (?);"
+
 #define INSERT_ASSOC_FILE_METADATA                                \
  "INSERT "                                                        \
  "INTO assoc_file_metadata (file_id, meta_id, data_id, _grp_id) " \
  "VALUES (?, ?, ?, ?);"
+
+#define INSERT_ASSOC_FILE_GRABBER                                 \
+ "INSERT "                                                        \
+ "INTO assoc_file_grabber (file_id, grabber_id) "                 \
+ "VALUES (?, ?);"
 
 /******************************************************************************/
 /*                                                                            */
@@ -338,11 +370,31 @@
    "WHERE assoc.data_id IS NULL "                  \
  ");"
 
+#define CLEANUP_GRABBER                            \
+ "DELETE FROM grabber "                            \
+ "WHERE grabber_id IN ( "                          \
+   "SELECT grabber.grabber_id "                    \
+   "FROM grabber "                                 \
+   "LEFT OUTER JOIN assoc_file_grabber AS assoc "  \
+     "ON grabber.grabber_id = assoc.grabber_id "   \
+   "WHERE assoc.grabber_id IS NULL "               \
+ ");"
+
 #define CLEANUP_ASSOC_FILE_METADATA     \
  "DELETE FROM assoc_file_metadata "     \
  "WHERE file_id IN ( "                  \
    "SELECT assoc.file_id "              \
    "FROM assoc_file_metadata AS assoc " \
+   "LEFT OUTER JOIN file "              \
+     "ON assoc.file_id = file.file_id " \
+   "WHERE file.file_id IS NULL "        \
+ ");"
+
+#define CLEANUP_ASSOC_FILE_GRABBER      \
+ "DELETE FROM assoc_file_grabber "      \
+ "WHERE file_id IN ( "                  \
+   "SELECT assoc.file_id "              \
+   "FROM assoc_file_grabber AS assoc "  \
    "LEFT OUTER JOIN file "              \
      "ON assoc.file_id = file.file_id " \
    "WHERE file.file_id IS NULL "        \

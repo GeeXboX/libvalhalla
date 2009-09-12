@@ -93,19 +93,24 @@ typedef enum database_stmt {
   STMT_SELECT_META_ID,
   STMT_SELECT_DATA_ID,
   STMT_SELECT_GROUP_ID,
+  STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
   STMT_INSERT_FILE,
   STMT_INSERT_TYPE,
   STMT_INSERT_META,
   STMT_INSERT_DATA,
   STMT_INSERT_GROUP,
+  STMT_INSERT_GRABBER,
   STMT_INSERT_ASSOC_FILE_METADATA,
+  STMT_INSERT_ASSOC_FILE_GRABBER,
   STMT_UPDATE_FILE,
   STMT_DELETE_FILE,
 
   STMT_CLEANUP_ASSOC_FILE_METADATA,
+  STMT_CLEANUP_ASSOC_FILE_GRABBER,
   STMT_CLEANUP_META,
   STMT_CLEANUP_DATA,
+  STMT_CLEANUP_GRABBER,
 
   STMT_UPDATE_FILE_CHECKED_CLEAR,
   STMT_SELECT_FILE_CHECKED_CLEAR,
@@ -121,19 +126,24 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_META_ID]              = { SELECT_META_ID,              NULL },
   [STMT_SELECT_DATA_ID]              = { SELECT_DATA_ID,              NULL },
   [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
+  [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
   [STMT_INSERT_FILE]                 = { INSERT_FILE,                 NULL },
   [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
   [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
   [STMT_INSERT_DATA]                 = { INSERT_DATA,                 NULL },
   [STMT_INSERT_GROUP]                = { INSERT_GROUP,                NULL },
+  [STMT_INSERT_GRABBER]              = { INSERT_GRABBER,              NULL },
   [STMT_INSERT_ASSOC_FILE_METADATA]  = { INSERT_ASSOC_FILE_METADATA,  NULL },
+  [STMT_INSERT_ASSOC_FILE_GRABBER]   = { INSERT_ASSOC_FILE_GRABBER,   NULL },
   [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
   [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
+  [STMT_CLEANUP_ASSOC_FILE_GRABBER]  = { CLEANUP_ASSOC_FILE_GRABBER,  NULL },
   [STMT_CLEANUP_META]                = { CLEANUP_META,                NULL },
   [STMT_CLEANUP_DATA]                = { CLEANUP_DATA,                NULL },
+  [STMT_CLEANUP_GRABBER]             = { CLEANUP_GRABBER,             NULL },
 
   [STMT_UPDATE_FILE_CHECKED_CLEAR]   = { UPDATE_FILE_CHECKED_CLEAR,   NULL },
   [STMT_SELECT_FILE_CHECKED_CLEAR]   = { SELECT_FILE_CHECKED_CLEAR,   NULL },
@@ -216,7 +226,9 @@ database_create_table (database_t *database)
                               CREATE_TABLE_META
                               CREATE_TABLE_DATA
                               CREATE_TABLE_GROUP
-                              CREATE_TABLE_ASSOC_FILE_METADATA,
+                              CREATE_TABLE_GRABBER
+                              CREATE_TABLE_ASSOC_FILE_METADATA
+                              CREATE_TABLE_ASSOC_FILE_GRABBER,
                 NULL, NULL, &msg);
   if (msg)
     goto err;
@@ -227,6 +239,7 @@ database_create_table (database_t *database)
                               CREATE_INDEX_META_NAME
                               CREATE_INDEX_DATA_VALUE
                               CREATE_INDEX_GROUP_NAME
+                              CREATE_INDEX_GRABBER_NAME
                               CREATE_INDEX_ASSOC,
                 NULL, NULL, &msg);
   if (msg)
@@ -381,6 +394,20 @@ database_group_insert (database_t *database, const char *name)
   return val;
 }
 
+static inline int64_t
+database_grabber_insert (database_t *database, const char *name)
+{
+  int64_t val;
+  val = database_insert_name (database, STMT_GET (STMT_INSERT_GRABBER), name);
+
+  /* retrieve ID if aborted */
+  if (!val)
+    return
+      database_table_get_id (database, STMT_GET (STMT_SELECT_GRABBER_ID), name);
+
+  return val;
+}
+
 static void
 database_assoc_insert (sqlite3_stmt *stmt,
                        int64_t file_id, int64_t meta_id,
@@ -401,6 +428,33 @@ database_assoc_insert (sqlite3_stmt *stmt,
     goto out_reset;
 
   res = sqlite3_bind_int64 (stmt, 4, group_id);
+  if (res != SQLITE_OK)
+    goto out_clear;
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+    err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out_reset:
+  sqlite3_reset (stmt);
+  if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
+    valhalla_log (VALHALLA_MSG_ERROR,
+                  "%s", sqlite3_errmsg (sqlite3_db_handle (stmt)));
+}
+
+static void
+database_assoc_filegrab_insert (sqlite3_stmt *stmt,
+                                int64_t file_id, int64_t grabber_id)
+{
+  int res, err = -1;
+
+  res = sqlite3_bind_int64 (stmt, 1, file_id);
+  if (res != SQLITE_OK)
+    goto out_reset;
+
+  res = sqlite3_bind_int64 (stmt, 2, grabber_id);
   if (res != SQLITE_OK)
     goto out_clear;
 
@@ -532,11 +586,18 @@ database_file_data (database_t *database, file_data_t *data, int insert)
 static void
 database_file_grab (database_t *database, file_data_t *data)
 {
-  int64_t file_id;
+  int64_t file_id, grabber_id;
 
   file_id = database_table_get_id (database,
                                    STMT_GET (STMT_SELECT_FILE_ID), data->file);
   database_file_metadata (database, file_id, data->meta_grabber);
+
+  if (!data->grabber_name)
+    return;
+
+  grabber_id = database_grabber_insert (database, data->grabber_name);
+  database_assoc_filegrab_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_GRABBER),
+                                  file_id, grabber_id);
 }
 
 void
@@ -711,6 +772,10 @@ database_cleanup (database_t *database)
   if (res != SQLITE_DONE)
     goto out;
 
+  res = sqlite3_step (STMT_GET (STMT_CLEANUP_ASSOC_FILE_GRABBER));
+  if (res != SQLITE_DONE)
+    goto out;
+
   res = sqlite3_step (STMT_GET (STMT_CLEANUP_META));
   if (res != SQLITE_DONE)
     goto out;
@@ -722,8 +787,10 @@ database_cleanup (database_t *database)
  out:
   val = sqlite3_total_changes (database->db);
   sqlite3_reset (STMT_GET (STMT_CLEANUP_ASSOC_FILE_METADATA));
+  sqlite3_reset (STMT_GET (STMT_CLEANUP_ASSOC_FILE_GRABBER));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_META));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_DATA));
+  sqlite3_reset (STMT_GET (STMT_CLEANUP_GRABBER));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val - val_tmp;

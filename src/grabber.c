@@ -243,6 +243,7 @@ grabber_thread (void *arg)
       int res;
 
       pdata->grabber_cnt = cnt + 1;
+      pdata->grabber_name = it->name;
       res = it->grab (it->priv, pdata);
       if (res)
         valhalla_log (VALHALLA_MSG_WARNING,

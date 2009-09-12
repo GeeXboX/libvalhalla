@@ -47,6 +47,7 @@ typedef struct file_data_s {
   /* grabbing attributes */
   int         wait;
   metadata_t *meta_grabber;
+  const char *grabber_name;
   sem_t       sem_grabber;
   int         grabber_cnt;
 
