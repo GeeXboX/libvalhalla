@@ -125,7 +125,11 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 
   /* check that requested item is known on TMDB */
   if (!xmlStrcmp ((unsigned char *) tmp, (unsigned char *) "0"))
+  {
+    xmlFree (tmp);
     goto error;
+  }
+
   xmlFree (tmp);
 
   /* get TMDB Movie ID */
