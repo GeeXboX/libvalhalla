@@ -97,13 +97,13 @@ url_free (url_t *url)
 }
 
 void
-url_init (void)
+url_global_init (void)
 {
   curl_global_init (CURL_GLOBAL_DEFAULT);
 }
 
 void
-url_uninit (void)
+url_global_uninit (void)
 {
   curl_global_cleanup ();
 }

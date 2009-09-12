@@ -59,8 +59,8 @@ typedef struct url_data_s {
 
 typedef void url_t;
 
-void url_init (void);
-void url_uninit (void);
+void url_global_init (void);
+void url_global_uninit (void);
 
 url_t *url_new (void);
 void url_free (url_t *url);

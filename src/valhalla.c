@@ -184,7 +184,7 @@ valhalla_uninit (valhalla_t *handle)
   grabber_uninit (handle->grabber);
   downloader_uninit (handle->downloader);
 
-  url_uninit ();
+  url_global_uninit ();
 #endif /* USE_GRABBER */
 
   free (handle);
@@ -340,7 +340,7 @@ valhalla_init (const char *db,
     return NULL;
 
 #ifdef USE_GRABBER
-  url_init ();
+  url_global_init ();
 #endif /* USE_GRABBER */
 
   handle->dispatcher = dispatcher_init (handle);
