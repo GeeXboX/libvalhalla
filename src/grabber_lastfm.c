@@ -83,7 +83,7 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
   if (!cv)
     return -1;
 
-  *dl_url = strdup ((const char *) cv);
+  *dl_url = strlen ((const char *) cv) ? strdup ((const char *) cv) : NULL;
   xmlFree (cv);
 
   return 0;
