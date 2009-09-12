@@ -68,7 +68,7 @@ file_exists (const char *file)
   return !stat (file, &st);
 }
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 4096
 
 int
 file_copy (const char *src, const char *dst)
