@@ -814,6 +814,10 @@ database_cleanup (database_t *database)
     goto out;
 
   res = sqlite3_step (STMT_GET (STMT_CLEANUP_DATA));
+  if (res != SQLITE_DONE)
+    goto out;
+
+  res = sqlite3_step (STMT_GET (STMT_CLEANUP_GRABBER));
   if (res == SQLITE_DONE)
     err = 0;
 
