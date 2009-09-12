@@ -309,8 +309,8 @@
  "INTO grp (grp_name) "    \
  "VALUES (?);"
 
-#define INSERT_GRABBER     \
- "INSERT "                 \
+#define INSERT_GRABBER          \
+ "INSERT "                      \
  "INTO grabber (grabber_name) " \
  "VALUES (?);"
 
