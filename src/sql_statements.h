@@ -80,6 +80,15 @@
    "grabber_name     INTEGER NOT NULL UNIQUE "            \
  ");"
 
+#define CREATE_TABLE_DLCONTEXT                            \
+ "CREATE TABLE IF NOT EXISTS dlcontext ( "                \
+   "dlcontext_id     INTEGER PRIMARY KEY AUTOINCREMENT, " \
+   "dlcontext_url    TEXT    NOT NULL, "                  \
+   "dlcontext_dst    INTEGER NOT NULL, "                  \
+   "dlcontext_name   TEXT    NOT NULL, "                  \
+   "_file_id         INTEGER NULL "                       \
+ ");"
+
 #define CREATE_TABLE_ASSOC_FILE_METADATA                  \
  "CREATE TABLE IF NOT EXISTS assoc_file_metadata ( "      \
    "file_id          INTEGER NOT NULL, "                  \
@@ -274,6 +283,12 @@
  "ON assoc.file_id = file.file_id "                   \
  "WHERE file.file_path = ?;"
 
+#define SELECT_FILE_DLCONTEXT                           \
+ "SELECT dlcontext_url, dlcontext_dst, dlcontext_name " \
+ "FROM dlcontext INNER JOIN file "                      \
+ "ON dlcontext._file_id = file.file_id "                \
+ "WHERE file.file_path = ?;"
+
 /******************************************************************************/
 /*                                                                            */
 /*                                  Insert                                    */
@@ -313,6 +328,11 @@
  "INSERT "                      \
  "INTO grabber (grabber_name) " \
  "VALUES (?);"
+
+#define INSERT_DLCONTEXT                                                    \
+ "INSERT "                                                                  \
+ "INTO dlcontext (dlcontext_url, dlcontext_dst, dlcontext_name, _file_id) " \
+ "VALUES (?, ?, ?, ?);"
 
 #define INSERT_ASSOC_FILE_METADATA                                \
  "INSERT "                                                        \
@@ -356,6 +376,9 @@
 #define DELETE_FILE  \
  "DELETE FROM file " \
  "WHERE file_path = ?;"
+
+#define DELETE_DLCONTEXT  \
+ "DELETE FROM dlcontext;"
 
 /* Cleanup */
 

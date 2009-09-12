@@ -35,6 +35,10 @@ void database_file_grab_update (database_t *database, file_data_t *data);
 int database_file_get_mtime (database_t *db, const char *file);
 void database_file_get_grabber (database_t *database,
                                 const char *file, list_t **l);
+void database_file_insert_dlcontext (database_t *database, file_data_t *data);
+void database_file_get_dlcontext (database_t *database,
+                                  const char *file, file_dl_t **dl);
+void database_delete_dlcontext (database_t *database);
 
 void database_file_interrupted_clear (database_t *database, const char *file);
 int database_file_get_interrupted (database_t *database, const char *file);

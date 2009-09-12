@@ -96,16 +96,19 @@ typedef enum database_stmt {
   STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
   STMT_SELECT_FILE_GRABBER_NAME,
+  STMT_SELECT_FILE_DLCONTEXT,
   STMT_INSERT_FILE,
   STMT_INSERT_TYPE,
   STMT_INSERT_META,
   STMT_INSERT_DATA,
   STMT_INSERT_GROUP,
   STMT_INSERT_GRABBER,
+  STMT_INSERT_DLCONTEXT,
   STMT_INSERT_ASSOC_FILE_METADATA,
   STMT_INSERT_ASSOC_FILE_GRABBER,
   STMT_UPDATE_FILE,
   STMT_DELETE_FILE,
+  STMT_DELETE_DLCONTEXT,
 
   STMT_CLEANUP_ASSOC_FILE_METADATA,
   STMT_CLEANUP_ASSOC_FILE_GRABBER,
@@ -130,16 +133,19 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
   [STMT_SELECT_FILE_GRABBER_NAME]    = { SELECT_FILE_GRABBER_NAME,    NULL },
+  [STMT_SELECT_FILE_DLCONTEXT]       = { SELECT_FILE_DLCONTEXT,       NULL },
   [STMT_INSERT_FILE]                 = { INSERT_FILE,                 NULL },
   [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
   [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
   [STMT_INSERT_DATA]                 = { INSERT_DATA,                 NULL },
   [STMT_INSERT_GROUP]                = { INSERT_GROUP,                NULL },
   [STMT_INSERT_GRABBER]              = { INSERT_GRABBER,              NULL },
+  [STMT_INSERT_DLCONTEXT]            = { INSERT_DLCONTEXT,            NULL },
   [STMT_INSERT_ASSOC_FILE_METADATA]  = { INSERT_ASSOC_FILE_METADATA,  NULL },
   [STMT_INSERT_ASSOC_FILE_GRABBER]   = { INSERT_ASSOC_FILE_GRABBER,   NULL },
   [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
   [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
+  [STMT_DELETE_DLCONTEXT]            = { DELETE_DLCONTEXT,            NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
   [STMT_CLEANUP_ASSOC_FILE_GRABBER]  = { CLEANUP_ASSOC_FILE_GRABBER,  NULL },
@@ -229,6 +235,7 @@ database_create_table (database_t *database)
                               CREATE_TABLE_DATA
                               CREATE_TABLE_GROUP
                               CREATE_TABLE_GRABBER
+                              CREATE_TABLE_DLCONTEXT
                               CREATE_TABLE_ASSOC_FILE_METADATA
                               CREATE_TABLE_ASSOC_FILE_GRABBER,
                 NULL, NULL, &msg);
@@ -790,6 +797,105 @@ database_file_get_grabber (database_t *database, const char *file, list_t **l)
 
  out:
   sqlite3_reset (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+static void
+database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
+{
+  int res, err = -1;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_DLCONTEXT), 1,
+                           dl->url, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out_reset;
+
+  res = sqlite3_bind_int (STMT_GET (STMT_INSERT_DLCONTEXT), 2, dl->dst);
+  if (res != SQLITE_OK)
+    goto out_clear;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_DLCONTEXT), 3,
+                           dl->name, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out_clear;
+
+  res = sqlite3_bind_int64 (STMT_GET (STMT_INSERT_DLCONTEXT), 4, file_id);
+  if (res != SQLITE_OK)
+    goto out_clear;
+
+  res = sqlite3_step (STMT_GET (STMT_INSERT_DLCONTEXT));
+  if (res == SQLITE_DONE)
+    err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (STMT_GET (STMT_INSERT_DLCONTEXT));
+ out_reset:
+  sqlite3_reset (STMT_GET (STMT_INSERT_DLCONTEXT));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+void
+database_file_insert_dlcontext (database_t *database, file_data_t *data)
+{
+  file_dl_t *it;
+  int64_t file_id;
+
+  file_id = database_table_get_id (database,
+                                   STMT_GET (STMT_SELECT_FILE_ID), data->file);
+  if (!file_id)
+    return;
+
+  for (it = data->list_downloader; it; it = it->next)
+    database_insert_dlcontext (database, it, file_id);
+}
+
+void
+database_file_get_dlcontext (database_t *database,
+                             const char *file, file_dl_t **dl)
+{
+  int res, err = -1;
+
+  if (!file || !dl)
+    return;
+
+  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT),
+                           1, file, -1, SQLITE_STATIC);
+  if (res != SQLITE_OK)
+    goto out;
+
+  while ((res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_DLCONTEXT)))
+         == SQLITE_ROW)
+  {
+    const char *url = (const char *)
+      sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 0);
+    const char *name = (const char *)
+      sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 2);
+    int dst = sqlite3_column_int (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 1);
+    if (url && name)
+      file_dl_add (dl, url, name, dst);
+  }
+
+  sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_DLCONTEXT));
+  err = 0;
+
+ out:
+  sqlite3_reset (STMT_GET (STMT_SELECT_FILE_DLCONTEXT));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+void
+database_delete_dlcontext (database_t *database)
+{
+  int res, err = -1;
+
+  res = sqlite3_step (STMT_GET (STMT_DELETE_DLCONTEXT));
+  if (res == SQLITE_DONE)
+    err = 0;
+
+  sqlite3_reset (STMT_GET (STMT_DELETE_DLCONTEXT));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }

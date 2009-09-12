@@ -23,6 +23,7 @@
 #define VALHALLA_DBMANAGER_H
 
 #include "fifo_queue.h"
+#include "utils.h"
 
 typedef struct dbmanager_s dbmanager_t;
 
@@ -41,6 +42,8 @@ dbmanager_t *dbmanager_init (valhalla_t *handle,
 
 void dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data);
 
+void dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data);
+void dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager);
 
 int dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                                valhalla_db_item_t *search,

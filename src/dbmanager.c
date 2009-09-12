@@ -156,8 +156,12 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
           database_file_get_interrupted (dbmanager->database, pdata->file);
         /* retrieve the list of all grabbers already handled for this file */
         if (interrup)
+        {
           database_file_get_grabber (dbmanager->database,
                                      pdata->file, &pdata->grabber_list);
+          database_file_get_dlcontext (dbmanager->database,
+                                       pdata->file, &pdata->list_downloader);
+        }
       }
 
       if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
@@ -370,6 +374,28 @@ dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
     return;
 
   fifo_queue_push (dbmanager->fifo, action, data);
+}
+
+void
+dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager || !data)
+    return;
+
+  database_file_insert_dlcontext (dbmanager->database, data);
+}
+
+void
+dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  database_delete_dlcontext (dbmanager->database);
 }
 
 int

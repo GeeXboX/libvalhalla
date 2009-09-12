@@ -21,6 +21,7 @@ SRCS =  database.c \
 	dispatcher.c \
 	fifo_queue.c \
 	lavf_utils.c \
+	list.c \
 	logs.c \
 	metadata.c \
 	parser.c \
@@ -33,7 +34,6 @@ SRCS =  database.c \
 SRCS_GRABBER-$(GRABBER)			+= downloader.c \
 					   grabber.c \
 					   grabber_utils.c \
-					   list.c \
 					   url_utils.c \
 
 SRCS_GRABBER-$(XML)			+= xml_utils.c

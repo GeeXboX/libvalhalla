@@ -67,6 +67,11 @@ valhalla_mrproper (valhalla_t *handle)
   if (!handle)
     return;
 
+#ifdef USE_GRABBER
+  /* remove all previous contexts */
+  dbmanager_db_dlcontext_delete (handle->dbmanager);
+#endif /* USE_GRABBER */
+
   fifo_o = fifo_queue_new ();
   if (!fifo_o)
     return;
@@ -105,6 +110,12 @@ valhalla_mrproper (valhalla_t *handle)
 
         file->clean_f = 1;
         fifo_queue_push (fifo_o, e, data);
+
+#ifdef USE_GRABBER
+        /* save downloader context */
+        if (file->step < STEP_ENDING && file->list_downloader)
+          dbmanager_db_dlcontext_save (handle->dbmanager, file);
+#endif /* USE_GRABBER */
         break;
       }
 
