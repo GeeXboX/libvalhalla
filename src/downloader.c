@@ -77,7 +77,7 @@ downloader_thread (void *arg)
     e = ACTION_NO_OPERATION;
     data = NULL;
 
-    res = fifo_queue_pop (downloader->fifo, &e, &data);
+    res = vh_fifo_queue_pop (downloader->fifo, &e, &data);
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
@@ -120,9 +120,9 @@ downloader_thread (void *arg)
                   it->name);
 
         if (*it->url == '/')
-          err = file_copy (it->url, dest);
+          err = vh_file_copy (it->url, dest);
         else
-          err = url_save_to_disk (downloader->url_handler, it->url, dest);
+          err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
           valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
                         __FUNCTION__, it->url, downloader->dl_list[dst]);
@@ -130,8 +130,8 @@ downloader_thread (void *arg)
       }
     }
 
-    file_data_step_increase (pdata, &e);
-    dispatcher_action_send (downloader->valhalla->dispatcher, e, pdata);
+    vh_file_data_step_increase (pdata, &e);
+    vh_dispatcher_action_send (downloader->valhalla->dispatcher, e, pdata);
   }
   while (!downloader_is_stopped (downloader));
 
@@ -139,7 +139,7 @@ downloader_thread (void *arg)
 }
 
 int
-downloader_run (downloader_t *downloader, int priority)
+vh_downloader_run (downloader_t *downloader, int priority)
 {
   int res = DOWNLOADER_SUCCESS;
   pthread_attr_t attr;
@@ -168,7 +168,7 @@ downloader_run (downloader_t *downloader, int priority)
 }
 
 fifo_queue_t *
-downloader_fifo_get (downloader_t *downloader)
+vh_downloader_fifo_get (downloader_t *downloader)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -179,7 +179,7 @@ downloader_fifo_get (downloader_t *downloader)
 }
 
 void
-downloader_stop (downloader_t *downloader)
+vh_downloader_stop (downloader_t *downloader)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -193,12 +193,12 @@ downloader_stop (downloader_t *downloader)
   downloader->run = 0;
   pthread_mutex_unlock (&downloader->mutex_run);
 
-  fifo_queue_push (downloader->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (downloader->fifo, ACTION_KILL_THREAD, NULL);
   pthread_join (downloader->thread, NULL);
 }
 
 void
-downloader_uninit (downloader_t *downloader)
+vh_downloader_uninit (downloader_t *downloader)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -206,7 +206,7 @@ downloader_uninit (downloader_t *downloader)
     return;
 
   if (downloader->url_handler)
-    url_free (downloader->url_handler);
+    vh_url_free (downloader->url_handler);
 
   if (downloader->dl_list)
   {
@@ -217,14 +217,14 @@ downloader_uninit (downloader_t *downloader)
     free (downloader->dl_list);
   }
 
-  fifo_queue_free (downloader->fifo);
+  vh_fifo_queue_free (downloader->fifo);
   pthread_mutex_destroy (&downloader->mutex_run);
 
   free (downloader);
 }
 
 downloader_t *
-downloader_init (valhalla_t *handle)
+vh_downloader_init (valhalla_t *handle)
 {
   downloader_t *downloader;
 
@@ -237,11 +237,11 @@ downloader_init (valhalla_t *handle)
   if (!downloader)
     return NULL;
 
-  downloader->fifo = fifo_queue_new ();
+  downloader->fifo = vh_fifo_queue_new ();
   if (!downloader->fifo)
     goto err;
 
-  downloader->url_handler = url_new ();
+  downloader->url_handler = vh_url_new ();
   if (!downloader->url_handler)
     goto err;
 
@@ -256,12 +256,12 @@ downloader_init (valhalla_t *handle)
   return downloader;
 
  err:
-  downloader_uninit (downloader);
+  vh_downloader_uninit (downloader);
   return NULL;
 }
 
 void
-downloader_destination_set (downloader_t *downloader,
+vh_downloader_destination_set (downloader_t *downloader,
                             valhalla_dl_t dl, const char *dst)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -277,7 +277,7 @@ downloader_destination_set (downloader_t *downloader,
 }
 
 const char *
-downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
+vh_downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -288,12 +288,12 @@ downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
 }
 
 void
-downloader_action_send (downloader_t *downloader, int action, void *data)
+vh_downloader_action_send (downloader_t *downloader, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;
 
-  fifo_queue_push (downloader->fifo, action, data);
+  vh_fifo_queue_push (downloader->fifo, action, data);
 }

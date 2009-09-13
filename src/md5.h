@@ -22,6 +22,6 @@
 #ifndef VALHALLA_MD5_H
 #define VALHALLA_MD5_H
 
-char *md5sum (const char *str);
+char *vh_md5sum (const char *str);
 
 #endif /* VALHALLA_MD5_H */

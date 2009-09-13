@@ -33,7 +33,7 @@ struct timer_thread_s {
 
 
 void
-timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
+vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
 {
   struct timespec ts;
   struct timeval  tp;
@@ -54,7 +54,7 @@ timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
 }
 
 void
-timer_thread_stop (timer_thread_t *timer)
+vh_timer_thread_stop (timer_thread_t *timer)
 {
   if (!timer)
     return;
@@ -69,7 +69,7 @@ timer_thread_stop (timer_thread_t *timer)
 }
 
 void
-timer_thread_start (timer_thread_t *timer)
+vh_timer_thread_start (timer_thread_t *timer)
 {
   if (!timer)
     return;
@@ -80,7 +80,7 @@ timer_thread_start (timer_thread_t *timer)
 }
 
 void
-timer_thread_delete (timer_thread_t *timer)
+vh_timer_thread_delete (timer_thread_t *timer)
 {
   if (!timer)
     return;
@@ -91,7 +91,7 @@ timer_thread_delete (timer_thread_t *timer)
 }
 
 timer_thread_t *
-timer_thread_create (void)
+vh_timer_thread_create (void)
 {
   timer_thread_t *timer;
 

@@ -25,15 +25,15 @@
 typedef struct list_s list_t;
 
 
-void list_append (list_t **list, const void *data, size_t len);
-void list_free (list_t *list, void (*free_fct) (void *data));
-void *list_search (list_t *list, const void *tocmp,
+void vh_list_append (list_t **list, const void *data, size_t len);
+void vh_list_free (list_t *list, void (*free_fct) (void *data));
+void *vh_list_search (list_t *list, const void *tocmp,
                    int (*cmp_fct) (const void *tocmp, const void *data));
 
-#define LIST_FREE(list, free_fct) \
+#define VH_LIST_FREE(list, free_fct) \
   do                              \
   {                               \
-    list_free (list, free_fct);   \
+    vh_list_free (list, free_fct);   \
     list = NULL;                  \
   }                               \
   while (0)

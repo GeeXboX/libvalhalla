@@ -50,10 +50,10 @@ grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
   if (!fdata || !nd || !tag || !name)
     return;
 
-  xml_search_str (nd, tag, &res);
+  vh_xml_search_str (nd, tag, &res);
   if (res)
   {
-    metadata_add (&fdata->meta_grabber, name, res, group);
+    vh_metadata_add (&fdata->meta_grabber, name, res, group);
     free (res);
     res = NULL;
   }
@@ -66,7 +66,7 @@ grabber_parse_int (file_data_t *fdata, int val,
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%d", val);
-  metadata_add (&fdata->meta_grabber, name,
+  vh_metadata_add (&fdata->meta_grabber, name,
                 v, VALHALLA_META_GRP_TEMPORAL);
 }
 
@@ -79,7 +79,7 @@ grabber_parse_categories (file_data_t *fdata, xmlNode *node)
   if (!fdata || !node)
     return;
 
-  n = get_node_xml_tree (node, "category");
+  n = vh_get_node_xml_tree (node, "category");
   for (i = 0; i < 5; i++)
   {
     xmlChar *tmp = NULL;
@@ -87,10 +87,10 @@ grabber_parse_categories (file_data_t *fdata, xmlNode *node)
     if (!n)
       break;
 
-    tmp = get_prop_value_from_xml_tree (n, "name");
+    tmp = vh_get_prop_value_from_xml_tree (n, "name");
     if (tmp)
     {
-      metadata_add (&fdata->meta_grabber, "category",
+      vh_metadata_add (&fdata->meta_grabber, "category",
                     (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
       xmlFree (tmp);
     }
@@ -107,8 +107,8 @@ grabber_add_person (file_data_t *fdata,
   if (!fdata || !node || !cat)
     return;
 
-  xml_search_str (node, "name", &name);
-  xml_search_str (node, "role", &role);
+  vh_xml_search_str (node, "name", &name);
+  vh_xml_search_str (node, "role", &role);
 
   if (name)
   {
@@ -119,7 +119,7 @@ grabber_add_person (file_data_t *fdata,
     else
       snprintf (str, sizeof (str), "%s", name);
     free (name);
-    metadata_add (&fdata->meta_grabber, cat, str, VALHALLA_META_GRP_ENTITIES);
+    vh_metadata_add (&fdata->meta_grabber, cat, str, VALHALLA_META_GRP_ENTITIES);
   }
 
   if (role)
@@ -134,14 +134,14 @@ grabber_parse_casting (file_data_t *fdata, xmlNode *node)
   if (!fdata || !node)
     return;
 
-  n = get_node_xml_tree (node, "person");
+  n = vh_get_node_xml_tree (node, "person");
   while (n)
   {
     int i;
 
     xmlChar *ch;
 
-    ch = get_attr_value_from_node (n, "job");
+    ch = vh_get_attr_value_from_node (n, "job");
     if (!ch)
     {
       n = n->next;

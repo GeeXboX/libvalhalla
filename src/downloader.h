@@ -33,16 +33,16 @@ enum downloader_errno {
   DOWNLOADER_SUCCESS       =  0,
 };
 
-int downloader_run (downloader_t *downloader, int priority);
-fifo_queue_t *downloader_fifo_get (downloader_t *downloader);
-void downloader_stop (downloader_t *downloader);
-void downloader_uninit (downloader_t *downloader);
-downloader_t *downloader_init (valhalla_t *handle);
+int vh_downloader_run (downloader_t *downloader, int priority);
+fifo_queue_t *vh_downloader_fifo_get (downloader_t *downloader);
+void vh_downloader_stop (downloader_t *downloader);
+void vh_downloader_uninit (downloader_t *downloader);
+downloader_t *vh_downloader_init (valhalla_t *handle);
 
-void downloader_destination_set (downloader_t *downloader,
+void vh_downloader_destination_set (downloader_t *downloader,
                                  valhalla_dl_t dl, const char *dst);
-const char *downloader_destination_get (downloader_t *downloader,
+const char *vh_downloader_destination_get (downloader_t *downloader,
                                         valhalla_dl_t dl);
-void downloader_action_send (downloader_t *downloader, int action, void *data);
+void vh_downloader_action_send (downloader_t *downloader, int action, void *data);
 
 #endif /* VALHALLA_DOWNLOADER_H */

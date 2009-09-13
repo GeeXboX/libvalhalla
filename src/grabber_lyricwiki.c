@@ -65,21 +65,21 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
   /* fetch lyrics URL */
-  xml_search_str (xmlDocGetRootElement (doc), "url", &html);
+  vh_xml_search_str (xmlDocGetRootElement (doc), "url", &html);
   xmlFreeDoc (doc);
 
   if (html)
@@ -87,7 +87,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     char *start, *end, *txt, *lyrics;
     int len, i, j;
 
-    udata = url_get_data (handler, html);
+    udata = vh_url_get_data (handler, html);
     free (html);
     if (udata.status != 0)
       return -1;
@@ -123,7 +123,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
       j++;
     }
 
-    metadata_add (&fdata->meta_grabber, "lyrics",
+    vh_metadata_add (&fdata->meta_grabber, "lyrics",
                   lyrics, VALHALLA_META_GRP_MISCELLANEOUS);
 
     free (txt);
@@ -156,7 +156,7 @@ grabber_lyricwiki_init (void *priv)
   if (!lyricwiki)
     return -1;
 
-  lyricwiki->handler = url_new ();
+  lyricwiki->handler = vh_url_new ();
   return lyricwiki->handler ? 0 : -1;
 }
 
@@ -170,7 +170,7 @@ grabber_lyricwiki_uninit (void *priv)
   if (!lyricwiki)
     return;
 
-  url_free (lyricwiki->handler);
+  vh_url_free (lyricwiki->handler);
   free (lyricwiki);
 }
 
@@ -184,14 +184,14 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "title", 0, &title);
+  err = vh_metadata_get (data->meta_parser, "title", 0, &title);
   if (err)
     return -1;
 
-  err = metadata_get (data->meta_parser, "author", 0, &author);
+  err = vh_metadata_get (data->meta_parser, "author", 0, &author);
   if (err)
   {
-    err = metadata_get (data->meta_parser, "artist", 0, &author);
+    err = vh_metadata_get (data->meta_parser, "artist", 0, &author);
     if (err)
       return -2;
   }
@@ -203,8 +203,8 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
     return -3;
 
   /* get HTTP compliant keywords */
-  artist = url_escape_string (lyricwiki->handler, author->value);
-  song = url_escape_string (lyricwiki->handler, title->value);
+  artist = vh_url_escape_string (lyricwiki->handler, author->value);
+  song = vh_url_escape_string (lyricwiki->handler, title->value);
 
   res = grabber_lyricwiki_get (lyricwiki->handler, data, artist, song);
 
@@ -218,7 +218,7 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_lyricwiki_register () */
+/* vh_grabber_lyricwiki_register () */
 GRABBER_REGISTER (lyricwiki,
                   GRABBER_CAP_FLAGS,
                   grabber_lyricwiki_priv,

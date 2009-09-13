@@ -52,13 +52,13 @@ valhalla_mrproper (valhalla_t *handle)
   fifo_queue_t *fifo_o;
 
   fifo_queue_t *fifo_i[] = {
-    scanner_fifo_get (handle->scanner),
-    dbmanager_fifo_get (handle->dbmanager),
-    dispatcher_fifo_get (handle->dispatcher),
-    parser_fifo_get (handle->parser),
+    vh_scanner_fifo_get (handle->scanner),
+    vh_dbmanager_fifo_get (handle->dbmanager),
+    vh_dispatcher_fifo_get (handle->dispatcher),
+    vh_parser_fifo_get (handle->parser),
 #ifdef USE_GRABBER
-    grabber_fifo_get (handle->grabber),
-    downloader_fifo_get (handle->downloader),
+    vh_grabber_fifo_get (handle->grabber),
+    vh_downloader_fifo_get (handle->downloader),
 #endif /* USE_GRABBER */
   };
 
@@ -69,10 +69,10 @@ valhalla_mrproper (valhalla_t *handle)
 
 #ifdef USE_GRABBER
   /* remove all previous contexts */
-  dbmanager_db_dlcontext_delete (handle->dbmanager);
+  vh_dbmanager_db_dlcontext_delete (handle->dbmanager);
 #endif /* USE_GRABBER */
 
-  fifo_o = fifo_queue_new ();
+  fifo_o = vh_fifo_queue_new ();
   if (!fifo_o)
     return;
 
@@ -87,13 +87,13 @@ valhalla_mrproper (valhalla_t *handle)
     int e;
     void *data;
 
-    fifo_queue_push (fifo_i[i], ACTION_CLEANUP_END, NULL);
+    vh_fifo_queue_push (fifo_i[i], ACTION_CLEANUP_END, NULL);
 
     do
     {
       e = ACTION_NO_OPERATION;
       data = NULL;
-      fifo_queue_pop (fifo_i[i], &e, &data);
+      vh_fifo_queue_pop (fifo_i[i], &e, &data);
 
       switch (e)
       {
@@ -109,12 +109,12 @@ valhalla_mrproper (valhalla_t *handle)
           break;
 
         file->clean_f = 1;
-        fifo_queue_push (fifo_o, e, data);
+        vh_fifo_queue_push (fifo_o, e, data);
 
 #ifdef USE_GRABBER
         /* save downloader context */
         if (file->step < STEP_ENDING && file->list_downloader)
-          dbmanager_db_dlcontext_save (handle->dbmanager, file);
+          vh_dbmanager_db_dlcontext_save (handle->dbmanager, file);
 #endif /* USE_GRABBER */
         break;
       }
@@ -126,8 +126,8 @@ valhalla_mrproper (valhalla_t *handle)
     while (e != ACTION_CLEANUP_END);
   }
 
-  queue_cleanup (fifo_o);
-  fifo_queue_free (fifo_o);
+  vh_queue_cleanup (fifo_o);
+  vh_fifo_queue_free (fifo_o);
 }
 
 void
@@ -138,14 +138,14 @@ valhalla_wait (valhalla_t *handle)
   if (!handle)
     return;
 
-  scanner_wait (handle->scanner);
+  vh_scanner_wait (handle->scanner);
 
-  dbmanager_stop (handle->dbmanager);
-  dispatcher_stop (handle->dispatcher);
-  parser_stop (handle->parser);
+  vh_dbmanager_stop (handle->dbmanager);
+  vh_dispatcher_stop (handle->dispatcher);
+  vh_parser_stop (handle->parser);
 #ifdef USE_GRABBER
-  grabber_stop (handle->grabber);
-  downloader_stop (handle->downloader);
+  vh_grabber_stop (handle->grabber);
+  vh_downloader_stop (handle->downloader);
 #endif /* USE_GRABBER */
 
   valhalla_mrproper (handle);
@@ -154,13 +154,13 @@ valhalla_wait (valhalla_t *handle)
 static void
 valhalla_force_stop (valhalla_t *handle)
 {
-  scanner_stop (handle->scanner);
-  dbmanager_stop (handle->dbmanager);
-  dispatcher_stop (handle->dispatcher);
-  parser_stop (handle->parser);
+  vh_scanner_stop (handle->scanner);
+  vh_dbmanager_stop (handle->dbmanager);
+  vh_dispatcher_stop (handle->dispatcher);
+  vh_parser_stop (handle->parser);
 #ifdef USE_GRABBER
-  grabber_stop (handle->grabber);
-  downloader_stop (handle->downloader);
+  vh_grabber_stop (handle->grabber);
+  vh_downloader_stop (handle->downloader);
 #endif /* USE_GRABBER */
 
   valhalla_mrproper (handle);
@@ -176,15 +176,15 @@ valhalla_uninit (valhalla_t *handle)
 
   valhalla_force_stop (handle);
 
-  scanner_uninit (handle->scanner);
-  dbmanager_uninit (handle->dbmanager);
-  dispatcher_uninit (handle->dispatcher);
-  parser_uninit (handle->parser);
+  vh_scanner_uninit (handle->scanner);
+  vh_dbmanager_uninit (handle->dbmanager);
+  vh_dispatcher_uninit (handle->dispatcher);
+  vh_parser_uninit (handle->parser);
 #ifdef USE_GRABBER
-  grabber_uninit (handle->grabber);
-  downloader_uninit (handle->downloader);
+  vh_grabber_uninit (handle->grabber);
+  vh_downloader_uninit (handle->downloader);
 
-  url_global_uninit ();
+  vh_url_global_uninit ();
 #endif /* USE_GRABBER */
 
   free (handle);
@@ -205,28 +205,28 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 
   handle->run = 1;
 
-  res = scanner_run (handle->scanner, loop, timeout, priority);
+  res = vh_scanner_run (handle->scanner, loop, timeout, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 
-  res = dbmanager_run (handle->dbmanager, priority);
+  res = vh_dbmanager_run (handle->dbmanager, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 
-  res = dispatcher_run (handle->dispatcher, priority);
+  res = vh_dispatcher_run (handle->dispatcher, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 
-  res = parser_run (handle->parser, priority);
+  res = vh_parser_run (handle->parser, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 
 #ifdef USE_GRABBER
-  res = grabber_run (handle->grabber, priority);
+  res = vh_grabber_run (handle->grabber, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 
-  res = downloader_run (handle->downloader, priority);
+  res = vh_downloader_run (handle->downloader, priority);
   if (res)
     return VALHALLA_ERROR_THREAD;
 #endif /* USE_GRABBER */
@@ -242,7 +242,7 @@ valhalla_path_add (valhalla_t *handle, const char *location, int recursive)
   if (!handle || !location)
     return;
 
-  scanner_path_add (handle->scanner, location, recursive);
+  vh_scanner_path_add (handle->scanner, location, recursive);
 }
 
 void
@@ -253,7 +253,7 @@ valhalla_suffix_add (valhalla_t *handle, const char *suffix)
   if (!handle || !suffix)
     return;
 
-  scanner_suffix_add (handle->scanner, suffix);
+  vh_scanner_suffix_add (handle->scanner, suffix);
 }
 
 void
@@ -264,7 +264,7 @@ valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword)
   if (!handle || !keyword)
     return;
 
-  parser_bl_keyword_add (handle->parser, keyword);
+  vh_parser_bl_keyword_add (handle->parser, keyword);
 }
 
 void
@@ -277,7 +277,7 @@ valhalla_downloader_dest_set (valhalla_t *handle,
     return;
 
 #ifdef USE_GRABBER
-  downloader_destination_set (handle->downloader, dl, dst);
+  vh_downloader_destination_set (handle->downloader, dl, dst);
 #else
   valhalla_log (VALHALLA_MSG_WARNING,
                 "This function is usable only with grabbing support!");
@@ -293,7 +293,7 @@ valhalla_grabber_state_set (valhalla_t *handle, const char *id, int enable)
     return;
 
 #ifdef USE_GRABBER
-  grabber_state_set (handle->grabber, id, enable);
+  vh_grabber_state_set (handle->grabber, id, enable);
 #else
   valhalla_log (VALHALLA_MSG_WARNING,
                 "This function is usable only with grabbing support!");
@@ -309,7 +309,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
     return NULL;
 
 #ifdef USE_GRABBER
-  return grabber_list_get (handle->grabber, id);
+  return vh_grabber_list_get (handle->grabber, id);
 #else
   valhalla_log (VALHALLA_MSG_WARNING,
                 "This function is usable only with grabbing support!");
@@ -320,7 +320,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 void
 valhalla_verbosity (valhalla_verb_t level)
 {
-  vlog_verb (level);
+  vh_log_verb (level);
 }
 
 valhalla_t *
@@ -340,32 +340,32 @@ valhalla_init (const char *db,
     return NULL;
 
 #ifdef USE_GRABBER
-  url_global_init ();
+  vh_url_global_init ();
 #endif /* USE_GRABBER */
 
-  handle->dispatcher = dispatcher_init (handle);
+  handle->dispatcher = vh_dispatcher_init (handle);
   if (!handle->dispatcher)
     goto err;
 
-  handle->parser = parser_init (handle, parser_nb, decrapifier);
+  handle->parser = vh_parser_init (handle, parser_nb, decrapifier);
   if (!handle->parser)
     goto err;
 
 #ifdef USE_GRABBER
-  handle->grabber = grabber_init (handle);
+  handle->grabber = vh_grabber_init (handle);
   if (!handle->grabber)
     goto err;
 
-  handle->downloader = downloader_init (handle);
+  handle->downloader = vh_downloader_init (handle);
   if (!handle->downloader)
     goto err;
 #endif /* USE_GRABBER */
 
-  handle->scanner = scanner_init (handle);
+  handle->scanner = vh_scanner_init (handle);
   if (!handle->scanner)
     goto err;
 
-  handle->dbmanager = dbmanager_init (handle, db, commit_int);
+  handle->dbmanager = vh_dbmanager_init (handle, db, commit_int);
   if (!handle->dbmanager)
     goto err;
 
@@ -401,7 +401,7 @@ int valhalla_db_metalist_get (valhalla_t *handle,
   if (!handle || !search || !result_cb)
     return -1;
 
-  return dbmanager_db_metalist_get (handle->dbmanager,
+  return vh_dbmanager_db_metalist_get (handle->dbmanager,
                                     search, restriction, result_cb, data);
 }
 
@@ -417,7 +417,7 @@ int valhalla_db_filelist_get (valhalla_t *handle,
   if (!handle || !result_cb)
     return -1;
 
-  return dbmanager_db_filelist_get (handle->dbmanager,
+  return vh_dbmanager_db_filelist_get (handle->dbmanager,
                                     filetype, restriction, result_cb, data);
 }
 
@@ -432,5 +432,5 @@ valhalla_db_file_get (valhalla_t *handle,
   if (!handle || !res)
     return -1;
 
-  return dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
+  return vh_dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
 }

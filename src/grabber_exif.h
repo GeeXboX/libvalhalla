@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_EXIF_H
 #define VALHALLA_GRABBER_EXIF_H
 
-grabber_list_t *grabber_exif_register (void);
+grabber_list_t *vh_grabber_exif_register (void);
 
 #endif /* VALHALLA_GRABBER_EXIF_H */

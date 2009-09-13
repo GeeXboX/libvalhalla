@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_DUMMY_H
 #define VALHALLA_GRABBER_DUMMY_H
 
-grabber_list_t *grabber_dummy_register (void);
+grabber_list_t *vh_grabber_dummy_register (void);
 
 #endif /* VALHALLA_GRABBER_DUMMY_H */

@@ -79,7 +79,7 @@ grabber_local_get (const char *filename)
 
     snprintf (cover, sizeof (cover),
               "%s/%s.%s", dir, file, known_extensions[i]);
-    if (file_exists (cover))
+    if (vh_file_exists (cover))
     {
       cv = strdup (cover);
       goto get_end;
@@ -94,7 +94,7 @@ grabber_local_get (const char *filename)
 
       snprintf (cover, sizeof (cover),
                 "%s/%s.%s", dir, known_filenames[j], known_extensions[i]);
-      if (file_exists (cover))
+      if (vh_file_exists (cover))
       {
         cv = strdup (cover);
         goto get_end;
@@ -149,10 +149,10 @@ grabber_local_grab (void *priv, file_data_t *data)
   {
     char *cv;
 
-    cv = md5sum (cover);
-    metadata_add (&data->meta_grabber, "cover",
+    cv = vh_md5sum (cover);
+    vh_metadata_add (&data->meta_grabber, "cover",
                   cv, VALHALLA_META_GRP_MISCELLANEOUS);
-    file_dl_add (&data->list_downloader, cover, cv, VALHALLA_DL_COVER);
+    vh_file_dl_add (&data->list_downloader, cover, cv, VALHALLA_DL_COVER);
     free (cv);
     free (cover);
   }
@@ -164,7 +164,7 @@ grabber_local_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_local_register () */
+/* vh_grabber_local_register () */
 GRABBER_REGISTER (local,
                   GRABBER_CAP_FLAGS,
                   grabber_local_priv,

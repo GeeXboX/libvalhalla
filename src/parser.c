@@ -69,7 +69,7 @@ suffix_fmt_guess (const char *file)
   if (it)
     it++;
 
-  return lavf_utils_fmtname_get (it);
+  return vh_lavf_utils_fmtname_get (it);
 }
 
 static inline int
@@ -135,7 +135,7 @@ parser_metadata_group (metadata_t **meta,
 
     snprintf (str, sizeof (str), "%s", key);
     vh_strtolower (str);
-    metadata_add (meta, str, value, metagrp[i].grp);
+    vh_metadata_add (meta, str, value, metagrp[i].grp);
     break;
   }
 }
@@ -294,12 +294,12 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     parser_metadata_group (&meta, ctx->iformat->name, tag->key, tag->value);
 
   /* if necessary, use the filename as title */
-  if (parser->decrapifier && metadata_get (meta, "title", 0, &title_tag))
+  if (parser->decrapifier && vh_metadata_get (meta, "title", 0, &title_tag))
   {
     char *title = parser_decrapify (parser, file);
     if (title)
     {
-      metadata_add (&meta, "title", title, VALHALLA_META_GRP_TITLES);
+      vh_metadata_add (&meta, "title", title, VALHALLA_META_GRP_TITLES);
       free (title);
     }
   }
@@ -479,7 +479,7 @@ parser_thread (void *arg)
     e = ACTION_NO_OPERATION;
     data = NULL;
 
-    res = fifo_queue_pop (parser->fifo, &e, &data);
+    res = vh_fifo_queue_pop (parser->fifo, &e, &data);
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
@@ -490,8 +490,8 @@ parser_thread (void *arg)
     if (pdata)
       parser_metadata (parser, pdata);
 
-    file_data_step_increase (pdata, &e);
-    dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
+    vh_file_data_step_increase (pdata, &e);
+    vh_dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
   }
   while (!parser_is_stopped (parser));
 
@@ -499,7 +499,7 @@ parser_thread (void *arg)
 }
 
 int
-parser_run (parser_t *parser, int priority)
+vh_parser_run (parser_t *parser, int priority)
 {
   int i, res = PARSER_SUCCESS;
   pthread_attr_t attr;
@@ -541,7 +541,7 @@ parser_get_list_length (void *list)
 }
 
 void
-parser_bl_keyword_add (parser_t *parser, const char *keyword)
+vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 {
   int n;
 
@@ -561,7 +561,7 @@ parser_bl_keyword_add (parser_t *parser, const char *keyword)
 }
 
 fifo_queue_t *
-parser_fifo_get (parser_t *parser)
+vh_parser_fifo_get (parser_t *parser)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -572,7 +572,7 @@ parser_fifo_get (parser_t *parser)
 }
 
 void
-parser_stop (parser_t *parser)
+vh_parser_stop (parser_t *parser)
 {
   int i;
 
@@ -589,14 +589,14 @@ parser_stop (parser_t *parser)
   pthread_mutex_unlock (&parser->mutex_run);
 
   for (i = 0; i < parser->nb; i++)
-    fifo_queue_push (parser->fifo, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (parser->fifo, ACTION_KILL_THREAD, NULL);
 
   for (i = 0; i < parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
 }
 
 void
-parser_uninit (parser_t *parser)
+vh_parser_uninit (parser_t *parser)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -611,14 +611,14 @@ parser_uninit (parser_t *parser)
     free (parser->bl_list);
   }
 
-  fifo_queue_free (parser->fifo);
+  vh_fifo_queue_free (parser->fifo);
   pthread_mutex_destroy (&parser->mutex_run);
 
   free (parser);
 }
 
 parser_t *
-parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
+vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
 {
   parser_t *parser;
 
@@ -634,7 +634,7 @@ parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
   if (!nb || nb > ARRAY_NB_ELEMENTS (parser->thread))
     goto err;
 
-  parser->fifo = fifo_queue_new ();
+  parser->fifo = vh_fifo_queue_new ();
   if (!parser->fifo)
     goto err;
 
@@ -647,17 +647,17 @@ parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
   return parser;
 
  err:
-  parser_uninit (parser);
+  vh_parser_uninit (parser);
   return NULL;
 }
 
 void
-parser_action_send (parser_t *parser, int action, void *data)
+vh_parser_action_send (parser_t *parser, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;
 
-  fifo_queue_push (parser->fifo, action, data);
+  vh_fifo_queue_push (parser->fifo, action, data);
 }

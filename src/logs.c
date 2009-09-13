@@ -46,7 +46,7 @@ static valhalla_verb_t g_verbosity  = VALHALLA_MSG_INFO;
 
 
 void
-vlog_verb (valhalla_verb_t level)
+vh_log_verb (valhalla_verb_t level)
 {
   pthread_mutex_lock (&g_mutex_verb);
   g_verbosity = level;
@@ -54,7 +54,7 @@ vlog_verb (valhalla_verb_t level)
 }
 
 int
-vlog_test (valhalla_verb_t level)
+vh_log_test (valhalla_verb_t level)
 {
   int verbosity;
 
@@ -73,7 +73,7 @@ vlog_test (valhalla_verb_t level)
 }
 
 void
-vlog (valhalla_verb_t level,
+vh_log (valhalla_verb_t level,
       const char *file, int line, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
@@ -94,7 +94,7 @@ vlog (valhalla_verb_t level,
   };
   va_list va;
 
-  if (!format || !vlog_test (level))
+  if (!format || !vh_log_test (level))
     return;
 
   va_start (va, format);

@@ -115,20 +115,20 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   /* 3. Perform request */
-  data = url_get_data (handler, url);
+  data = vh_url_get_data (handler, url);
   if (data.status)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", data.buffer);
 
   /* 4. Parse the answer to get ASIN value */
-  doc = get_xml_doc_from_memory (data.buffer);
+  doc = vh_get_xml_doc_from_memory (data.buffer);
   free (data.buffer);
 
   if (!doc)
     return -1;
 
-  asin = get_prop_value_from_xml_tree (xmlDocGetRootElement (doc), "ASIN");
+  asin = vh_get_prop_value_from_xml_tree (xmlDocGetRootElement (doc), "ASIN");
   xmlFreeDoc (doc);
 
   if (!asin)
@@ -148,7 +148,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   valhalla_log (VALHALLA_MSG_VERBOSE, "Cover Search Request: %s", url);
 
   /* 6. Perform request */
-  data = url_get_data (handler, url);
+  data = vh_url_get_data (handler, url);
   if (data.status)
     return -1;
 
@@ -161,11 +161,11 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   if (!doc)
     return -1;
 
-  img = get_node_xml_tree (xmlDocGetRootElement(doc), "LargeImage");
+  img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "LargeImage");
   if (!img)
-    img = get_node_xml_tree (xmlDocGetRootElement(doc), "MediumImage");
+    img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "MediumImage");
   if (!img)
-    img = get_node_xml_tree (xmlDocGetRootElement(doc), "SmallImage");
+    img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "SmallImage");
 
   if (!img)
   {
@@ -173,7 +173,7 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
     return -1;
   }
 
-  cover_url = get_prop_value_from_xml_tree (img, "URL");
+  cover_url = vh_get_prop_value_from_xml_tree (img, "URL");
   if (!cover_url)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
@@ -205,12 +205,12 @@ grabber_amazon_check (grabber_amazon_t *amazon, const char *cover)
 
   if (amazon->list)
   {
-    data = list_search (amazon->list, cover, grabber_amazon_cmp_fct);
+    data = vh_list_search (amazon->list, cover, grabber_amazon_cmp_fct);
     if (data)
       return 0;
   }
 
-  list_append (&amazon->list, cover, strlen (cover) + 1);
+  vh_list_append (&amazon->list, cover, strlen (cover) + 1);
   return -1;
 }
 
@@ -236,7 +236,7 @@ grabber_amazon_init (void *priv)
   if (!amazon)
     return -1;
 
-  amazon->handler = url_new ();
+  amazon->handler = vh_url_new ();
   return amazon->handler ? 0 : -1;
 }
 
@@ -251,9 +251,9 @@ grabber_amazon_uninit (void *priv)
     return;
 
   if (amazon->handler)
-    url_free (amazon->handler);
+    vh_url_free (amazon->handler);
   if (amazon->list)
-    list_free (amazon->list, NULL);
+    vh_list_free (amazon->list, NULL);
 
   free (amazon);
 }
@@ -274,13 +274,13 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   /*
    * Try with the album's name, or with the title.
    */
-  if (   !metadata_get (data->meta_parser, "album", 0, &tag)
-      || !metadata_get (data->meta_parser, "title", 0, &tag))
+  if (   !vh_metadata_get (data->meta_parser, "album", 0, &tag)
+      || !vh_metadata_get (data->meta_parser, "title", 0, &tag))
     keywords = tag->value;
   else
     return -1;
 
-  cover = md5sum (keywords);
+  cover = vh_md5sum (keywords);
   /*
    * Check if these keywords were already used for retrieving a cover.
    * If yes, then only the association on the available cover is added.
@@ -293,7 +293,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   res = grabber_amazon_check (amazon, cover);
   if (!res)
   {
-    metadata_add (&data->meta_grabber, METADATA_COVER,
+    vh_metadata_add (&data->meta_grabber, METADATA_COVER,
                   cover, VALHALLA_META_GRP_MISCELLANEOUS);
     free (cover);
     return 0;
@@ -312,7 +312,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   }
 
   /* Format the keywords */
-  escaped_keywords = url_escape_string (amazon->handler, keywords);
+  escaped_keywords = vh_url_escape_string (amazon->handler, keywords);
   if (!escaped_keywords)
   {
     free (cover);
@@ -324,9 +324,9 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   free (escaped_keywords);
   if (!res)
   {
-    metadata_add (&data->meta_grabber, METADATA_COVER,
+    vh_metadata_add (&data->meta_grabber, METADATA_COVER,
                   cover, VALHALLA_META_GRP_MISCELLANEOUS);
-    file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
+    vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }
   free (cover);
@@ -342,14 +342,14 @@ grabber_amazon_loop (void *priv)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
-  LIST_FREE (amazon->list, NULL);
+  VH_LIST_FREE (amazon->list, NULL);
 }
 
 /****************************************************************************/
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_amazon_register () */
+/* vh_grabber_amazon_register () */
 GRABBER_REGISTER (amazon,
                   GRABBER_CAP_FLAGS,
                   grabber_amazon_priv,

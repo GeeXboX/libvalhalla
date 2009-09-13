@@ -70,21 +70,21 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
   /* check for a known DB entry */
-  n = get_node_xml_tree (xmlDocGetRootElement (doc), "show");
+  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), "show");
   if (!n)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
@@ -93,7 +93,7 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   }
 
   /* get TVRage show id */
-  tmp = get_prop_value_from_xml_tree (n, "showid");
+  tmp = vh_get_prop_value_from_xml_tree (n, "showid");
   if (!tmp)
     goto error;
 
@@ -108,14 +108,14 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     goto error;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -123,10 +123,10 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch tv show french title (to be extended to language param) */
-  tmp = get_prop_value_from_xml_tree_by_attr (n, "aka", "country", "FR");
+  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "aka", "country", "FR");
   if (tmp)
   {
-    metadata_add (&fdata->meta_grabber, "alternative_title",
+    vh_metadata_add (&fdata->meta_grabber, "alternative_title",
                   (char *) tmp, VALHALLA_META_GRP_TITLES);
     xmlFree (tmp);
   }
@@ -144,16 +144,16 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie categories */
-  node = get_node_xml_tree (n, "genre");
+  node = vh_get_node_xml_tree (n, "genre");
   for (i = 0; i < 5; i++)
   {
     if (!node)
       break;
 
-    tmp = get_prop_value_from_xml_tree (node, "genre");
+    tmp = vh_get_prop_value_from_xml_tree (node, "genre");
     if (tmp)
     {
-      metadata_add (&fdata->meta_grabber, "category",
+      vh_metadata_add (&fdata->meta_grabber, "category",
                     (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
       xmlFree (tmp);
     }
@@ -192,7 +192,7 @@ grabber_tvrage_init (void *priv)
   if (!tvrage)
     return -1;
 
-  tvrage->handler = url_new ();
+  tvrage->handler = vh_url_new ();
   return tvrage->handler ? 0 : -1;
 }
 
@@ -206,7 +206,7 @@ grabber_tvrage_uninit (void *priv)
   if (!tvrage)
     return;
 
-  url_free (tvrage->handler);
+  vh_url_free (tvrage->handler);
   free (tvrage);
 }
 
@@ -220,12 +220,12 @@ grabber_tvrage_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "title", 0, &tag);
+  err = vh_metadata_get (data->meta_parser, "title", 0, &tag);
   if (err)
     return -1;
 
   /* Format the keywords */
-  keywords = url_escape_string (tvrage->handler, tag->value);
+  keywords = vh_url_escape_string (tvrage->handler, tag->value);
   if (!keywords)
     return -2;
 
@@ -239,7 +239,7 @@ grabber_tvrage_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_tvrage_register () */
+/* vh_grabber_tvrage_register () */
 GRABBER_REGISTER (tvrage,
                   GRABBER_CAP_FLAGS,
                   grabber_tvrage_priv,

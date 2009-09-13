@@ -22,6 +22,6 @@
 #ifndef VALHALLA_LAVF_UTILS
 #define VALHALLA_LAVF_UTILS
 
-const char *lavf_utils_fmtname_get (const char *suffix);
+const char *vh_lavf_utils_fmtname_get (const char *suffix);
 
 #endif /* VALHALLA_LAVF_UTILS */

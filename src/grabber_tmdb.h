@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_TMDB_H
 #define VALHALLA_GRABBER_TMDB_H
 
-grabber_list_t *grabber_tmdb_register (void);
+grabber_list_t *vh_grabber_tmdb_register (void);
 
 #endif /* VALHALLA_GRABBER_TMDB_H */

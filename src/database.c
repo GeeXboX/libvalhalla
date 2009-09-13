@@ -169,27 +169,27 @@ static const stmt_list_t g_stmts[] = {
 /******************************************************************************/
 
 void
-database_begin_transaction (database_t *database)
+vh_database_begin_transaction (database_t *database)
 {
   sqlite3_step (STMT_GET (STMT_BEGIN_TRANSACTION));
   sqlite3_reset (STMT_GET (STMT_BEGIN_TRANSACTION));
 }
 
 void
-database_end_transaction (database_t *database)
+vh_database_end_transaction (database_t *database)
 {
   sqlite3_step (STMT_GET (STMT_END_TRANSACTION));
   sqlite3_reset (STMT_GET (STMT_END_TRANSACTION));
 }
 
 void
-database_step_transaction (database_t *database,
+vh_database_step_transaction (database_t *database,
                            unsigned int interval, int value)
 {
   if (value && !(value % interval))
   {
-    database_end_transaction (database);
-    database_begin_transaction (database);
+    vh_database_end_transaction (database);
+    vh_database_begin_transaction (database);
   }
 }
 
@@ -569,7 +569,7 @@ database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
   if (!file_id || !meta)
     return;
 
-  while (!metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
+  while (!vh_metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
   {
     meta_id  = database_meta_insert (database, tag->name);
     data_id  = database_data_insert (database, tag->value);
@@ -610,19 +610,19 @@ database_file_grab (database_t *database, file_data_t *data)
 }
 
 void
-database_file_data_insert (database_t *database, file_data_t *data)
+vh_database_file_data_insert (database_t *database, file_data_t *data)
 {
   database_file_data (database, data, 1);
 }
 
 void
-database_file_data_update (database_t *database, file_data_t *data)
+vh_database_file_data_update (database_t *database, file_data_t *data)
 {
   database_file_data (database, data, 0);
 }
 
 void
-database_file_grab_insert (database_t *database, file_data_t *data)
+vh_database_file_grab_insert (database_t *database, file_data_t *data)
 {
   database_file_grab (database, data);
 }
@@ -635,13 +635,13 @@ database_file_grab_insert (database_t *database, file_data_t *data)
  *        keeps previous 'as it'.
  */
 void
-database_file_grab_update (database_t *database, file_data_t *data)
+vh_database_file_grab_update (database_t *database, file_data_t *data)
 {
   database_file_grab (database, data);
 }
 
 void
-database_file_data_delete (database_t *database, const char *file)
+vh_database_file_data_delete (database_t *database, const char *file)
 {
   int res, err = -1;
 
@@ -663,7 +663,7 @@ database_file_data_delete (database_t *database, const char *file)
 }
 
 void
-database_file_checked_clear (database_t *database)
+vh_database_file_checked_clear (database_t *database)
 {
   int res;
 
@@ -675,7 +675,7 @@ database_file_checked_clear (database_t *database)
 }
 
 const char *
-database_file_get_checked_clear (database_t *database)
+vh_database_file_get_checked_clear (database_t *database)
 {
   int res;
 
@@ -692,7 +692,7 @@ database_file_get_checked_clear (database_t *database)
 }
 
 void
-database_file_interrupted_clear (database_t *database, const char *file)
+vh_database_file_interrupted_clear (database_t *database, const char *file)
 {
   int res, err = -1;
 
@@ -717,7 +717,7 @@ database_file_interrupted_clear (database_t *database, const char *file)
 }
 
 int
-database_file_get_interrupted (database_t *database, const char *file)
+vh_database_file_get_interrupted (database_t *database, const char *file)
 {
   int res, err = -1, val = -1;
 
@@ -744,7 +744,7 @@ database_file_get_interrupted (database_t *database, const char *file)
 }
 
 int
-database_file_get_mtime (database_t *database, const char *file)
+vh_database_file_get_mtime (database_t *database, const char *file)
 {
   int res, err = -1, val = -1;
 
@@ -771,7 +771,7 @@ database_file_get_mtime (database_t *database, const char *file)
 }
 
 void
-database_file_get_grabber (database_t *database, const char *file, list_t **l)
+vh_database_file_get_grabber (database_t *database, const char *file, list_t **l)
 {
   int res, err = -1;
 
@@ -788,7 +788,7 @@ database_file_get_grabber (database_t *database, const char *file, list_t **l)
     const char *grabber_name = (const char *)
       sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME), 0);
     if (grabber_name)
-      list_append (l, grabber_name, strlen (grabber_name));
+      vh_list_append (l, grabber_name, strlen (grabber_name));
   }
 
   sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME));
@@ -836,7 +836,7 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
 }
 
 void
-database_file_insert_dlcontext (database_t *database, file_data_t *data)
+vh_database_file_insert_dlcontext (database_t *database, file_data_t *data)
 {
   file_dl_t *it;
   int64_t file_id;
@@ -851,7 +851,7 @@ database_file_insert_dlcontext (database_t *database, file_data_t *data)
 }
 
 void
-database_file_get_dlcontext (database_t *database,
+vh_database_file_get_dlcontext (database_t *database,
                              const char *file, file_dl_t **dl)
 {
   int res, err = -1;
@@ -873,7 +873,7 @@ database_file_get_dlcontext (database_t *database,
       sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 2);
     int dst = sqlite3_column_int (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 1);
     if (url && name)
-      file_dl_add (dl, url, name, dst);
+      vh_file_dl_add (dl, url, name, dst);
   }
 
   sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_DLCONTEXT));
@@ -886,7 +886,7 @@ database_file_get_dlcontext (database_t *database,
 }
 
 void
-database_delete_dlcontext (database_t *database)
+vh_database_delete_dlcontext (database_t *database)
 {
   int res, err = -1;
 
@@ -900,7 +900,7 @@ database_delete_dlcontext (database_t *database)
 }
 
 int
-database_cleanup (database_t *database)
+vh_database_cleanup (database_t *database)
 {
   int res, val, val_tmp, err = -1;
 
@@ -939,7 +939,7 @@ database_cleanup (database_t *database)
 }
 
 void
-database_uninit (database_t *database)
+vh_database_uninit (database_t *database)
 {
   int i;
 
@@ -968,7 +968,7 @@ database_uninit (database_t *database)
 }
 
 database_t *
-database_init (const char *path)
+vh_database_init (const char *path)
 {
   int i, res;
   database_t *database;
@@ -1014,7 +1014,7 @@ database_init (const char *path)
   return database;
 
  err:
-  database_uninit (database);
+  vh_database_uninit (database);
   return NULL;
 }
 
@@ -1182,7 +1182,7 @@ database_select_metalist_cb (void *user_data,
 }
 
 int
-database_metalist_get (database_t *database,
+vh_database_metalist_get (database_t *database,
                        valhalla_db_item_t *search,
                        valhalla_db_restrict_t *restriction,
                        int (*select_cb) (void *data,
@@ -1244,7 +1244,7 @@ database_select_filelist_cb (void *user_data,
 }
 
 int
-database_filelist_get (database_t *database,
+vh_database_filelist_get (database_t *database,
                        valhalla_file_type_t filetype,
                        valhalla_db_restrict_t *restriction,
                        int (*select_cb) (void *data,
@@ -1321,7 +1321,7 @@ database_select_file_cb (void *user_data,
 }
 
 int
-database_file_get (database_t *database,
+vh_database_file_get (database_t *database,
                    int64_t id, const char *path,
                    valhalla_db_restrict_t *restriction,
                    valhalla_db_filemeta_t **res)

@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_LYRICSFLY_H
 #define VALHALLA_GRABBER_LYRICSFLY_H
 
-grabber_list_t *grabber_lyricsfly_register (void);
+grabber_list_t *vh_grabber_lyricsfly_register (void);
 
 #endif /* VALHALLA_GRABBER_LYRICSFLY_H */

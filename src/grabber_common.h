@@ -110,19 +110,19 @@ typedef struct grabber_list_s {
    * and \p list_downloader in the \p data structure. All others attributes must
    * be considered as read-only! Only them are thread-safe for writing.
    *
-   * To add new metadata in the database, the function metadata_add() must be
+   * To add new metadata in the database, the function vh_metadata_add() must be
    * used on \p meta_grabber.
    *
    * It is proibited to download files (images for example) with this function.
    * Only textual metadata are proceeded here. But the reference on an image
    * can be saved in the meta_grabber attribute.
    * To download a file, the URL and the destination must be prepared for the
-   * downloader with the function file_dl_add() in order to populate the
+   * downloader with the function vh_file_dl_add() in order to populate the
    * \p list_downloader attribute. The files will be downloaded after the
    * grabbing step.
    *
    * To read \p meta_parser (attribute populated by the parser), you must use
-   * the function metadata_get().
+   * the function vh_metadata_get().
    *
    * \param[in] priv      Private structure registered with the grabber.
    * \param[in] data      File structure where some data must be populated.
@@ -170,7 +170,7 @@ typedef struct grabber_list_s {
 #define GRABBER_REGISTER(p_name, p_caps,                                      \
                          fct_priv, fct_init, fct_uninit, fct_grab, fct_loop)  \
   grabber_list_t *                                                            \
-  grabber_##p_name##_register (void)                                          \
+  vh_grabber_##p_name##_register (void)                                       \
   {                                                                           \
     grabber_list_t *grabber;                                                  \
                                                                               \

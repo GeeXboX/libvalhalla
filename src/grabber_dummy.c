@@ -102,7 +102,7 @@ grabber_dummy_loop (void *priv)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_dummy_register () */
+/* vh_grabber_dummy_register () */
 GRABBER_REGISTER (dummy,
                   GRABBER_CAP_FLAGS,
                   grabber_dummy_priv,

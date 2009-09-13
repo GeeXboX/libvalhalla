@@ -64,20 +64,20 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
-  cv = get_prop_value_from_xml_tree_by_attr (xmlDocGetRootElement (doc),
+  cv = vh_get_prop_value_from_xml_tree_by_attr (xmlDocGetRootElement (doc),
                                              "image", "size", "extralarge");
   xmlFreeDoc (doc);
   if (!cv)
@@ -105,12 +105,12 @@ grabber_lastfm_check (grabber_lastfm_t *lastfm, const char *cover)
 
   if (lastfm->list)
   {
-    data = list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
+    data = vh_list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
     if (data)
       return 0;
   }
 
-  list_append (&lastfm->list, cover, strlen (cover) + 1);
+  vh_list_append (&lastfm->list, cover, strlen (cover) + 1);
   return -1;
 }
 
@@ -136,7 +136,7 @@ grabber_lastfm_init (void *priv)
   if (!lastfm)
     return -1;
 
-  lastfm->handler = url_new ();
+  lastfm->handler = vh_url_new ();
   return lastfm->handler ? 0 : -1;
 }
 
@@ -150,8 +150,8 @@ grabber_lastfm_uninit (void *priv)
   if (!lastfm)
     return;
 
-  url_free (lastfm->handler);
-  list_free (lastfm->list, NULL);
+  vh_url_free (lastfm->handler);
+  vh_list_free (lastfm->list, NULL);
   free (lastfm);
 }
 
@@ -167,14 +167,14 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "album", 0, &album);
+  err = vh_metadata_get (data->meta_parser, "album", 0, &album);
   if (err)
     return -1;
 
-  err = metadata_get (data->meta_parser, "author", 0, &author);
+  err = vh_metadata_get (data->meta_parser, "author", 0, &author);
   if (err)
   {
-    err = metadata_get (data->meta_parser, "artist", 0, &author);
+    err = vh_metadata_get (data->meta_parser, "artist", 0, &author);
     if (err)
       return -2;
   }
@@ -186,11 +186,11 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
     return -3;
 
   /* get HTTP compliant keywords */
-  artist = url_escape_string (lastfm->handler, author->value);
-  alb = url_escape_string (lastfm->handler, album->value);
+  artist = vh_url_escape_string (lastfm->handler, author->value);
+  alb = vh_url_escape_string (lastfm->handler, album->value);
 
   snprintf (name, sizeof (name), "%s-%s", artist, alb);
-  cover = md5sum (name);
+  cover = vh_md5sum (name);
   /*
    * Check if these keywords were already used for retrieving a cover.
    * If yes, then only the association on the available cover is added.
@@ -199,7 +199,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   res = grabber_lastfm_check (lastfm, cover);
   if (!res)
   {
-    metadata_add (&data->meta_grabber, "cover",
+    vh_metadata_add (&data->meta_grabber, "cover",
                   cover, VALHALLA_META_GRP_MISCELLANEOUS);
     goto out;
   }
@@ -207,9 +207,9 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   res = grabber_lastfm_get (lastfm->handler, &url, artist, alb, cover);
   if (!res)
   {
-    metadata_add (&data->meta_grabber, "cover",
+    vh_metadata_add (&data->meta_grabber, "cover",
                   cover, VALHALLA_META_GRP_MISCELLANEOUS);
-    file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
+    vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }
 
@@ -229,14 +229,14 @@ grabber_lastfm_loop (void *priv)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
-  LIST_FREE (lastfm->list, NULL);
+  VH_LIST_FREE (lastfm->list, NULL);
 }
 
 /****************************************************************************/
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_lastfm_register () */
+/* vh_grabber_lastfm_register () */
 GRABBER_REGISTER (lastfm,
                   GRABBER_CAP_FLAGS,
                   grabber_lastfm_priv,

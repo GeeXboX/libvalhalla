@@ -52,7 +52,7 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
 
   exif_entry_get_value (entry, buf, BUF_SIZE);
 
-  metadata_add (&fdata->meta_grabber,
+  vh_metadata_add (&fdata->meta_grabber,
                 exif_tag_get_name (entry->tag),
                 exif_entry_get_value (entry, buf, BUF_SIZE),
                 VALHALLA_META_GRP_TECHNICAL);
@@ -115,7 +115,7 @@ grabber_exif_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_exif_register () */
+/* vh_grabber_exif_register () */
 GRABBER_REGISTER (exif,
                   GRABBER_CAP_FLAGS,
                   grabber_exif_priv,

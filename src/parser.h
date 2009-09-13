@@ -32,14 +32,14 @@ enum parser_errno {
   PARSER_SUCCESS       =  0,
 };
 
-int parser_run (parser_t *parser, int priority);
-fifo_queue_t *parser_fifo_get (parser_t *parser);
-void parser_stop (parser_t *parser);
-void parser_uninit (parser_t *parser);
-parser_t *parser_init (valhalla_t *handle, unsigned int nb, int decrapifier);
+int vh_parser_run (parser_t *parser, int priority);
+fifo_queue_t *vh_parser_fifo_get (parser_t *parser);
+void vh_parser_stop (parser_t *parser);
+void vh_parser_uninit (parser_t *parser);
+parser_t *vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier);
 
-void parser_bl_keyword_add (parser_t *parser, const char *keyword);
+void vh_parser_bl_keyword_add (parser_t *parser, const char *keyword);
 
-void parser_action_send (parser_t *parser, int action, void *data);
+void vh_parser_action_send (parser_t *parser, int action, void *data);
 
 #endif /* VALHALLA_PARSER_H */

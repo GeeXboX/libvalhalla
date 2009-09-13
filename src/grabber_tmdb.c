@@ -68,11 +68,11 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
     return;
 
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
-  cover = md5sum (name);
+  cover = vh_md5sum (name);
 
-  metadata_add (&fdata->meta_grabber, type,
+  vh_metadata_add (&fdata->meta_grabber, type,
                 cover, VALHALLA_META_GRP_MISCELLANEOUS);
-  file_dl_add (&fdata->list_downloader, (char *) url, cover, dl);
+  vh_file_dl_add (&fdata->list_downloader, (char *) url, cover, dl);
 
   free (cover);
 }
@@ -100,14 +100,14 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
@@ -115,7 +115,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 
   /* check for total number of results */
   n = xmlDocGetRootElement (doc);
-  tmp = get_prop_value_from_xml_tree (n, "totalResults");
+  tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
   if (!tmp)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
@@ -133,7 +133,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   xmlFree (tmp);
 
   /* get TMDB Movie ID */
-  tmp = get_prop_value_from_xml_tree (n, "id");
+  tmp = vh_get_prop_value_from_xml_tree (n, "id");
   if (!tmp)
     goto error;
 
@@ -148,14 +148,14 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     goto error;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -171,7 +171,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
-  xml_search_int (n, "release", &res_int);
+  vh_xml_search_int (n, "release", &res_int);
   if (res_int)
   {
     grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
@@ -179,7 +179,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch movie rating */
-  xml_search_int (n, "rating", &res_int);
+  vh_xml_search_int (n, "rating", &res_int);
   if (res_int)
   {
     grabber_parse_int (fdata, res_int / 2,
@@ -196,13 +196,13 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
                      "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie country */
-  node = get_node_xml_tree (n, "country");
+  node = vh_get_node_xml_tree (n, "country");
   if (node)
   {
-    tmp = get_prop_value_from_xml_tree (node, "short_name");
+    tmp = vh_get_prop_value_from_xml_tree (node, "short_name");
     if (tmp)
     {
-      metadata_add (&fdata->meta_grabber, "country",
+      vh_metadata_add (&fdata->meta_grabber, "country",
                     (char *) tmp, VALHALLA_META_GRP_COMMERCIAL);
       xmlFree (tmp);
     }
@@ -215,7 +215,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   grabber_parse_casting (fdata, n);
 
   /* fetch movie poster */
-  tmp = get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "cover");
+  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "cover");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_COVER);
@@ -223,7 +223,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch movie backdrop */
-  tmp = get_prop_value_from_xml_tree_by_attr (n, "backdrop", "size", "mid");
+  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "backdrop", "size", "mid");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_BACKDROP);
@@ -264,7 +264,7 @@ grabber_tmdb_init (void *priv)
   if (!tmdb)
     return -1;
 
-  tmdb->handler = url_new ();
+  tmdb->handler = vh_url_new ();
   return tmdb->handler ? 0 : -1;
 }
 
@@ -278,7 +278,7 @@ grabber_tmdb_uninit (void *priv)
   if (!tmdb)
     return;
 
-  url_free (tmdb->handler);
+  vh_url_free (tmdb->handler);
   free (tmdb);
 }
 
@@ -296,13 +296,13 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
   /*
    * Try with the video's title.
    */
-  if (!metadata_get (data->meta_parser, "title", 0, &tag))
+  if (!vh_metadata_get (data->meta_parser, "title", 0, &tag))
     keywords = tag->value;
   else
     return -1;
 
   /* Format the keywords */
-  escaped_keywords = url_escape_string (tmdb->handler, keywords);
+  escaped_keywords = vh_url_escape_string (tmdb->handler, keywords);
   if (!escaped_keywords)
     return -2;
 
@@ -316,7 +316,7 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_tmdb_register () */
+/* vh_grabber_tmdb_register () */
 GRABBER_REGISTER (tmdb,
                   GRABBER_CAP_FLAGS,
                   grabber_tmdb_priv,

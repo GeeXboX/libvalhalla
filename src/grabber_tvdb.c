@@ -65,7 +65,7 @@ grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
   category = strtok_r ((char *) genre, "|", &saveptr);
   while (category)
   {
-    metadata_add (&fdata->meta_grabber, "category",
+    vh_metadata_add (&fdata->meta_grabber, "category",
                   category, VALHALLA_META_GRP_CLASSIFICATION);
     category = strtok_r (NULL, "|", &saveptr);
   }
@@ -95,11 +95,11 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
             TVDB_IMAGES_HOSTNAME, (char *) url);
 
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
-  cover = md5sum (name);
+  cover = vh_md5sum (name);
 
-  metadata_add (&fdata->meta_grabber, type,
+  vh_metadata_add (&fdata->meta_grabber, type,
                 cover, VALHALLA_META_GRP_MISCELLANEOUS);
-  file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
+  vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
 }
 
 static int
@@ -124,21 +124,21 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
   /* check for a known DB entry */
-  n = get_node_xml_tree (xmlDocGetRootElement (doc), "Series");
+  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), "Series");
   if (!n)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
@@ -147,7 +147,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* get TVDB show id */
-  tmp = get_prop_value_from_xml_tree (n, "seriesid");
+  tmp = vh_get_prop_value_from_xml_tree (n, "seriesid");
   if (!tmp)
     goto error;
 
@@ -162,14 +162,14 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     goto error;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -181,7 +181,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
                      "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show first air date */
-  xml_search_year (n, "FirstAired", &res_int);
+  vh_xml_search_year (n, "FirstAired", &res_int);
   if (res_int)
   {
     grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
@@ -189,7 +189,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show categories */
-  tmp = get_prop_value_from_xml_tree (n, "Genre");
+  tmp = vh_get_prop_value_from_xml_tree (n, "Genre");
   if (tmp)
   {
     grabber_tvdb_parse_genre (fdata, tmp);
@@ -201,7 +201,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show poster */
-  tmp = get_prop_value_from_xml_tree (n, "poster");
+  tmp = vh_get_prop_value_from_xml_tree (n, "poster");
   if (tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_COVER);
@@ -209,7 +209,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show backdrop */
-  tmp = get_prop_value_from_xml_tree (n, "fanart");
+  tmp = vh_get_prop_value_from_xml_tree (n, "fanart");
   if (tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_BACKDROP);
@@ -250,7 +250,7 @@ grabber_tvdb_init (void *priv)
   if (!tvdb)
     return -1;
 
-  tvdb->handler = url_new ();
+  tvdb->handler = vh_url_new ();
   return tvdb->handler ? 0 : -1;
 }
 
@@ -264,7 +264,7 @@ grabber_tvdb_uninit (void *priv)
   if (!tvdb)
     return;
 
-  url_free (tvdb->handler);
+  vh_url_free (tvdb->handler);
   free (tvdb);
 }
 
@@ -278,12 +278,12 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "title", 0, &tag);
+  err = vh_metadata_get (data->meta_parser, "title", 0, &tag);
   if (err)
     return -1;
 
   /* Format the keywords */
-  keywords = url_escape_string (tvdb->handler, tag->value);
+  keywords = vh_url_escape_string (tvdb->handler, tag->value);
   if (!keywords)
     return -2;
 
@@ -297,7 +297,7 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_tvdb_register () */
+/* vh_grabber_tvdb_register () */
 GRABBER_REGISTER (tvdb,
                   GRABBER_CAP_FLAGS,
                   grabber_tvdb_priv,

@@ -61,21 +61,21 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
   /* fetch lyrics URL */
-  xml_search_str (xmlDocGetRootElement (doc), "tx", &lyrics);
+  vh_xml_search_str (xmlDocGetRootElement (doc), "tx", &lyrics);
   xmlFreeDoc (doc);
 
   if (lyrics)
@@ -95,7 +95,7 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
       }
       ly[j] = lyrics[i];
     }
-    metadata_add (&fdata->meta_grabber, "lyrics",
+    vh_metadata_add (&fdata->meta_grabber, "lyrics",
                   ly, VALHALLA_META_GRP_MISCELLANEOUS);
     free (lyrics);
     free (ly);
@@ -126,7 +126,7 @@ grabber_lyricsfly_init (void *priv)
   if (!lyricsfly)
     return -1;
 
-  lyricsfly->handler = url_new ();
+  lyricsfly->handler = vh_url_new ();
   return lyricsfly->handler ? 0 : -1;
 }
 
@@ -140,7 +140,7 @@ grabber_lyricsfly_uninit (void *priv)
   if (!lyricsfly)
     return;
 
-  url_free (lyricsfly->handler);
+  vh_url_free (lyricsfly->handler);
   free (lyricsfly);
 }
 
@@ -154,14 +154,14 @@ grabber_lyricsfly_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "title", 0, &title);
+  err = vh_metadata_get (data->meta_parser, "title", 0, &title);
   if (err)
     return -1;
 
-  err = metadata_get (data->meta_parser, "author", 0, &author);
+  err = vh_metadata_get (data->meta_parser, "author", 0, &author);
   if (err)
   {
-    err = metadata_get (data->meta_parser, "artist", 0, &author);
+    err = vh_metadata_get (data->meta_parser, "artist", 0, &author);
     if (err)
       return -2;
   }
@@ -173,8 +173,8 @@ grabber_lyricsfly_grab (void *priv, file_data_t *data)
     return -3;
 
   /* get HTTP compliant keywords */
-  artist = url_escape_string (lyricsfly->handler, author->value);
-  song = url_escape_string (lyricsfly->handler, title->value);
+  artist = vh_url_escape_string (lyricsfly->handler, author->value);
+  song = vh_url_escape_string (lyricsfly->handler, title->value);
 
   res = grabber_lyricsfly_get (lyricsfly->handler, data, artist, song);
 
@@ -188,7 +188,7 @@ grabber_lyricsfly_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_lyricsfly_register () */
+/* vh_grabber_lyricsfly_register () */
 GRABBER_REGISTER (lyricsfly,
                   GRABBER_CAP_FLAGS,
                   grabber_lyricsfly_priv,

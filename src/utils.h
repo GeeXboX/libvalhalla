@@ -62,13 +62,13 @@ typedef struct file_data_s {
 
 void vh_strtolower (char *str);
 char *vh_strrcasestr (const char *buf, const char *str);
-int file_exists (const char *file);
-int file_copy (const char *src, const char *dst);
-void file_dl_add (file_dl_t **dl,
+int vh_file_exists (const char *file);
+int vh_file_copy (const char *src, const char *dst);
+void vh_file_dl_add (file_dl_t **dl,
                   const char *url, const char *name, valhalla_dl_t dst);
-void file_data_free (file_data_t *data);
-void file_data_step_increase (file_data_t *data, action_list_t *action);
-void file_data_step_continue (file_data_t *data, action_list_t *action);
-void queue_cleanup (fifo_queue_t *queue);
+void vh_file_data_free (file_data_t *data);
+void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
+void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
+void vh_queue_cleanup (fifo_queue_t *queue);
 
 #endif /* VALHALLA_UTILS_H */

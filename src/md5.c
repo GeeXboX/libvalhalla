@@ -30,7 +30,7 @@
 
 
 char *
-md5sum (const char *str)
+vh_md5sum (const char *str)
 {
   unsigned char sum[MD5_SUM_SIZE];
   char md5[MD5_STR_SIZE];

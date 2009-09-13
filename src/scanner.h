@@ -33,18 +33,18 @@ enum scanner_errno {
   SCANNER_SUCCESS       =  0,
 };
 
-int scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority);
-void scanner_wait (scanner_t *scanner);
-fifo_queue_t *scanner_fifo_get (scanner_t *scanner);
-void scanner_stop (scanner_t *scanner);
-void scanner_uninit (scanner_t *scanner);
-scanner_t *scanner_init (valhalla_t *handle);
+int vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority);
+void vh_scanner_wait (scanner_t *scanner);
+fifo_queue_t *vh_scanner_fifo_get (scanner_t *scanner);
+void vh_scanner_stop (scanner_t *scanner);
+void vh_scanner_uninit (scanner_t *scanner);
+scanner_t *vh_scanner_init (valhalla_t *handle);
 
-int scanner_path_cmp (scanner_t *scanner, const char *file);
-void scanner_path_add (scanner_t *scanner, const char *location, int recursive);
-int scanner_suffix_cmp (scanner_t *scanner, const char *file);
-void scanner_suffix_add (scanner_t *scanner, const char *suffix);
+int vh_scanner_path_cmp (scanner_t *scanner, const char *file);
+void vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive);
+int vh_scanner_suffix_cmp (scanner_t *scanner, const char *file);
+void vh_scanner_suffix_add (scanner_t *scanner, const char *suffix);
 
-void scanner_action_send (scanner_t *scanner, int action, void *data);
+void vh_scanner_action_send (scanner_t *scanner, int action, void *data);
 
 #endif /* VALHALLA_SCANNER_H */

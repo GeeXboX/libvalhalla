@@ -59,13 +59,13 @@ typedef struct url_data_s {
 
 typedef void url_t;
 
-void url_global_init (void);
-void url_global_uninit (void);
+void vh_url_global_init (void);
+void vh_url_global_uninit (void);
 
-url_t *url_new (void);
-void url_free (url_t *url);
-url_data_t url_get_data (url_t *handler, char *url);
-char *url_escape_string (url_t *handler, const char *buf);
-int url_save_to_disk (url_t *handler, char *src, char *dst);
+url_t *vh_url_new (void);
+void vh_url_free (url_t *url);
+url_data_t vh_url_get_data (url_t *handler, char *url);
+char *vh_url_escape_string (url_t *handler, const char *buf);
+int vh_url_save_to_disk (url_t *handler, char *src, char *dst);
 
 #endif /* VALHALLA_URL_UTILS_H */

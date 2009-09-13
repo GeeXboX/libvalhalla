@@ -72,12 +72,12 @@ dispatcher_thread (void *arg)
     void *handler;
     void (*fct) (void *handler, int action, void *data);
   } send[] = {
-    [STEP_PARSING]      = { NULL, (void *) parser_action_send     },
+    [STEP_PARSING]      = { NULL, (void *) vh_parser_action_send     },
 #ifdef USE_GRABBER
-    [STEP_GRABBING]     = { NULL, (void *) grabber_action_send    },
-    [STEP_DOWNLOADING]  = { NULL, (void *) downloader_action_send },
+    [STEP_GRABBING]     = { NULL, (void *) vh_grabber_action_send    },
+    [STEP_DOWNLOADING]  = { NULL, (void *) vh_downloader_action_send },
 #endif /* USE_GRABBER */
-    [STEP_ENDING]       = { NULL, (void *) dbmanager_action_send  },
+    [STEP_ENDING]       = { NULL, (void *) vh_dbmanager_action_send  },
   };
 
 
@@ -98,7 +98,7 @@ dispatcher_thread (void *arg)
     e = ACTION_NO_OPERATION;
     data = NULL;
 
-    res = fifo_queue_pop (dispatcher->fifo, &e, &data);
+    res = vh_fifo_queue_pop (dispatcher->fifo, &e, &data);
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
@@ -111,7 +111,7 @@ dispatcher_thread (void *arg)
     {
 #ifdef USE_GRABBER
     case ACTION_DB_NEXT_LOOP:
-      grabber_action_send (dispatcher->valhalla->grabber, e, NULL);
+      vh_grabber_action_send (dispatcher->valhalla->grabber, e, NULL);
       break;
 #endif /* USE_GRABBER */
 
@@ -152,7 +152,7 @@ dispatcher_thread (void *arg)
       if (step == STEP_ENDING)
       {
 #endif /* USE_GRABBER */
-        dbmanager_action_send (dispatcher->valhalla->dbmanager, e, pdata);
+        vh_dbmanager_action_send (dispatcher->valhalla->dbmanager, e, pdata);
       }
 
       if (step == STEP_ENDING)
@@ -173,7 +173,7 @@ dispatcher_thread (void *arg)
 }
 
 int
-dispatcher_run (dispatcher_t *dispatcher, int priority)
+vh_dispatcher_run (dispatcher_t *dispatcher, int priority)
 {
   int res = DISPATCHER_SUCCESS;
   pthread_attr_t attr;
@@ -202,7 +202,7 @@ dispatcher_run (dispatcher_t *dispatcher, int priority)
 }
 
 fifo_queue_t *
-dispatcher_fifo_get (dispatcher_t *dispatcher)
+vh_dispatcher_fifo_get (dispatcher_t *dispatcher)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -213,7 +213,7 @@ dispatcher_fifo_get (dispatcher_t *dispatcher)
 }
 
 void
-dispatcher_stop (dispatcher_t *dispatcher)
+vh_dispatcher_stop (dispatcher_t *dispatcher)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -227,26 +227,26 @@ dispatcher_stop (dispatcher_t *dispatcher)
   dispatcher->run = 0;
   pthread_mutex_unlock (&dispatcher->mutex_run);
 
-  fifo_queue_push (dispatcher->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (dispatcher->fifo, ACTION_KILL_THREAD, NULL);
   pthread_join (dispatcher->thread, NULL);
 }
 
 void
-dispatcher_uninit (dispatcher_t *dispatcher)
+vh_dispatcher_uninit (dispatcher_t *dispatcher)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
 
-  fifo_queue_free (dispatcher->fifo);
+  vh_fifo_queue_free (dispatcher->fifo);
   pthread_mutex_destroy (&dispatcher->mutex_run);
 
   free (dispatcher);
 }
 
 dispatcher_t *
-dispatcher_init (valhalla_t *handle)
+vh_dispatcher_init (valhalla_t *handle)
 {
   dispatcher_t *dispatcher;
 
@@ -259,7 +259,7 @@ dispatcher_init (valhalla_t *handle)
   if (!dispatcher)
     return NULL;
 
-  dispatcher->fifo = fifo_queue_new ();
+  dispatcher->fifo = vh_fifo_queue_new ();
   if (!dispatcher->fifo)
     goto err;
 
@@ -270,17 +270,17 @@ dispatcher_init (valhalla_t *handle)
   return dispatcher;
 
  err:
-  dispatcher_uninit (dispatcher);
+  vh_dispatcher_uninit (dispatcher);
   return NULL;
 }
 
 void
-dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data)
+vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
 
-  fifo_queue_push (dispatcher->fifo, action, data);
+  vh_fifo_queue_push (dispatcher->fifo, action, data);
 }

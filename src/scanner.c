@@ -245,7 +245,7 @@ scanner_readdir (scanner_t *scanner,
         data->mtime = st.st_mtime;
         data->step = STEP_PARSING;
         sem_init (&data->sem_grabber, 0, 0);
-        dbmanager_action_send (scanner->valhalla->dbmanager,
+        vh_dbmanager_action_send (scanner->valhalla->dbmanager,
                                ACTION_DB_NEWFILE, data);
         (*files)++;
         continue;
@@ -303,7 +303,7 @@ scanner_thread (void *arg)
       while (files)
       {
         int e;
-        fifo_queue_pop (scanner->fifo, &e, NULL);
+        vh_fifo_queue_pop (scanner->fifo, &e, NULL);
         if (e == ACTION_ACKNOWLEDGE)
           files--;
 
@@ -315,9 +315,9 @@ scanner_thread (void *arg)
     /* It is not the last loop ?  */
     if (i != 1)
     {
-      dbmanager_action_send (scanner->valhalla->dbmanager,
+      vh_dbmanager_action_send (scanner->valhalla->dbmanager,
                              ACTION_DB_NEXT_LOOP, NULL);
-      timer_thread_sleep (scanner->timer, scanner->timeout);
+      vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 
     if (scanner_is_stopped (scanner))
@@ -332,7 +332,7 @@ scanner_thread (void *arg)
 }
 
 int
-scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
+vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
 {
   int res = SCANNER_SUCCESS;
   pthread_attr_t attr;
@@ -349,7 +349,7 @@ scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   if (timeout)
   {
     scanner->timeout = timeout;
-    timer_thread_start (scanner->timer);
+    vh_timer_thread_start (scanner->timer);
   }
 
   /* -1 for infinite loop */
@@ -373,7 +373,7 @@ scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
 }
 
 void
-scanner_wait (scanner_t *scanner)
+vh_scanner_wait (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -386,7 +386,7 @@ scanner_wait (scanner_t *scanner)
 }
 
 fifo_queue_t *
-scanner_fifo_get (scanner_t *scanner)
+vh_scanner_fifo_get (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -397,7 +397,7 @@ scanner_fifo_get (scanner_t *scanner)
 }
 
 void
-scanner_stop (scanner_t *scanner)
+vh_scanner_stop (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -411,20 +411,20 @@ scanner_stop (scanner_t *scanner)
   scanner->run = 0;
   pthread_mutex_unlock (&scanner->mutex_run);
 
-  fifo_queue_push (scanner->fifo, ACTION_KILL_THREAD, NULL);
-  timer_thread_stop (scanner->timer);
+  vh_fifo_queue_push (scanner->fifo, ACTION_KILL_THREAD, NULL);
+  vh_timer_thread_stop (scanner->timer);
   pthread_join (scanner->thread, NULL);
 }
 
 void
-scanner_uninit (scanner_t *scanner)
+vh_scanner_uninit (scanner_t *scanner)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
 
-  timer_thread_delete (scanner->timer);
+  vh_timer_thread_delete (scanner->timer);
 
   if (scanner->paths)
     path_free (scanner->paths);
@@ -437,14 +437,14 @@ scanner_uninit (scanner_t *scanner)
     free (scanner->suffix);
   }
 
-  fifo_queue_free (scanner->fifo);
+  vh_fifo_queue_free (scanner->fifo);
   pthread_mutex_destroy (&scanner->mutex_run);
 
   free (scanner);
 }
 
 int
-scanner_path_cmp (scanner_t *scanner, const char *file)
+vh_scanner_path_cmp (scanner_t *scanner, const char *file)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -455,7 +455,7 @@ scanner_path_cmp (scanner_t *scanner, const char *file)
 }
 
 void
-scanner_path_add (scanner_t *scanner, const char *location, int recursive)
+vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive)
 {
   struct path_s *path;
 
@@ -477,7 +477,7 @@ scanner_path_add (scanner_t *scanner, const char *location, int recursive)
 }
 
 int
-scanner_suffix_cmp (scanner_t *scanner, const char *file)
+vh_scanner_suffix_cmp (scanner_t *scanner, const char *file)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -489,7 +489,7 @@ scanner_suffix_cmp (scanner_t *scanner, const char *file)
 
 
 void
-scanner_suffix_add (scanner_t *scanner, const char *suffix)
+vh_scanner_suffix_add (scanner_t *scanner, const char *suffix)
 {
   int n;
 
@@ -510,7 +510,7 @@ scanner_suffix_add (scanner_t *scanner, const char *suffix)
 }
 
 scanner_t *
-scanner_init (valhalla_t *handle)
+vh_scanner_init (valhalla_t *handle)
 {
   scanner_t *scanner;
 
@@ -523,11 +523,11 @@ scanner_init (valhalla_t *handle)
   if (!scanner)
     return NULL;
 
-  scanner->fifo = fifo_queue_new ();
+  scanner->fifo = vh_fifo_queue_new ();
   if (!scanner->fifo)
     goto err;
 
-  scanner->timer = timer_thread_create ();
+  scanner->timer = vh_timer_thread_create ();
   if (!scanner->timer)
     goto err;
 
@@ -538,17 +538,17 @@ scanner_init (valhalla_t *handle)
   return scanner;
 
  err:
-  scanner_uninit (scanner);
+  vh_scanner_uninit (scanner);
   return NULL;
 }
 
 void
-scanner_action_send (scanner_t *scanner, int action, void *data)
+vh_scanner_action_send (scanner_t *scanner, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
 
-  fifo_queue_push (scanner->fifo, action, data);
+  vh_fifo_queue_push (scanner->fifo, action, data);
 }

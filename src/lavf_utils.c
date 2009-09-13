@@ -87,7 +87,7 @@ static const struct fileext_s {
 };
 
 const char *
-lavf_utils_fmtname_get (const char *suffix)
+vh_lavf_utils_fmtname_get (const char *suffix)
 {
   const struct fileext_s *it;
 

@@ -31,7 +31,7 @@ struct list_s {
 
 
 void
-list_append (list_t **list, const void *data, size_t len)
+vh_list_append (list_t **list, const void *data, size_t len)
 {
   list_t *it;
 
@@ -60,7 +60,7 @@ list_append (list_t **list, const void *data, size_t len)
 }
 
 void
-list_free (list_t *list, void (*free_fct) (void *data))
+vh_list_free (list_t *list, void (*free_fct) (void *data))
 {
   list_t *list_n;
 
@@ -80,7 +80,7 @@ list_free (list_t *list, void (*free_fct) (void *data))
 }
 
 void *
-list_search (list_t *list, const void *tocmp,
+vh_list_search (list_t *list, const void *tocmp,
              int (*cmp_fct) (const void *tocmp, const void *data))
 {
   if (!tocmp || !cmp_fct)

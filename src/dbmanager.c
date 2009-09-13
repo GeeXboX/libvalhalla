@@ -67,7 +67,7 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
 }
 
 #define METADATA_GRABBER_POST           \
-  metadata_free (pdata->meta_grabber);  \
+  vh_metadata_free (pdata->meta_grabber);  \
   pdata->meta_grabber = NULL;           \
   if (pdata->wait)                      \
     sem_post (&pdata->sem_grabber);
@@ -85,7 +85,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     e = ACTION_NO_OPERATION;
     data = NULL;
 
-    res = fifo_queue_pop (dbmanager->fifo, &e, &data);
+    res = vh_fifo_queue_pop (dbmanager->fifo, &e, &data);
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
@@ -94,14 +94,14 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      dispatcher_action_send (dbmanager->valhalla->dispatcher, e, NULL);
+      vh_dispatcher_action_send (dbmanager->valhalla->dispatcher, e, NULL);
       return e;
     }
 
     pdata = data;
 
     /* Manage BEGIN / COMMIT transactions */
-    database_step_transaction (dbmanager->database, dbmanager->commit_int,
+    vh_database_step_transaction (dbmanager->database, dbmanager->commit_int,
                                stats->file_insert + stats->file_update +
                                stats->grab_insert + stats->grab_update);
 
@@ -112,31 +112,31 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     /* received from the dispatcher */
     case ACTION_DB_END:
-      database_file_interrupted_clear (dbmanager->database, pdata->file);
+      vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
       break;
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_INSERT_P:
-      database_file_data_insert (dbmanager->database, pdata);
+      vh_database_file_data_insert (dbmanager->database, pdata);
       stats->file_insert++;
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
-      database_file_grab_insert (dbmanager->database, pdata);
+      vh_database_file_grab_insert (dbmanager->database, pdata);
       METADATA_GRABBER_POST
       stats->grab_insert++;
       continue;
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_UPDATE_P:
-      database_file_data_update (dbmanager->database, pdata);
+      vh_database_file_data_update (dbmanager->database, pdata);
       stats->file_update++;
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_UPDATE_G:
-      database_file_grab_update (dbmanager->database, pdata);
+      vh_database_file_grab_update (dbmanager->database, pdata);
       METADATA_GRABBER_POST
       stats->grab_update++;
       continue;
@@ -145,7 +145,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     case ACTION_DB_NEWFILE:
     {
       int interrup = 0;
-      int mtime = database_file_get_mtime (dbmanager->database, pdata->file);
+      int mtime = vh_database_file_get_mtime (dbmanager->database, pdata->file);
       /*
        * File is parsed only if mtime has changed, if the grabbing/downloading
        * was interrupted or if it is unexistant in the database.
@@ -153,23 +153,23 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       if (mtime >= 0)
       {
         interrup =
-          database_file_get_interrupted (dbmanager->database, pdata->file);
+          vh_database_file_get_interrupted (dbmanager->database, pdata->file);
         /*
          * Retrieve the list of all grabbers already handled for this file
          * and search if there are files to download since the interruption.
          */
         if (interrup)
         {
-          database_file_get_grabber (dbmanager->database,
+          vh_database_file_get_grabber (dbmanager->database,
                                      pdata->file, &pdata->grabber_list);
-          database_file_get_dlcontext (dbmanager->database,
+          vh_database_file_get_dlcontext (dbmanager->database,
                                        pdata->file, &pdata->list_downloader);
         }
       }
 
       if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
       {
-        dispatcher_action_send (dbmanager->valhalla->dispatcher,
+        vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                 mtime < 0
                                 ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
                                 pdata);
@@ -180,8 +180,8 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
     }
 
-    file_data_free (pdata);
-    scanner_action_send (dbmanager->valhalla->scanner,
+    vh_file_data_free (pdata);
+    vh_scanner_action_send (dbmanager->valhalla->scanner,
                          ACTION_ACKNOWLEDGE, NULL);
   }
   while (!dbmanager_is_stopped (dbmanager));
@@ -210,34 +210,34 @@ dbmanager_thread (void *arg)
     int stats_cleanup  = 0;
 
     /* Clear all checked__ files */
-    database_file_checked_clear (dbmanager->database);
+    vh_database_file_checked_clear (dbmanager->database);
 
-    database_begin_transaction (dbmanager->database);
+    vh_database_begin_transaction (dbmanager->database);
     rc = dbmanager_queue (dbmanager, &stats);
-    database_end_transaction (dbmanager->database);
+    vh_database_end_transaction (dbmanager->database);
 
     /*
      * Get all files that have checked__ to 0 and verify if the file is valid.
      * The entry is deleted otherwise.
      */
-    database_begin_transaction (dbmanager->database);
-    while ((file = database_file_get_checked_clear (dbmanager->database)))
-      if (scanner_path_cmp (dbmanager->valhalla->scanner, file)
-          || scanner_suffix_cmp (dbmanager->valhalla->scanner, file)
+    vh_database_begin_transaction (dbmanager->database);
+    while ((file = vh_database_file_get_checked_clear (dbmanager->database)))
+      if (vh_scanner_path_cmp (dbmanager->valhalla->scanner, file)
+          || vh_scanner_suffix_cmp (dbmanager->valhalla->scanner, file)
           || access (file, R_OK))
       {
         /* Manage BEGIN / COMMIT transactions */
-        database_step_transaction (dbmanager->database,
+        vh_database_step_transaction (dbmanager->database,
                                    dbmanager->commit_int, stats_delete);
 
-        database_file_data_delete (dbmanager->database, file);
+        vh_database_file_data_delete (dbmanager->database, file);
         stats_delete++;
       }
-    database_end_transaction (dbmanager->database);
+    vh_database_end_transaction (dbmanager->database);
 
     /* Clean all relations */
     if (stats.file_update || stats.grab_update || stats_delete)
-      stats_cleanup = database_cleanup (dbmanager->database);
+      stats_cleanup = vh_database_cleanup (dbmanager->database);
 
     /* Statistics */
     valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
@@ -257,7 +257,7 @@ dbmanager_thread (void *arg)
 }
 
 int
-dbmanager_run (dbmanager_t *dbmanager, int priority)
+vh_dbmanager_run (dbmanager_t *dbmanager, int priority)
 {
   int res = DBMANAGER_SUCCESS;
   pthread_attr_t attr;
@@ -285,7 +285,7 @@ dbmanager_run (dbmanager_t *dbmanager, int priority)
 }
 
 fifo_queue_t *
-dbmanager_fifo_get (dbmanager_t *dbmanager)
+vh_dbmanager_fifo_get (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -296,7 +296,7 @@ dbmanager_fifo_get (dbmanager_t *dbmanager)
 }
 
 void
-dbmanager_stop (dbmanager_t *dbmanager)
+vh_dbmanager_stop (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -310,12 +310,12 @@ dbmanager_stop (dbmanager_t *dbmanager)
   dbmanager->run = 0;
   pthread_mutex_unlock (&dbmanager->mutex_run);
 
-  fifo_queue_push (dbmanager->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (dbmanager->fifo, ACTION_KILL_THREAD, NULL);
   pthread_join (dbmanager->thread, NULL);
 }
 
 void
-dbmanager_uninit (dbmanager_t *dbmanager)
+vh_dbmanager_uninit (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -323,16 +323,16 @@ dbmanager_uninit (dbmanager_t *dbmanager)
     return;
 
   if (dbmanager->database)
-    database_uninit (dbmanager->database);
+    vh_database_uninit (dbmanager->database);
 
-  fifo_queue_free (dbmanager->fifo);
+  vh_fifo_queue_free (dbmanager->fifo);
   pthread_mutex_destroy (&dbmanager->mutex_run);
 
   free (dbmanager);
 }
 
 dbmanager_t *
-dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
+vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
 {
   dbmanager_t *dbmanager;
 
@@ -345,11 +345,11 @@ dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
   if (!dbmanager)
     return NULL;
 
-  dbmanager->fifo = fifo_queue_new ();
+  dbmanager->fifo = vh_fifo_queue_new ();
   if (!dbmanager->fifo)
     goto err;
 
-  dbmanager->database = database_init (db);
+  dbmanager->database = vh_database_init (db);
   if (!dbmanager->database)
     goto err;
 
@@ -364,45 +364,45 @@ dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
   return dbmanager;
 
  err:
-  dbmanager_uninit (dbmanager);
+  vh_dbmanager_uninit (dbmanager);
   return NULL;
 }
 
 void
-dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
+vh_dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
 
-  fifo_queue_push (dbmanager->fifo, action, data);
+  vh_fifo_queue_push (dbmanager->fifo, action, data);
 }
 
 void
-dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
+vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager || !data)
     return;
 
-  database_file_insert_dlcontext (dbmanager->database, data);
+  vh_database_file_insert_dlcontext (dbmanager->database, data);
 }
 
 void
-dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
+vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
 
-  database_delete_dlcontext (dbmanager->database);
+  vh_database_delete_dlcontext (dbmanager->database);
 }
 
 int
-dbmanager_db_metalist_get (dbmanager_t *dbmanager,
+vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                            valhalla_db_item_t *search,
                            valhalla_db_restrict_t *restriction,
                            int (*select_cb) (void *data,
@@ -414,12 +414,12 @@ dbmanager_db_metalist_get (dbmanager_t *dbmanager,
   if (!dbmanager)
     return -1;
 
-  return database_metalist_get (dbmanager->database,
+  return vh_database_metalist_get (dbmanager->database,
                                 search, restriction, select_cb, data);
 }
 
 int
-dbmanager_db_filelist_get (dbmanager_t *dbmanager,
+vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
                            valhalla_file_type_t filetype,
                            valhalla_db_restrict_t *restriction,
                            int (*select_cb) (void *data,
@@ -431,12 +431,12 @@ dbmanager_db_filelist_get (dbmanager_t *dbmanager,
   if (!dbmanager)
     return -1;
 
-  return database_filelist_get (dbmanager->database,
+  return vh_database_filelist_get (dbmanager->database,
                                 filetype, restriction, select_cb, data);
 }
 
 int
-dbmanager_db_file_get (dbmanager_t *dbmanager,
+vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
                        int64_t id, const char *path,
                        valhalla_db_restrict_t *restriction,
                        valhalla_db_filemeta_t **res)
@@ -446,5 +446,5 @@ dbmanager_db_file_get (dbmanager_t *dbmanager,
   if (!dbmanager)
     return -1;
 
-  return database_file_get (dbmanager->database, id, path, restriction, res);
+  return vh_database_file_get (dbmanager->database, id, path, restriction, res);
 }

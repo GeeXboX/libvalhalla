@@ -81,7 +81,7 @@ url_buffer_get (void *ptr, size_t size, size_t nmemb, void *data)
 }
 
 url_t *
-url_new (void)
+vh_url_new (void)
 {
   CURL *curl;
 
@@ -90,26 +90,26 @@ url_new (void)
 }
 
 void
-url_free (url_t *url)
+vh_url_free (url_t *url)
 {
   if (url)
     curl_easy_cleanup ((CURL *) url);
 }
 
 void
-url_global_init (void)
+vh_url_global_init (void)
 {
   curl_global_init (CURL_GLOBAL_DEFAULT);
 }
 
 void
-url_global_uninit (void)
+vh_url_global_uninit (void)
 {
   curl_global_cleanup ();
 }
 
 url_data_t
-url_get_data (url_t *handler, char *url)
+vh_url_get_data (url_t *handler, char *url)
 {
   url_data_t chunk;
   CURL *curl = (CURL *) handler;
@@ -134,7 +134,7 @@ url_get_data (url_t *handler, char *url)
 }
 
 char *
-url_escape_string (url_t *handler, const char *buf)
+vh_url_escape_string (url_t *handler, const char *buf)
 {
   CURL *curl = (CURL *) handler;
 
@@ -145,7 +145,7 @@ url_escape_string (url_t *handler, const char *buf)
 }
 
 int
-url_save_to_disk (url_t *handler, char *src, char *dst)
+vh_url_save_to_disk (url_t *handler, char *src, char *dst)
 {
   url_data_t data;
   int n, fd;
@@ -155,12 +155,12 @@ url_save_to_disk (url_t *handler, char *src, char *dst)
     return 1;
 
   /* no need to download again an already existing file */
-  if (file_exists (dst))
+  if (vh_file_exists (dst))
     return 1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Saving %s to %s", src, dst);
 
-  data = url_get_data (curl, src);
+  data = vh_url_get_data (curl, src);
   if (data.status != CURLE_OK)
   {
     valhalla_log (VALHALLA_MSG_WARNING,

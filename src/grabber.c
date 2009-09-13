@@ -91,40 +91,40 @@ struct grabber_s {
  */
 static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
-  grabber_dummy_register,
+  vh_grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
 #ifdef HAVE_GRABBER_LOCAL
-  grabber_local_register,
+  vh_grabber_local_register,
 #endif /* HAVE_GRABBER_LOCAL */
 #ifdef HAVE_GRABBER_AMAZON
-  grabber_amazon_register,
+  vh_grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */
 #ifdef HAVE_GRABBER_LASTFM
-  grabber_lastfm_register,
+  vh_grabber_lastfm_register,
 #endif /* HAVE_GRABBER_LASTFM */
 #ifdef HAVE_GRABBER_EXIF
-  grabber_exif_register,
+  vh_grabber_exif_register,
 #endif /* HAVE_GRABBER_EXIF */
 #ifdef HAVE_GRABBER_LYRICSFLY
-  grabber_lyricsfly_register,
+  vh_grabber_lyricsfly_register,
 #endif /* HAVE_GRABBER_LYRICSFLY */
 #ifdef HAVE_GRABBER_LYRICWIKI
-  grabber_lyricwiki_register,
+  vh_grabber_lyricwiki_register,
 #endif /* HAVE_GRABBER_LYRICWIKI */
 #ifdef HAVE_GRABBER_TMDB
-  grabber_tmdb_register,
+  vh_grabber_tmdb_register,
 #endif /* HAVE_GRABBER_TMDB */
 #ifdef HAVE_GRABBER_TVDB
-  grabber_tvdb_register,
+  vh_grabber_tvdb_register,
 #endif /* HAVE_GRABBER_TVDB */
 #ifdef HAVE_GRABBER_TVRAGE
-  grabber_tvrage_register,
+  vh_grabber_tvrage_register,
 #endif /* HAVE_GRABBER_TVRAGE */
 #ifdef HAVE_GRABBER_IMDB
-  grabber_imdb_register,
+  vh_grabber_imdb_register,
 #endif /* HAVE_GRABBER_IMDB */
 #ifdef HAVE_GRABBER_ALLOCINE
-  grabber_allocine_register,
+  vh_grabber_allocine_register,
 #endif /* HAVE_GRABBER_ALLOCINE */
   NULL
 };
@@ -182,7 +182,7 @@ grabber_cmp_fct (const void *tocmp, const void *data)
   for (it = grabber->list, cnt = 0; it; it = it->next, cnt++)             \
     if (it->enable && cnt >= pdata->grabber_cnt                           \
         && file_type_supported (it->caps_flag, pdata->type)               \
-        && !list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
+        && !vh_list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
     {                                                                     \
       grab = 1;                                                           \
       break;                                                              \
@@ -209,7 +209,7 @@ grabber_thread (void *arg)
     e = ACTION_NO_OPERATION;
     data = NULL;
 
-    res = fifo_queue_pop (grabber->fifo, &e, &data);
+    res = vh_fifo_queue_pop (grabber->fifo, &e, &data);
     if (res || e == ACTION_NO_OPERATION)
       continue;
 
@@ -263,25 +263,25 @@ grabber_thread (void *arg)
       /* at least still one grabber for this file ? */
       GRABBER_IS_AVAILABLE
       if (!grab) /* no?, then next step */
-        file_data_step_increase (pdata, &e);
+        vh_file_data_step_increase (pdata, &e);
       else
-        file_data_step_continue (pdata, &e);
+        vh_file_data_step_continue (pdata, &e);
     }
     else /* next step, no grabber */
-      file_data_step_increase (pdata, &e);
+      vh_file_data_step_increase (pdata, &e);
 
-    dispatcher_action_send (grabber->valhalla->dispatcher, e, pdata);
+    vh_dispatcher_action_send (grabber->valhalla->dispatcher, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
 
-  /* the thread is locked by grabber_run() */
+  /* the thread is locked by vh_grabber_run() */
   pthread_mutex_unlock (&grabber->mutex_grabber);
 
   pthread_exit (NULL);
 }
 
 int
-grabber_run (grabber_t *grabber, int priority)
+vh_grabber_run (grabber_t *grabber, int priority)
 {
   int res = GRABBER_SUCCESS;
   pthread_attr_t attr;
@@ -311,7 +311,7 @@ grabber_run (grabber_t *grabber, int priority)
 }
 
 fifo_queue_t *
-grabber_fifo_get (grabber_t *grabber)
+vh_grabber_fifo_get (grabber_t *grabber)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -322,7 +322,7 @@ grabber_fifo_get (grabber_t *grabber)
 }
 
 void
-grabber_state_set (grabber_t *grabber, const char *id, int enable)
+vh_grabber_state_set (grabber_t *grabber, const char *id, int enable)
 {
   grabber_list_t *it;
 
@@ -340,7 +340,7 @@ grabber_state_set (grabber_t *grabber, const char *id, int enable)
 }
 
 const char *
-grabber_list_get (grabber_t *grabber, const char *id)
+vh_grabber_list_get (grabber_t *grabber, const char *id)
 {
   grabber_list_t *it;
 
@@ -364,7 +364,7 @@ grabber_list_get (grabber_t *grabber, const char *id)
 }
 
 void
-grabber_stop (grabber_t *grabber)
+vh_grabber_stop (grabber_t *grabber)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -378,7 +378,7 @@ grabber_stop (grabber_t *grabber)
   grabber->run = 0;
   pthread_mutex_unlock (&grabber->mutex_run);
 
-  fifo_queue_push (grabber->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (grabber->fifo, ACTION_KILL_THREAD, NULL);
 
   /* wake up the thread if this is asleep by dbmanager */
   pthread_mutex_lock (&grabber->mutex_grabber);
@@ -390,7 +390,7 @@ grabber_stop (grabber_t *grabber)
 }
 
 void
-grabber_uninit (grabber_t *grabber)
+vh_grabber_uninit (grabber_t *grabber)
 {
   grabber_list_t *it;
 
@@ -399,7 +399,7 @@ grabber_uninit (grabber_t *grabber)
   if (!grabber)
     return;
 
-  fifo_queue_free (grabber->fifo);
+  vh_fifo_queue_free (grabber->fifo);
   pthread_mutex_destroy (&grabber->mutex_run);
   pthread_mutex_destroy (&grabber->mutex_grabber);
 
@@ -454,7 +454,7 @@ grabber_register_childs (void)
 }
 
 grabber_t *
-grabber_init (valhalla_t *handle)
+vh_grabber_init (valhalla_t *handle)
 {
   grabber_t *grabber;
   grabber_list_t *it;
@@ -471,7 +471,7 @@ grabber_init (valhalla_t *handle)
   pthread_mutex_init (&grabber->mutex_run, NULL);
   pthread_mutex_init (&grabber->mutex_grabber, NULL);
 
-  grabber->fifo = fifo_queue_new ();
+  grabber->fifo = vh_fifo_queue_new ();
   if (!grabber->fifo)
     goto err;
 
@@ -492,17 +492,17 @@ grabber_init (valhalla_t *handle)
   return grabber;
 
  err:
-  grabber_uninit (grabber);
+  vh_grabber_uninit (grabber);
   return NULL;
 }
 
 void
-grabber_action_send (grabber_t *grabber, int action, void *data)
+vh_grabber_action_send (grabber_t *grabber, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
 
-  fifo_queue_push (grabber->fifo, action, data);
+  vh_fifo_queue_push (grabber->fifo, action, data);
 }

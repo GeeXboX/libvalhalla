@@ -62,7 +62,7 @@ vh_strrcasestr (const char *buf, const char *str)
 }
 
 int
-file_exists (const char *file)
+vh_file_exists (const char *file)
 {
   struct stat st;
   return !stat (file, &st);
@@ -71,7 +71,7 @@ file_exists (const char *file)
 #define BUFFER_SIZE 4096
 
 int
-file_copy (const char *src, const char *dst)
+vh_file_copy (const char *src, const char *dst)
 {
   struct stat st_src, st_dst;
   int fd_src, fd_dst;
@@ -122,7 +122,7 @@ file_copy (const char *src, const char *dst)
 }
 
 void
-file_dl_add (file_dl_t **dl,
+vh_file_dl_add (file_dl_t **dl,
              const char *url, const char *name, valhalla_dl_t dst)
 {
   file_dl_t *it;
@@ -173,7 +173,7 @@ file_dl_free (file_dl_t *dl)
 }
 
 void
-file_data_free (file_data_t *data)
+vh_file_data_free (file_data_t *data)
 {
   if (!data)
     return;
@@ -181,13 +181,13 @@ file_data_free (file_data_t *data)
   if (data->file)
     free (data->file);
   if (data->meta_parser)
-    metadata_free (data->meta_parser);
+    vh_metadata_free (data->meta_parser);
   if (data->meta_grabber)
-    metadata_free (data->meta_grabber);
+    vh_metadata_free (data->meta_grabber);
   if (data->list_downloader)
     file_dl_free (data->list_downloader);
   if (data->grabber_list)
-    list_free (data->grabber_list, NULL);
+    vh_list_free (data->grabber_list, NULL);
 
   sem_destroy (&data->sem_grabber);
 
@@ -195,7 +195,7 @@ file_data_free (file_data_t *data)
 }
 
 void
-file_data_step_increase (file_data_t *data, action_list_t *action)
+vh_file_data_step_increase (file_data_t *data, action_list_t *action)
 {
   if (!data || !action)
     return;
@@ -235,7 +235,7 @@ file_data_step_increase (file_data_t *data, action_list_t *action)
 }
 
 void
-file_data_step_continue (file_data_t *data, action_list_t *action)
+vh_file_data_step_continue (file_data_t *data, action_list_t *action)
 {
   if (!data || !action)
     return;
@@ -261,18 +261,18 @@ file_data_step_continue (file_data_t *data, action_list_t *action)
 }
 
 void
-queue_cleanup (fifo_queue_t *queue)
+vh_queue_cleanup (fifo_queue_t *queue)
 {
   int e;
   void *data;
 
-  fifo_queue_push (queue, ACTION_CLEANUP_END, NULL);
+  vh_fifo_queue_push (queue, ACTION_CLEANUP_END, NULL);
 
   do
   {
     e = ACTION_NO_OPERATION;
     data = NULL;
-    fifo_queue_pop (queue, &e, &data);
+    vh_fifo_queue_pop (queue, &e, &data);
 
     switch (e)
     {
@@ -286,7 +286,7 @@ queue_cleanup (fifo_queue_t *queue)
     case ACTION_DB_END:
     case ACTION_DB_NEWFILE:
       if (data)
-        file_data_free (data);
+        vh_file_data_free (data);
       break;
     }
   }

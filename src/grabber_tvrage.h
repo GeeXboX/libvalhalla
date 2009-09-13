@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_TVRAGE_H
 #define VALHALLA_GRABBER_TVRAGE_H
 
-grabber_list_t *grabber_tvrage_register (void);
+grabber_list_t *vh_grabber_tvrage_register (void);
 
 #endif /* VALHALLA_GRABBER_TVRAGE_H */

@@ -67,14 +67,14 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = url_get_data (handler, url);
+  udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = get_xml_doc_from_memory (udata.buffer);
+  doc = vh_get_xml_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
@@ -83,7 +83,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* check for total number of results */
-  tmp = get_prop_value_from_xml_tree (n, "totalResults");
+  tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
   if (!tmp)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
@@ -101,13 +101,13 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   xmlFree (tmp);
 
   /* fetch movie title */
-  tmp = get_prop_value_from_xml_tree (n, "title");
+  tmp = vh_get_prop_value_from_xml_tree (n, "title");
   if (tmp)
   {
     /* special trick to retrieve english title,
      *  used by next grabbers to find cover and backdrops.
      */
-    metadata_add (&fdata->meta_grabber, "title",
+    vh_metadata_add (&fdata->meta_grabber, "title",
                   (char *) tmp, VALHALLA_META_GRP_TITLES);
     xmlFree (tmp);
   }
@@ -125,7 +125,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
-  xml_search_year (n, "release", &res_int);
+  vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
     grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
@@ -136,7 +136,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   grabber_parse_categories (fdata, n);
 
   /* fetch movie rating */
-  xml_search_int (n, "rating", &res_int);
+  vh_xml_search_int (n, "rating", &res_int);
   /* ImDB ranks from 0 to 10, we do from 0 to 5 */
   if (res_int)
   {
@@ -180,7 +180,7 @@ grabber_imdb_init (void *priv)
   if (!imdb)
     return -1;
 
-  imdb->handler = url_new ();
+  imdb->handler = vh_url_new ();
   return imdb->handler ? 0 : -1;
 }
 
@@ -194,7 +194,7 @@ grabber_imdb_uninit (void *priv)
   if (!imdb)
     return;
 
-  url_free (imdb->handler);
+  vh_url_free (imdb->handler);
   free (imdb);
 }
 
@@ -208,12 +208,12 @@ grabber_imdb_grab (void *priv, file_data_t *data)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  err = metadata_get (data->meta_parser, "title", 0, &tag);
+  err = vh_metadata_get (data->meta_parser, "title", 0, &tag);
   if (err)
     return -1;
 
   /* Format the keywords */
-  keywords = url_escape_string (imdb->handler, tag->value);
+  keywords = vh_url_escape_string (imdb->handler, tag->value);
   if (!keywords)
     return -2;
 
@@ -227,7 +227,7 @@ grabber_imdb_grab (void *priv, file_data_t *data)
 /* Public Grabber API                                                       */
 /****************************************************************************/
 
-/* grabber_imdb_register () */
+/* vh_grabber_imdb_register () */
 GRABBER_REGISTER (imdb,
                   GRABBER_CAP_FLAGS,
                   grabber_imdb_priv,

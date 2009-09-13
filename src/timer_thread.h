@@ -26,10 +26,10 @@
 
 typedef struct timer_thread_s timer_thread_t;
 
-void timer_thread_sleep (timer_thread_t *timer, uint16_t timeout);
-void timer_thread_stop (timer_thread_t *timer);
-void timer_thread_start (timer_thread_t *timer);
-void timer_thread_delete (timer_thread_t *timer);
-timer_thread_t *timer_thread_create (void);
+void vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout);
+void vh_timer_thread_stop (timer_thread_t *timer);
+void vh_timer_thread_start (timer_thread_t *timer);
+void vh_timer_thread_delete (timer_thread_t *timer);
+timer_thread_t *vh_timer_thread_create (void);
 
 #endif /* TIMER_THREAD_H */

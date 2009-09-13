@@ -32,12 +32,12 @@ enum dispatcher_errno {
   DISPATCHER_SUCCESS       =  0,
 };
 
-int dispatcher_run (dispatcher_t *dispatcher, int priority);
-fifo_queue_t *dispatcher_fifo_get (dispatcher_t *dispatcher);
-void dispatcher_stop (dispatcher_t *dispatcher);
-void dispatcher_uninit (dispatcher_t *dispatcher);
-dispatcher_t *dispatcher_init (valhalla_t *handle);
+int vh_dispatcher_run (dispatcher_t *dispatcher, int priority);
+fifo_queue_t *vh_dispatcher_fifo_get (dispatcher_t *dispatcher);
+void vh_dispatcher_stop (dispatcher_t *dispatcher);
+void vh_dispatcher_uninit (dispatcher_t *dispatcher);
+dispatcher_t *vh_dispatcher_init (valhalla_t *handle);
 
-void dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data);
+void vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data);
 
 #endif /* VALHALLA_DISPATCHER_H */

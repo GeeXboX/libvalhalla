@@ -33,10 +33,10 @@ typedef struct metadata_s {
 
 #define METADATA_IGNORE_SUFFIX (1 << 0)
 
-int metadata_get (metadata_t *meta,
+int vh_metadata_get (metadata_t *meta,
                   const char *name, int flags, metadata_t **tag);
-void metadata_free (metadata_t *meta);
-void metadata_add (metadata_t **meta, const char *name,
+void vh_metadata_free (metadata_t *meta);
+void vh_metadata_add (metadata_t **meta, const char *name,
                    const char *value, valhalla_meta_grp_t group);
 
 #endif /* VALHALLA_METADATA */

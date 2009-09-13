@@ -29,7 +29,7 @@
 
 
 int
-metadata_get (metadata_t *meta,
+vh_metadata_get (metadata_t *meta,
               const char *name, int flags, metadata_t **tag)
 {
   if (!meta || !tag || !name)
@@ -52,7 +52,7 @@ metadata_get (metadata_t *meta,
 }
 
 void
-metadata_free (metadata_t *meta)
+vh_metadata_free (metadata_t *meta)
 {
   metadata_t *tmp;
 
@@ -67,7 +67,7 @@ metadata_free (metadata_t *meta)
 }
 
 void
-metadata_add (metadata_t **meta,
+vh_metadata_add (metadata_t **meta,
               const char *name, const char *value, valhalla_meta_grp_t group)
 {
   metadata_t *it;

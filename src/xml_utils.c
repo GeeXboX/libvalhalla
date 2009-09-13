@@ -54,7 +54,7 @@
 
 
 xmlDocPtr
-get_xml_doc_from_memory (char *buffer)
+vh_get_xml_doc_from_memory (char *buffer)
 {
   xmlDocPtr doc = NULL;
 
@@ -68,7 +68,7 @@ get_xml_doc_from_memory (char *buffer)
 }
 
 xmlNode *
-get_node_xml_tree (xmlNode *root, const char *prop)
+vh_get_node_xml_tree (xmlNode *root, const char *prop)
 {
   xmlNode *n, *children_node;
 
@@ -78,7 +78,7 @@ get_node_xml_tree (xmlNode *root, const char *prop)
         && !xmlStrcmp ((unsigned char *) prop, n->name))
       return n;
 
-    children_node = get_node_xml_tree (n->children, prop);
+    children_node = vh_get_node_xml_tree (n->children, prop);
     if (children_node)
       return children_node;
   }
@@ -87,11 +87,11 @@ get_node_xml_tree (xmlNode *root, const char *prop)
 }
 
 xmlChar *
-get_prop_value_from_xml_tree (xmlNode *root, const char *prop)
+vh_get_prop_value_from_xml_tree (xmlNode *root, const char *prop)
 {
   xmlNode *node;
 
-  node = get_node_xml_tree (root, prop);
+  node = vh_get_node_xml_tree (root, prop);
   if (!node)
     return NULL;
 
@@ -99,14 +99,14 @@ get_prop_value_from_xml_tree (xmlNode *root, const char *prop)
 }
 
 xmlChar *
-get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
+vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
                                       const char *attr_name,
                                       const char *attr_value)
 {
   xmlNode *n, *node;
   xmlAttr *attr;
 
-  node = get_node_xml_tree (root, prop);
+  node = vh_get_node_xml_tree (root, prop);
   if (!node)
     return NULL;
 
@@ -139,13 +139,13 @@ get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
 }
 
 xmlChar *
-get_attr_value_from_xml_tree (xmlNode *root,
+vh_get_attr_value_from_xml_tree (xmlNode *root,
                               const char *prop, const char *attr_name)
 {
   xmlNode *n, *node;
   xmlAttr *attr;
 
-  node = get_node_xml_tree (root, prop);
+  node = vh_get_node_xml_tree (root, prop);
   if (!node)
     return NULL;
 
@@ -169,7 +169,7 @@ get_attr_value_from_xml_tree (xmlNode *root,
 }
 
 xmlChar *
-get_attr_value_from_node (xmlNode *node, const char *attr_name)
+vh_get_attr_value_from_node (xmlNode *node, const char *attr_name)
 {
   xmlNode *n;
   xmlAttr *attr;
@@ -197,7 +197,7 @@ get_attr_value_from_node (xmlNode *node, const char *attr_name)
 }
 
 xmlXPathObjectPtr
-get_xnodes_from_xml_tree (xmlDocPtr doc, xmlChar *xpath)
+vh_get_xnodes_from_xml_tree (xmlDocPtr doc, xmlChar *xpath)
 {
   xmlXPathContextPtr context;
   xmlXPathObjectPtr result;
@@ -223,14 +223,14 @@ get_xnodes_from_xml_tree (xmlDocPtr doc, xmlChar *xpath)
 }
 
 int
-xml_search_str (xmlNode *n, const char *node, char **str)
+vh_xml_search_str (xmlNode *n, const char *node, char **str)
 {
   xmlChar *tmp;
 
   if (*str)
     return 1;
 
-  tmp = get_prop_value_from_xml_tree (n, node);
+  tmp = vh_get_prop_value_from_xml_tree (n, node);
   if (!tmp)
     return 1;
 
@@ -241,14 +241,14 @@ xml_search_str (xmlNode *n, const char *node, char **str)
 }
 
 int
-xml_search_int (xmlNode *n, const char *node, int *val)
+vh_xml_search_int (xmlNode *n, const char *node, int *val)
 {
   xmlChar *tmp;
 
   if (*val)
     return 1;
 
-  tmp = get_prop_value_from_xml_tree (n, node);
+  tmp = vh_get_prop_value_from_xml_tree (n, node);
   if (!tmp)
     return 1;
 
@@ -259,7 +259,7 @@ xml_search_int (xmlNode *n, const char *node, int *val)
 }
 
 int
-xml_search_year (xmlNode *n, const char *node, int *year)
+vh_xml_search_year (xmlNode *n, const char *node, int *year)
 {
   xmlChar *tmp;
   int r, y, m, d;
@@ -267,7 +267,7 @@ xml_search_year (xmlNode *n, const char *node, int *year)
   if (*year)
     return 1;
 
-  tmp = get_prop_value_from_xml_tree (n, node);
+  tmp = vh_get_prop_value_from_xml_tree (n, node);
   if (!tmp)
     return 1;
 
