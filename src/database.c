@@ -184,7 +184,7 @@ vh_database_end_transaction (database_t *database)
 
 void
 vh_database_step_transaction (database_t *database,
-                           unsigned int interval, int value)
+                              unsigned int interval, int value)
 {
   if (value && !(value % interval))
   {
