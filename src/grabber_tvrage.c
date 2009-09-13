@@ -132,15 +132,15 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show country */
-  grabber_parse_str (fdata, n, "origin_country",
+  vh_grabber_parse_str (fdata, n, "origin_country",
                      "country", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch tv show studio */
-  grabber_parse_str (fdata, n, "network",
+  vh_grabber_parse_str (fdata, n, "network",
                      "studio", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch tv show runtime (in minutes) */
-  grabber_parse_str (fdata, n, "runtime",
+  vh_grabber_parse_str (fdata, n, "runtime",
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie categories */

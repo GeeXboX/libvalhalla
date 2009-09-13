@@ -42,7 +42,7 @@ static const struct {
 
 
 void
-grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
+vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
                    const char *name, valhalla_meta_grp_t group)
 {
   char *res = NULL;
@@ -60,7 +60,7 @@ grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
 }
 
 void
-grabber_parse_int (file_data_t *fdata, int val,
+vh_grabber_parse_int (file_data_t *fdata, int val,
                    const char *name, valhalla_meta_grp_t group)
 {
   char v[32] = { 0 };
@@ -71,7 +71,7 @@ grabber_parse_int (file_data_t *fdata, int val,
 }
 
 void
-grabber_parse_categories (file_data_t *fdata, xmlNode *node)
+vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
 {
   xmlNode *n;
   int i;
@@ -128,7 +128,7 @@ grabber_add_person (file_data_t *fdata,
 }
 
 void
-grabber_parse_casting (file_data_t *fdata, xmlNode *node)
+vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
 {
   xmlNode *n;
 

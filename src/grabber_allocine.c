@@ -113,44 +113,44 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch movie alternative title */
-  grabber_parse_str (fdata, n, "alternative_title",
+  vh_grabber_parse_str (fdata, n, "alternative_title",
                      "alternative_title", VALHALLA_META_GRP_TITLES);
 
   /* fetch movie overview description */
-  grabber_parse_str (fdata, n, "short_overview",
+  vh_grabber_parse_str (fdata, n, "short_overview",
                      "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie runtime (in minutes) */
-  grabber_parse_str (fdata, n, "runtime",
+  vh_grabber_parse_str (fdata, n, "runtime",
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
+    vh_grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
     res_int = 0;
   }
 
   /* fetch movie categories */
-  grabber_parse_categories (fdata, n);
+  vh_grabber_parse_categories (fdata, n);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "popularity", &res_int);
   /* allocine ranks from 0 to 4, we do from 0 to 5 */
   if (res_int)
   {
-    grabber_parse_int (fdata, res_int + 1,
+    vh_grabber_parse_int (fdata, res_int + 1,
                        "rating", VALHALLA_META_GRP_PERSONAL);
     res_int = 0;
   }
 
   /* fetch movie budget */
-  grabber_parse_str (fdata, n,
+  vh_grabber_parse_str (fdata, n,
                      "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie people */
-  grabber_parse_casting (fdata, n);
+  vh_grabber_parse_casting (fdata, n);
 
   xmlFreeDoc (doc);
   return 0;

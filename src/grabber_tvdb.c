@@ -177,14 +177,14 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch tv show overview description */
-  grabber_parse_str (fdata, n, "Overview",
+  vh_grabber_parse_str (fdata, n, "Overview",
                      "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show first air date */
   vh_xml_search_year (n, "FirstAired", &res_int);
   if (res_int)
   {
-    grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
+    vh_grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
     res_int = 0;
   }
 
@@ -197,7 +197,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show runtime (in minutes) */
-  grabber_parse_str (fdata, n, "Runtime",
+  vh_grabber_parse_str (fdata, n, "Runtime",
                      "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show poster */
