@@ -30,7 +30,7 @@
 
 int
 vh_metadata_get (metadata_t *meta,
-              const char *name, int flags, metadata_t **tag)
+                 const char *name, int flags, metadata_t **tag)
 {
   if (!meta || !tag || !name)
     return -1;
@@ -68,7 +68,7 @@ vh_metadata_free (metadata_t *meta)
 
 void
 vh_metadata_add (metadata_t **meta,
-              const char *name, const char *value, valhalla_meta_grp_t group)
+                 const char *name, const char *value, valhalla_meta_grp_t group)
 {
   metadata_t *it;
 

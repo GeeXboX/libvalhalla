@@ -78,7 +78,7 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
     return -1;
 
   cv = vh_get_prop_value_from_xml_tree_by_attr (xmlDocGetRootElement (doc),
-                                             "image", "size", "extralarge");
+                                                "image", "size", "extralarge");
   xmlFreeDoc (doc);
   if (!cv)
     return -1;
@@ -200,7 +200,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add (&data->meta_grabber, "cover",
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
     goto out;
   }
 
@@ -208,7 +208,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add (&data->meta_grabber, "cover",
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

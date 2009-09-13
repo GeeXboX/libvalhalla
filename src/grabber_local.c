@@ -118,6 +118,7 @@ static void *
 grabber_local_priv (void)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
   return calloc (1, sizeof (grabber_local_t));
 }
 
@@ -125,6 +126,7 @@ static int
 grabber_local_init (void *priv)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
   return 0;
 }
 
@@ -134,6 +136,7 @@ grabber_local_uninit (void *priv)
   grabber_local_t *local = priv;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
   free (local);
 }
 
@@ -151,7 +154,7 @@ grabber_local_grab (void *priv, file_data_t *data)
 
     cv = vh_md5sum (cover);
     vh_metadata_add (&data->meta_grabber, "cover",
-                  cv, VALHALLA_META_GRP_MISCELLANEOUS);
+                     cv, VALHALLA_META_GRP_MISCELLANEOUS);
     vh_file_dl_add (&data->list_downloader, cover, cv, VALHALLA_DL_COVER);
     free (cv);
     free (cover);

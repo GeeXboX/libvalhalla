@@ -53,9 +53,9 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
   exif_entry_get_value (entry, buf, BUF_SIZE);
 
   vh_metadata_add (&fdata->meta_grabber,
-                exif_tag_get_name (entry->tag),
-                exif_entry_get_value (entry, buf, BUF_SIZE),
-                VALHALLA_META_GRP_TECHNICAL);
+                   exif_tag_get_name (entry->tag),
+                   exif_entry_get_value (entry, buf, BUF_SIZE),
+                   VALHALLA_META_GRP_TECHNICAL);
 }
 
 static void

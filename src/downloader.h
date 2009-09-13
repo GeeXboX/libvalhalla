@@ -40,9 +40,10 @@ void vh_downloader_uninit (downloader_t *downloader);
 downloader_t *vh_downloader_init (valhalla_t *handle);
 
 void vh_downloader_destination_set (downloader_t *downloader,
-                                 valhalla_dl_t dl, const char *dst);
+                                    valhalla_dl_t dl, const char *dst);
 const char *vh_downloader_destination_get (downloader_t *downloader,
-                                        valhalla_dl_t dl);
-void vh_downloader_action_send (downloader_t *downloader, int action, void *data);
+                                           valhalla_dl_t dl);
+void vh_downloader_action_send (downloader_t *downloader,
+                                int action, void *data);
 
 #endif /* VALHALLA_DOWNLOADER_H */

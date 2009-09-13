@@ -246,7 +246,7 @@ scanner_readdir (scanner_t *scanner,
         data->step = STEP_PARSING;
         sem_init (&data->sem_grabber, 0, 0);
         vh_dbmanager_action_send (scanner->valhalla->dbmanager,
-                               ACTION_DB_NEWFILE, data);
+                                  ACTION_DB_NEWFILE, data);
         (*files)++;
         continue;
       }
@@ -316,7 +316,7 @@ scanner_thread (void *arg)
     if (i != 1)
     {
       vh_dbmanager_action_send (scanner->valhalla->dbmanager,
-                             ACTION_DB_NEXT_LOOP, NULL);
+                                ACTION_DB_NEXT_LOOP, NULL);
       vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 

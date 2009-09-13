@@ -33,7 +33,8 @@ enum scanner_errno {
   SCANNER_SUCCESS       =  0,
 };
 
-int vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority);
+int vh_scanner_run (scanner_t *scanner,
+                    int loop, uint16_t timeout, int priority);
 void vh_scanner_wait (scanner_t *scanner);
 fifo_queue_t *vh_scanner_fifo_get (scanner_t *scanner);
 void vh_scanner_stop (scanner_t *scanner);
@@ -41,7 +42,8 @@ void vh_scanner_uninit (scanner_t *scanner);
 scanner_t *vh_scanner_init (valhalla_t *handle);
 
 int vh_scanner_path_cmp (scanner_t *scanner, const char *file);
-void vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive);
+void vh_scanner_path_add (scanner_t *scanner,
+                          const char *location, int recursive);
 int vh_scanner_suffix_cmp (scanner_t *scanner, const char *file);
 void vh_scanner_suffix_add (scanner_t *scanner, const char *suffix);
 

@@ -102,8 +102,8 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     /* Manage BEGIN / COMMIT transactions */
     vh_database_step_transaction (dbmanager->database, dbmanager->commit_int,
-                               stats->file_insert + stats->file_update +
-                               stats->grab_insert + stats->grab_update);
+                                  stats->file_insert + stats->file_update +
+                                  stats->grab_insert + stats->grab_update);
 
     switch (e)
     {
@@ -161,18 +161,18 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         if (interrup)
         {
           vh_database_file_get_grabber (dbmanager->database,
-                                     pdata->file, &pdata->grabber_list);
+                                        pdata->file, &pdata->grabber_list);
           vh_database_file_get_dlcontext (dbmanager->database,
-                                       pdata->file, &pdata->list_downloader);
+                                          pdata->file, &pdata->list_downloader);
         }
       }
 
       if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
-                                mtime < 0
-                                ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
-                                pdata);
+                                   mtime < 0
+                                   ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
+                                   pdata);
         continue;
       }
 
@@ -182,7 +182,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     vh_file_data_free (pdata);
     vh_scanner_action_send (dbmanager->valhalla->scanner,
-                         ACTION_ACKNOWLEDGE, NULL);
+                            ACTION_ACKNOWLEDGE, NULL);
   }
   while (!dbmanager_is_stopped (dbmanager));
 
@@ -228,7 +228,7 @@ dbmanager_thread (void *arg)
       {
         /* Manage BEGIN / COMMIT transactions */
         vh_database_step_transaction (dbmanager->database,
-                                   dbmanager->commit_int, stats_delete);
+                                      dbmanager->commit_int, stats_delete);
 
         vh_database_file_data_delete (dbmanager->database, file);
         stats_delete++;
@@ -403,11 +403,11 @@ vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
 
 int
 vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
-                           valhalla_db_item_t *search,
-                           valhalla_db_restrict_t *restriction,
-                           int (*select_cb) (void *data,
-                                             valhalla_db_metares_t *res),
-                           void *data)
+                              valhalla_db_item_t *search,
+                              valhalla_db_restrict_t *restriction,
+                              int (*select_cb) (void *data,
+                                                valhalla_db_metares_t *res),
+                              void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -415,16 +415,16 @@ vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
     return -1;
 
   return vh_database_metalist_get (dbmanager->database,
-                                search, restriction, select_cb, data);
+                                   search, restriction, select_cb, data);
 }
 
 int
 vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
-                           valhalla_file_type_t filetype,
-                           valhalla_db_restrict_t *restriction,
-                           int (*select_cb) (void *data,
-                                             valhalla_db_fileres_t *res),
-                           void *data)
+                              valhalla_file_type_t filetype,
+                              valhalla_db_restrict_t *restriction,
+                              int (*select_cb) (void *data,
+                                                valhalla_db_fileres_t *res),
+                              void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -432,14 +432,14 @@ vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
     return -1;
 
   return vh_database_filelist_get (dbmanager->database,
-                                filetype, restriction, select_cb, data);
+                                   filetype, restriction, select_cb, data);
 }
 
 int
 vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
-                       int64_t id, const char *path,
-                       valhalla_db_restrict_t *restriction,
-                       valhalla_db_filemeta_t **res)
+                          int64_t id, const char *path,
+                          valhalla_db_restrict_t *restriction,
+                          valhalla_db_filemeta_t **res)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 

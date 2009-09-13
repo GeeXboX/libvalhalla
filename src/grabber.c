@@ -177,15 +177,15 @@ grabber_cmp_fct (const void *tocmp, const void *data)
   return strcmp (tocmp, data);
 }
 
-#define GRABBER_IS_AVAILABLE                                              \
-  grab = 0;                                                               \
-  for (it = grabber->list, cnt = 0; it; it = it->next, cnt++)             \
-    if (it->enable && cnt >= pdata->grabber_cnt                           \
-        && file_type_supported (it->caps_flag, pdata->type)               \
+#define GRABBER_IS_AVAILABLE                                                 \
+  grab = 0;                                                                  \
+  for (it = grabber->list, cnt = 0; it; it = it->next, cnt++)                \
+    if (it->enable && cnt >= pdata->grabber_cnt                              \
+        && file_type_supported (it->caps_flag, pdata->type)                  \
         && !vh_list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
-    {                                                                     \
-      grab = 1;                                                           \
-      break;                                                              \
+    {                                                                        \
+      grab = 1;                                                              \
+      break;                                                                 \
     }
 
 static void *

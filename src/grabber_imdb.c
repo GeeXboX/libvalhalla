@@ -108,7 +108,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
      *  used by next grabbers to find cover and backdrops.
      */
     vh_metadata_add (&fdata->meta_grabber, "title",
-                  (char *) tmp, VALHALLA_META_GRP_TITLES);
+                     (char *) tmp, VALHALLA_META_GRP_TITLES);
     xmlFree (tmp);
   }
 

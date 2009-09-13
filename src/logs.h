@@ -25,7 +25,7 @@
 void vh_log_verb (valhalla_verb_t level);
 int vh_log_test (valhalla_verb_t level);
 void vh_log (valhalla_verb_t level,
-           const char *file, int line, const char *format, ...);
+             const char *file, int line, const char *format, ...);
 
 #define valhalla_log(level, format, arg...) \
   vh_log (level, __FILE__, __LINE__, format, ##arg)

@@ -124,7 +124,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     }
 
     vh_metadata_add (&fdata->meta_grabber, "lyrics",
-                  lyrics, VALHALLA_META_GRP_MISCELLANEOUS);
+                     lyrics, VALHALLA_META_GRP_MISCELLANEOUS);
 
     free (txt);
     free (lyrics);

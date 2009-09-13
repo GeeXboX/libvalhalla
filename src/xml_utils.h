@@ -58,11 +58,13 @@
 xmlDocPtr vh_get_xml_doc_from_memory (char *buffer);
 xmlNode *vh_get_node_xml_tree (xmlNode *root, const char *prop);
 xmlChar *vh_get_prop_value_from_xml_tree (xmlNode *root, const char *prop);
-xmlChar *vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
-                                               const char *attr_name,
-                                               const char *attr_value);
-xmlChar *vh_get_attr_value_from_xml_tree (xmlNode *root, const char *prop,
-                                       const char *attr_name);
+xmlChar *vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root,
+                                                  const char *prop,
+                                                  const char *attr_name,
+                                                  const char *attr_value);
+xmlChar *vh_get_attr_value_from_xml_tree (xmlNode *root,
+                                          const char *prop,
+                                          const char *attr_name);
 xmlChar *vh_get_attr_value_from_node (xmlNode *node, const char *attr_name);
 xmlXPathObjectPtr vh_get_xnodes_from_xml_tree (xmlDocPtr doc, xmlChar *xpath);
 int vh_xml_search_str (xmlNode *n, const char *node, char **str);

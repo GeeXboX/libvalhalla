@@ -38,7 +38,7 @@ fifo_queue_t *vh_dbmanager_fifo_get (dbmanager_t *dbmanager);
 void vh_dbmanager_stop (dbmanager_t *dbmanager);
 void vh_dbmanager_uninit (dbmanager_t *dbmanager);
 dbmanager_t *vh_dbmanager_init (valhalla_t *handle,
-                             const char *db, unsigned int commit_int);
+                                const char *db, unsigned int commit_int);
 
 void vh_dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data);
 
@@ -46,22 +46,22 @@ void vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data);
 void vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager);
 
 int vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
-                               valhalla_db_item_t *search,
-                               valhalla_db_restrict_t *restriction,
-                               int (*select_cb) (void *data,
-                                                 valhalla_db_metares_t *res),
-                               void *data);
+                                  valhalla_db_item_t *search,
+                                  valhalla_db_restrict_t *restriction,
+                                  int (*select_cb) (void *data,
+                                                    valhalla_db_metares_t *res),
+                                  void *data);
 
 int vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
-                               valhalla_file_type_t filetype,
-                               valhalla_db_restrict_t *restriction,
-                               int (*select_cb) (void *data,
-                                                 valhalla_db_fileres_t *res),
-                               void *data);
+                                  valhalla_file_type_t filetype,
+                                  valhalla_db_restrict_t *restriction,
+                                  int (*select_cb) (void *data,
+                                                    valhalla_db_fileres_t *res),
+                                  void *data);
 
 int vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
-                           int64_t id, const char *path,
-                           valhalla_db_restrict_t *restriction,
-                           valhalla_db_filemeta_t **res);
+                              int64_t id, const char *path,
+                              valhalla_db_restrict_t *restriction,
+                              valhalla_db_filemeta_t **res);
 
 #endif /* VALHALLA_DBMANAGER_H */

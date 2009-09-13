@@ -771,7 +771,8 @@ vh_database_file_get_mtime (database_t *database, const char *file)
 }
 
 void
-vh_database_file_get_grabber (database_t *database, const char *file, list_t **l)
+vh_database_file_get_grabber (database_t *database,
+                              const char *file, list_t **l)
 {
   int res, err = -1;
 
@@ -852,7 +853,7 @@ vh_database_file_insert_dlcontext (database_t *database, file_data_t *data)
 
 void
 vh_database_file_get_dlcontext (database_t *database,
-                             const char *file, file_dl_t **dl)
+                                const char *file, file_dl_t **dl)
 {
   int res, err = -1;
 
@@ -1183,11 +1184,11 @@ database_select_metalist_cb (void *user_data,
 
 int
 vh_database_metalist_get (database_t *database,
-                       valhalla_db_item_t *search,
-                       valhalla_db_restrict_t *restriction,
-                       int (*select_cb) (void *data,
-                                         valhalla_db_metares_t *res),
-                       void *data)
+                          valhalla_db_item_t *search,
+                          valhalla_db_restrict_t *restriction,
+                          int (*select_cb) (void *data,
+                                            valhalla_db_metares_t *res),
+                          void *data)
 {
   database_cb_t data_cb;
   char *msg = NULL;
@@ -1245,11 +1246,11 @@ database_select_filelist_cb (void *user_data,
 
 int
 vh_database_filelist_get (database_t *database,
-                       valhalla_file_type_t filetype,
-                       valhalla_db_restrict_t *restriction,
-                       int (*select_cb) (void *data,
-                                         valhalla_db_fileres_t *res),
-                       void *data)
+                          valhalla_file_type_t filetype,
+                          valhalla_db_restrict_t *restriction,
+                          int (*select_cb) (void *data,
+                                            valhalla_db_fileres_t *res),
+                          void *data)
 {
   database_cb_t data_cb;
   char *msg = NULL;
@@ -1322,9 +1323,9 @@ database_select_file_cb (void *user_data,
 
 int
 vh_database_file_get (database_t *database,
-                   int64_t id, const char *path,
-                   valhalla_db_restrict_t *restriction,
-                   valhalla_db_filemeta_t **res)
+                      int64_t id, const char *path,
+                      valhalla_db_restrict_t *restriction,
+                      valhalla_db_filemeta_t **res)
 {
   database_cb_t data_cb;
   char *msg = NULL;

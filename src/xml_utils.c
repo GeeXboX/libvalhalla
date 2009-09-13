@@ -100,8 +100,8 @@ vh_get_prop_value_from_xml_tree (xmlNode *root, const char *prop)
 
 xmlChar *
 vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
-                                      const char *attr_name,
-                                      const char *attr_value)
+                                         const char *attr_name,
+                                         const char *attr_value)
 {
   xmlNode *n, *node;
   xmlAttr *attr;
@@ -140,7 +140,7 @@ vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root, const char *prop,
 
 xmlChar *
 vh_get_attr_value_from_xml_tree (xmlNode *root,
-                              const char *prop, const char *attr_name)
+                                 const char *prop, const char *attr_name)
 {
   xmlNode *n, *node;
   xmlAttr *attr;

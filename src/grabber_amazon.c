@@ -294,7 +294,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add (&data->meta_grabber, METADATA_COVER,
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
     free (cover);
     return 0;
   }
@@ -325,7 +325,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add (&data->meta_grabber, METADATA_COVER,
-                  cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

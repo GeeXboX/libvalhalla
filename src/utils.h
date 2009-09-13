@@ -65,7 +65,7 @@ char *vh_strrcasestr (const char *buf, const char *str);
 int vh_file_exists (const char *file);
 int vh_file_copy (const char *src, const char *dst);
 void vh_file_dl_add (file_dl_t **dl,
-                  const char *url, const char *name, valhalla_dl_t dst);
+                     const char *url, const char *name, valhalla_dl_t dst);
 void vh_file_data_free (file_data_t *data);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);

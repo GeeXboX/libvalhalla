@@ -66,7 +66,7 @@ grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
   while (category)
   {
     vh_metadata_add (&fdata->meta_grabber, "category",
-                  category, VALHALLA_META_GRP_CLASSIFICATION);
+                     category, VALHALLA_META_GRP_CLASSIFICATION);
     category = strtok_r (NULL, "|", &saveptr);
   }
 }
@@ -98,7 +98,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   cover = vh_md5sum (name);
 
   vh_metadata_add (&fdata->meta_grabber, type,
-                cover, VALHALLA_META_GRP_MISCELLANEOUS);
+                   cover, VALHALLA_META_GRP_MISCELLANEOUS);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
 }
 

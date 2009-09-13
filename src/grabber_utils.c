@@ -119,7 +119,8 @@ grabber_add_person (file_data_t *fdata,
     else
       snprintf (str, sizeof (str), "%s", name);
     free (name);
-    vh_metadata_add (&fdata->meta_grabber, cat, str, VALHALLA_META_GRP_ENTITIES);
+    vh_metadata_add (&fdata->meta_grabber,
+                     cat, str, VALHALLA_META_GRP_ENTITIES);
   }
 
   if (role)

@@ -402,7 +402,7 @@ int valhalla_db_metalist_get (valhalla_t *handle,
     return -1;
 
   return vh_dbmanager_db_metalist_get (handle->dbmanager,
-                                    search, restriction, result_cb, data);
+                                       search, restriction, result_cb, data);
 }
 
 int valhalla_db_filelist_get (valhalla_t *handle,
@@ -418,7 +418,7 @@ int valhalla_db_filelist_get (valhalla_t *handle,
     return -1;
 
   return vh_dbmanager_db_filelist_get (handle->dbmanager,
-                                    filetype, restriction, result_cb, data);
+                                       filetype, restriction, result_cb, data);
 }
 
 int
@@ -432,5 +432,6 @@ valhalla_db_file_get (valhalla_t *handle,
   if (!handle || !res)
     return -1;
 
-  return vh_dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
+  return
+    vh_dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
 }

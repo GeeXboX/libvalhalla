@@ -38,6 +38,7 @@ void vh_dispatcher_stop (dispatcher_t *dispatcher);
 void vh_dispatcher_uninit (dispatcher_t *dispatcher);
 dispatcher_t *vh_dispatcher_init (valhalla_t *handle);
 
-void vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data);
+void vh_dispatcher_action_send (dispatcher_t *dispatcher,
+                                int action, void *data);
 
 #endif /* VALHALLA_DISPATCHER_H */

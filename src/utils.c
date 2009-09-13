@@ -123,7 +123,7 @@ vh_file_copy (const char *src, const char *dst)
 
 void
 vh_file_dl_add (file_dl_t **dl,
-             const char *url, const char *name, valhalla_dl_t dst)
+                const char *url, const char *name, valhalla_dl_t dst)
 {
   file_dl_t *it;
 
