@@ -23,10 +23,10 @@
 #define VALHALLA_GRABBER_UTILS_H
 
 void vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                        const char *name, valhalla_meta_grp_t group);
+                           const char *name, valhalla_meta_grp_t group);
 
 void vh_grabber_parse_int (file_data_t *fdata, int val,
-                        const char *name, valhalla_meta_grp_t group);
+                           const char *name, valhalla_meta_grp_t group);
 
 void vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node);
 

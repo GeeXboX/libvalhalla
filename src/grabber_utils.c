@@ -43,7 +43,7 @@ static const struct {
 
 void
 vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                   const char *name, valhalla_meta_grp_t group)
+                      const char *name, valhalla_meta_grp_t group)
 {
   char *res = NULL;
 
@@ -61,13 +61,13 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
 
 void
 vh_grabber_parse_int (file_data_t *fdata, int val,
-                   const char *name, valhalla_meta_grp_t group)
+                      const char *name, valhalla_meta_grp_t group)
 {
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%d", val);
   vh_metadata_add (&fdata->meta_grabber, name,
-                v, VALHALLA_META_GRP_TEMPORAL);
+                   v, VALHALLA_META_GRP_TEMPORAL);
 }
 
 void
@@ -91,7 +91,7 @@ vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
     if (tmp)
     {
       vh_metadata_add (&fdata->meta_grabber, "category",
-                    (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
+                       (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
       xmlFree (tmp);
     }
     n = n->next;
