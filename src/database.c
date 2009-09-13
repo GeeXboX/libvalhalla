@@ -865,8 +865,7 @@ vh_database_file_get_dlcontext (database_t *database,
   if (res != SQLITE_OK)
     goto out;
 
-  while ((res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_DLCONTEXT)))
-         == SQLITE_ROW)
+  while (sqlite3_step (STMT_GET (STMT_SELECT_FILE_DLCONTEXT)) == SQLITE_ROW)
   {
     const char *url = (const char *)
       sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 0);
