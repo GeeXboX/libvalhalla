@@ -208,6 +208,18 @@ database_group_get (database_t *database, int64_t id)
   return VALHALLA_META_GRP_NIL;
 }
 
+static int64_t
+database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
+{
+  if (!database)
+    return 0;
+
+  if (grp < ARRAY_NB_ELEMENTS (g_meta_group) && grp >= 0)
+    return database->meta_group[grp].id;
+
+  return 0;
+}
+
 static valhalla_file_type_t
 database_file_type_get (database_t *database, int64_t id)
 {
@@ -573,7 +585,7 @@ database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
   {
     meta_id  = database_meta_insert (database, tag->name);
     data_id  = database_data_insert (database, tag->value);
-    group_id = database->meta_group[tag->group].id;
+    group_id = database_groupid_get (database, tag->group);
 
     database_assoc_filemd_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
                                   file_id, meta_id, data_id, group_id);
@@ -1209,7 +1221,7 @@ vh_database_metalist_get (database_t *database,
     if (search->id || search->text)
       SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT (sql, SELECT_LIST_WHERE_GROUP_ID,
-                database->meta_group[search->group].id);
+                database_groupid_get (database, search->group));
   }
 
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
