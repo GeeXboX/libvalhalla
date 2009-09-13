@@ -235,6 +235,18 @@ database_file_type_get (database_t *database, int64_t id)
   return VALHALLA_FILE_TYPE_NULL;
 }
 
+static int64_t
+database_file_typeid_get (database_t *database, valhalla_file_type_t type)
+{
+  if (!database)
+    return 0;
+
+  if (type < ARRAY_NB_ELEMENTS (g_file_type) && type >= 0)
+    return database->file_type[type].id;
+
+  return 0;
+}
+
 static void
 database_create_table (database_t *database)
 {
@@ -596,7 +608,7 @@ static void
 database_file_data (database_t *database, file_data_t *data, int insert)
 {
   int64_t file_id, type_id;
-  type_id = database->file_type[data->type].id;
+  type_id = database_file_typeid_get (database, data->type);
   file_id = insert
             ? database_file_insert (database, data, type_id)
             : database_file_update (database, data, type_id);
@@ -1278,7 +1290,7 @@ vh_database_filelist_get (database_t *database,
     if (restriction)
       SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT (sql, SELECT_LIST_WHERE_TYPE_ID,
-                database->file_type[filetype].id);
+                database_file_typeid_get (database, filetype));
   }
 
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
