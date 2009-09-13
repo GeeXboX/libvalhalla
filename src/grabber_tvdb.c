@@ -220,8 +220,6 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   return 0;
 
  error:
-  if (tmp)
-    xmlFree (tmp);
   if (doc)
     xmlFreeDoc (doc);
 
