@@ -178,7 +178,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch tv show overview description */
   vh_grabber_parse_str (fdata, n, "Overview",
-                     "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
+                        "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show first air date */
   vh_xml_search_year (n, "FirstAired", &res_int);
@@ -198,7 +198,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch tv show runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "Runtime",
-                     "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+                        "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch tv show poster */
   tmp = vh_get_prop_value_from_xml_tree (n, "poster");

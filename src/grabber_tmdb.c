@@ -164,11 +164,11 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                     "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
+                        "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                     "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+                        "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
   vh_xml_search_int (n, "release", &res_int);
@@ -183,17 +183,17 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   if (res_int)
   {
     vh_grabber_parse_int (fdata, res_int / 2,
-                       "rating", VALHALLA_META_GRP_PERSONAL);
+                          "rating", VALHALLA_META_GRP_PERSONAL);
     res_int = 0;
   }
 
   /* fetch movie budget */
   vh_grabber_parse_str (fdata, n,
-                     "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
+                        "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie revenue */
   vh_grabber_parse_str (fdata, n,
-                     "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
+                        "revenue", "revenue", VALHALLA_META_GRP_COMMERCIAL);
 
   /* fetch movie country */
   node = vh_get_node_xml_tree (n, "country");
@@ -203,7 +203,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
     if (tmp)
     {
       vh_metadata_add (&fdata->meta_grabber, "country",
-                    (char *) tmp, VALHALLA_META_GRP_COMMERCIAL);
+                       (char *) tmp, VALHALLA_META_GRP_COMMERCIAL);
       xmlFree (tmp);
     }
   }

@@ -114,15 +114,15 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                     "alternative_title", VALHALLA_META_GRP_TITLES);
+                        "alternative_title", VALHALLA_META_GRP_TITLES);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                     "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
+                        "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                     "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+                        "runtime", VALHALLA_META_GRP_CLASSIFICATION);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
@@ -141,7 +141,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   if (res_int)
   {
     vh_grabber_parse_int (fdata, res_int / 2,
-                       "rating", VALHALLA_META_GRP_PERSONAL);
+                          "rating", VALHALLA_META_GRP_PERSONAL);
     res_int = 0;
   }
 
