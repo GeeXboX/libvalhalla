@@ -66,10 +66,10 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
   return !run;
 }
 
-#define METADATA_GRABBER_POST           \
-  vh_metadata_free (pdata->meta_grabber);  \
-  pdata->meta_grabber = NULL;           \
-  if (pdata->wait)                      \
+#define METADATA_GRABBER_POST             \
+  vh_metadata_free (pdata->meta_grabber); \
+  pdata->meta_grabber = NULL;             \
+  if (pdata->wait)                        \
     sem_post (&pdata->sem_grabber);
 
 static int
