@@ -81,7 +81,7 @@ vh_list_free (list_t *list, void (*free_fct) (void *data))
 
 void *
 vh_list_search (list_t *list, const void *tocmp,
-             int (*cmp_fct) (const void *tocmp, const void *data))
+                int (*cmp_fct) (const void *tocmp, const void *data))
 {
   if (!tocmp || !cmp_fct)
     return NULL;
