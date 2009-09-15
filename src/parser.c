@@ -530,16 +530,6 @@ vh_parser_run (parser_t *parser, int priority)
   return res;
 }
 
-static inline int
-parser_get_list_length (void *list)
-{
-  void **l = list;
-  int n = 0;
-  while (l && *l++)
-    n++;
-  return n;
-}
-
 void
 vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 {
@@ -550,7 +540,7 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
   if (!parser || !parser->decrapifier || !keyword)
     return;
 
-  n = parser_get_list_length (parser->bl_list) + 1;
+  n = vh_get_list_length (parser->bl_list) + 1;
   parser->bl_list =
     realloc (parser->bl_list, (n + 1) * sizeof (*parser->bl_list));
   if (!parser->bl_list)

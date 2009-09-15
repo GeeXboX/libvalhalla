@@ -65,17 +65,6 @@ struct scanner_s {
 };
 
 
-static int
-get_list_length (void *list)
-{
-  void **l = list;
-  int n = 0;
-
-  while (l && *l++)
-    n++;
-  return n;
-}
-
 static void
 path_free (struct path_s *path)
 {
@@ -498,7 +487,7 @@ vh_scanner_suffix_add (scanner_t *scanner, const char *suffix)
   if (!scanner)
     return;
 
-  n = get_list_length (scanner->suffix) + 1;
+  n = vh_get_list_length (scanner->suffix) + 1;
 
   scanner->suffix =
     realloc (scanner->suffix, (n + 1) * sizeof (*scanner->suffix));

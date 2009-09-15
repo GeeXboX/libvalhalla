@@ -70,5 +70,6 @@ void vh_file_data_free (file_data_t *data);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
 void vh_queue_cleanup (fifo_queue_t *queue);
+int vh_get_list_length (void *list);
 
 #endif /* VALHALLA_UTILS_H */

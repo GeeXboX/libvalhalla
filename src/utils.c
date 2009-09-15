@@ -292,3 +292,14 @@ vh_queue_cleanup (fifo_queue_t *queue)
   }
   while (e != ACTION_CLEANUP_END);
 }
+
+int
+vh_get_list_length (void *list)
+{
+  void **l = list;
+  int n = 0;
+
+  while (l && *l++)
+    n++;
+  return n;
+}
