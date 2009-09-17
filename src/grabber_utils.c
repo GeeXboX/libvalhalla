@@ -136,7 +136,7 @@ vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
     return;
 
   n = vh_get_node_xml_tree (node, "person");
-  while (n)
+  for (; n; n = n->next)
   {
     int i;
 
@@ -144,10 +144,7 @@ vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
 
     ch = vh_get_attr_value_from_node (n, "job");
     if (!ch)
-    {
-      n = n->next;
       continue;
-    }
 
     for (i = 0; grabber_casting_mapping[i].tag; i++)
       if (!strcmp ((char *) ch, grabber_casting_mapping[i].tag))
@@ -157,6 +154,5 @@ vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
       }
 
     xmlFree (ch);
-    n = n->next;
   }
 }
