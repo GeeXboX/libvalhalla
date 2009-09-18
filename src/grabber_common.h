@@ -44,11 +44,12 @@
  *    of Valhalla.
  *
  * Some utils are available for the grabbers:
- *  - xml_utils.h for XML parsing (based on libxml2)
- *  - url_utils.h for downloading (based on libcurl)
- *  - logs.h      for logging
- *  - md5.h       to compute the MD5 sum
- *  - list.h      to handle very simple linked-lists
+ *  - grabber_utils.h  utils specific to grabbers
+ *  - xml_utils.h      for XML parsing (based on libxml2)
+ *  - url_utils.h      for downloading (based on libcurl)
+ *  - logs.h           for logging
+ *  - md5.h            to compute the MD5 sum
+ *  - list.h           to handle very simple linked-lists
  *
  * Main header for all grabbers:
  *  - grabber_common.h
