@@ -278,7 +278,7 @@ main (int argc, char **argv)
   }
 
   if (!time_limit)
-  valhalla_wait (handle);
+    valhalla_wait (handle);
   else
     usleep (time_limit * 1000);
 
