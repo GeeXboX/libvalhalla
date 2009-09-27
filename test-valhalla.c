@@ -46,6 +46,7 @@
   " -f --download           path for the downloader destination\n" \
   " -c --commit-int         commits interval\n" \
   " -p --parser             number of parsers\n" \
+  " -n --decrap             enable decrapifier (for title metadata)\n" \
   " -k --keyword            keyword for the decrapifier\n" \
   " -s --suffix             file suffix (extension)\n" \
   " -g --grabber            grabber to be used\n" \
@@ -69,7 +70,7 @@ main (int argc, char **argv)
 {
   int rc, i;
   int loop_nb = 1, loop_wait = 0, time_limit = 0;
-  int priority = 19, commit = 128;
+  int priority = 19, commit = 128, decrap = 0;
   valhalla_t *handle;
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
   const char *database = "./valhalla.db";
@@ -85,7 +86,7 @@ main (int argc, char **argv)
   long long diff;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:k:s:g:";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -97,6 +98,7 @@ main (int argc, char **argv)
     { "download",   required_argument, 0, 'f'  },
     { "commit-int", required_argument, 0, 'c'  },
     { "parser",     required_argument, 0, 'p'  },
+    { "decrap",     no_argument,       0, 'n'  },
     { "keyword",    required_argument, 0, 'k'  },
     { "suffix",     required_argument, 0, 's'  },
     { "grabber",    required_argument, 0, 'g'  },
@@ -167,6 +169,8 @@ main (int argc, char **argv)
     case 'k':
       if (kid < KEYWORD_MAX)
         keyword[kid++] = optarg;
+    case 'n':
+      decrap = 1;
       break;
 
     case 'g':
@@ -182,7 +186,7 @@ main (int argc, char **argv)
 
   valhalla_verbosity (verbosity);
 
-  handle = valhalla_init (database, parser_nb, kid, commit);
+  handle = valhalla_init (database, parser_nb, decrap, commit);
   if (!handle)
     return -1;
 
