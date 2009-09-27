@@ -74,7 +74,7 @@ int
 vh_file_copy (const char *src, const char *dst)
 {
   struct stat st_src, st_dst;
-  int fd_src, fd_dst;
+  int fd_src = 0, fd_dst = 0;
   ssize_t r, w;
   char b[BUFFER_SIZE];
   int err, res = 1;
