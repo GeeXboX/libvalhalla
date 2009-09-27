@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <getopt.h>
 #include <sys/time.h>
 
@@ -39,6 +40,7 @@
   " -v --verbose            increase verbosity\n" \
   " -l --loop               number of loops\n" \
   " -t --timewait           time to wait between loops [sec]\n" \
+  " -m --timelimit          time limit [ms] for the scanning\n" \
   " -a --priority           priority for the threads\n" \
   " -d --database           path for the database\n" \
   " -f --download           path for the downloader destination\n" \
@@ -66,7 +68,7 @@ int
 main (int argc, char **argv)
 {
   int rc, i;
-  int loop_nb = 1, loop_wait = 0;
+  int loop_nb = 1, loop_wait = 0, time_limit = 0;
   int priority = 19, commit = 128;
   valhalla_t *handle;
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
@@ -83,12 +85,13 @@ main (int argc, char **argv)
   long long diff;
 
   int c, index;
-  const char *const short_options = "hvl:t:a:d:f:c:p:k:s:g:";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:k:s:g:";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
     { "loop",       required_argument, 0, 'l'  },
     { "timewait",   required_argument, 0, 't'  },
+    { "timelimit",  required_argument, 0, 'm'  },
     { "priority",   required_argument, 0, 'a'  },
     { "database",   required_argument, 0, 'd'  },
     { "download",   required_argument, 0, 'f'  },
@@ -130,6 +133,10 @@ main (int argc, char **argv)
 
     case 't':
       loop_wait = atoi (optarg);
+      break;
+
+    case 'm':
+      time_limit = atoi (optarg);
       break;
 
     case 'a':
@@ -270,7 +277,10 @@ main (int argc, char **argv)
     return -1;
   }
 
+  if (!time_limit)
   valhalla_wait (handle);
+  else
+    usleep (time_limit * 1000);
 
   gettimeofday (&tve, NULL);
 
