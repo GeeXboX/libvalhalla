@@ -88,7 +88,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   xmlChar *tmp;
   xmlNode *n, *node;
 
-  int res_int;
+  int res_int = 0;
 
   if (!keywords || !escaped_keywords)
     return -1;

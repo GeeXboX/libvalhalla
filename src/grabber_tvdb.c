@@ -108,7 +108,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
-  int res_int;
+  int res_int = 0;
 
   xmlDocPtr doc;
   xmlChar *tmp = NULL;
