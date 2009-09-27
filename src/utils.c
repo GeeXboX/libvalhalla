@@ -266,7 +266,8 @@ vh_queue_cleanup (fifo_queue_t *queue)
   int e;
   void *data;
 
-  vh_fifo_queue_push (queue, ACTION_CLEANUP_END, NULL);
+  vh_fifo_queue_push (queue,
+                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_CLEANUP_END, NULL);
 
   do
   {

@@ -378,7 +378,8 @@ vh_grabber_stop (grabber_t *grabber)
   grabber->run = 0;
   pthread_mutex_unlock (&grabber->mutex_run);
 
-  vh_fifo_queue_push (grabber->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (grabber->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
   /* wake up the thread if this is asleep by dbmanager */
   pthread_mutex_lock (&grabber->mutex_grabber);
@@ -504,5 +505,5 @@ vh_grabber_action_send (grabber_t *grabber, int action, void *data)
   if (!grabber)
     return;
 
-  vh_fifo_queue_push (grabber->fifo, action, data);
+  vh_fifo_queue_push (grabber->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }

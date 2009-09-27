@@ -76,7 +76,8 @@ vh_fifo_queue_free (fifo_queue_t *queue)
 }
 
 int
-vh_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
+vh_fifo_queue_push (fifo_queue_t *queue,
+                    fifo_queue_prio_t p, int id, void *data)
 {
   fifo_queue_item_t *item;
 
@@ -88,10 +89,24 @@ vh_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
   item = queue->item;
   if (item)
   {
+    switch (p)
+    {
+    default:
+    case FIFO_QUEUE_PRIORITY_NORMAL:
     while (item->next)
       item = item->next;
     item->next = calloc (1, sizeof (fifo_queue_item_t));
     item = item->next;
+      break;
+
+    case FIFO_QUEUE_PRIORITY_HIGH:
+      item = calloc (1, sizeof (fifo_queue_item_t));
+      if (!item)
+        break;
+      item->next = queue->item;
+      queue->item = item;
+      break;
+    }
   }
   else
   {

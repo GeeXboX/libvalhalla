@@ -193,7 +193,8 @@ vh_downloader_stop (downloader_t *downloader)
   downloader->run = 0;
   pthread_mutex_unlock (&downloader->mutex_run);
 
-  vh_fifo_queue_push (downloader->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (downloader->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   pthread_join (downloader->thread, NULL);
 }
 
@@ -295,5 +296,6 @@ vh_downloader_action_send (downloader_t *downloader, int action, void *data)
   if (!downloader)
     return;
 
-  vh_fifo_queue_push (downloader->fifo, action, data);
+  vh_fifo_queue_push (downloader->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }

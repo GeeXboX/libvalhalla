@@ -227,7 +227,8 @@ vh_dispatcher_stop (dispatcher_t *dispatcher)
   dispatcher->run = 0;
   pthread_mutex_unlock (&dispatcher->mutex_run);
 
-  vh_fifo_queue_push (dispatcher->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (dispatcher->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   pthread_join (dispatcher->thread, NULL);
 }
 
@@ -282,5 +283,5 @@ vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data)
   if (!dispatcher)
     return;
 
-  vh_fifo_queue_push (dispatcher->fifo, action, data);
+  vh_fifo_queue_push (dispatcher->fifo, FIFO_QUEUE_PRIORITY_HIGH, action, data);
 }

@@ -400,7 +400,8 @@ vh_scanner_stop (scanner_t *scanner)
   scanner->run = 0;
   pthread_mutex_unlock (&scanner->mutex_run);
 
-  vh_fifo_queue_push (scanner->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (scanner->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   vh_timer_thread_stop (scanner->timer);
   pthread_join (scanner->thread, NULL);
 }
@@ -539,5 +540,5 @@ vh_scanner_action_send (scanner_t *scanner, int action, void *data)
   if (!scanner)
     return;
 
-  vh_fifo_queue_push (scanner->fifo, action, data);
+  vh_fifo_queue_push (scanner->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }

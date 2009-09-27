@@ -87,7 +87,8 @@ valhalla_mrproper (valhalla_t *handle)
     int e;
     void *data;
 
-    vh_fifo_queue_push (fifo_i[i], ACTION_CLEANUP_END, NULL);
+    vh_fifo_queue_push (fifo_i[i],
+                        FIFO_QUEUE_PRIORITY_NORMAL, ACTION_CLEANUP_END, NULL);
 
     do
     {
@@ -109,7 +110,7 @@ valhalla_mrproper (valhalla_t *handle)
           break;
 
         file->clean_f = 1;
-        vh_fifo_queue_push (fifo_o, e, data);
+        vh_fifo_queue_push (fifo_o, FIFO_QUEUE_PRIORITY_NORMAL, e, data);
 
 #ifdef USE_GRABBER
         /* save downloader context */

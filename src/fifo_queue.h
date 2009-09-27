@@ -31,11 +31,17 @@ enum fifo_queue_errno {
   FIFO_QUEUE_SUCCESS      =  0,
 };
 
+typedef enum fifo_queue_prio {
+  FIFO_QUEUE_PRIORITY_NORMAL,
+  FIFO_QUEUE_PRIORITY_HIGH,
+} fifo_queue_prio_t;
+
 
 fifo_queue_t *vh_fifo_queue_new (void);
 void vh_fifo_queue_free (fifo_queue_t *queue);
 
-int vh_fifo_queue_push (fifo_queue_t *queue, int id, void *data);
+int vh_fifo_queue_push (fifo_queue_t *queue,
+                        fifo_queue_prio_t p, int id, void *data);
 int vh_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data);
 
 #endif /* VALHALLA_FIFO_QUEUE_H */

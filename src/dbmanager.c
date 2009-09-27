@@ -310,7 +310,8 @@ vh_dbmanager_stop (dbmanager_t *dbmanager)
   dbmanager->run = 0;
   pthread_mutex_unlock (&dbmanager->mutex_run);
 
-  vh_fifo_queue_push (dbmanager->fifo, ACTION_KILL_THREAD, NULL);
+  vh_fifo_queue_push (dbmanager->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   pthread_join (dbmanager->thread, NULL);
 }
 
@@ -376,7 +377,8 @@ vh_dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
   if (!dbmanager)
     return;
 
-  vh_fifo_queue_push (dbmanager->fifo, action, data);
+  vh_fifo_queue_push (dbmanager->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }
 
 void

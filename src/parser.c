@@ -579,7 +579,8 @@ vh_parser_stop (parser_t *parser)
   pthread_mutex_unlock (&parser->mutex_run);
 
   for (i = 0; i < parser->nb; i++)
-    vh_fifo_queue_push (parser->fifo, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (parser->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
   for (i = 0; i < parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
@@ -649,5 +650,5 @@ vh_parser_action_send (parser_t *parser, int action, void *data)
   if (!parser)
     return;
 
-  vh_fifo_queue_push (parser->fifo, action, data);
+  vh_fifo_queue_push (parser->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }
