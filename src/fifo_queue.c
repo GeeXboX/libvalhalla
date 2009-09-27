@@ -93,10 +93,10 @@ vh_fifo_queue_push (fifo_queue_t *queue,
     {
     default:
     case FIFO_QUEUE_PRIORITY_NORMAL:
-    while (item->next)
+      while (item->next)
+        item = item->next;
+      item->next = calloc (1, sizeof (fifo_queue_item_t));
       item = item->next;
-    item->next = calloc (1, sizeof (fifo_queue_item_t));
-    item = item->next;
       break;
 
     case FIFO_QUEUE_PRIORITY_HIGH:
