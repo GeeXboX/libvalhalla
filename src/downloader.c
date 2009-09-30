@@ -260,7 +260,7 @@ vh_downloader_init (valhalla_t *handle)
 
 void
 vh_downloader_destination_set (downloader_t *downloader,
-                            valhalla_dl_t dl, const char *dst)
+                               valhalla_dl_t dl, const char *dst)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
