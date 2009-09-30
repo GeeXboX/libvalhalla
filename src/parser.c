@@ -122,7 +122,7 @@ parser_metadata_group (metadata_t **meta,
   if (!key || !value)
     return;
 
-  for (i = 0; i < ARRAY_NB_ELEMENTS (metagrp); i++)
+  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (metagrp); i++)
   {
     char str[32];
 
@@ -382,7 +382,7 @@ parser_stream_info (AVFormatContext *ctx)
   if (!ctx)
     return VALHALLA_FILE_TYPE_NULL;
 
-  for (i = 0; i < ctx->nb_streams; i++)
+  for (i = 0; i < (int) ctx->nb_streams; i++)
   {
     AVStream *st = ctx->streams[i];
 
@@ -515,7 +515,7 @@ vh_parser_run (parser_t *parser, int priority)
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  for (i = 0; i < parser->nb; i++)
+  for (i = 0; i < (int) parser->nb; i++)
   {
     res = pthread_create (&parser->thread[i], &attr, parser_thread, parser);
     if (res)
@@ -578,11 +578,11 @@ vh_parser_stop (parser_t *parser)
   parser->run = 0;
   pthread_mutex_unlock (&parser->mutex_run);
 
-  for (i = 0; i < parser->nb; i++)
+  for (i = 0; i < (int) parser->nb; i++)
     vh_fifo_queue_push (parser->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
-  for (i = 0; i < parser->nb; i++)
+  for (i = 0; i < (int) parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
 }
 
