@@ -99,7 +99,7 @@ downloader_thread (void *arg)
         if (downloader_is_stopped (downloader))
           break;
 
-        if (!it->url || dst >= VALHALLA_DL_LAST || dst < 0)
+        if (!it->url || dst >= VALHALLA_DL_LAST)
           continue;
 
         if (!downloader->dl_list[dst] || !downloader->dl_list[dst][0])
@@ -265,7 +265,7 @@ vh_downloader_destination_set (downloader_t *downloader,
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader || !downloader->dl_list || !dst
-      || dl >= VALHALLA_DL_LAST || dl < 0)
+      || dl >= VALHALLA_DL_LAST)
     return;
 
   if (downloader->dl_list[dl])
@@ -279,7 +279,7 @@ vh_downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!downloader || !downloader->dl_list || dl >= VALHALLA_DL_LAST || dl < 0)
+  if (!downloader || !downloader->dl_list || dl >= VALHALLA_DL_LAST)
     return NULL;
 
   return downloader->dl_list[dl];
