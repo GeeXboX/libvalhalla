@@ -307,7 +307,7 @@ grabber_nfo_priv (void)
 }
 
 static int
-grabber_nfo_init (void *priv)
+grabber_nfo_init (vh_unused void *priv)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -325,7 +325,7 @@ grabber_nfo_uninit (void *priv)
 }
 
 static int
-grabber_nfo_grab (void *priv, file_data_t *data)
+grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
 {
   nfo_type_t type;
   nfo_t *nfo;
