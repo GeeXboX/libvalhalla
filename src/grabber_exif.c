@@ -77,7 +77,7 @@ grabber_exif_priv (void)
 }
 
 static int
-grabber_exif_init (void *priv)
+grabber_exif_init (vh_unused void *priv)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -98,7 +98,7 @@ grabber_exif_uninit (void *priv)
 }
 
 static int
-grabber_exif_grab (void *priv, file_data_t *data)
+grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 {
   ExifData *d;
 

@@ -122,7 +122,7 @@ grabber_local_priv (void)
 }
 
 static int
-grabber_local_init (void *priv)
+grabber_local_init (vh_unused void *priv)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -140,7 +140,7 @@ grabber_local_uninit (void *priv)
 }
 
 static int
-grabber_local_grab (void *priv, file_data_t *data)
+grabber_local_grab (vh_unused void *priv, file_data_t *data)
 {
   char *cover;
 
