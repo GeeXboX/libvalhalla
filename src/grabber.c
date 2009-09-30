@@ -62,6 +62,9 @@
 #ifdef HAVE_GRABBER_LYRICWIKI
 #include "grabber_lyricwiki.h"
 #endif /* HAVE_GRABBER_LYRICWIKI */
+#ifdef HAVE_GRABBER_NFO
+#include "grabber_nfo.h"
+#endif /* HAVE_GRABBER_NFO */
 #ifdef HAVE_GRABBER_TMDB
 #include "grabber_tmdb.h"
 #endif /* HAVE_GRABBER_TMDB */
@@ -96,6 +99,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_LOCAL
   vh_grabber_local_register,
 #endif /* HAVE_GRABBER_LOCAL */
+#ifdef HAVE_GRABBER_NFO
+  vh_grabber_nfo_register,
+#endif /* HAVE_GRABBER_NFO */
 #ifdef HAVE_GRABBER_AMAZON
   vh_grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */

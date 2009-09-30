@@ -50,6 +50,7 @@ show_help(){
   echo "  --enable-grabber-local      build localfiles grabber [default=yes]"
   echo "  --enable-grabber-lyricsfly  build LyricsFly.com grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=no]"
+  echo "  --enable-grabber-nfo        build NFO grabber [default=yes]"
   echo "  --enable-grabber-tvdb       build TheTVDB.org grabber [default=yes]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=yes]"
   echo "  --enable-grabber-tvrage     build TVRage.com grabber [default=yes]"
@@ -69,6 +70,7 @@ show_help(){
   echo "  --with-curl-dir=DIR         check for libcurl installed in DIR"
   echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
   echo "  --with-exif-dir=DIR         check for libexif installed in DIR"
+  echo "  --with-nfo-dir=DIR          check for libnfo installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -433,6 +435,7 @@ grabber_lastfm="yes"
 grabber_local="yes"
 grabber_lyricsfly="no"
 grabber_lyricwiki="no"
+grabber_nfo="yes"
 grabber_tmdb="yes"
 grabber_tvdb="yes"
 grabber_tvrage="yes"
@@ -495,6 +498,8 @@ for opt do
   ;;
   --with-exif-dir=*) exifdir="$optval";
   ;;
+  --with-nfo-dir=*) nfodir="$optval";
+  ;;
   --enable-grabbers) grabber_all="yes";
   ;;
   --disable-grabbers) grabber_all="no";
@@ -534,6 +539,10 @@ for opt do
   --enable-grabber-lyricwiki) grabber_lyricwiki="yes";
   ;;
   --disable-grabber-lyricwiki) grabber_lyricwiki="no";
+  ;;
+  --enable-grabber-nfo) grabber_nfo="yes";
+  ;;
+  --disable-grabber-nfo) grabber_nfo="no";
   ;;
   --enable-grabber-tmdb) grabber_tmdb="yes";
   ;;
@@ -882,6 +891,7 @@ grabber="no"
 xml="no"
 md5="no"
 exif="no"
+nfo="no"
 
 if [ "$grabber_all" != "auto" ]; then
   grabber_allocine=$grabber_all
@@ -892,6 +902,7 @@ if [ "$grabber_all" != "auto" ]; then
   grabber_local=$grabber_all
   grabber_lyricsfly=$grabber_all
   grabber_lyricwiki=$grabber_all
+  grabber_nfo=$grabber_all
   grabber_tmdb=$grabber_all
   grabber_tvdb=$grabber_all
   grabber_tvrage=$grabber_all
@@ -942,6 +953,12 @@ if enabled grabber_lyricsfly; then
   add_cflags -DHAVE_GRABBER_LYRICSFLY
   grabber="yes"
   xml="yes"
+fi
+
+if enabled grabber_nfo; then
+  add_cflags -DHAVE_GRABBER_NFO
+  grabber="yes"
+  nfo="yes"
 fi
 
 if enabled grabber_lyricwiki; then
@@ -1023,6 +1040,23 @@ if enabled exif; then
   add_pkgconfig_requires libexif
 fi
 
+if enabled nfo; then
+  ###############################################
+  #   check for libnfo
+  ###############################################
+  if [ -n "$nfodir" ]; then
+    check_cflags -I$nfodir
+    check_ldflags -L$nfodir
+  fi
+  if [ -z  "$nfodir" ]; then
+    add_pkgconfig_deps libnfo
+  fi
+
+  echolog "Checking for libnfo ..."
+  check_lib nfo.h nfo_init -lnfo || die "Error, can't find libnfo !"
+  add_pkgconfig_requires libnfo
+fi
+
 if enabled md5; then
   ###############################################
   #   check for FFmpeg libavutil
@@ -1096,6 +1130,7 @@ echolog "    Last.fm          $grabber_lastfm"
 echolog "    Local Files      $grabber_local"
 echolog "    LyricsFly        $grabber_lyricsfly"
 echolog "    LyricWiki        $grabber_lyricwiki"
+echolog "    NFO              $grabber_nfo"
 echolog "    TheMovieDB       $grabber_tmdb"
 echolog "    TheTVDB          $grabber_tvdb"
 echolog "    TVRage           $grabber_tvrage"
@@ -1148,6 +1183,7 @@ fi
 
 append_config "XML=$xml"
 append_config "EXIF=$exif"
+append_config "NFO=$nfo"
 append_config "MD5=$md5"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
@@ -1159,6 +1195,7 @@ append_config "GRABBER_LASTFM=$grabber_lastfm"
 append_config "GRABBER_LOCAL=$grabber_local"
 append_config "GRABBER_LYRICSFLY=$grabber_lyricsfly"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
+append_config "GRABBER_NFO=$grabber_nfo"
 append_config "GRABBER_TMDB=$grabber_tmdb"
 append_config "GRABBER_TVDB=$grabber_tvdb"
 append_config "GRABBER_TVRAGE=$grabber_tvrage"

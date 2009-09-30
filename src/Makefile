@@ -47,6 +47,7 @@ SRCS_GRABBER-$(GRABBER_LASTFM)		+= grabber_lastfm.c
 SRCS_GRABBER-$(GRABBER_LOCAL)		+= grabber_local.c
 SRCS_GRABBER-$(GRABBER_LYRICSFLY)	+= grabber_lyricsfly.c
 SRCS_GRABBER-$(GRABBER_LYRICWIKI)	+= grabber_lyricwiki.c
+SRCS_GRABBER-$(GRABBER_NFO)		+= grabber_nfo.c
 SRCS_GRABBER-$(GRABBER_TMDB)		+= grabber_tmdb.c
 SRCS_GRABBER-$(GRABBER_TVDB)		+= grabber_tvdb.c
 SRCS_GRABBER-$(GRABBER_TVRAGE)		+= grabber_tvrage.c
