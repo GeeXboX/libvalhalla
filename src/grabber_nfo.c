@@ -80,18 +80,8 @@ grab_nfo_video_stream (nfo_stream_video_t *video, int id, file_data_t *data)
   META_VIDEO_ADD ("width",        WIDTH);
   META_VIDEO_ADD ("height",       HEIGHT);
   META_VIDEO_ADD ("codec",        CODEC);
-  META_VIDEO_ADD ("format_info",  FORMAT_INFO);
   META_VIDEO_ADD ("duration",     DURATION);
-
   META_VIDEO_ADD ("bitrate",      BITRATE);
-  META_VIDEO_ADD ("bitrate_mode", BITRATE_MODE);
-  META_VIDEO_ADD ("bitrate_max",  BITRATE_MAX);
-
-  META_VIDEO_ADD ("container",    CONTAINER);
-  META_VIDEO_ADD ("codec_id",     CODEC_ID);
-  META_VIDEO_ADD ("codec_info",   CODEC_INFO);
-  META_VIDEO_ADD ("scan_type",    SCAN_TYPE);
-  META_VIDEO_ADD ("length",       ASPECT);
 }
 
 #define META_AUDIO_ADD(meta,field)                                         \
@@ -154,19 +144,12 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
   META_MOVIE_ADD ("original_title", ORIGINAL_TITLE);
   META_MOVIE_ADD ("rating",         RATING);
   META_MOVIE_ADD ("year",           YEAR);
-  META_MOVIE_ADD ("top250",         TOP250);
-  META_MOVIE_ADD ("votes",          VOTES);
-  META_MOVIE_ADD ("outline",        OUTLINE);
   META_MOVIE_ADD ("plot",           PLOT);
-  META_MOVIE_ADD ("tagline",        TAGLINE);
-  META_MOVIE_ADD ("runtime",        RUNTIME);
   META_MOVIE_ADD ("thumb",          THUMB);
   META_MOVIE_ADD ("fanart",         FAN_ART);
   META_MOVIE_ADD ("mpaa",           MPAA);
   META_MOVIE_ADD ("playcount",      PLAY_COUNT);
   META_MOVIE_ADD ("watched",        WATCHED);
-  META_MOVIE_ADD ("movieid",        ID);
-  META_MOVIE_ADD ("trailer",        TRAILER);
   META_MOVIE_ADD ("genre",          GENRE);
   META_MOVIE_ADD ("credits",        CREDITS);
   META_MOVIE_ADD ("director",       DIRECTOR);
@@ -227,11 +210,6 @@ grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
 
   META_SHOW_ADD ("title",          TITLE);
   META_SHOW_ADD ("rating",         RATING);
-  META_SHOW_ADD ("season",         SEASON);
-  META_SHOW_ADD ("episode",        EPISODE);
-  META_SHOW_ADD ("dispalyseason",  DISPLAY_SEASON);
-  META_SHOW_ADD ("displayepisode", DISPLAY_EPISODE);
-  META_SHOW_ADD ("guideurl",       EPISODE_GUIDE_URL);
   META_SHOW_ADD ("plot",           PLOT);
   META_SHOW_ADD ("mpaa",           MPAA);
   META_SHOW_ADD ("watched",        WATCHED);
@@ -275,8 +253,6 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
   META_EPISODE_ADD ("playcount",    PLAY_COUNT);
   META_EPISODE_ADD ("credits",      CREDITS);
   META_EPISODE_ADD ("director",     DIRECTOR);
-  META_EPISODE_ADD ("aired",        AIRED);
-  META_EPISODE_ADD ("votes",        VOTES);
 
   tvshow = nfo_tvshow_episode_get_show (episode);
   grab_nfo_show (tvshow, data);
