@@ -119,9 +119,6 @@ downloader_thread (void *arg)
                   ? "" : "/",
                   it->name);
 
-        if (*it->url == '/')
-          err = vh_file_copy (it->url, dest);
-        else
           err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
           valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
