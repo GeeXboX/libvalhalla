@@ -119,7 +119,7 @@ downloader_thread (void *arg)
                   ? "" : "/",
                   it->name);
 
-          err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
+        err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
           valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
                         __FUNCTION__, it->url, downloader->dl_list[dst]);
