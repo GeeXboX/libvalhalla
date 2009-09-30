@@ -1186,7 +1186,7 @@ database_list_get_restriction (valhalla_db_restrict_t *restriction, char *sql)
 
 static int
 database_select_metalist_cb (void *user_data,
-                             int argc, char **argv, char **column)
+                             int argc, char **argv, vh_unused char **column)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_metares_t res;
@@ -1250,7 +1250,7 @@ vh_database_metalist_get (database_t *database,
 
 static int
 database_select_filelist_cb (void *user_data,
-                             int argc, char **argv, char **column)
+                             int argc, char **argv, vh_unused char **column)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_fileres_t res;
@@ -1307,7 +1307,7 @@ vh_database_filelist_get (database_t *database,
 
 static int
 database_select_file_cb (void *user_data,
-                         int argc, char **argv, char **column)
+                         int argc, char **argv, vh_unused char **column)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_filemeta_t **res, *new;
