@@ -49,7 +49,7 @@ typedef struct grabber_lastfm_s {
 
 static int
 grabber_lastfm_get (url_t *handler, char **dl_url,
-                    const char *artist, const char *album, const char *cover)
+                    const char *artist, const char *album)
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
@@ -204,7 +204,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
     goto out;
   }
 
-  res = grabber_lastfm_get (lastfm->handler, &url, artist, alb, cover);
+  res = grabber_lastfm_get (lastfm->handler, &url, artist, alb);
   if (!res)
   {
     vh_metadata_add (&data->meta_grabber, "cover",
