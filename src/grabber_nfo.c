@@ -79,9 +79,9 @@ grab_nfo_video_stream (nfo_stream_video_t *video, int id, file_data_t *data)
 
   META_VIDEO_ADD ("width",        WIDTH);
   META_VIDEO_ADD ("height",       HEIGHT);
-  META_VIDEO_ADD ("codec",        CODEC);
+  META_VIDEO_ADD ("video_codec",        CODEC);
   META_VIDEO_ADD ("duration",     DURATION);
-  META_VIDEO_ADD ("bitrate",      BITRATE);
+  META_VIDEO_ADD ("video_bitrate",      BITRATE);
 }
 
 #define META_AUDIO_ADD(meta,field)                                         \
@@ -97,9 +97,9 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio, int id, file_data_t *data)
     return;
 
   META_AUDIO_ADD ("lang",     LANG);
-  META_AUDIO_ADD ("codec",    CODEC);
+  META_AUDIO_ADD ("audio_codec",    CODEC);
   META_AUDIO_ADD ("channels", CHANNELS);
-  META_AUDIO_ADD ("bitrate",  BITRATE);
+  META_AUDIO_ADD ("audio_bitrate",  BITRATE);
 }
 
 #define META_SUB_ADD(meta,field)                                           \
@@ -114,7 +114,7 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub, int id, file_data_t *data)
   if (!sub || !data)
     return;
 
-  META_SUB_ADD ("lang", LANG);
+  META_SUB_ADD ("sub_lang", LANG);
 }
 
 /****************************************************************************/
