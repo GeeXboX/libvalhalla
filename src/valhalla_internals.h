@@ -60,4 +60,12 @@ struct valhalla_s {
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
+#ifndef vh_unused
+#if defined(__GNUC__)
+#    define vh_unused __attribute__((unused))
+#else
+#    define vh_unused
+#endif
+#endif
+
 #endif /* VALHALLA_INTERNALS_H */
