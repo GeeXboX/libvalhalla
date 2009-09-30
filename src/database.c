@@ -214,7 +214,7 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
   if (!database)
     return 0;
 
-  if (grp < ARRAY_NB_ELEMENTS (g_meta_group) && grp >= 0)
+  if (grp < ARRAY_NB_ELEMENTS (g_meta_group))
     return database->meta_group[grp].id;
 
   return 0;
@@ -241,7 +241,7 @@ database_file_typeid_get (database_t *database, valhalla_file_type_t type)
   if (!database)
     return 0;
 
-  if (type < ARRAY_NB_ELEMENTS (g_file_type) && type >= 0)
+  if (type < ARRAY_NB_ELEMENTS (g_file_type))
     return database->file_type[type].id;
 
   return 0;
