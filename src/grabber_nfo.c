@@ -72,7 +72,7 @@ grab_nfo_actor (nfo_actor_t *actor, file_data_t *data)
                      VALHALLA_META_GRP_MISCELLANEOUS);
 
 static void
-grab_nfo_video_stream (nfo_stream_video_t *video, int id, file_data_t *data)
+grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
 {
   if (!video || !data)
     return;
@@ -91,7 +91,7 @@ grab_nfo_video_stream (nfo_stream_video_t *video, int id, file_data_t *data)
                      VALHALLA_META_GRP_MISCELLANEOUS);
 
 static void
-grab_nfo_audio_stream (nfo_stream_audio_t *audio, int id, file_data_t *data)
+grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
 {
   if (!audio || !data)
     return;
@@ -109,7 +109,7 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio, int id, file_data_t *data)
                      VALHALLA_META_GRP_MISCELLANEOUS);
 
 static void
-grab_nfo_sub_stream (nfo_stream_sub_t *sub, int id, file_data_t *data)
+grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
 {
   if (!sub || !data)
     return;
@@ -170,7 +170,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_video_t *video;
 
     video = nfo_movie_get_video_stream (movie, i);
-    grab_nfo_video_stream (video, i, data);
+    grab_nfo_video_stream (video, data);
   }
 
   c = nfo_movie_get_audio_streams_count (movie);
@@ -179,7 +179,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_audio_t *audio;
 
     audio = nfo_movie_get_audio_stream (movie, i);
-    grab_nfo_audio_stream (audio, i, data);
+    grab_nfo_audio_stream (audio, data);
   }
 
   c = nfo_movie_get_sub_streams_count (movie);
@@ -188,7 +188,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_sub_t *sub;
 
     sub = nfo_movie_get_sub_stream (movie, i);
-    grab_nfo_sub_stream (sub, i, data);
+    grab_nfo_sub_stream (sub, data);
   }
 }
 
@@ -272,7 +272,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_video_t *video;
 
     video = nfo_tvshow_episode_get_video_stream (episode, i);
-    grab_nfo_video_stream (video, i, data);
+    grab_nfo_video_stream (video, data);
   }
 
   c = nfo_tvshow_episode_get_audio_streams_count (episode);
@@ -281,7 +281,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_audio_t *audio;
 
     audio = nfo_tvshow_episode_get_audio_stream (episode, i);
-    grab_nfo_audio_stream (audio, i, data);
+    grab_nfo_audio_stream (audio, data);
   }
 
   c = nfo_tvshow_episode_get_sub_streams_count (episode);
@@ -290,7 +290,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_sub_t *sub;
 
     sub = nfo_tvshow_episode_get_sub_stream (episode, i);
-    grab_nfo_sub_stream (sub, i, data);
+    grab_nfo_sub_stream (sub, data);
   }
 }
 
