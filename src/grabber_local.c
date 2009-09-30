@@ -32,7 +32,6 @@
 #include "metadata.h"
 #include "utils.h"
 #include "logs.h"
-#include "md5.h"
 
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO | \
@@ -150,13 +149,8 @@ grabber_local_grab (void *priv, file_data_t *data)
   cover = grabber_local_get (data->file);
   if (cover)
   {
-    char *cv;
-
-    cv = vh_md5sum (cover);
     vh_metadata_add (&data->meta_grabber, "cover",
-                     cv, VALHALLA_META_GRP_MISCELLANEOUS);
-    vh_file_dl_add (&data->list_downloader, cover, cv, VALHALLA_DL_COVER);
-    free (cv);
+                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
     free (cover);
   }
 
