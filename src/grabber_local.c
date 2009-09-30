@@ -72,7 +72,7 @@ grabber_local_get (const char *filename)
                   strlen (filename) - strlen (dir) - strlen (s) - 1);
 
   /* try to find an exact file match */
-  for (i = 0; i < ARRAY_NB_ELEMENTS (known_extensions); i++)
+  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (known_extensions); i++)
   {
     char cover[1024] = { 0 };
 
@@ -86,8 +86,8 @@ grabber_local_get (const char *filename)
   }
 
   /* try to find a generic cover file for the whole directory */
-  for (i = 0; i < ARRAY_NB_ELEMENTS (known_extensions); i++)
-    for (j = 0; j < ARRAY_NB_ELEMENTS (known_filenames); j++)
+  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (known_extensions); i++)
+    for (j = 0; j < (int) ARRAY_NB_ELEMENTS (known_filenames); j++)
     {
       char cover[1024] = { 0 };
 
