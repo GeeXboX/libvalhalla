@@ -66,7 +66,7 @@ vh_log_test (valhalla_verb_t level)
   if (verbosity == VALHALLA_MSG_NONE)
     return 0;
 
-  if (level < verbosity)
+  if ((int) level < verbosity)
     return 0;
 
   return 1;
