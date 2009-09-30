@@ -127,7 +127,7 @@ vh_file_dl_add (file_dl_t **dl,
 {
   file_dl_t *it;
 
-  if (!dl || !url || !name || dst >= VALHALLA_DL_LAST || dst < 0)
+  if (!dl || !url || !name || dst >= VALHALLA_DL_LAST)
     return;
 
   if (!*dl)
