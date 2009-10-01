@@ -48,7 +48,7 @@
 static void
 valhalla_mrproper (valhalla_t *handle)
 {
-  int i;
+  unsigned int i;
   fifo_queue_t *fifo_o;
 
   fifo_queue_t *fifo_i[] = {
@@ -82,7 +82,7 @@ valhalla_mrproper (valhalla_t *handle)
    * these entries in the fifo_o queue.
    * Then, all data pointers can be safety freed (prevents double free).
    */
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (fifo_i) && fifo_i[i]; i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (fifo_i) && fifo_i[i]; i++)
   {
     int e;
     void *data;
