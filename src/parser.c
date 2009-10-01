@@ -117,12 +117,12 @@ parser_metadata_group (metadata_t **meta,
     /* default group */
     { NULL,         NULL,         VALHALLA_META_GRP_MISCELLANEOUS  }
   };
-  int i;
+  unsigned int i;
 
   if (!key || !value)
     return;
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (metagrp); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (metagrp); i++)
   {
     char str[32];
 
@@ -377,12 +377,13 @@ parser_probe (AVInputFormat *fmt, const char *file)
 static valhalla_file_type_t
 parser_stream_info (AVFormatContext *ctx)
 {
-  int i, video_st = 0, audio_st = 0;
+  int video_st = 0, audio_st = 0;
+  unsigned int i;
 
   if (!ctx)
     return VALHALLA_FILE_TYPE_NULL;
 
-  for (i = 0; i < (int) ctx->nb_streams; i++)
+  for (i = 0; i < ctx->nb_streams; i++)
   {
     AVStream *st = ctx->streams[i];
 
@@ -501,7 +502,8 @@ parser_thread (void *arg)
 int
 vh_parser_run (parser_t *parser, int priority)
 {
-  int i, res = PARSER_SUCCESS;
+  int res = PARSER_SUCCESS;
+  unsigned int i;
   pthread_attr_t attr;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -515,7 +517,7 @@ vh_parser_run (parser_t *parser, int priority)
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  for (i = 0; i < (int) parser->nb; i++)
+  for (i = 0; i < parser->nb; i++)
   {
     res = pthread_create (&parser->thread[i], &attr, parser_thread, parser);
     if (res)
@@ -564,7 +566,7 @@ vh_parser_fifo_get (parser_t *parser)
 void
 vh_parser_stop (parser_t *parser)
 {
-  int i;
+  unsigned int i;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -578,11 +580,11 @@ vh_parser_stop (parser_t *parser)
   parser->run = 0;
   pthread_mutex_unlock (&parser->mutex_run);
 
-  for (i = 0; i < (int) parser->nb; i++)
+  for (i = 0; i < parser->nb; i++)
     vh_fifo_queue_push (parser->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
-  for (i = 0; i < (int) parser->nb; i++)
+  for (i = 0; i < parser->nb; i++)
     pthread_join (parser->thread[i], NULL);
 }
 
