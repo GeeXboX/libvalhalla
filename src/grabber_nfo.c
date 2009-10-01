@@ -65,7 +65,7 @@ grab_nfo_actor (nfo_actor_t *actor, file_data_t *data)
   }
 }
 
-#define META_VIDEO_ADD(meta,field)                                         \
+#define META_VIDEO_ADD(meta, field)                                        \
   if (nfo_video_stream_get (video, NFO_VIDEO_##field))                     \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_video_stream_get (video, NFO_VIDEO_##field),      \
@@ -84,7 +84,7 @@ grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
   META_VIDEO_ADD ("video_bitrate", BITRATE);
 }
 
-#define META_AUDIO_ADD(meta,field)                                         \
+#define META_AUDIO_ADD(meta, field)                                        \
   if (nfo_audio_stream_get (audio, NFO_AUDIO_##field))                     \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_audio_stream_get (audio, NFO_AUDIO_##field),      \
@@ -102,7 +102,7 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
   META_AUDIO_ADD ("audio_bitrate", BITRATE);
 }
 
-#define META_SUB_ADD(meta,field)                                           \
+#define META_SUB_ADD(meta, field)                                          \
   if (nfo_sub_stream_get (sub, NFO_SUB_##field))                           \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_sub_stream_get (sub, NFO_SUB_##field),            \
@@ -121,7 +121,7 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
 /* Movie Grabber                                                            */
 /****************************************************************************/
 
-#define META_MOVIE_ADD(meta,field)                                         \
+#define META_MOVIE_ADD(meta, field)                                        \
   if (nfo_movie_get (movie, NFO_MOVIE_##field))                            \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_movie_get (movie, NFO_MOVIE_##field),             \
@@ -196,7 +196,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
 /* TVShow Grabber                                                           */
 /****************************************************************************/
 
-#define META_SHOW_ADD(meta,field)                                          \
+#define META_SHOW_ADD(meta, field)                                         \
   if (nfo_tvshow_get (tvshow, NFO_TVSHOW_##field))                         \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_tvshow_get (tvshow, NFO_TVSHOW_##field),          \
@@ -221,7 +221,7 @@ grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
   META_SHOW_ADD ("cover_cover",    FANART_COVER);
 }
 
-#define META_EPISODE_ADD(meta,field)                                       \
+#define META_EPISODE_ADD(meta, field)                                      \
   if (nfo_tvshow_episode_get (episode, NFO_TVSHOW_EPISODE_##field))        \
     vh_metadata_add (&data->meta_grabber, meta,                            \
                      nfo_tvshow_episode_get (episode,                      \
