@@ -196,12 +196,12 @@ vh_database_step_transaction (database_t *database,
 static valhalla_meta_grp_t
 database_group_get (database_t *database, int64_t id)
 {
-  int i;
+  unsigned int i;
 
   if (!database)
     return VALHALLA_META_GRP_NIL;
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_meta_group); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_meta_group); i++)
     if (database->meta_group[i].id == id)
       return i;
 
@@ -223,12 +223,12 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
 static valhalla_file_type_t
 database_file_type_get (database_t *database, int64_t id)
 {
-  int i;
+  unsigned int i;
 
   if (!database)
     return VALHALLA_FILE_TYPE_NULL;
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_file_type); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_file_type); i++)
     if (database->file_type[i].id == id)
       return i;
 
@@ -288,7 +288,7 @@ database_create_table (database_t *database)
 static int
 database_prepare_stmt (database_t *database)
 {
-  int i;
+  unsigned int i;
 
   database->stmts = malloc (sizeof (g_stmts));
   if (!database->stmts)
@@ -296,7 +296,7 @@ database_prepare_stmt (database_t *database)
 
   memcpy (database->stmts, g_stmts, sizeof (g_stmts));
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_stmts); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_stmts); i++)
   {
     int res = sqlite3_prepare_v2 (database->db, database->stmts[i].sql,
                                   -1, &database->stmts[i].stmt, NULL);
@@ -965,7 +965,7 @@ vh_database_cleanup (database_t *database)
 void
 vh_database_uninit (database_t *database)
 {
-  int i;
+  unsigned int i;
 
   if (!database)
     return;
@@ -973,7 +973,7 @@ vh_database_uninit (database_t *database)
   if (database->path)
     free (database->path);
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_stmts); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_stmts); i++)
     if (STMT_GET (i))
       sqlite3_finalize (STMT_GET (i));
 
@@ -994,7 +994,8 @@ vh_database_uninit (database_t *database)
 database_t *
 vh_database_init (const char *path)
 {
-  int i, res;
+  int res;
+  unsigned int i;
   database_t *database;
 
   if (!path)
@@ -1028,10 +1029,10 @@ vh_database_init (const char *path)
   memcpy (database->file_type, g_file_type, sizeof (g_file_type));
   memcpy (database->meta_group, g_meta_group, sizeof (g_meta_group));
 
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_file_type); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_file_type); i++)
     database->file_type[i].id =
       database_type_insert (database, database->file_type[i].name);
-  for (i = 0; i < (int) ARRAY_NB_ELEMENTS (g_meta_group); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (g_meta_group); i++)
     database->meta_group[i].id =
       database_group_insert (database, database->meta_group[i].name);
 
