@@ -56,7 +56,7 @@ vh_log_verb (valhalla_verb_t level)
 int
 vh_log_test (valhalla_verb_t level)
 {
-  unsigned int verbosity;
+  valhalla_verb_t verbosity;
 
   pthread_mutex_lock (&g_mutex_verb);
   verbosity = g_verbosity;
