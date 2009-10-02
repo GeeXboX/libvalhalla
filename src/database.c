@@ -470,8 +470,8 @@ database_assoc_filemd_insert (sqlite3_stmt *stmt,
   int res, err = -1;
 
   VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_reset);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
 
   res = sqlite3_step (stmt);
