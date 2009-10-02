@@ -371,6 +371,75 @@ typedef enum valhalla_meta_grp {
 
 } valhalla_meta_grp_t;
 
+/** \brief List of common metadata. */
+
+/* Classification */
+#define VALHALLA_METADATA_CATEGORY                   "category"
+#define VALHALLA_METADATA_DURATION                   "duration"
+#define VALHALLA_METADATA_EPISODE                    "episode"
+#define VALHALLA_METADATA_GENRE                      "genre"
+#define VALHALLA_METADATA_MPAA                       "mpaa"
+#define VALHALLA_METADATA_RUNTIME                    "runtime"
+#define VALHALLA_METADATA_SEASON                     "season"
+#define VALHALLA_METADATA_SYNOPSIS                   "synopsis"
+#define VALHALLA_METADATA_SYNOPSIS_SHOW              "synopsis_show"
+
+/* Commercial */
+#define VALHALLA_METADATA_BUDGET                     "budget"
+#define VALHALLA_METADATA_COUNTRY                    "country"
+#define VALHALLA_METADATA_STUDIO                     "studio"
+
+/* Entities */
+#define VALHALLA_METADATA_ACTOR                      "actor"
+#define VALHALLA_METADATA_ARTIST                     "artist"
+#define VALHALLA_METADATA_AUTHOR                     "author"
+#define VALHALLA_METADATA_CASTING                    "casting"
+#define VALHALLA_METADATA_COMPOSER                   "composer"
+#define VALHALLA_METADATA_CREDITS                    "credits"
+#define VALHALLA_METADATA_DIRECTOR                   "director"
+#define VALHALLA_METADATA_DIRECTOR_PHOTO             "director_photo"
+#define VALHALLA_METADATA_EDITOR                     "editor"
+#define VALHALLA_METADATA_PRODUCER                   "producer"
+
+/* Miscellaneous */
+#define VALHALLA_METADATA_COVER                      "cover"
+#define VALHALLA_METADATA_COVER_SEASON               "cover_season"
+#define VALHALLA_METADATA_COVER_SHOW                 "cover_show"
+#define VALHALLA_METADATA_COVER_SHOW_HEADER          "cover_show_header"
+#define VALHALLA_METADATA_FAN_ART                    "fanart"
+#define VALHALLA_METADATA_LYRICS                     "lyrics"
+#define VALHALLA_METADATA_THUMBNAIL                  "thumbnail"
+
+/* Organizational */
+#define VALHALLA_METADATA_TRACK                      "track"
+
+/* Personal */
+#define VALHALLA_METADATA_PLAY_COUNT                 "playcount"
+#define VALHALLA_METADATA_RATING                     "rating"
+#define VALHALLA_METADATA_WATCHED                    "watched"
+
+/* Technical */
+#define VALHALLA_METADATA_AUDIO_BITRATE              "audio_bitrate"
+#define VALHALLA_METADATA_AUDIO_CHANNELS             "audio_channels"
+#define VALHALLA_METADATA_AUDIO_CODEC                "audio_codec"
+#define VALHALLA_METADATA_AUDIO_LANG                 "audio_lang"
+#define VALHALLA_METADATA_HEIGHT                     "height"
+#define VALHALLA_METADATA_SUB_LANG                   "sub_lang"
+#define VALHALLA_METADATA_VIDEO_BITRATE              "video_bitrate"
+#define VALHALLA_METADATA_VIDEO_CODEC                "video_codec"
+#define VALHALLA_METADATA_WIDTH                      "width"
+
+/* Temporal */
+#define VALHALLA_METADATA_DATE                       "date"
+#define VALHALLA_METADATA_PREMIERED                  "premiered"
+#define VALHALLA_METADATA_YEAR                       "year"
+
+/* Titles */
+#define VALHALLA_METADATA_ALBUM                      "album"
+#define VALHALLA_METADATA_TITLE                      "title"
+#define VALHALLA_METADATA_TITLE_ALTERNATIVE          "title_alternative"
+#define VALHALLA_METADATA_TITLE_SHOW                 "title_show"
+
 typedef enum valhalla_db_type {
   VALHALLA_DB_TYPE_ID,
   VALHALLA_DB_TYPE_TEXT,
