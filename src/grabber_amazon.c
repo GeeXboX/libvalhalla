@@ -95,7 +95,7 @@ typedef struct grabber_amazon_s {
 
 static int
 grabber_amazon_cover_get (url_t *handler, char **dl_url,
-                          const char *cover, const char *search_type,
+                          const char *search_type,
                           const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
@@ -319,7 +319,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
     return -2;
   }
 
-  res = grabber_amazon_cover_get (amazon->handler, &url, cover,
+  res = grabber_amazon_cover_get (amazon->handler, &url,
                                   search_type, keywords, escaped_keywords);
   free (escaped_keywords);
   if (!res)
