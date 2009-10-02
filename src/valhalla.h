@@ -387,6 +387,7 @@ typedef enum valhalla_meta_grp {
 /* Commercial */
 #define VALHALLA_METADATA_BUDGET                     "budget"
 #define VALHALLA_METADATA_COUNTRY                    "country"
+#define VALHALLA_METADATA_REVENUE                    "revenue"
 #define VALHALLA_METADATA_STUDIO                     "studio"
 
 /* Entities */

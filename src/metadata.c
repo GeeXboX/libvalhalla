@@ -47,6 +47,7 @@ static const struct {
   /* Commercial */
   { VALHALLA_METADATA_BUDGET,              VALHALLA_META_GRP_COMMERCIAL     },
   { VALHALLA_METADATA_COUNTRY,             VALHALLA_META_GRP_COMMERCIAL     },
+  { VALHALLA_METADATA_REVENUE,             VALHALLA_META_GRP_COMMERCIAL     },
   { VALHALLA_METADATA_STUDIO,              VALHALLA_META_GRP_COMMERCIAL     },
 
   /* Entities */
