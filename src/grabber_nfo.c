@@ -150,6 +150,15 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
   META_MOVIE_ADD (DIRECTOR,          DIRECTOR);
   META_MOVIE_ADD (STUDIO,            STUDIO);
 
+  if (nfo_movie_get (movie, NFO_MOVIE_RATING))
+  {
+    char str[16], *rating;
+
+    rating = nfo_movie_get (movie, NFO_MOVIE_RATING);
+    snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_RATING, str);
+  }
+
   c = nfo_movie_get_actors_count (movie);
   for (i = 0; i < c; i++)
   {
@@ -242,6 +251,15 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
   META_EPISODE_ADD (PLAY_COUNT,   PLAY_COUNT);
   META_EPISODE_ADD (CREDITS,      CREDITS);
   META_EPISODE_ADD (DIRECTOR,     DIRECTOR);
+
+  if (nfo_tvshow_episode_get (episode, NFO_MOVIE_RATING))
+  {
+    char str[16], *rating;
+
+    rating = nfo_tvshow_episode_get (episode, NFO_MOVIE_RATING);
+    snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_RATING, str);
+  }
 
   tvshow = nfo_tvshow_episode_get_show (episode);
   grab_nfo_show (tvshow, data);
