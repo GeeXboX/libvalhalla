@@ -81,7 +81,7 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
   if (lyrics)
   {
     char *ly;
-    int i, j = 0;
+    unsigned int i, j = 0;
 
     ly = calloc (1, strlen (lyrics));
     for (i = 0, j = 0; i < strlen (lyrics); i++, j++)
