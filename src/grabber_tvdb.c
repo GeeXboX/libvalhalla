@@ -84,12 +84,12 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
 
   if (dl == VALHALLA_DL_COVER)
     type = VALHALLA_METADATA_COVER;
-  else if (dl == VALHALLA_DL_BACKDROP)
+  else if (dl == VALHALLA_DL_FAN_ART)
     type = VALHALLA_METADATA_FAN_ART;
   else
     return;
 
-  /* constructing url for download tvdb covers and backdrop */
+  /* constructing url for download tvdb covers and fan art */
   memset (complete_url, '\0', MAX_URL_SIZE);
   snprintf (complete_url, MAX_URL_SIZE, TVDB_COVERS_URL,
             TVDB_IMAGES_HOSTNAME, (char *) url);
@@ -205,11 +205,11 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
     xmlFree (tmp);
   }
 
-  /* fetch tv show backdrop */
+  /* fetch tv show fan art */
   tmp = vh_get_prop_value_from_xml_tree (n, "fanart");
   if (tmp)
   {
-    grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_BACKDROP);
+    grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_FAN_ART);
     xmlFree (tmp);
   }
 

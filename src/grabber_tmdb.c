@@ -62,7 +62,7 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
 
   if (dl == VALHALLA_DL_COVER)
     type = VALHALLA_METADATA_COVER;
-  else if (dl == VALHALLA_DL_BACKDROP)
+  else if (dl == VALHALLA_DL_FAN_ART)
     type = VALHALLA_METADATA_FAN_ART;
   else
     return;
@@ -217,11 +217,11 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
     xmlFree (tmp);
   }
 
-  /* fetch movie backdrop */
+  /* fetch movie fan art */
   tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "backdrop", "size", "mid");
   if (tmp)
   {
-    grabber_tmdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_BACKDROP);
+    grabber_tmdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_FAN_ART);
     xmlFree (tmp);
   }
 

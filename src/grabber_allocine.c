@@ -105,7 +105,7 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
   if (tmp)
   {
     /* special trick to retrieve english title,
-     *  used by next grabbers to find cover and backdrops.
+     *  used by next grabbers to find cover and fan arts.
      */
     vh_metadata_add_auto (&fdata->meta_grabber,
                           VALHALLA_METADATA_TITLE, (char *) tmp);

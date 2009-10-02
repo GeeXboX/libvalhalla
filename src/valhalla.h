@@ -87,8 +87,8 @@ typedef enum valhalla_verb {
 typedef enum valhalla_dl {
   VALHALLA_DL_DEFAULT = 0,
   VALHALLA_DL_COVER,
-  VALHALLA_DL_THUMB,
-  VALHALLA_DL_BACKDROP,
+  VALHALLA_DL_THUMBNAIL,
+  VALHALLA_DL_FAN_ART,
   VALHALLA_DL_LAST
 } valhalla_dl_t;
 
