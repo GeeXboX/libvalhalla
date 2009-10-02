@@ -85,7 +85,8 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
   if (html)
   {
     char *start, *end, *txt, *lyrics;
-    int len, i, j;
+    int len;
+    unsigned int i, j;
 
     udata = vh_url_get_data (handler, html);
     free (html);
