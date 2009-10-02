@@ -60,16 +60,14 @@ grab_nfo_actor (nfo_actor_t *actor, file_data_t *data)
       snprintf (str, sizeof (str), "%s (%s)", name, role);
     else
       snprintf (str, sizeof (str), "%s", name);
-    vh_metadata_add (&data->meta_grabber,
-                     "actor", str, VALHALLA_META_GRP_ENTITIES);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_ACTOR, str);
   }
 }
 
 #define META_VIDEO_ADD(meta, field)                                        \
   if (nfo_video_stream_get (video, NFO_VIDEO_##field))                     \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
-                     nfo_video_stream_get (video, NFO_VIDEO_##field),      \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
+                     nfo_video_stream_get (video, NFO_VIDEO_##field));     \
 
 static void
 grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
@@ -77,18 +75,17 @@ grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
   if (!video || !data)
     return;
 
-  META_VIDEO_ADD ("width",         WIDTH);
-  META_VIDEO_ADD ("height",        HEIGHT);
-  META_VIDEO_ADD ("video_codec",   CODEC);
-  META_VIDEO_ADD ("duration",      DURATION);
-  META_VIDEO_ADD ("video_bitrate", BITRATE);
+  META_VIDEO_ADD (WIDTH,         WIDTH);
+  META_VIDEO_ADD (HEIGHT,        HEIGHT);
+  META_VIDEO_ADD (VIDEO_CODEC,   CODEC);
+  META_VIDEO_ADD (DURATION,      DURATION);
+  META_VIDEO_ADD (VIDEO_BITRATE, BITRATE);
 }
 
 #define META_AUDIO_ADD(meta, field)                                        \
   if (nfo_audio_stream_get (audio, NFO_AUDIO_##field))                     \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
-                     nfo_audio_stream_get (audio, NFO_AUDIO_##field),      \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
+                     nfo_audio_stream_get (audio, NFO_AUDIO_##field));     \
 
 static void
 grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
@@ -96,17 +93,16 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
   if (!audio || !data)
     return;
 
-  META_AUDIO_ADD ("lang",          LANG);
-  META_AUDIO_ADD ("audio_codec",   CODEC);
-  META_AUDIO_ADD ("channels",      CHANNELS);
-  META_AUDIO_ADD ("audio_bitrate", BITRATE);
+  META_AUDIO_ADD (AUDIO_LANG,     LANG);
+  META_AUDIO_ADD (AUDIO_CODEC,    CODEC);
+  META_AUDIO_ADD (AUDIO_CHANNELS, CHANNELS);
+  META_AUDIO_ADD (AUDIO_BITRATE,  BITRATE);
 }
 
 #define META_SUB_ADD(meta, field)                                          \
   if (nfo_sub_stream_get (sub, NFO_SUB_##field))                           \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
-                     nfo_sub_stream_get (sub, NFO_SUB_##field),            \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
+                     nfo_sub_stream_get (sub, NFO_SUB_##field));           \
 
 static void
 grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
@@ -114,7 +110,7 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
   if (!sub || !data)
     return;
 
-  META_SUB_ADD ("sub_lang", LANG);
+  META_SUB_ADD (SUB_LANG, LANG);
 }
 
 /****************************************************************************/
@@ -123,9 +119,8 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
 
 #define META_MOVIE_ADD(meta, field)                                        \
   if (nfo_movie_get (movie, NFO_MOVIE_##field))                            \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
-                     nfo_movie_get (movie, NFO_MOVIE_##field),             \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
+                     nfo_movie_get (movie, NFO_MOVIE_##field));            \
 
 static void
 grab_nfo_movie (nfo_t *nfo, file_data_t *data)
@@ -140,20 +135,20 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
   if (!movie)
     return;
 
-  META_MOVIE_ADD ("title",          TITLE);
-  META_MOVIE_ADD ("original_title", ORIGINAL_TITLE);
-  META_MOVIE_ADD ("rating",         RATING);
-  META_MOVIE_ADD ("year",           YEAR);
-  META_MOVIE_ADD ("plot",           PLOT);
-  META_MOVIE_ADD ("thumb",          THUMB);
-  META_MOVIE_ADD ("fanart",         FAN_ART);
-  META_MOVIE_ADD ("mpaa",           MPAA);
-  META_MOVIE_ADD ("playcount",      PLAY_COUNT);
-  META_MOVIE_ADD ("watched",        WATCHED);
-  META_MOVIE_ADD ("genre",          GENRE);
-  META_MOVIE_ADD ("credits",        CREDITS);
-  META_MOVIE_ADD ("director",       DIRECTOR);
-  META_MOVIE_ADD ("studio",         STUDIO);
+  META_MOVIE_ADD (TITLE,             TITLE);
+  META_MOVIE_ADD (TITLE_ALTERNATIVE, ORIGINAL_TITLE);
+  META_MOVIE_ADD (RATING,            RATING);
+  META_MOVIE_ADD (YEAR,              YEAR);
+  META_MOVIE_ADD (SYNOPSIS,          PLOT);
+  META_MOVIE_ADD (THUMBNAIL,         THUMB);
+  META_MOVIE_ADD (FAN_ART,           FAN_ART);
+  META_MOVIE_ADD (MPAA,              MPAA);
+  META_MOVIE_ADD (PLAY_COUNT,        PLAY_COUNT);
+  META_MOVIE_ADD (WATCHED,           WATCHED);
+  META_MOVIE_ADD (GENRE,             GENRE);
+  META_MOVIE_ADD (CREDITS,           CREDITS);
+  META_MOVIE_ADD (DIRECTOR,          DIRECTOR);
+  META_MOVIE_ADD (STUDIO,            STUDIO);
 
   c = nfo_movie_get_actors_count (movie);
   for (i = 0; i < c; i++)
@@ -198,9 +193,8 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
 
 #define META_SHOW_ADD(meta, field)                                         \
   if (nfo_tvshow_get (tvshow, NFO_TVSHOW_##field))                         \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
-                     nfo_tvshow_get (tvshow, NFO_TVSHOW_##field),          \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
+                     nfo_tvshow_get (tvshow, NFO_TVSHOW_##field));         \
 
 static void
 grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
@@ -208,25 +202,20 @@ grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
   if (!tvshow || !data)
     return;
 
-  META_SHOW_ADD ("title",          TITLE);
-  META_SHOW_ADD ("rating",         RATING);
-  META_SHOW_ADD ("plot",           PLOT);
-  META_SHOW_ADD ("mpaa",           MPAA);
-  META_SHOW_ADD ("watched",        WATCHED);
-  META_SHOW_ADD ("genre",          GENRE);
-  META_SHOW_ADD ("premiered",      PREMIERED);
-  META_SHOW_ADD ("studio",         STUDIO);
-  META_SHOW_ADD ("cover",          FANART);
-  META_SHOW_ADD ("cover_header",   FANART_HEADER);
-  META_SHOW_ADD ("cover_cover",    FANART_COVER);
+  META_SHOW_ADD (TITLE,             TITLE);
+  META_SHOW_ADD (SYNOPSIS_SHOW,     PLOT);
+  META_SHOW_ADD (PREMIERED,         PREMIERED);
+  META_SHOW_ADD (STUDIO,            STUDIO);
+  META_SHOW_ADD (FAN_ART   ,        FANART);
+  META_SHOW_ADD (COVER_SHOW_HEADER, FANART_HEADER);
+  META_SHOW_ADD (COVER_SHOW,        FANART_COVER);
 }
 
 #define META_EPISODE_ADD(meta, field)                                      \
   if (nfo_tvshow_episode_get (episode, NFO_TVSHOW_EPISODE_##field))        \
-    vh_metadata_add (&data->meta_grabber, meta,                            \
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,   \
                      nfo_tvshow_episode_get (episode,                      \
-                                             NFO_TVSHOW_EPISODE_##field),  \
-                     VALHALLA_META_GRP_MISCELLANEOUS);
+                                             NFO_TVSHOW_EPISODE_##field)); \
 
 static void
 grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
@@ -242,17 +231,17 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
   if (!episode)
     return;
 
-  META_EPISODE_ADD ("title",        TITLE);
-  META_EPISODE_ADD ("rating",       RATING);
-  META_EPISODE_ADD ("season",       SEASON);
-  META_EPISODE_ADD ("episode",      EPISODE);
-  META_EPISODE_ADD ("plot",         PLOT);
-  META_EPISODE_ADD ("thumb",        THUMB);
-  META_EPISODE_ADD ("cover",        FANART);
-  META_EPISODE_ADD ("cover_season", FANART_SEASON);
-  META_EPISODE_ADD ("playcount",    PLAY_COUNT);
-  META_EPISODE_ADD ("credits",      CREDITS);
-  META_EPISODE_ADD ("director",     DIRECTOR);
+  META_EPISODE_ADD (TITLE,        TITLE);
+  META_EPISODE_ADD (RATING,       RATING);
+  META_EPISODE_ADD (SEASON,       SEASON);
+  META_EPISODE_ADD (EPISODE,      EPISODE);
+  META_EPISODE_ADD (SYNOPSIS,     PLOT);
+  META_EPISODE_ADD (THUMBNAIL,    THUMB);
+  META_EPISODE_ADD (FAN_ART,      FANART);
+  META_EPISODE_ADD (COVER_SEASON, FANART_SEASON);
+  META_EPISODE_ADD (PLAY_COUNT,   PLAY_COUNT);
+  META_EPISODE_ADD (CREDITS,      CREDITS);
+  META_EPISODE_ADD (DIRECTOR,     DIRECTOR);
 
   tvshow = nfo_tvshow_episode_get_show (episode);
   grab_nfo_show (tvshow, data);

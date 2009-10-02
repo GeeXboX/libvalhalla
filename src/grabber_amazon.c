@@ -37,14 +37,6 @@
   GRABBER_CAP_VIDEO | \
   GRABBER_CAP_AUDIO
 
-/*
- * This name can be used with the public API (db selections) in order
- * to retrieve the cover's name linked to a file.
- * The directory is defined by VALHALLA_DL_COVER.
- */
-#define METADATA_COVER "cover"
-
-
 #define MAX_URL_SIZE        1024
 #define MAX_KEYWORD_SIZE    1024
 #define MAX_BUF_LEN         65535
@@ -264,8 +256,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   res = grabber_amazon_check (amazon, cover);
   if (!res)
   {
-    vh_metadata_add (&data->meta_grabber, METADATA_COVER,
-                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
     free (cover);
     return 0;
   }
@@ -295,8 +286,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   free (escaped_keywords);
   if (!res)
   {
-    vh_metadata_add (&data->meta_grabber, METADATA_COVER,
-                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

@@ -95,8 +95,7 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
       }
       ly[j] = lyrics[i];
     }
-    vh_metadata_add (&fdata->meta_grabber, "lyrics",
-                     ly, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add (&fdata->meta_grabber, VALHALLA_METADATA_LYRICS, ly);
     free (lyrics);
     free (ly);
   }

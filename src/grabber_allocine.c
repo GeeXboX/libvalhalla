@@ -107,28 +107,28 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
     /* special trick to retrieve english title,
      *  used by next grabbers to find cover and backdrops.
      */
-    vh_metadata_add (&fdata->meta_grabber, "title",
-                     (char *) tmp, VALHALLA_META_GRP_TITLES);
+    vh_metadata_add_auto (&fdata->meta_grabber,
+                          VALHALLA_METADATA_TITLE, (char *) tmp);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        "alternative_title", VALHALLA_META_GRP_TITLES);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                        "synopsis", VALHALLA_META_GRP_CLASSIFICATION);
+                        VALHALLA_METADATA_SYNOPSIS);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                        "runtime", VALHALLA_META_GRP_CLASSIFICATION);
+                        VALHALLA_METADATA_RUNTIME);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, "year", VALHALLA_META_GRP_TEMPORAL);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR);
     res_int = 0;
   }
 
@@ -140,14 +140,12 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
   /* allocine ranks from 0 to 4, we do from 0 to 5 */
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int + 1,
-                          "rating", VALHALLA_META_GRP_PERSONAL);
+    vh_grabber_parse_int (fdata, res_int + 1, VALHALLA_METADATA_RATING);
     res_int = 0;
   }
 
   /* fetch movie budget */
-  vh_grabber_parse_str (fdata, n,
-                        "budget", "budget", VALHALLA_META_GRP_COMMERCIAL);
+  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET);
 
   /* fetch movie people */
   vh_grabber_parse_casting (fdata, n);

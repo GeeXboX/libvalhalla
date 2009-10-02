@@ -199,16 +199,14 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   res = grabber_lastfm_check (lastfm, cover);
   if (!res)
   {
-    vh_metadata_add (&data->meta_grabber, "cover",
-                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
     goto out;
   }
 
   res = grabber_lastfm_get (lastfm->handler, &url, artist, alb);
   if (!res)
   {
-    vh_metadata_add (&data->meta_grabber, "cover",
-                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

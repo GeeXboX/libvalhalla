@@ -149,8 +149,7 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
   cover = grabber_local_get (data->file);
   if (cover)
   {
-    vh_metadata_add (&data->meta_grabber, "cover",
-                     cover, VALHALLA_META_GRP_MISCELLANEOUS);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
     free (cover);
   }
 

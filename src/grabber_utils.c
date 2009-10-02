@@ -43,7 +43,7 @@ static const struct {
 
 void
 vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                      const char *name, valhalla_meta_grp_t group)
+                      const char *name)
 {
   char *res = NULL;
 
@@ -53,20 +53,19 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
   vh_xml_search_str (nd, tag, &res);
   if (res)
   {
-    vh_metadata_add (&fdata->meta_grabber, name, res, group);
+    vh_metadata_add_auto (&fdata->meta_grabber, name, res);
     free (res);
     res = NULL;
   }
 }
 
 void
-vh_grabber_parse_int (file_data_t *fdata, int val,
-                      const char *name, valhalla_meta_grp_t group)
+vh_grabber_parse_int (file_data_t *fdata, int val, const char *name)
 {
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%d", val);
-  vh_metadata_add (&fdata->meta_grabber, name, v, group);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
 }
 
 void
@@ -89,8 +88,8 @@ vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
     tmp = vh_get_prop_value_from_xml_tree (n, "name");
     if (tmp)
     {
-      vh_metadata_add (&fdata->meta_grabber, "category",
-                       (char *) tmp, VALHALLA_META_GRP_CLASSIFICATION);
+      vh_metadata_add_auto (&fdata->meta_grabber,
+                            VALHALLA_METADATA_CATEGORY, (char *) tmp);
       xmlFree (tmp);
     }
     n = n->next;
@@ -118,8 +117,7 @@ grabber_add_person (file_data_t *fdata,
     else
       snprintf (str, sizeof (str), "%s", name);
     free (name);
-    vh_metadata_add (&fdata->meta_grabber,
-                     cat, str, VALHALLA_META_GRP_ENTITIES);
+    vh_metadata_add_auto (&fdata->meta_grabber, cat, str);
   }
 
   if (role)
