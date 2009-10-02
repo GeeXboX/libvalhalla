@@ -189,10 +189,10 @@ vh_metadata_add_auto (metadata_t **meta,
   grp = VALHALLA_META_GRP_NIL;
   for (i = 0; metadata_group_mapping[i].meta; i++)
     if (!strcmp (name, metadata_group_mapping[i].meta))
-      {
-        grp = metadata_group_mapping[i].grp;
-        break;
-      }
+    {
+      grp = metadata_group_mapping[i].grp;
+      break;
+    }
 
   vh_metadata_add (meta, name, value, grp);
 }
