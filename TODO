@@ -28,6 +28,3 @@
 
  * Parser
      -> Retrieve all properties (codec, length, bitrate, etc, ...).
-
- * Grabber
-     -> Import more grabbers from Enna.
