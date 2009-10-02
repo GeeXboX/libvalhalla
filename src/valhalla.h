@@ -371,7 +371,10 @@ typedef enum valhalla_meta_grp {
 
 } valhalla_meta_grp_t;
 
-/** \brief List of common metadata. */
+/**
+ * \name List of common metadata.
+ * @{
+ */
 
 /* Classification */
 #define VALHALLA_METADATA_CATEGORY                   "category"
@@ -440,6 +443,10 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_TITLE                      "title"
 #define VALHALLA_METADATA_TITLE_ALTERNATIVE          "title_alternative"
 #define VALHALLA_METADATA_TITLE_SHOW                 "title_show"
+
+/**
+ * @}
+ */
 
 typedef enum valhalla_db_type {
   VALHALLA_DB_TYPE_ID,
