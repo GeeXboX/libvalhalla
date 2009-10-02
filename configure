@@ -793,6 +793,7 @@ EOF
 od -A n -t x1 $TMPO | grep -q '42 *49 *47 *45' && enable bigendian
 
 # add some useful compiler flags if supported
+check_cflags -W
 check_cflags -Wall
 check_cflags -D_LARGEFILE_SOURCE
 check_cflags -D_FILE_OFFSET_BITS=64
