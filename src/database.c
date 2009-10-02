@@ -162,6 +162,31 @@ static const stmt_list_t g_stmts[] = {
 
 #define STMT_GET(id) database->stmts[id].stmt
 
+#define VH_DB_BIND_TEXT_OR_GOTO(stmt, col, value, label)            \
+  do                                                                \
+  {                                                                 \
+    res = sqlite3_bind_text (stmt, col, value, -1, SQLITE_STATIC);  \
+    if (res != SQLITE_OK)                                           \
+      goto label;                                                   \
+  }                                                                 \
+  while (0)
+#define VH_DB_BIND_INT_OR_GOTO(stmt, col, value, label)             \
+  do                                                                \
+  {                                                                 \
+    res = sqlite3_bind_int (stmt, col, value);                      \
+    if (res != SQLITE_OK)                                           \
+      goto label;                                                   \
+  }                                                                 \
+  while (0)
+#define VH_DB_BIND_INT64_OR_GOTO(stmt, col, value, label)           \
+  do                                                                \
+  {                                                                 \
+    res = sqlite3_bind_int64 (stmt, col, value);                    \
+    if (res != SQLITE_OK)                                           \
+      goto label;                                                   \
+  }                                                                 \
+  while (0)
+
 /******************************************************************************/
 /*                                                                            */
 /*                                 Internal                                   */
@@ -320,9 +345,7 @@ database_table_get_id (database_t *database,
   if (!name)
     return 0;
 
-  res = sqlite3_bind_text (stmt, 1, name, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name, out);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_ROW)
@@ -348,9 +371,7 @@ database_insert_name (database_t *database,
   if (!name)
     return 0;
 
-  res = sqlite3_bind_text (stmt, 1, name, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name, out);
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (stmt);
@@ -448,21 +469,10 @@ database_assoc_filemd_insert (sqlite3_stmt *stmt,
 {
   int res, err = -1;
 
-  res = sqlite3_bind_int64 (stmt, 1, file_id);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int64 (stmt, 2, meta_id);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int64 (stmt, 3, data_id);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int64 (stmt, 4, group_id);
-  if (res != SQLITE_OK)
-    goto out_clear;
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -483,13 +493,8 @@ database_assoc_filegrab_insert (sqlite3_stmt *stmt,
 {
   int res, err = -1;
 
-  res = sqlite3_bind_int64 (stmt, 1, file_id);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int64 (stmt, 2, grabber_id);
-  if (res != SQLITE_OK)
-    goto out_clear;
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, grabber_id, out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -510,21 +515,14 @@ database_file_insert (database_t *database, file_data_t *data, int64_t type_id)
   int res, err = -1;
   int64_t val = 0, val_tmp;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_FILE), 1,
-                           data->file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int (STMT_GET (STMT_INSERT_FILE), 2, data->mtime);
-  if (res != SQLITE_OK)
-    goto out_clear;
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_INSERT_FILE), 1, data->file, out_reset);
+  VH_DB_BIND_INT_OR_GOTO
+    (STMT_GET (STMT_INSERT_FILE), 2, data->mtime, out_clear);
 
   if (type_id)
-  {
-    res = sqlite3_bind_int64 (STMT_GET (STMT_INSERT_FILE), 3, type_id);
-    if (res != SQLITE_OK)
-      goto out_clear;
-  }
+    VH_DB_BIND_INT64_OR_GOTO
+      (STMT_GET (STMT_INSERT_FILE), 3, type_id, out_clear);
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (STMT_GET (STMT_INSERT_FILE));
@@ -550,21 +548,15 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   int res, err = -1;
   int64_t val = 0, val_tmp;
 
-  res = sqlite3_bind_int (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime);
-  if (res != SQLITE_OK)
-    goto out_reset;
+  VH_DB_BIND_INT_OR_GOTO
+    (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime, out_reset);
 
   if (type_id)
-  {
-    res = sqlite3_bind_int64 (STMT_GET (STMT_UPDATE_FILE), 2, type_id);
-    if (res != SQLITE_OK)
-      goto out_clear;
-  }
+    VH_DB_BIND_INT64_OR_GOTO
+      (STMT_GET (STMT_UPDATE_FILE), 2, type_id, out_clear);
 
-  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE), 3,
-                           data->file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out_clear;
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_UPDATE_FILE), 3, data->file, out_clear);
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (STMT_GET (STMT_UPDATE_FILE));
@@ -669,10 +661,7 @@ vh_database_file_data_delete (database_t *database, const char *file)
 {
   int res, err = -1;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_DELETE_FILE),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_DELETE_FILE), 1, file, out);
 
   res = sqlite3_step (STMT_GET (STMT_DELETE_FILE));
   if (res == SQLITE_DONE)
@@ -723,10 +712,8 @@ vh_database_file_interrupted_clear (database_t *database, const char *file)
   if (!file)
     return;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR), 1, file, out);
 
   res = sqlite3_step (STMT_GET (STMT_UPDATE_FILE_INTERRUP_CLEAR));
   if (res == SQLITE_DONE)
@@ -748,10 +735,7 @@ vh_database_file_get_interrupted (database_t *database, const char *file)
   if (!file)
     return -1;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_INTERRUP),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_SELECT_FILE_INTERRUP), 1, file, out);
 
   res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_INTERRUP));
   if (res == SQLITE_ROW)
@@ -775,10 +759,7 @@ vh_database_file_get_mtime (database_t *database, const char *file)
   if (!file)
     return -1;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_MTIME),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_SELECT_FILE_MTIME), 1, file, out);
 
   res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_MTIME));
   if (res == SQLITE_ROW)
@@ -803,10 +784,8 @@ vh_database_file_get_grabber (database_t *database,
   if (!file || !l)
     return;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME), 1, file, out);
 
   while (sqlite3_step (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME)) == SQLITE_ROW)
   {
@@ -830,23 +809,14 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
 {
   int res, err = -1;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_DLCONTEXT), 1,
-                           dl->url, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out_reset;
-
-  res = sqlite3_bind_int (STMT_GET (STMT_INSERT_DLCONTEXT), 2, dl->dst);
-  if (res != SQLITE_OK)
-    goto out_clear;
-
-  res = sqlite3_bind_text (STMT_GET (STMT_INSERT_DLCONTEXT), 3,
-                           dl->name, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out_clear;
-
-  res = sqlite3_bind_int64 (STMT_GET (STMT_INSERT_DLCONTEXT), 4, file_id);
-  if (res != SQLITE_OK)
-    goto out_clear;
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 1, dl->url, out_reset);
+  VH_DB_BIND_INT_OR_GOTO
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 2, dl->dst, out_clear);
+  VH_DB_BIND_TEXT_OR_GOTO
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 3, dl->name, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 4, file_id, out_clear);
 
   res = sqlite3_step (STMT_GET (STMT_INSERT_DLCONTEXT));
   if (res == SQLITE_DONE)
@@ -884,10 +854,7 @@ vh_database_file_get_dlcontext (database_t *database,
   if (!file || !dl)
     return;
 
-  res = sqlite3_bind_text (STMT_GET (STMT_SELECT_FILE_DLCONTEXT),
-                           1, file, -1, SQLITE_STATIC);
-  if (res != SQLITE_OK)
-    goto out;
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_SELECT_FILE_DLCONTEXT), 1, file, out);
 
   while (sqlite3_step (STMT_GET (STMT_SELECT_FILE_DLCONTEXT)) == SQLITE_ROW)
   {
