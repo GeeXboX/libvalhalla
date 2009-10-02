@@ -83,7 +83,7 @@ grabber_dummy_uninit (void *priv)
 }
 
 static int
-grabber_dummy_grab (void *priv, file_data_t *data)
+grabber_dummy_grab (vh_unused void *priv, vh_unused file_data_t *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -91,7 +91,7 @@ grabber_dummy_grab (void *priv, file_data_t *data)
 }
 
 static void
-grabber_dummy_loop (void *priv)
+grabber_dummy_loop (vh_unused void *priv)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
