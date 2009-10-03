@@ -171,7 +171,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
-                                   FIFO_QUEUE_PRIORITY_NORMAL,
+                                   pdata->priority,
                                    mtime < 0
                                    ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
                                    pdata);

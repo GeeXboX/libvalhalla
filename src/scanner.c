@@ -232,11 +232,11 @@ scanner_readdir (scanner_t *scanner,
       {
         data->file = file;
         data->mtime = st.st_mtime;
+        data->priority = FIFO_QUEUE_PRIORITY_NORMAL;
         data->step = STEP_PARSING;
         sem_init (&data->sem_grabber, 0, 0);
         vh_dbmanager_action_send (scanner->valhalla->dbmanager,
-                                  FIFO_QUEUE_PRIORITY_NORMAL,
-                                  ACTION_DB_NEWFILE, data);
+                                  data->priority, ACTION_DB_NEWFILE, data);
         (*files)++;
         continue;
       }

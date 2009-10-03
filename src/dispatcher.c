@@ -154,14 +154,14 @@ dispatcher_thread (void *arg)
       {
 #endif /* USE_GRABBER */
         vh_dbmanager_action_send (dispatcher->valhalla->dbmanager,
-                                  FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
+                                  pdata->priority, e, pdata);
       }
 
       if (step == STEP_ENDING)
         e = ACTION_DB_END;
 
       /* Proceed to the step */
-      send[step].fct (send[step].handler, FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
+      send[step].fct (send[step].handler, pdata->priority, e, pdata);
       break;
     }
 

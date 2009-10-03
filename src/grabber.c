@@ -277,7 +277,7 @@ grabber_thread (void *arg)
       vh_file_data_step_increase (pdata, &e);
 
     vh_dispatcher_action_send (grabber->valhalla->dispatcher,
-                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
+                               pdata->priority, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
 

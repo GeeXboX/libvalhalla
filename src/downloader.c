@@ -129,7 +129,7 @@ downloader_thread (void *arg)
 
     vh_file_data_step_increase (pdata, &e);
     vh_dispatcher_action_send (downloader->valhalla->dispatcher,
-                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
+                               pdata->priority, e, pdata);
   }
   while (!downloader_is_stopped (downloader));
 

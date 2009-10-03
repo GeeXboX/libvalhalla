@@ -493,7 +493,7 @@ parser_thread (void *arg)
 
     vh_file_data_step_increase (pdata, &e);
     vh_dispatcher_action_send (parser->valhalla->dispatcher,
-                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
+                               pdata->priority, e, pdata);
   }
   while (!parser_is_stopped (parser));
 

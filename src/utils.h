@@ -42,6 +42,7 @@ typedef struct file_data_s {
   char                *file;
   time_t               mtime;
   valhalla_file_type_t type;
+  fifo_queue_prio_t    priority;
   metadata_t          *meta_parser;
   processing_step_t    step;
 
