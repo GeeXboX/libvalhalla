@@ -183,9 +183,9 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
 
     if (!pdata->outofpath)
-    vh_scanner_action_send (dbmanager->valhalla->scanner,
-                            FIFO_QUEUE_PRIORITY_NORMAL,
-                            ACTION_ACKNOWLEDGE, NULL);
+      vh_scanner_action_send (dbmanager->valhalla->scanner,
+                              FIFO_QUEUE_PRIORITY_NORMAL,
+                              ACTION_ACKNOWLEDGE, NULL);
     vh_file_data_free (pdata);
   }
   while (!dbmanager_is_stopped (dbmanager));
