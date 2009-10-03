@@ -519,10 +519,12 @@ database_file_insert (database_t *database, file_data_t *data, int64_t type_id)
     (STMT_GET (STMT_INSERT_FILE), 1, data->file, out_reset);
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_INSERT_FILE), 2, data->mtime, out_clear);
+  VH_DB_BIND_INT_OR_GOTO
+    (STMT_GET (STMT_INSERT_FILE), 3, data->outofpath, out_clear);
 
   if (type_id)
     VH_DB_BIND_INT64_OR_GOTO
-      (STMT_GET (STMT_INSERT_FILE), 3, type_id, out_clear);
+      (STMT_GET (STMT_INSERT_FILE), 4, type_id, out_clear);
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (STMT_GET (STMT_INSERT_FILE));
@@ -550,13 +552,15 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
 
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime, out_reset);
+  VH_DB_BIND_INT_OR_GOTO
+    (STMT_GET (STMT_UPDATE_FILE), 2, data->outofpath, out_clear);
 
   if (type_id)
     VH_DB_BIND_INT64_OR_GOTO
-      (STMT_GET (STMT_UPDATE_FILE), 2, type_id, out_clear);
+      (STMT_GET (STMT_UPDATE_FILE), 3, type_id, out_clear);
 
   VH_DB_BIND_TEXT_OR_GOTO
-    (STMT_GET (STMT_UPDATE_FILE), 3, data->file, out_clear);
+    (STMT_GET (STMT_UPDATE_FILE), 4, data->file, out_clear);
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (STMT_GET (STMT_UPDATE_FILE));

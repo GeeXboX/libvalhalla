@@ -47,6 +47,7 @@
    "file_mtime       INTEGER NOT NULL, "                  \
    "checked__        INTEGER NOT NULL, "                  \
    "interrupted__    INTEGER NOT NULL, "                  \
+   "outofpath__      INTEGER NOT NULL, "                  \
    "_type_id         INTEGER NULL "                       \
  ");"
 
@@ -301,8 +302,9 @@
  "           file_mtime, "    \
  "           checked__, "     \
  "           interrupted__, " \
+ "           outofpath__, "   \
  "           _type_id) "      \
- "VALUES (?, ?, 1, 1, ?);"
+ "VALUES (?, ?, 1, 1, ?, ?);"
 
 #define INSERT_TYPE        \
  "INSERT "                 \
@@ -355,6 +357,7 @@
  "SET file_mtime      = ?, " \
  "    checked__       = 1, " \
  "    interrupted__   = 1, " \
+ "    outofpath__     = ?, " \
  "    _type_id        = ?  " \
  "WHERE file_path = ?;"
 
