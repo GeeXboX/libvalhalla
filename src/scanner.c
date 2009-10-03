@@ -227,14 +227,12 @@ scanner_readdir (scanner_t *scanner,
 
     if (S_ISREG (st.st_mode) && !suffix_cmp (scanner->suffix, dp.d_name))
     {
-      file_data_t *data = calloc (1, sizeof (file_data_t));
+      file_data_t *data;
+
+      data = vh_file_data_new (file, st.st_mtime, 0,
+                               FIFO_QUEUE_PRIORITY_NORMAL, STEP_PARSING);
       if (data)
       {
-        data->file = file;
-        data->mtime = st.st_mtime;
-        data->priority = FIFO_QUEUE_PRIORITY_NORMAL;
-        data->step = STEP_PARSING;
-        sem_init (&data->sem_grabber, 0, 0);
         vh_dbmanager_action_send (scanner->valhalla->dbmanager,
                                   data->priority, ACTION_DB_NEWFILE, data);
         (*files)++;
