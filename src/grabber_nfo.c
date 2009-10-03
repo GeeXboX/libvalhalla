@@ -354,7 +354,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
     break;
   default:
     valhalla_log (VALHALLA_MSG_VERBOSE,
-                  "No NFO file available or unsupported type.\n");
+                  "No NFO file available or unsupported type.");
     break;
   }
 
