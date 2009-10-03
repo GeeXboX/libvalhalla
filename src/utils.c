@@ -194,6 +194,27 @@ vh_file_data_free (file_data_t *data)
   free (data);
 }
 
+file_data_t *
+vh_file_data_new (char *file, time_t mtime, int outofpath,
+                  fifo_queue_prio_t prio, processing_step_t step)
+{
+  file_data_t *fdata;
+
+  fdata = calloc (1, sizeof (file_data_t));
+  if (!fdata)
+    return NULL;
+
+  fdata->file      = file;
+  fdata->mtime     = mtime;
+  fdata->outofpath = outofpath;
+  fdata->priority  = prio;
+  fdata->step      = step;
+
+  sem_init (&fdata->sem_grabber, 0, 0);
+
+  return fdata;
+}
+
 void
 vh_file_data_step_increase (file_data_t *data, action_list_t *action)
 {
