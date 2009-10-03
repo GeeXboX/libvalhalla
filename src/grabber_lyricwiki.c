@@ -124,7 +124,8 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
       j++;
     }
 
-    vh_metadata_add (&fdata->meta_grabber, VALHALLA_METADATA_LYRICS, lyrics);
+    vh_metadata_add_auto (&fdata->meta_grabber,
+                          VALHALLA_METADATA_LYRICS, lyrics);
 
     free (txt);
     free (lyrics);
