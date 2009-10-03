@@ -47,6 +47,7 @@ void vh_scanner_path_add (scanner_t *scanner,
 int vh_scanner_suffix_cmp (scanner_t *scanner, const char *file);
 void vh_scanner_suffix_add (scanner_t *scanner, const char *suffix);
 
-void vh_scanner_action_send (scanner_t *scanner, int action, void *data);
+void vh_scanner_action_send (scanner_t *scanner,
+                             fifo_queue_prio_t prio, int action, void *data);
 
 #endif /* VALHALLA_SCANNER_H */

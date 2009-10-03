@@ -235,6 +235,7 @@ scanner_readdir (scanner_t *scanner,
         data->step = STEP_PARSING;
         sem_init (&data->sem_grabber, 0, 0);
         vh_dbmanager_action_send (scanner->valhalla->dbmanager,
+                                  FIFO_QUEUE_PRIORITY_NORMAL,
                                   ACTION_DB_NEWFILE, data);
         (*files)++;
         continue;
@@ -305,6 +306,7 @@ scanner_thread (void *arg)
     if (i != 1)
     {
       vh_dbmanager_action_send (scanner->valhalla->dbmanager,
+                                FIFO_QUEUE_PRIORITY_NORMAL,
                                 ACTION_DB_NEXT_LOOP, NULL);
       vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
@@ -533,12 +535,13 @@ vh_scanner_init (valhalla_t *handle)
 }
 
 void
-vh_scanner_action_send (scanner_t *scanner, int action, void *data)
+vh_scanner_action_send (scanner_t *scanner,
+                        fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
 
-  vh_fifo_queue_push (scanner->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (scanner->fifo, prio, action, data);
 }

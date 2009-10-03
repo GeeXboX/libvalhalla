@@ -40,6 +40,7 @@ parser_t *vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier);
 
 void vh_parser_bl_keyword_add (parser_t *parser, const char *keyword);
 
-void vh_parser_action_send (parser_t *parser, int action, void *data);
+void vh_parser_action_send (parser_t *parser,
+                            fifo_queue_prio_t prio, int action, void *data);
 
 #endif /* VALHALLA_PARSER_H */

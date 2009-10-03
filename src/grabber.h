@@ -42,6 +42,7 @@ void vh_grabber_stop (grabber_t *grabber);
 void vh_grabber_uninit (grabber_t *grabber);
 grabber_t *vh_grabber_init (valhalla_t *handle);
 
-void vh_grabber_action_send (grabber_t *grabber, int action, void *data);
+void vh_grabber_action_send (grabber_t *grabber,
+                             fifo_queue_prio_t prio, int action, void *data);
 
 #endif /* VALHALLA_GRABBER_H */

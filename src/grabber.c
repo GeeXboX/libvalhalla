@@ -276,7 +276,8 @@ grabber_thread (void *arg)
     else /* next step, no grabber */
       vh_file_data_step_increase (pdata, &e);
 
-    vh_dispatcher_action_send (grabber->valhalla->dispatcher, e, pdata);
+    vh_dispatcher_action_send (grabber->valhalla->dispatcher,
+                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
 
@@ -504,12 +505,13 @@ vh_grabber_init (valhalla_t *handle)
 }
 
 void
-vh_grabber_action_send (grabber_t *grabber, int action, void *data)
+vh_grabber_action_send (grabber_t *grabber,
+                        fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
 
-  vh_fifo_queue_push (grabber->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (grabber->fifo, prio, action, data);
 }

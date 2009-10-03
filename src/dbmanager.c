@@ -94,7 +94,8 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      vh_dispatcher_action_send (dbmanager->valhalla->dispatcher, e, NULL);
+      vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
+                                 FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
       return e;
     }
 
@@ -170,6 +171,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
+                                   FIFO_QUEUE_PRIORITY_NORMAL,
                                    mtime < 0
                                    ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
                                    pdata);
@@ -182,6 +184,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     vh_file_data_free (pdata);
     vh_scanner_action_send (dbmanager->valhalla->scanner,
+                            FIFO_QUEUE_PRIORITY_NORMAL,
                             ACTION_ACKNOWLEDGE, NULL);
   }
   while (!dbmanager_is_stopped (dbmanager));
@@ -370,15 +373,15 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
 }
 
 void
-vh_dbmanager_action_send (dbmanager_t *dbmanager, int action, void *data)
+vh_dbmanager_action_send (dbmanager_t *dbmanager,
+                          fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
 
-  vh_fifo_queue_push (dbmanager->fifo,
-                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (dbmanager->fifo, prio, action, data);
 }
 
 void

@@ -70,7 +70,7 @@ dispatcher_thread (void *arg)
 
   struct dispatcher_step_s {
     void *handler;
-    void (*fct) (void *handler, int action, void *data);
+    void (*fct) (void *handler, fifo_queue_prio_t prio, int action, void *data);
   } send[] = {
     [STEP_PARSING]      = { NULL, (void *) vh_parser_action_send     },
 #ifdef USE_GRABBER
@@ -111,7 +111,8 @@ dispatcher_thread (void *arg)
     {
 #ifdef USE_GRABBER
     case ACTION_DB_NEXT_LOOP:
-      vh_grabber_action_send (dispatcher->valhalla->grabber, e, NULL);
+      vh_grabber_action_send (dispatcher->valhalla->grabber,
+                              FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
       break;
 #endif /* USE_GRABBER */
 
@@ -152,14 +153,15 @@ dispatcher_thread (void *arg)
       if (step == STEP_ENDING)
       {
 #endif /* USE_GRABBER */
-        vh_dbmanager_action_send (dispatcher->valhalla->dbmanager, e, pdata);
+        vh_dbmanager_action_send (dispatcher->valhalla->dbmanager,
+                                  FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
       }
 
       if (step == STEP_ENDING)
         e = ACTION_DB_END;
 
       /* Proceed to the step */
-      send[step].fct (send[step].handler, e, pdata);
+      send[step].fct (send[step].handler, FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
       break;
     }
 
@@ -276,13 +278,13 @@ vh_dispatcher_init (valhalla_t *handle)
 }
 
 void
-vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data)
+vh_dispatcher_action_send (dispatcher_t *dispatcher,
+                           fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
 
-  vh_fifo_queue_push (dispatcher->fifo,
-                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (dispatcher->fifo, prio, action, data);
 }

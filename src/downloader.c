@@ -128,7 +128,8 @@ downloader_thread (void *arg)
     }
 
     vh_file_data_step_increase (pdata, &e);
-    vh_dispatcher_action_send (downloader->valhalla->dispatcher, e, pdata);
+    vh_dispatcher_action_send (downloader->valhalla->dispatcher,
+                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
   }
   while (!downloader_is_stopped (downloader));
 
@@ -286,13 +287,13 @@ vh_downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
 }
 
 void
-vh_downloader_action_send (downloader_t *downloader, int action, void *data)
+vh_downloader_action_send (downloader_t *downloader,
+                           fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;
 
-  vh_fifo_queue_push (downloader->fifo,
-                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (downloader->fifo, prio, action, data);
 }

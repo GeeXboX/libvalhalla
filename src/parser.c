@@ -492,7 +492,8 @@ parser_thread (void *arg)
       parser_metadata (parser, pdata);
 
     vh_file_data_step_increase (pdata, &e);
-    vh_dispatcher_action_send (parser->valhalla->dispatcher, e, pdata);
+    vh_dispatcher_action_send (parser->valhalla->dispatcher,
+                               FIFO_QUEUE_PRIORITY_NORMAL, e, pdata);
   }
   while (!parser_is_stopped (parser));
 
@@ -645,12 +646,13 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
 }
 
 void
-vh_parser_action_send (parser_t *parser, int action, void *data)
+vh_parser_action_send (parser_t *parser,
+                       fifo_queue_prio_t prio, int action, void *data)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;
 
-  vh_fifo_queue_push (parser->fifo, FIFO_QUEUE_PRIORITY_NORMAL, action, data);
+  vh_fifo_queue_push (parser->fifo, prio, action, data);
 }

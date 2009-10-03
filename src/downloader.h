@@ -44,6 +44,6 @@ void vh_downloader_destination_set (downloader_t *downloader,
 const char *vh_downloader_destination_get (downloader_t *downloader,
                                            valhalla_dl_t dl);
 void vh_downloader_action_send (downloader_t *downloader,
-                                int action, void *data);
+                                fifo_queue_prio_t prio, int action, void *data);
 
 #endif /* VALHALLA_DOWNLOADER_H */

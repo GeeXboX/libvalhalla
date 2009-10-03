@@ -39,6 +39,6 @@ void vh_dispatcher_uninit (dispatcher_t *dispatcher);
 dispatcher_t *vh_dispatcher_init (valhalla_t *handle);
 
 void vh_dispatcher_action_send (dispatcher_t *dispatcher,
-                                int action, void *data);
+                                fifo_queue_prio_t prio, int action, void *data);
 
 #endif /* VALHALLA_DISPATCHER_H */
