@@ -283,5 +283,6 @@ vh_dispatcher_action_send (dispatcher_t *dispatcher, int action, void *data)
   if (!dispatcher)
     return;
 
-  vh_fifo_queue_push (dispatcher->fifo, FIFO_QUEUE_PRIORITY_HIGH, action, data);
+  vh_fifo_queue_push (dispatcher->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, action, data);
 }
