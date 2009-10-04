@@ -796,7 +796,7 @@ vh_database_file_get_grabber (database_t *database,
     const char *grabber_name = (const char *)
       sqlite3_column_text (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME), 0);
     if (grabber_name)
-      vh_list_append (l, grabber_name, strlen (grabber_name));
+      vh_list_append (l, grabber_name, strlen (grabber_name) + 1);
   }
 
   sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_GRABBER_NAME));
