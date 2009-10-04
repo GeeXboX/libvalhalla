@@ -163,3 +163,57 @@ vh_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data)
 
   return FIFO_QUEUE_SUCCESS;
 }
+
+void *
+vh_fifo_queue_search (fifo_queue_t *queue, const void *tocmp,
+                      int (*cmp_fct) (const void *tocmp,
+                                      int id, const void *data))
+{
+  void *data = NULL;
+  fifo_queue_item_t *item;
+
+  if (!queue || !tocmp || !cmp_fct)
+    return NULL;
+
+  pthread_mutex_lock (&queue->mutex);
+
+  for (item = queue->item; item; item = item->next)
+    if (!cmp_fct (tocmp, item->id, item->data))
+    {
+      data = item->data;
+      break;
+    }
+
+  pthread_mutex_unlock (&queue->mutex);
+
+  return data;
+}
+
+void
+vh_fifo_queue_moveup (fifo_queue_t *queue, const void *tomove,
+                      int (*cmp_fct) (const void *tocmp,
+                                      int id, const void *data))
+{
+  fifo_queue_item_t *item, *item_p = NULL;
+
+  if (!queue || !tomove || !cmp_fct)
+    return;
+
+  pthread_mutex_lock (&queue->mutex);
+
+  for (item = queue->item; item; item = item->next)
+  {
+    if (!cmp_fct (tomove, item->id, item->data))
+    {
+      if (!item_p)
+        break;
+      item_p->next = item->next;
+      item->next = queue->item;
+      queue->item = item;
+      break;
+    }
+    item_p = item;
+  }
+
+  pthread_mutex_unlock (&queue->mutex);
+}
