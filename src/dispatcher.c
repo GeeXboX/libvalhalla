@@ -20,6 +20,7 @@
  */
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -46,6 +47,8 @@ struct dispatcher_s {
 
   int             run;
   pthread_mutex_t mutex_run;
+
+  VH_THREAD_PAUSE_ATTRS
 };
 
 
@@ -109,6 +112,10 @@ dispatcher_thread (void *arg)
 
     switch (e)
     {
+    case ACTION_PAUSE_THREAD:
+      VH_THREAD_PAUSE_ACTION (dispatcher)
+      continue;
+
 #ifdef USE_GRABBER
     case ACTION_DB_NEXT_LOOP:
       vh_grabber_action_send (dispatcher->valhalla->grabber,
@@ -215,6 +222,17 @@ vh_dispatcher_fifo_get (dispatcher_t *dispatcher)
 }
 
 void
+vh_dispatcher_pause (dispatcher_t *dispatcher)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dispatcher)
+    return;
+
+  VH_THREAD_PAUSE_FCT (dispatcher, 1)
+}
+
+void
 vh_dispatcher_stop (dispatcher_t *dispatcher)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -244,6 +262,7 @@ vh_dispatcher_uninit (dispatcher_t *dispatcher)
 
   vh_fifo_queue_free (dispatcher->fifo);
   pthread_mutex_destroy (&dispatcher->mutex_run);
+  VH_THREAD_PAUSE_UNINIT (dispatcher)
 
   free (dispatcher);
 }
@@ -269,6 +288,7 @@ vh_dispatcher_init (valhalla_t *handle)
   dispatcher->valhalla = handle;
 
   pthread_mutex_init (&dispatcher->mutex_run, NULL);
+  VH_THREAD_PAUSE_INIT (dispatcher)
 
   return dispatcher;
 

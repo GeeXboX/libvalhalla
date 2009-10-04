@@ -43,6 +43,8 @@ struct downloader_s {
   int             run;
   pthread_mutex_t mutex_run;
 
+  VH_THREAD_PAUSE_ATTRS
+
   url_t *url_handler;
   char **dl_list;
 };
@@ -83,6 +85,12 @@ downloader_thread (void *arg)
 
     if (e == ACTION_KILL_THREAD)
       break;
+
+    if (e == ACTION_PAUSE_THREAD)
+    {
+      VH_THREAD_PAUSE_ACTION (downloader)
+      continue;
+    }
 
     pdata = data;
 
@@ -177,6 +185,17 @@ vh_downloader_fifo_get (downloader_t *downloader)
 }
 
 void
+vh_downloader_pause (downloader_t *downloader)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!downloader)
+    return;
+
+  VH_THREAD_PAUSE_FCT (downloader, 1)
+}
+
+void
 vh_downloader_stop (downloader_t *downloader)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -218,6 +237,7 @@ vh_downloader_uninit (downloader_t *downloader)
 
   vh_fifo_queue_free (downloader->fifo);
   pthread_mutex_destroy (&downloader->mutex_run);
+  VH_THREAD_PAUSE_UNINIT (downloader)
 
   free (downloader);
 }
@@ -251,6 +271,7 @@ vh_downloader_init (valhalla_t *handle)
   downloader->valhalla = handle;
 
   pthread_mutex_init (&downloader->mutex_run, NULL);
+  VH_THREAD_PAUSE_INIT (downloader)
 
   return downloader;
 

@@ -84,6 +84,8 @@ struct grabber_s {
   int             run;
   pthread_mutex_t mutex_run;
 
+  VH_THREAD_PAUSE_ATTRS
+
   grabber_list_t *list;
   sem_t          *sem_grabber;
   pthread_mutex_t mutex_grabber;
@@ -230,6 +232,12 @@ grabber_thread (void *arg)
       continue;
     }
 
+    if (e == ACTION_PAUSE_THREAD)
+    {
+      VH_THREAD_PAUSE_ACTION (grabber)
+      continue;
+    }
+
     pdata = data;
 
     /*
@@ -371,6 +379,17 @@ vh_grabber_list_get (grabber_t *grabber, const char *id)
 }
 
 void
+vh_grabber_pause (grabber_t *grabber)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!grabber)
+    return;
+
+  VH_THREAD_PAUSE_FCT (grabber, 1)
+}
+
+void
 vh_grabber_stop (grabber_t *grabber)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -410,6 +429,7 @@ vh_grabber_uninit (grabber_t *grabber)
   vh_fifo_queue_free (grabber->fifo);
   pthread_mutex_destroy (&grabber->mutex_run);
   pthread_mutex_destroy (&grabber->mutex_grabber);
+  VH_THREAD_PAUSE_UNINIT (grabber)
 
   /* uninit all childs */
   for (it = grabber->list; it; it = it->next)
@@ -478,6 +498,7 @@ vh_grabber_init (valhalla_t *handle)
 
   pthread_mutex_init (&grabber->mutex_run, NULL);
   pthread_mutex_init (&grabber->mutex_grabber, NULL);
+  VH_THREAD_PAUSE_INIT (grabber)
 
   grabber->fifo = vh_fifo_queue_new ();
   if (!grabber->fifo)

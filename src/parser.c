@@ -54,6 +54,8 @@ struct parser_s {
 
   int             run;
   pthread_mutex_t mutex_run;
+
+  VH_THREAD_PAUSE_ATTRS
 };
 
 
@@ -487,6 +489,12 @@ parser_thread (void *arg)
     if (e == ACTION_KILL_THREAD)
       break;
 
+    if (e == ACTION_PAUSE_THREAD)
+    {
+      VH_THREAD_PAUSE_ACTION (parser)
+      continue;
+    }
+
     pdata = data;
     if (pdata)
       parser_metadata (parser, pdata);
@@ -565,6 +573,17 @@ vh_parser_fifo_get (parser_t *parser)
 }
 
 void
+vh_parser_pause (parser_t *parser)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!parser)
+    return;
+
+  VH_THREAD_PAUSE_FCT (parser, parser->nb)
+}
+
+void
 vh_parser_stop (parser_t *parser)
 {
   unsigned int i;
@@ -607,6 +626,7 @@ vh_parser_uninit (parser_t *parser)
 
   vh_fifo_queue_free (parser->fifo);
   pthread_mutex_destroy (&parser->mutex_run);
+  VH_THREAD_PAUSE_UNINIT (parser)
 
   free (parser);
 }
@@ -637,6 +657,7 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
   parser->decrapifier = !!decrapifier;
 
   pthread_mutex_init (&parser->mutex_run, NULL);
+  VH_THREAD_PAUSE_INIT (parser)
 
   return parser;
 

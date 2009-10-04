@@ -33,6 +33,7 @@ enum parser_errno {
 };
 
 int vh_parser_run (parser_t *parser, int priority);
+void vh_parser_pause (parser_t *parser);
 fifo_queue_t *vh_parser_fifo_get (parser_t *parser);
 void vh_parser_stop (parser_t *parser);
 void vh_parser_uninit (parser_t *parser);

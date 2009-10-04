@@ -25,6 +25,7 @@
 typedef enum action_list {
   ACTION_KILL_THREAD  = -1, /* auto-kill when all pending commands are ended */
   ACTION_NO_OPERATION =  0, /* wake-up for nothing */
+  ACTION_PAUSE_THREAD,      /* send thread in waiting list */
   ACTION_DB_INSERT_P,       /* dispatcher: parser  metadata ok, insert in DB */
   ACTION_DB_INSERT_G,       /* dispatcher: grabber metadata ok, insert in DB */
   ACTION_DB_UPDATE_P,       /* dispatcher: parser  metadata ok, update in DB */
@@ -67,5 +68,48 @@ struct valhalla_s {
 #    define vh_unused
 #endif
 #endif
+
+
+/****************************************************************************/
+/* Thread 'pause' helpers                                                   */
+/****************************************************************************/
+
+#define VH_THREAD_PAUSE_ATTRS                                       \
+  int   paused;                                                     \
+  sem_t sem_pause;                                                  \
+  sem_t sem_pausing;
+
+#define VH_THREAD_PAUSE_INIT(handle)                                \
+  handle->paused = 0;                                               \
+  sem_init (&handle->sem_pause, 0, 0);                              \
+  sem_init (&handle->sem_pausing, 0, 0);
+
+#define VH_THREAD_PAUSE_UNINIT(handle)                              \
+  sem_destroy (&handle->sem_pause);                                 \
+  sem_destroy (&handle->sem_pausing);
+
+#define VH_THREAD_PAUSE_FCT(handle, nb)                             \
+  {                                                                 \
+    unsigned int i;                                                 \
+    if (handle->paused)                                             \
+    {                                                               \
+      handle->paused = 0;                                           \
+      for (i = 0; i < nb; i++)                                      \
+        sem_post (&handle->sem_pause);                              \
+    }                                                               \
+    else                                                            \
+    {                                                               \
+      for (i = 0; i < nb; i++)                                      \
+      {                                                             \
+        vh_fifo_queue_push (handle->fifo, FIFO_QUEUE_PRIORITY_HIGH, \
+                            ACTION_PAUSE_THREAD, NULL);             \
+        sem_wait (&handle->sem_pausing);                            \
+      }                                                             \
+      handle->paused = 1;                                           \
+    }                                                               \
+  }
+#define VH_THREAD_PAUSE_ACTION(handle)                              \
+  sem_post (&handle->sem_pausing);                                  \
+  sem_wait (&handle->sem_pause);
 
 #endif /* VALHALLA_INTERNALS_H */

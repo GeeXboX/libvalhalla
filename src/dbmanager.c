@@ -46,6 +46,8 @@ struct dbmanager_s {
   int             run;
   pthread_mutex_t mutex_run;
 
+  VH_THREAD_PAUSE_ATTRS
+
   database_t   *database;
   unsigned int  commit_int;
 };
@@ -110,6 +112,10 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     {
     default:
       break;
+
+    case ACTION_PAUSE_THREAD:
+      VH_THREAD_PAUSE_ACTION (dbmanager)
+      continue;
 
     /* received from the dispatcher */
     case ACTION_DB_END:
@@ -300,6 +306,17 @@ vh_dbmanager_fifo_get (dbmanager_t *dbmanager)
 }
 
 void
+vh_dbmanager_pause (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  VH_THREAD_PAUSE_FCT (dbmanager, 1)
+}
+
+void
 vh_dbmanager_stop (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -332,6 +349,7 @@ vh_dbmanager_uninit (dbmanager_t *dbmanager)
 
   vh_fifo_queue_free (dbmanager->fifo);
   pthread_mutex_destroy (&dbmanager->mutex_run);
+  VH_THREAD_PAUSE_UNINIT (dbmanager)
 
   free (dbmanager);
 }
@@ -365,6 +383,7 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
   dbmanager->valhalla = handle;
 
   pthread_mutex_init (&dbmanager->mutex_run, NULL);
+  VH_THREAD_PAUSE_INIT (dbmanager)
 
   return dbmanager;
 
