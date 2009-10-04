@@ -29,6 +29,7 @@
 #include "scanner.h"
 #include "dbmanager.h"
 #include "dispatcher.h"
+#include "ondemand.h"
 #include "utils.h"
 #include "logs.h"
 
@@ -129,6 +130,12 @@ valhalla_mrproper (valhalla_t *handle)
 
   vh_queue_cleanup (fifo_o);
   vh_fifo_queue_free (fifo_o);
+
+  /* On-demand queue must be handled separately. */
+  fifo_o = vh_ondemand_fifo_get (handle->ondemand);
+  if (!fifo_o)
+    return;
+  vh_queue_cleanup (fifo_o);
 }
 
 void
@@ -141,6 +148,7 @@ valhalla_wait (valhalla_t *handle)
 
   vh_scanner_wait (handle->scanner);
 
+  vh_ondemand_stop (handle->ondemand);
   vh_dbmanager_stop (handle->dbmanager);
   vh_dispatcher_stop (handle->dispatcher);
   vh_parser_stop (handle->parser);
@@ -148,13 +156,12 @@ valhalla_wait (valhalla_t *handle)
   vh_grabber_stop (handle->grabber);
   vh_downloader_stop (handle->downloader);
 #endif /* USE_GRABBER */
-
-  valhalla_mrproper (handle);
 }
 
 static void
 valhalla_force_stop (valhalla_t *handle)
 {
+  vh_ondemand_stop (handle->ondemand);
   vh_scanner_stop (handle->scanner);
   vh_dbmanager_stop (handle->dbmanager);
   vh_dispatcher_stop (handle->dispatcher);
@@ -177,6 +184,7 @@ valhalla_uninit (valhalla_t *handle)
 
   valhalla_force_stop (handle);
 
+  vh_ondemand_uninit (handle->ondemand);
   vh_scanner_uninit (handle->scanner);
   vh_dbmanager_uninit (handle->dbmanager);
   vh_dispatcher_uninit (handle->dispatcher);
@@ -231,6 +239,10 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
   if (res)
     return VALHALLA_ERROR_THREAD;
 #endif /* USE_GRABBER */
+
+  res = vh_ondemand_run (handle->ondemand, priority);
+  if (res)
+    return VALHALLA_ERROR_THREAD;
 
   return VALHALLA_SUCCESS;
 }
@@ -370,6 +382,10 @@ valhalla_init (const char *db,
   if (!handle->dbmanager)
     goto err;
 
+  handle->ondemand = vh_ondemand_init (handle);
+  if (!handle->ondemand)
+    goto err;
+
   if (!preinit)
   {
     av_log_set_level (AV_LOG_FATAL);
@@ -382,6 +398,29 @@ valhalla_init (const char *db,
  err:
   valhalla_uninit (handle);
   return NULL;
+}
+
+void
+valhalla_ondemand (valhalla_t *handle, const char *file, void *user_data,
+                   void (*cb) (valhalla_t *handle, int e, void *data))
+{
+  ondemand_data_t *od_data;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !file)
+    return;
+
+  od_data = calloc (1, sizeof (ondemand_data_t));
+  if (!od_data)
+    return;
+
+  od_data->file      = strdup (file);
+  od_data->cb        = cb;
+  od_data->user_data = user_data;
+
+  vh_ondemand_action_send (handle->ondemand, FIFO_QUEUE_PRIORITY_HIGH,
+                           ACTION_OD_ENGAGE, od_data);
 }
 
 /******************************************************************************/

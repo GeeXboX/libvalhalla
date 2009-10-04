@@ -165,7 +165,15 @@ dispatcher_thread (void *arg)
       }
 
       if (step == STEP_ENDING)
+      {
         e = ACTION_DB_END;
+        /*
+         * Force NORMAL priority because the last step must be always
+         * at the end! It prevents to free pdata before the handling
+         * of metadata.
+         */
+        pdata->priority = FIFO_QUEUE_PRIORITY_NORMAL;
+      }
 
       /* Proceed to the step */
       send[step].fct (send[step].handler, pdata->priority, e, pdata);

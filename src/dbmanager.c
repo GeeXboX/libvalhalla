@@ -122,12 +122,6 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
       break;
 
-    /* received from the dispatcher (parsed data) */
-    case ACTION_DB_INSERT_P:
-      vh_database_file_data_insert (dbmanager->database, pdata);
-      stats->file_insert++;
-      continue;
-
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
@@ -137,8 +131,9 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_UPDATE_P:
-      vh_database_file_data_update (dbmanager->database, pdata);
       stats->file_update++;
+    case ACTION_DB_INSERT_P:
+      vh_database_file_data_update (dbmanager->database, pdata);
       continue;
 
     /* received from the dispatcher (grabbed data) */
@@ -165,7 +160,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
          * Retrieve the list of all grabbers already handled for this file
          * and search if there are files to download since the interruption.
          */
-        if (interrup)
+        if (interrup == 1)
         {
           vh_database_file_get_grabber (dbmanager->database,
                                         pdata->file, &pdata->grabber_list);
@@ -173,8 +168,13 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
                                           pdata->file, &pdata->list_downloader);
         }
       }
+      else
+      {
+        vh_database_file_insert (dbmanager->database, pdata);
+        stats->file_insert++;
+      }
 
-      if (mtime < 0 || (int) pdata->mtime != mtime || interrup)
+      if (mtime < 0 || (int) pdata->mtime != mtime || interrup == 1)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                    pdata->priority,
@@ -188,13 +188,16 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
     }
 
-    if (!pdata->outofpath)
+    if (!pdata->od) /* Must not come from "On-demand" */
       vh_scanner_action_send (dbmanager->valhalla->scanner,
                               FIFO_QUEUE_PRIORITY_NORMAL,
                               ACTION_ACKNOWLEDGE, NULL);
     vh_file_data_free (pdata);
   }
   while (!dbmanager_is_stopped (dbmanager));
+
+  /* Change files where interrupted__ is -1 to 1. */
+  vh_database_file_interrupted_fix (dbmanager->database);
 
   return ACTION_KILL_THREAD;
 }

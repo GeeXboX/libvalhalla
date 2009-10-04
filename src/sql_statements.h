@@ -285,7 +285,7 @@
 #define SELECT_FILE_CHECKED_CLEAR \
  "SELECT file_path "              \
  "FROM file "                     \
- "WHERE checked__ = 0;"
+ "WHERE checked__ = 0 AND outofpath__ = 0;"
 
 #define SELECT_FILE_GRABBER_NAME                      \
  "SELECT grabber.grabber_name "                       \
@@ -314,9 +314,8 @@
  "           file_mtime, "    \
  "           checked__, "     \
  "           interrupted__, " \
- "           outofpath__, "   \
- "           _type_id) "      \
- "VALUES (?, ?, 1, 1, ?, ?);"
+ "           outofpath__) "   \
+ "VALUES (?, ?, 1, -1, ?);"
 
 #define INSERT_TYPE        \
  "INSERT "                 \
@@ -381,6 +380,11 @@
  "UPDATE file "                    \
  "SET interrupted__ = 0 "          \
  "WHERE file_path = ?;"
+
+#define UPDATE_FILE_INTERRUP_FIX \
+ "UPDATE file "                  \
+ "SET interrupted__ = 1 "        \
+ "WHERE interrupted__ = -1;"
 
 /******************************************************************************/
 /*                                                                            */

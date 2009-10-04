@@ -268,6 +268,24 @@ int valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority);
 void valhalla_wait (valhalla_t *handle);
 
 /**
+ * \brief Force Valhalla to retrieve metadata on-demand for a file.
+ *
+ * This functionality can be used on files in/out of paths defined for
+ * the scanner. This function is non-blocking and it is priority over
+ * the files retrieved by the scanner.
+ *
+ * TODO: \p userdata and \p cb are ignored (event handling not implemented).
+ *
+ * \warning This function can be used only after valhalla_run()!
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] file        Target.
+ * \param[in] user_data   User data for callback.
+ * \param[in] cb          Callback where send events.
+ */
+void valhalla_ondemand (valhalla_t *handle, const char *file, void *user_data,
+                        void (*cb) (valhalla_t *handle, int e, void *data));
+
+/**
  * @}
  */
 

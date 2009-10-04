@@ -32,6 +32,7 @@
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
+#include "ondemand.h"
 #include "metadata.h"
 #include "fifo_queue.h"
 #include "utils.h"
@@ -195,7 +196,7 @@ vh_file_data_free (file_data_t *data)
 }
 
 file_data_t *
-vh_file_data_new (char *file, time_t mtime, int outofpath,
+vh_file_data_new (const char *file, time_t mtime, int outofpath, int od,
                   fifo_queue_prio_t prio, processing_step_t step)
 {
   file_data_t *fdata;
@@ -204,9 +205,10 @@ vh_file_data_new (char *file, time_t mtime, int outofpath,
   if (!fdata)
     return NULL;
 
-  fdata->file      = file;
+  fdata->file      = strdup (file);
   fdata->mtime     = mtime;
   fdata->outofpath = outofpath;
+  fdata->od        = od;
   fdata->priority  = prio;
   fdata->step      = step;
 
@@ -310,6 +312,18 @@ vh_queue_cleanup (fifo_queue_t *queue)
       if (data)
         vh_file_data_free (data);
       break;
+
+    case ACTION_OD_ENGAGE:
+    {
+      ondemand_data_t *od_data = data;
+      if (!od_data)
+        break;
+
+      if (od_data->file)
+        free (od_data->file);
+      free (od_data);
+      break;
+    }
     }
   }
   while (e != ACTION_CLEANUP_END);

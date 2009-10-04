@@ -24,6 +24,7 @@ SRCS =  database.c \
 	list.c \
 	logs.c \
 	metadata.c \
+	ondemand.c \
 	parser.c \
 	scanner.c \
 	thread_utils.c \

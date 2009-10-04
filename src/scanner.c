@@ -229,14 +229,13 @@ scanner_readdir (scanner_t *scanner,
     {
       file_data_t *data;
 
-      data = vh_file_data_new (file, st.st_mtime, 0,
+      data = vh_file_data_new (file, st.st_mtime, 0, 0,
                                FIFO_QUEUE_PRIORITY_NORMAL, STEP_PARSING);
       if (data)
       {
         vh_dbmanager_action_send (scanner->valhalla->dbmanager,
                                   data->priority, ACTION_DB_NEWFILE, data);
         (*files)++;
-        continue;
       }
     }
     else if (S_ISDIR (st.st_mode) && recursive)

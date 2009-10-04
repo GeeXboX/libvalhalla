@@ -34,6 +34,7 @@ typedef enum action_list {
   ACTION_DB_NEWFILE,        /* scanner: new file to handle */
   ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
   ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
+  ACTION_OD_ENGAGE,         /* engage ondemand procedure */
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
@@ -47,6 +48,7 @@ typedef enum processing_step {
 } processing_step_t;
 
 struct valhalla_s {
+  struct ondemand_s   *ondemand;
   struct scanner_s    *scanner;
   struct dispatcher_s *dispatcher;
   struct parser_s     *parser;

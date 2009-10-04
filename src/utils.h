@@ -43,6 +43,7 @@ typedef struct file_data_s {
   time_t               mtime;
   valhalla_file_type_t type;
   int                  outofpath;
+  int                  od;
   fifo_queue_prio_t    priority;
   metadata_t          *meta_parser;
   processing_step_t    step;
@@ -69,8 +70,9 @@ int vh_file_copy (const char *src, const char *dst);
 void vh_file_dl_add (file_dl_t **dl,
                      const char *url, const char *name, valhalla_dl_t dst);
 void vh_file_data_free (file_data_t *data);
-file_data_t *vh_file_data_new (char *file, time_t mtime, int outofpath,
-                               fifo_queue_prio_t prio, processing_step_t step);
+file_data_t *vh_file_data_new (const char *file, time_t mtime,
+                               int outofpath, int od, fifo_queue_prio_t prio,
+                               processing_step_t step);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
 void vh_queue_cleanup (fifo_queue_t *queue);
