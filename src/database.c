@@ -293,6 +293,9 @@ database_create_table (database_t *database)
 
   /* Create indexes */
   sqlite3_exec (database->db, CREATE_INDEX_FILE_PATH
+                              CREATE_INDEX_CHECKED
+                              CREATE_INDEX_INTERRUPTED
+                              CREATE_INDEX_OUTOFPATH
                               CREATE_INDEX_TYPE_NAME
                               CREATE_INDEX_META_NAME
                               CREATE_INDEX_DATA_VALUE
