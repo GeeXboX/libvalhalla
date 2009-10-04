@@ -600,7 +600,7 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     database_file_update (database, data, type_id);
     file_id = database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID),
                                      data->file);
-  database_file_metadata (database, file_id, data->meta_parser);
+    database_file_metadata (database, file_id, data->meta_parser);
   }
 }
 
