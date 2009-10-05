@@ -65,9 +65,9 @@ struct valhalla_s {
 
 #ifndef vh_unused
 #if defined(__GNUC__)
-#    define vh_unused __attribute__((unused))
+#  define vh_unused __attribute__((unused))
 #else
-#    define vh_unused
+#  define vh_unused
 #endif
 #endif
 
@@ -110,6 +110,7 @@ struct valhalla_s {
       handle->paused = 1;                                           \
     }                                                               \
   }
+
 #define VH_THREAD_PAUSE_ACTION(handle)                              \
   sem_post (&handle->sem_pausing);                                  \
   sem_wait (&handle->sem_pause);

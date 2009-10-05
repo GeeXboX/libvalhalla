@@ -112,21 +112,23 @@
 /*                                                                            */
 /******************************************************************************/
 
+#define CREATE_INDEX_CHECKED      \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "checked_idx ON file (checked__);"
+
+#define CREATE_INDEX_INTERRUPTED  \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "interrupted_idx ON file (interrupted__);"
+
+#define CREATE_INDEX_OUTOFPATH    \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "outofpath_idx ON file (outofpath__);"
+
+/* Unique */
+
 #define CREATE_INDEX_FILE_PATH         \
  "CREATE UNIQUE INDEX IF NOT EXISTS "  \
  "file_path_idx ON file (file_path);"
-
-#define CREATE_INDEX_CHECKED           \
- "CREATE INDEX IF NOT EXISTS "  \
- "checked_idx ON file (checked__);"
-
-#define CREATE_INDEX_INTERRUPTED       \
- "CREATE INDEX IF NOT EXISTS "  \
- "interrupted_idx ON file (interrupted__);"
-
-#define CREATE_INDEX_OUTOFPATH         \
- "CREATE INDEX IF NOT EXISTS "  \
- "outofpath_idx ON file (outofpath__);"
 
 #define CREATE_INDEX_TYPE_NAME         \
  "CREATE UNIQUE INDEX IF NOT EXISTS "  \

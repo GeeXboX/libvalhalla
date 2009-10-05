@@ -54,6 +54,7 @@ typedef struct grabber_tvdb_s {
   url_t *handler;
 } grabber_tvdb_t;
 
+
 static void
 grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
 {

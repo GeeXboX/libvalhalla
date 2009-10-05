@@ -45,6 +45,7 @@ typedef struct grabber_lyricsfly_s {
   url_t *handler;
 } grabber_lyricsfly_t;
 
+
 static int
 grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
                        const char *artist, const char *song)

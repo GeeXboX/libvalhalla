@@ -47,6 +47,7 @@ typedef struct grabber_lastfm_s {
   list_t *list;
 } grabber_lastfm_t;
 
+
 static int
 grabber_lastfm_get (url_t *handler, char **dl_url,
                     const char *artist, const char *album)
