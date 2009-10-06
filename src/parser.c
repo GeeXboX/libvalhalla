@@ -301,7 +301,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     char *title = parser_decrapify (parser, file);
     if (title)
     {
-      vh_metadata_add (&meta, "title", title, VALHALLA_META_GRP_TITLES);
+      vh_metadata_add_auto (&meta, "title", title);
       free (title);
     }
   }
