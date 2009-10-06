@@ -24,6 +24,7 @@
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
+#include "utils.h"
 #include "metadata.h"
 #include "logs.h"
 
@@ -168,6 +169,8 @@ vh_metadata_add (metadata_t **meta,
     return;
 
   it->name  = strdup (name);
+  vh_strtolower (it->name);
+
   it->value = strdup (value);
   it->group = group;
 
@@ -188,7 +191,7 @@ vh_metadata_add_auto (metadata_t **meta,
 
   grp = VALHALLA_META_GRP_MISCELLANEOUS;
   for (i = 0; metadata_group_mapping[i].meta; i++)
-    if (!strcmp (name, metadata_group_mapping[i].meta))
+    if (!strcasecmp (name, metadata_group_mapping[i].meta))
     {
       grp = metadata_group_mapping[i].grp;
       break;
