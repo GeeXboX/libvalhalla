@@ -186,7 +186,7 @@ vh_metadata_add_auto (metadata_t **meta,
   if (!meta || !name || !value)
     return;
 
-  grp = VALHALLA_META_GRP_NIL;
+  grp = VALHALLA_META_GRP_MISCELLANEOUS;
   for (i = 0; metadata_group_mapping[i].meta; i++)
     if (!strcmp (name, metadata_group_mapping[i].meta))
     {
