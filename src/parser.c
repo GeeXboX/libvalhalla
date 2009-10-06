@@ -84,6 +84,7 @@ parser_is_stopped (parser_t *parser)
   return !run;
 }
 
+#if 0
 static void
 parser_metadata_group (metadata_t **meta,
                        const char *fmtname, const char *key, const char *value)
@@ -141,6 +142,7 @@ parser_metadata_group (metadata_t **meta,
     break;
   }
 }
+#endif /* 0 */
 
 #define PATTERN_NUMBER "NUM"
 
@@ -293,7 +295,11 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 
   while ((tag = av_metadata_get (ctx->metadata,
                                  "", tag, AV_METADATA_IGNORE_SUFFIX)))
+#if 0
     parser_metadata_group (&meta, ctx->iformat->name, tag->key, tag->value);
+#else
+    vh_metadata_add_auto (&meta, tag->key, tag->value);
+#endif /* 0 */
 
   /* if necessary, use the filename as title */
   if (parser->decrapifier && vh_metadata_get (meta, "title", 0, &title_tag))
