@@ -101,12 +101,28 @@ static int
 grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 {
   ExifData *d;
+  ExifEntry *e;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   d = exif_data_new_from_file (data->file);
   if (!d)
     return 1;
+
+  e = exif_data_get_entry (d, EXIF_TAG_ORIENTATION);
+  if (e)
+  {
+    ExifByteOrder bo;
+    int orientation;
+    char val[8] = { 0 };
+
+    bo = exif_data_get_byte_order (d);
+    orientation = exif_get_short (e->data, bo);
+
+    snprintf (val, sizeof (val), "%d", orientation);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_PICTURE_ORIENTATION, val);
+  }
 
   exif_data_foreach_content (d, exif_data_foreach_func, data);
   exif_data_unref (d);
