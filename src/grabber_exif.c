@@ -47,7 +47,7 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
   char buf[BUF_SIZE] = { 0 };
   file_data_t *fdata = data;
 
-  if (!fdata)
+  if (!entry || !fdata)
     return;
 
   exif_entry_get_value (entry, buf, BUF_SIZE);
@@ -105,6 +105,9 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   d = exif_data_new_from_file (data->file);
+  if (!d)
+    return 1;
+
   exif_data_foreach_content (d, exif_data_foreach_func, data);
   exif_data_unref (d);
 
