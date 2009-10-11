@@ -1,11 +1,7 @@
 
  * Valhalla
-     -> Implement a system to support an "on-demand" scan. The goal is
-        to retrieve in priority the metadata for a specific file.
      -> Improve the log system to send the messages in a callback
         instead of the stderr (if the callback is defined).
-     -> Add callbacks for events (to follow each steps: parsing, grabbing,
-        downloading, ...).
 
  * Database
      -> Add a new SQLite table to store some informations related to the
