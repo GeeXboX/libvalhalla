@@ -19,6 +19,7 @@ SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
 SRCS =  database.c \
 	dbmanager.c \
 	dispatcher.c \
+	event_handler.c \
 	fifo_queue.c \
 	lavf_utils.c \
 	list.c \

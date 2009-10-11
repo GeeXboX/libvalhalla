@@ -30,6 +30,7 @@
 #include "fifo_queue.h"
 #include "logs.h"
 #include "thread_utils.h"
+#include "event_handler.h"
 #include "database.h"
 #include "scanner.h"
 #include "dbmanager.h"
@@ -120,11 +121,17 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     /* received from the dispatcher */
     case ACTION_DB_END:
       vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
+      if (pdata->od)
+        vh_event_handler_send (dbmanager->valhalla->event_handler,
+                               pdata->file, VALHALLA_EVENT_ENDED, NULL);
       break;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
+      if (pdata->od)
+        vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
+                               VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
       stats->grab_insert++;
       continue;
@@ -134,11 +141,17 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       stats->file_update++;
     case ACTION_DB_INSERT_P:
       vh_database_file_data_update (dbmanager->database, pdata);
+      if (pdata->od)
+        vh_event_handler_send (dbmanager->valhalla->event_handler,
+                               pdata->file, VALHALLA_EVENT_PARSED, NULL);
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_UPDATE_G:
       vh_database_file_grab_update (dbmanager->database, pdata);
+      if (pdata->od)
+        vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
+                               VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
       stats->grab_update++;
       continue;
@@ -184,6 +197,9 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         continue;
       }
 
+      if (pdata->od)
+        vh_event_handler_send (dbmanager->valhalla->event_handler,
+                               pdata->file, VALHALLA_EVENT_ENDED, NULL);
       stats->file_nochange++;
     }
     }

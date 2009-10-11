@@ -32,6 +32,7 @@
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
+#include "event_handler.h"
 #include "ondemand.h"
 #include "metadata.h"
 #include "fifo_queue.h"
@@ -315,13 +316,21 @@ vh_queue_cleanup (fifo_queue_t *queue)
 
     case ACTION_OD_ENGAGE:
     {
-      ondemand_data_t *od_data = data;
-      if (!od_data)
+      char *file = data;
+      if (file)
+        free (file);
+      break;
+    }
+
+    case ACTION_EH_EVENT:
+    {
+      event_handler_data_t *edata = data;
+      if (!edata)
         break;
 
-      if (od_data->file)
-        free (od_data->file);
-      free (od_data);
+      if (edata->file)
+        free (edata->file);
+      free (edata);
       break;
     }
     }

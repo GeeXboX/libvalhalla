@@ -35,6 +35,7 @@ typedef enum action_list {
   ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
   ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
   ACTION_OD_ENGAGE,         /* engage ondemand procedure */
+  ACTION_EH_EVENT,          /* event for the user */
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
 
@@ -57,6 +58,7 @@ struct valhalla_s {
   struct downloader_s *downloader;
 #endif /* USE_GRABBER */
   struct dbmanager_s  *dbmanager;
+  struct event_handler_s *event_handler;
 
   int run; /* prevent a bug if valhalla_run() is called two times */
 };

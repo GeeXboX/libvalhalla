@@ -30,6 +30,7 @@
 #include "dbmanager.h"
 #include "dispatcher.h"
 #include "ondemand.h"
+#include "event_handler.h"
 #include "utils.h"
 #include "logs.h"
 
@@ -61,6 +62,7 @@ valhalla_mrproper (valhalla_t *handle)
     vh_grabber_fifo_get (handle->grabber),
     vh_downloader_fifo_get (handle->downloader),
 #endif /* USE_GRABBER */
+    vh_event_handler_fifo_get (handle->event_handler),
   };
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -121,6 +123,10 @@ valhalla_mrproper (valhalla_t *handle)
         break;
       }
 
+      case ACTION_EH_EVENT:
+        vh_fifo_queue_push (fifo_o, FIFO_QUEUE_PRIORITY_NORMAL, e, data);
+        break;
+
       default:
         break;
       }
@@ -156,6 +162,7 @@ valhalla_wait (valhalla_t *handle)
   vh_grabber_stop (handle->grabber);
   vh_downloader_stop (handle->downloader);
 #endif /* USE_GRABBER */
+  vh_event_handler_stop (handle->event_handler);
 }
 
 static void
@@ -170,6 +177,7 @@ valhalla_force_stop (valhalla_t *handle)
   vh_grabber_stop (handle->grabber);
   vh_downloader_stop (handle->downloader);
 #endif /* USE_GRABBER */
+  vh_event_handler_stop (handle->event_handler);
 
   valhalla_mrproper (handle);
 }
@@ -192,7 +200,10 @@ valhalla_uninit (valhalla_t *handle)
 #ifdef USE_GRABBER
   vh_grabber_uninit (handle->grabber);
   vh_downloader_uninit (handle->downloader);
+#endif /* USE_GRABBER */
+  vh_event_handler_uninit (handle->event_handler);
 
+#if USE_GRABBER
   vh_url_global_uninit ();
 #endif /* USE_GRABBER */
 
@@ -213,6 +224,13 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
     return VALHALLA_ERROR_DEAD;
 
   handle->run = 1;
+
+  if (handle->event_handler)
+  {
+    res = vh_event_handler_run (handle->event_handler, priority);
+    if (res)
+      return VALHALLA_ERROR_THREAD;
+  }
 
   res = vh_scanner_run (handle->scanner, loop, timeout, priority);
   if (res)
@@ -338,7 +356,10 @@ valhalla_verbosity (valhalla_verb_t level)
 
 valhalla_t *
 valhalla_init (const char *db,
-               unsigned int parser_nb, int decrapifier, unsigned int commit_int)
+               unsigned int parser_nb, int decrapifier, unsigned int commit_int,
+               void (*od_cb) (const char *path, valhalla_event_t e,
+                              const char *id, void *data),
+               void *od_data)
 {
   static int preinit = 0;
   valhalla_t *handle;
@@ -355,6 +376,13 @@ valhalla_init (const char *db,
 #ifdef USE_GRABBER
   vh_url_global_init ();
 #endif /* USE_GRABBER */
+
+  if (od_cb)
+  {
+    handle->event_handler = vh_event_handler_init (handle, od_cb, od_data);
+    if (!handle->event_handler)
+      goto err;
+  }
 
   handle->dispatcher = vh_dispatcher_init (handle);
   if (!handle->dispatcher)
@@ -401,26 +429,21 @@ valhalla_init (const char *db,
 }
 
 void
-valhalla_ondemand (valhalla_t *handle, const char *file, void *user_data,
-                   void (*cb) (valhalla_t *handle, int e, void *data))
+valhalla_ondemand (valhalla_t *handle, const char *file)
 {
-  ondemand_data_t *od_data;
+  char *odfile;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !file)
     return;
 
-  od_data = calloc (1, sizeof (ondemand_data_t));
-  if (!od_data)
+  odfile = strdup (file);
+  if (!odfile)
     return;
 
-  od_data->file      = strdup (file);
-  od_data->cb        = cb;
-  od_data->user_data = user_data;
-
   vh_ondemand_action_send (handle->ondemand, FIFO_QUEUE_PRIORITY_HIGH,
-                           ACTION_OD_ENGAGE, od_data);
+                           ACTION_OD_ENGAGE, odfile);
 }
 
 /******************************************************************************/

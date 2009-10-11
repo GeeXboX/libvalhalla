@@ -92,6 +92,13 @@ typedef enum valhalla_dl {
   VALHALLA_DL_LAST
 } valhalla_dl_t;
 
+/** \brief Events for valhalla_ondemand() callback. */
+typedef enum valhalla_event {
+  VALHALLA_EVENT_PARSED = 0,  /**< Parsed data available in DB.         */
+  VALHALLA_EVENT_GRABBED,     /**< Grabbed data available in DB.        */
+  VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
+} valhalla_event_t;
+
 /**
  * \name Valhalla Handling.
  * @{
@@ -115,15 +122,30 @@ typedef enum valhalla_dl {
  * updated in one pass. A value between 100 and 200 is a good choice. If the
  * value is <=0, then the default interval is used (128).
  *
+ * Events
+ * ~~~~~~
+ * When \p od_cb is defined, an event is sent for each step with an on demand
+ * query. If an event arrives, the data are really inserted in the DB. The
+ * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
+ * sent before VALHALLA_EVENT_PARSED. VALHALLA_EVENT_GRABBED is sent for each
+ * grabber and \p id is its identifier. Only VALHALLA_EVENT_ENDED is always
+ * sent at the end. If the file is already (completely) inserted in the DB,
+ * only VALHALLA_EVENT_ENDED is sent to the callback.
+ *
  * \param[in] db          Path on the database.
  * \param[in] parser_nb   Number of parsers to create.
  * \param[in] decrapifier Use the decrapifier, !=0 to enable.
  * \param[in] commit_int  File Interval between database commits.
+ * \param[in] od_cb       Callback for ondemand, NULL to ignore.
+ * \param[in] od_data     User data for ondemand callback.
  * \return The handle.
  */
 valhalla_t *valhalla_init (const char *db,
                            unsigned int parser_nb, int decrapifier,
-                           unsigned int commit_int);
+                           unsigned int commit_int,
+                           void (*od_cb) (const char *path, valhalla_event_t e,
+                                          const char *id, void *data),
+                           void *od_data);
 
 /**
  * \brief Uninit an handle.
@@ -274,16 +296,11 @@ void valhalla_wait (valhalla_t *handle);
  * the scanner. This function is non-blocking and it is priority over
  * the files retrieved by the scanner.
  *
- * TODO: \p userdata and \p cb are ignored (event handling not implemented).
- *
  * \warning This function can be used only after valhalla_run()!
  * \param[in] handle      Handle on the scanner.
  * \param[in] file        Target.
- * \param[in] user_data   User data for callback.
- * \param[in] cb          Callback where send events.
  */
-void valhalla_ondemand (valhalla_t *handle, const char *file, void *user_data,
-                        void (*cb) (valhalla_t *handle, int e, void *data));
+void valhalla_ondemand (valhalla_t *handle, const char *file);
 
 /**
  * @}

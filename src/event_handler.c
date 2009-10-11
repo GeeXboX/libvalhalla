@@ -1,0 +1,228 @@
+/*
+ * GeeXboX Valhalla: tiny media scanner API.
+ * Copyright (C) 2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ *
+ * This file is part of libvalhalla.
+ *
+ * libvalhalla is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * libvalhalla is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with libvalhalla; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "valhalla.h"
+#include "valhalla_internals.h"
+#include "fifo_queue.h"
+#include "logs.h"
+#include "thread_utils.h"
+#include "event_handler.h"
+
+struct event_handler_s {
+  valhalla_t   *valhalla;
+  pthread_t     thread;
+  fifo_queue_t *fifo;
+  int           priority;
+
+  void (*cb) (const char *file, valhalla_event_t e, const char *id, void *data);
+  void  *data;
+
+  int             run;
+  pthread_mutex_t mutex_run;
+};
+
+
+static inline int
+event_handler_is_stopped (event_handler_t *event_handler)
+{
+  int run;
+  pthread_mutex_lock (&event_handler->mutex_run);
+  run = event_handler->run;
+  pthread_mutex_unlock (&event_handler->mutex_run);
+  return !run;
+}
+
+static void *
+event_handler_thread (void *arg)
+{
+  int res;
+  int e;
+  void *data = NULL;
+  event_handler_data_t *edata;
+  event_handler_t *event_handler = arg;
+
+  if (!event_handler)
+    pthread_exit (NULL);
+
+  vh_setpriority (event_handler->priority);
+
+  do
+  {
+    e = ACTION_NO_OPERATION;
+    data = NULL;
+
+    res = vh_fifo_queue_pop (event_handler->fifo, &e, &data);
+    if (res || e == ACTION_NO_OPERATION)
+      continue;
+
+    if (e == ACTION_KILL_THREAD)
+      break;
+
+    if (e != ACTION_EH_EVENT || !data)
+      continue;
+
+    edata = data;
+
+    /* Send to the front-end. */
+    event_handler->cb (edata->file, edata->e, edata->id, event_handler->data);
+
+    free (edata->file);
+    free (edata);
+  }
+  while (!event_handler_is_stopped (event_handler));
+
+  pthread_exit (NULL);
+}
+
+int
+vh_event_handler_run (event_handler_t *event_handler, int priority)
+{
+  int res = EVENT_HANDLER_SUCCESS;
+  pthread_attr_t attr;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return EVENT_HANDLER_ERROR_HANDLER;
+
+  event_handler->priority = priority;
+  event_handler->run      = 1;
+
+  pthread_attr_init (&attr);
+  pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+
+  res = pthread_create (&event_handler->thread,
+                        &attr, event_handler_thread, event_handler);
+  if (res)
+  {
+    res = EVENT_HANDLER_ERROR_THREAD;
+    event_handler->run = 0;
+  }
+
+  pthread_attr_destroy (&attr);
+  return res;
+}
+
+fifo_queue_t *
+vh_event_handler_fifo_get (event_handler_t *event_handler)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return NULL;
+
+  return event_handler->fifo;
+}
+
+void
+vh_event_handler_stop (event_handler_t *event_handler)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return;
+
+  if (event_handler_is_stopped (event_handler))
+    return;
+
+  pthread_mutex_lock (&event_handler->mutex_run);
+  event_handler->run = 0;
+  pthread_mutex_unlock (&event_handler->mutex_run);
+
+  vh_fifo_queue_push (event_handler->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  pthread_join (event_handler->thread, NULL);
+}
+
+void
+vh_event_handler_uninit (event_handler_t *event_handler)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return;
+
+  vh_fifo_queue_free (event_handler->fifo);
+  pthread_mutex_destroy (&event_handler->mutex_run);
+
+  free (event_handler);
+}
+
+event_handler_t *
+vh_event_handler_init (valhalla_t *handle,
+                       void (*cb) (const char *file, valhalla_event_t e,
+                                   const char *id, void *data),
+                       void *data)
+{
+  event_handler_t *event_handler;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !cb)
+    return NULL;
+
+  event_handler = calloc (1, sizeof (event_handler_t));
+  if (!event_handler)
+    return NULL;
+
+  event_handler->fifo = vh_fifo_queue_new ();
+  if (!event_handler->fifo)
+    goto err;
+
+  event_handler->valhalla = handle;
+  event_handler->cb       = cb;
+  event_handler->data     = data;
+
+  pthread_mutex_init (&event_handler->mutex_run, NULL);
+
+  return event_handler;
+
+ err:
+  vh_event_handler_uninit (event_handler);
+  return NULL;
+}
+
+void
+vh_event_handler_send (event_handler_t *event_handler,
+                       const char *file, valhalla_event_t e, const char *id)
+{
+  event_handler_data_t *edata;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return;
+
+  edata = calloc (1, sizeof (event_handler_data_t));
+  if (!edata)
+    return;
+
+  edata->file = strdup (file);
+  edata->e    = e;
+  edata->id   = id;
+
+  vh_fifo_queue_push (event_handler->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENT, edata);
+}

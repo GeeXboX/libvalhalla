@@ -93,8 +93,8 @@ ondemand_thread (void *arg)
   int e;
   unsigned int i = 0;
   void *data = NULL;
+  char *file;
   file_data_t *fdata;
-  ondemand_data_t *od_data;
   ondemand_t *ondemand = arg;
 
   struct {
@@ -146,7 +146,7 @@ ondemand_thread (void *arg)
       continue;
 
     fdata   = NULL;
-    od_data = data;
+    file  = data;
 
     /*
      * On-demand engaged, all threads must be in pause mode.
@@ -162,7 +162,7 @@ ondemand_thread (void *arg)
     for (i = 0; i < ARRAY_NB_ELEMENTS (pause) && !fdata; i++)
     {
       fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
-      fdata = vh_fifo_queue_search (queue, od_data->file, ondemand_cmp_fct);
+      fdata = vh_fifo_queue_search (queue, file, ondemand_cmp_fct);
     }
 
     /* Already in queues? */
@@ -174,19 +174,18 @@ ondemand_thread (void *arg)
       for (i = 0; i < ARRAY_NB_ELEMENTS (pause); i++)
       {
         fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
-        vh_fifo_queue_moveup (queue, od_data->file, ondemand_cmp_fct);
+        vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
       }
     }
     /* Check if the file is available and consistent. */
-    else if (!lstat (od_data->file, &st)
+    else if (!lstat (file, &st)
              && S_ISREG (st.st_mode)
-             && !vh_scanner_suffix_cmp (ondemand->valhalla->scanner,
-                                        od_data->file))
+             && !vh_scanner_suffix_cmp (ondemand->valhalla->scanner, file))
     {
       int outofpath =
-        !!vh_scanner_path_cmp (ondemand->valhalla->scanner, od_data->file);
+        !!vh_scanner_path_cmp (ondemand->valhalla->scanner, file);
 
-      fdata = vh_file_data_new (od_data->file, st.st_mtime, outofpath, 1,
+      fdata = vh_file_data_new (file, st.st_mtime, outofpath, 1,
                                 FIFO_QUEUE_PRIORITY_HIGH, STEP_PARSING);
       if (fdata)
         vh_dbmanager_action_send (ondemand->valhalla->dbmanager,
@@ -195,10 +194,9 @@ ondemand_thread (void *arg)
     else
       valhalla_log (VALHALLA_MSG_WARNING,
                     "[%s] File %s unavailable or unsupported",
-                    __FUNCTION__, od_data->file);
+                    __FUNCTION__, file);
 
-    free (od_data->file);
-    free (od_data);
+    free (file);
 
     /* Wake up threads */
     for (i = 0; i < ARRAY_NB_ELEMENTS (pause); i++)

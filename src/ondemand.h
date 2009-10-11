@@ -32,11 +32,6 @@ enum ondemand_errno {
   ONDEMAND_SUCCESS       =  0,
 };
 
-typedef struct ondemand_data_s {
-  char  *file;
-  void (*cb) (valhalla_t *handle, int e, void *data);
-  void  *user_data;
-} ondemand_data_t;
 
 int vh_ondemand_run (ondemand_t *ondemand, int priority);
 fifo_queue_t *vh_ondemand_fifo_get (ondemand_t *ondemand);
