@@ -357,7 +357,7 @@ valhalla_verbosity (valhalla_verb_t level)
 valhalla_t *
 valhalla_init (const char *db,
                unsigned int parser_nb, int decrapifier, unsigned int commit_int,
-               void (*od_cb) (const char *path, valhalla_event_t e,
+               void (*od_cb) (const char *file, valhalla_event_t e,
                               const char *id, void *data),
                void *od_data)
 {
