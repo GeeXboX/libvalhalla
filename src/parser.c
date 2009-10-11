@@ -302,12 +302,13 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 #endif /* 0 */
 
   /* if necessary, use the filename as title */
-  if (parser->decrapifier && vh_metadata_get (meta, "title", 0, &title_tag))
+  if (parser->decrapifier
+      && vh_metadata_get (meta, VALHALLA_METADATA_TITLE, 0, &title_tag))
   {
     char *title = parser_decrapify (parser, file);
     if (title)
     {
-      vh_metadata_add_auto (&meta, "title", title);
+      vh_metadata_add_auto (&meta, VALHALLA_METADATA_TITLE, title);
       free (title);
     }
   }
