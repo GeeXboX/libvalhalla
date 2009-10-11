@@ -49,15 +49,15 @@ typedef enum processing_step {
 } processing_step_t;
 
 struct valhalla_s {
-  struct ondemand_s   *ondemand;
-  struct scanner_s    *scanner;
-  struct dispatcher_s *dispatcher;
-  struct parser_s     *parser;
+  struct ondemand_s      *ondemand;
+  struct scanner_s       *scanner;
+  struct dispatcher_s    *dispatcher;
+  struct parser_s        *parser;
 #ifdef USE_GRABBER
-  struct grabber_s    *grabber;
-  struct downloader_s *downloader;
+  struct grabber_s       *grabber;
+  struct downloader_s    *downloader;
 #endif /* USE_GRABBER */
-  struct dbmanager_s  *dbmanager;
+  struct dbmanager_s     *dbmanager;
   struct event_handler_s *event_handler;
 
   int run; /* prevent a bug if valhalla_run() is called two times */

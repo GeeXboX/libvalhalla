@@ -145,7 +145,7 @@ ondemand_thread (void *arg)
     if (e != ACTION_OD_ENGAGE)
       continue;
 
-    fdata   = NULL;
+    fdata = NULL;
     file  = data;
 
     /*
