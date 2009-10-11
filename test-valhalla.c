@@ -186,7 +186,7 @@ main (int argc, char **argv)
 
   valhalla_verbosity (verbosity);
 
-  handle = valhalla_init (database, parser_nb, decrap, commit);
+  handle = valhalla_init (database, parser_nb, decrap, commit, NULL, NULL);
   if (!handle)
     return -1;
 
