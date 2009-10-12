@@ -92,7 +92,7 @@ struct grabber_s {
 };
 
 /*
- * The first grabber is the prioritate.
+ * The first grabber is priority.
  */
 static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
