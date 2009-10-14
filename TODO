@@ -13,6 +13,7 @@
         available in the DB, the file must be removed (covers, etc, ...).
 
  * Scanner
+     -> Add optional support for inotify.
      -> Implement a system to add filters (to ignore some directories)
         for a path.
      -> Rewrite a bit the scanner in order to support several scanners
