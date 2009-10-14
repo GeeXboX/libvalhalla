@@ -92,7 +92,7 @@ struct grabber_s {
 };
 
 /*
- * The first grabber is priority.
+ * The first grabber has the highest priority.
  */
 static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
@@ -460,7 +460,7 @@ grabber_childs_add (grabber_list_t **list, grabber_list_t *child)
 }
 
 /*
- * NOTE: the first grabber in the linked list is considered as the prioritate.
+ * NOTE: the first grabber in the linked list is considered as top priority.
  *       grabber_childs_add() adds the grabber always at the end of the list.
  */
 static grabber_list_t *
