@@ -77,7 +77,7 @@ vh_log (valhalla_verb_t level,
       const char *file, int line, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
-  static const char const *c[] = {
+  static const char *const c[] = {
     [VALHALLA_MSG_VERBOSE]  = F_BLUE,
     [VALHALLA_MSG_INFO]     = F_GREEN,
     [VALHALLA_MSG_WARNING]  = F_YELLOW,
@@ -85,7 +85,7 @@ vh_log (valhalla_verb_t level,
     [VALHALLA_MSG_CRITICAL] = B_RED,
   };
 #endif /* USE_LOGCOLOR */
-  static const char const *l[] = {
+  static const char *const l[] = {
     [VALHALLA_MSG_VERBOSE]  = "Verb",
     [VALHALLA_MSG_INFO]     = "Info",
     [VALHALLA_MSG_WARNING]  = "Warn",
