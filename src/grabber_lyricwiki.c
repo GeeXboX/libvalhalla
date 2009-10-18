@@ -37,10 +37,11 @@
 
 #define MAX_URL_SIZE      1024
 
-#define LYRICWIKI_HOSTNAME     "lyricwiki.org"
-#define LYRICWIKI_QUERY_SEARCH "http://%s/api.php?artist=%s&song=%s&fmt=xml"
+#define LYRICWIKI_HOSTNAME     "lyrics.wikia.com"
+#define LYRICWIKI_QUERY_SEARCH "http://%s/api.php?func=getSong&artist=%s&song=%s&fmt=xml"
 
-#define LYRICWIKI_BOX_START    "<div class='lyricbox' >"
+#define LYRICWIKI_BOX_START    "<div class='lyricbox'>"
+#define LYRICWIKI_BOX_OFFSET   "</div>"
 #define LYRICWIKI_BOX_END      "<p>"
 
 typedef struct grabber_lyricwiki_s {
@@ -84,7 +85,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
 
   if (html)
   {
-    char *start, *end, *txt, *lyrics;
+    char *start, *offset, *end, *txt, *lyrics;
     int len;
     unsigned int i, j;
 
@@ -101,15 +102,22 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
       return -1;
     }
 
-    end = strstr (start + strlen (LYRICWIKI_BOX_START), LYRICWIKI_BOX_END);
+    offset = strstr (start, LYRICWIKI_BOX_OFFSET);
+    if (!offset)
+    {
+      free (udata.buffer);
+      return -1;
+    }
+
+    end = strstr (offset + strlen (LYRICWIKI_BOX_OFFSET), LYRICWIKI_BOX_END);
     if (!end)
     {
       free (udata.buffer);
       return -1;
     }
 
-    len = strlen (start) - strlen (LYRICWIKI_BOX_START) - strlen (end);
-    txt = strndup (start + strlen (LYRICWIKI_BOX_START), len);
+    len = strlen (offset) - strlen (LYRICWIKI_BOX_OFFSET) - strlen (end);
+    txt = strndup (offset + strlen (LYRICWIKI_BOX_OFFSET), len);
 
     lyrics = calloc (1, strlen (txt));
     for (i = 0, j = 0; i < strlen (txt); i++)
