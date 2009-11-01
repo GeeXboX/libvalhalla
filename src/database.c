@@ -684,17 +684,20 @@ vh_database_file_checked_clear (database_t *database)
 }
 
 const char *
-vh_database_file_get_checked_clear (database_t *database)
+vh_database_file_get_checked_clear (database_t *database, int rst)
 {
-  int res;
+  int res = SQLITE_DONE;
 
+  if (!rst)
+  {
   res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
   if (res == SQLITE_ROW)
     return (const char *) sqlite3_column_text (
                             STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR), 0);
+  }
 
   sqlite3_reset (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
-  if (res != SQLITE_DONE)
+  if (res != SQLITE_DONE && res != SQLITE_ROW)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 
   return NULL;

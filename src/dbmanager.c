@@ -237,6 +237,7 @@ dbmanager_thread (void *arg)
     };
     int stats_delete   = 0;
     int stats_cleanup  = 0;
+    int rst = 0;
 
     /* Clear all checked__ files */
     vh_database_file_checked_clear (dbmanager->database);
@@ -250,7 +251,9 @@ dbmanager_thread (void *arg)
      * The entry is deleted otherwise.
      */
     vh_database_begin_transaction (dbmanager->database);
-    while ((file = vh_database_file_get_checked_clear (dbmanager->database)))
+    while ((file =
+              vh_database_file_get_checked_clear (dbmanager->database, rst)))
+    {
       if (vh_scanner_path_cmp (dbmanager->valhalla->scanner, file)
           || vh_scanner_suffix_cmp (dbmanager->valhalla->scanner, file)
           || access (file, R_OK))
@@ -262,6 +265,10 @@ dbmanager_thread (void *arg)
         vh_database_file_data_delete (dbmanager->database, file);
         stats_delete++;
       }
+
+      if (dbmanager_is_stopped (dbmanager))
+        rst = 1;
+    }
     vh_database_end_transaction (dbmanager->database);
 
     /* Clean all relations */
