@@ -690,10 +690,10 @@ vh_database_file_get_checked_clear (database_t *database, int rst)
 
   if (!rst)
   {
-  res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
-  if (res == SQLITE_ROW)
-    return (const char *) sqlite3_column_text (
-                            STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR), 0);
+    res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
+    if (res == SQLITE_ROW)
+      return (const char *) sqlite3_column_text (
+                              STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR), 0);
   }
 
   sqlite3_reset (STMT_GET (STMT_SELECT_FILE_CHECKED_CLEAR));
