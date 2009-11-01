@@ -343,6 +343,21 @@ vh_dbmanager_pause (dbmanager_t *dbmanager)
 }
 
 void
+vh_dbmanager_wait (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  vh_fifo_queue_push (dbmanager->fifo,
+                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  pthread_join (dbmanager->thread, NULL);
+
+  dbmanager->run = 0;
+}
+
+void
 vh_dbmanager_stop (dbmanager_t *dbmanager)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);

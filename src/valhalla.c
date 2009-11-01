@@ -155,7 +155,7 @@ valhalla_wait (valhalla_t *handle)
   vh_scanner_wait (handle->scanner);
 
   vh_ondemand_stop (handle->ondemand);
-  vh_dbmanager_stop (handle->dbmanager);
+  vh_dbmanager_wait (handle->dbmanager);
   vh_dispatcher_stop (handle->dispatcher);
   vh_parser_stop (handle->parser);
 #ifdef USE_GRABBER

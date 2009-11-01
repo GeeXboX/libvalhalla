@@ -36,6 +36,7 @@ enum dbmanager_errno {
 int vh_dbmanager_run (dbmanager_t *dbmanager, int priority);
 void vh_dbmanager_pause (dbmanager_t *dbmanager);
 fifo_queue_t *vh_dbmanager_fifo_get (dbmanager_t *dbmanager);
+void vh_dbmanager_wait (dbmanager_t *dbmanager);
 void vh_dbmanager_stop (dbmanager_t *dbmanager);
 void vh_dbmanager_uninit (dbmanager_t *dbmanager);
 dbmanager_t *vh_dbmanager_init (valhalla_t *handle,
