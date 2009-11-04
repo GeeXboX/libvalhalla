@@ -41,7 +41,7 @@ typedef struct event_handler_data_s {
 
 int vh_event_handler_run (event_handler_t *event_handler, int priority);
 fifo_queue_t *vh_event_handler_fifo_get (event_handler_t *event_handler);
-void vh_event_handler_stop (event_handler_t *event_handler);
+void vh_event_handler_stop (event_handler_t *event_handler, int f);
 void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         void (*cb) (const char *file,

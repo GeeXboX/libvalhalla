@@ -35,7 +35,7 @@ enum dispatcher_errno {
 int vh_dispatcher_run (dispatcher_t *dispatcher, int priority);
 void vh_dispatcher_pause (dispatcher_t *dispatcher);
 fifo_queue_t *vh_dispatcher_fifo_get (dispatcher_t *dispatcher);
-void vh_dispatcher_stop (dispatcher_t *dispatcher);
+void vh_dispatcher_stop (dispatcher_t *dispatcher, int f);
 void vh_dispatcher_uninit (dispatcher_t *dispatcher);
 dispatcher_t *vh_dispatcher_init (valhalla_t *handle);
 

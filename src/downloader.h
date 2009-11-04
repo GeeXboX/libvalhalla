@@ -36,7 +36,7 @@ enum downloader_errno {
 int vh_downloader_run (downloader_t *downloader, int priority);
 void vh_downloader_pause (downloader_t *downloader);
 fifo_queue_t *vh_downloader_fifo_get (downloader_t *downloader);
-void vh_downloader_stop (downloader_t *downloader);
+void vh_downloader_stop (downloader_t *downloader, int f);
 void vh_downloader_uninit (downloader_t *downloader);
 downloader_t *vh_downloader_init (valhalla_t *handle);
 

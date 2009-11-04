@@ -247,7 +247,7 @@ vh_ondemand_fifo_get (ondemand_t *ondemand)
 }
 
 void
-vh_ondemand_stop (ondemand_t *ondemand)
+vh_ondemand_stop (ondemand_t *ondemand, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -257,12 +257,17 @@ vh_ondemand_stop (ondemand_t *ondemand)
   if (ondemand_is_stopped (ondemand))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&ondemand->mutex_run);
   ondemand->run = 0;
   pthread_mutex_unlock (&ondemand->mutex_run);
 
   vh_fifo_queue_push (ondemand->fifo,
                       FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  }
+
+  if (f & STOP_FLAG_WAIT)
   pthread_join (ondemand->thread, NULL);
 }
 

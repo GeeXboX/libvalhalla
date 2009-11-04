@@ -385,7 +385,7 @@ vh_scanner_fifo_get (scanner_t *scanner)
 }
 
 void
-vh_scanner_stop (scanner_t *scanner)
+vh_scanner_stop (scanner_t *scanner, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -395,6 +395,8 @@ vh_scanner_stop (scanner_t *scanner)
   if (scanner_is_stopped (scanner))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&scanner->mutex_run);
   scanner->run = 0;
   pthread_mutex_unlock (&scanner->mutex_run);
@@ -402,6 +404,9 @@ vh_scanner_stop (scanner_t *scanner)
   vh_fifo_queue_push (scanner->fifo,
                       FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   vh_timer_thread_stop (scanner->timer);
+  }
+
+  if (f & STOP_FLAG_WAIT)
   pthread_join (scanner->thread, NULL);
 }
 

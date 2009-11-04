@@ -196,7 +196,7 @@ vh_downloader_pause (downloader_t *downloader)
 }
 
 void
-vh_downloader_stop (downloader_t *downloader)
+vh_downloader_stop (downloader_t *downloader, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -206,12 +206,17 @@ vh_downloader_stop (downloader_t *downloader)
   if (downloader_is_stopped (downloader))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&downloader->mutex_run);
   downloader->run = 0;
   pthread_mutex_unlock (&downloader->mutex_run);
 
   vh_fifo_queue_push (downloader->fifo,
                       FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  }
+
+  if (f & STOP_FLAG_WAIT)
   pthread_join (downloader->thread, NULL);
 }
 

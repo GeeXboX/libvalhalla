@@ -35,7 +35,7 @@ enum ondemand_errno {
 
 int vh_ondemand_run (ondemand_t *ondemand, int priority);
 fifo_queue_t *vh_ondemand_fifo_get (ondemand_t *ondemand);
-void vh_ondemand_stop (ondemand_t *ondemand);
+void vh_ondemand_stop (ondemand_t *ondemand, int f);
 void vh_ondemand_uninit (ondemand_t *ondemand);
 ondemand_t *vh_ondemand_init (valhalla_t *handle);
 

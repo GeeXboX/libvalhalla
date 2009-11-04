@@ -147,6 +147,8 @@ valhalla_mrproper (valhalla_t *handle)
 void
 valhalla_wait (valhalla_t *handle)
 {
+  const int f = STOP_FLAG_REQUEST | STOP_FLAG_WAIT;
+
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
@@ -154,30 +156,37 @@ valhalla_wait (valhalla_t *handle)
 
   vh_scanner_wait (handle->scanner);
 
-  vh_ondemand_stop (handle->ondemand);
+  vh_ondemand_stop (handle->ondemand, f);
   vh_dbmanager_wait (handle->dbmanager);
-  vh_dispatcher_stop (handle->dispatcher);
-  vh_parser_stop (handle->parser);
+  vh_dispatcher_stop (handle->dispatcher, f);
+  vh_parser_stop (handle->parser, f);
 #ifdef USE_GRABBER
-  vh_grabber_stop (handle->grabber);
-  vh_downloader_stop (handle->downloader);
+  vh_grabber_stop (handle->grabber, f);
+  vh_downloader_stop (handle->downloader, f);
 #endif /* USE_GRABBER */
-  vh_event_handler_stop (handle->event_handler);
+  vh_event_handler_stop (handle->event_handler, f);
 }
 
 static void
 valhalla_force_stop (valhalla_t *handle)
 {
-  vh_ondemand_stop (handle->ondemand);
-  vh_scanner_stop (handle->scanner);
-  vh_dbmanager_stop (handle->dbmanager);
-  vh_dispatcher_stop (handle->dispatcher);
-  vh_parser_stop (handle->parser);
+  unsigned int i;
+
+  for (i = 0; i < 2; i++)
+  {
+    int f = !i ? STOP_FLAG_REQUEST : STOP_FLAG_WAIT;
+
+    vh_ondemand_stop (handle->ondemand, f);
+    vh_scanner_stop (handle->scanner, f);
+    vh_dbmanager_stop (handle->dbmanager, f);
+    vh_dispatcher_stop (handle->dispatcher, f);
+    vh_parser_stop (handle->parser, f);
 #ifdef USE_GRABBER
-  vh_grabber_stop (handle->grabber);
-  vh_downloader_stop (handle->downloader);
+    vh_grabber_stop (handle->grabber, f);
+    vh_downloader_stop (handle->downloader, f);
 #endif /* USE_GRABBER */
-  vh_event_handler_stop (handle->event_handler);
+    vh_event_handler_stop (handle->event_handler, f);
+  }
 
   valhalla_mrproper (handle);
 }

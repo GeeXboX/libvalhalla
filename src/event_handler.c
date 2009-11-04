@@ -137,7 +137,7 @@ vh_event_handler_fifo_get (event_handler_t *event_handler)
 }
 
 void
-vh_event_handler_stop (event_handler_t *event_handler)
+vh_event_handler_stop (event_handler_t *event_handler, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -147,12 +147,17 @@ vh_event_handler_stop (event_handler_t *event_handler)
   if (event_handler_is_stopped (event_handler))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&event_handler->mutex_run);
   event_handler->run = 0;
   pthread_mutex_unlock (&event_handler->mutex_run);
 
   vh_fifo_queue_push (event_handler->fifo,
                       FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  }
+
+  if (f & STOP_FLAG_WAIT)
   pthread_join (event_handler->thread, NULL);
 }
 

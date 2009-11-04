@@ -390,7 +390,7 @@ vh_grabber_pause (grabber_t *grabber)
 }
 
 void
-vh_grabber_stop (grabber_t *grabber)
+vh_grabber_stop (grabber_t *grabber, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -400,6 +400,8 @@ vh_grabber_stop (grabber_t *grabber)
   if (grabber_is_stopped (grabber))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&grabber->mutex_run);
   grabber->run = 0;
   pthread_mutex_unlock (&grabber->mutex_run);
@@ -412,7 +414,9 @@ vh_grabber_stop (grabber_t *grabber)
   if (grabber->sem_grabber)
     sem_post (grabber->sem_grabber);
   pthread_mutex_unlock (&grabber->mutex_grabber);
+  }
 
+  if (f & STOP_FLAG_WAIT)
   pthread_join (grabber->thread, NULL);
 }
 

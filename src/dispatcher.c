@@ -241,7 +241,7 @@ vh_dispatcher_pause (dispatcher_t *dispatcher)
 }
 
 void
-vh_dispatcher_stop (dispatcher_t *dispatcher)
+vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
@@ -251,12 +251,17 @@ vh_dispatcher_stop (dispatcher_t *dispatcher)
   if (dispatcher_is_stopped (dispatcher))
     return;
 
+  if (f & STOP_FLAG_REQUEST)
+  {
   pthread_mutex_lock (&dispatcher->mutex_run);
   dispatcher->run = 0;
   pthread_mutex_unlock (&dispatcher->mutex_run);
 
   vh_fifo_queue_push (dispatcher->fifo,
                       FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+  }
+
+  if (f & STOP_FLAG_WAIT)
   pthread_join (dispatcher->thread, NULL);
 }
 

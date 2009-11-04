@@ -39,7 +39,7 @@ void vh_grabber_pause (grabber_t *grabber);
 fifo_queue_t *vh_grabber_fifo_get (grabber_t *grabber);
 void vh_grabber_state_set (grabber_t *grabber, const char *id, int enable);
 const char *vh_grabber_list_get (grabber_t *grabber, const char *id);
-void vh_grabber_stop (grabber_t *grabber);
+void vh_grabber_stop (grabber_t *grabber, int f);
 void vh_grabber_uninit (grabber_t *grabber);
 grabber_t *vh_grabber_init (valhalla_t *handle);
 
