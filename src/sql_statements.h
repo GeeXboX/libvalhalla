@@ -405,52 +405,37 @@
 
 #define CLEANUP_META                               \
  "DELETE FROM meta "                               \
- "WHERE meta_id IN ( "                             \
-   "SELECT meta.meta_id "                          \
-   "FROM meta "                                    \
-   "LEFT OUTER JOIN assoc_file_metadata AS assoc " \
-     "ON meta.meta_id = assoc.meta_id "            \
-   "WHERE assoc.meta_id IS NULL "                  \
+ "WHERE meta_id NOT IN ( "                         \
+   "SELECT meta_id "                               \
+   "FROM assoc_file_metadata "                     \
  ");"
 
 #define CLEANUP_DATA                               \
  "DELETE FROM data "                               \
- "WHERE data_id IN ( "                             \
-   "SELECT data.data_id "                          \
-   "FROM data "                                    \
-   "LEFT OUTER JOIN assoc_file_metadata AS assoc " \
-     "ON data.data_id = assoc.data_id "            \
-   "WHERE assoc.data_id IS NULL "                  \
+ "WHERE data_id NOT IN ( "                         \
+   "SELECT data_id "                               \
+   "FROM assoc_file_metadata "                     \
  ");"
 
 #define CLEANUP_GRABBER                            \
  "DELETE FROM grabber "                            \
- "WHERE grabber_id IN ( "                          \
-   "SELECT grabber.grabber_id "                    \
-   "FROM grabber "                                 \
-   "LEFT OUTER JOIN assoc_file_grabber AS assoc "  \
-     "ON grabber.grabber_id = assoc.grabber_id "   \
-   "WHERE assoc.grabber_id IS NULL "               \
+ "WHERE grabber_id NOT IN ( "                      \
+   "SELECT grabber_id "                            \
+   "FROM assoc_file_grabber "                      \
  ");"
 
 #define CLEANUP_ASSOC_FILE_METADATA     \
  "DELETE FROM assoc_file_metadata "     \
- "WHERE file_id IN ( "                  \
-   "SELECT assoc.file_id "              \
-   "FROM assoc_file_metadata AS assoc " \
-   "LEFT OUTER JOIN file "              \
-     "ON assoc.file_id = file.file_id " \
-   "WHERE file.file_id IS NULL "        \
+ "WHERE file_id NOT IN ( "              \
+   "SELECT file_id "                    \
+   "FROM file "                         \
  ");"
 
 #define CLEANUP_ASSOC_FILE_GRABBER      \
  "DELETE FROM assoc_file_grabber "      \
- "WHERE file_id IN ( "                  \
-   "SELECT assoc.file_id "              \
-   "FROM assoc_file_grabber AS assoc "  \
-   "LEFT OUTER JOIN file "              \
-     "ON assoc.file_id = file.file_id " \
-   "WHERE file.file_id IS NULL "        \
+ "WHERE file_id NOT IN ( "              \
+   "SELECT file_id "                    \
+   "FROM file "                         \
  ");"
 
 #endif /* VALHALLA_SQL_STATEMENTS_H */
