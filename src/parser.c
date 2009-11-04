@@ -605,18 +605,18 @@ vh_parser_stop (parser_t *parser, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&parser->mutex_run);
-  parser->run = 0;
-  pthread_mutex_unlock (&parser->mutex_run);
+    pthread_mutex_lock (&parser->mutex_run);
+    parser->run = 0;
+    pthread_mutex_unlock (&parser->mutex_run);
 
-  for (i = 0; i < parser->nb; i++)
-    vh_fifo_queue_push (parser->fifo,
-                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    for (i = 0; i < parser->nb; i++)
+      vh_fifo_queue_push (parser->fifo,
+                          FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   }
 
   if (f & STOP_FLAG_WAIT)
-  for (i = 0; i < parser->nb; i++)
-    pthread_join (parser->thread[i], NULL);
+    for (i = 0; i < parser->nb; i++)
+      pthread_join (parser->thread[i], NULL);
 }
 
 void

@@ -208,16 +208,16 @@ vh_downloader_stop (downloader_t *downloader, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&downloader->mutex_run);
-  downloader->run = 0;
-  pthread_mutex_unlock (&downloader->mutex_run);
+    pthread_mutex_lock (&downloader->mutex_run);
+    downloader->run = 0;
+    pthread_mutex_unlock (&downloader->mutex_run);
 
-  vh_fifo_queue_push (downloader->fifo,
-                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (downloader->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   }
 
   if (f & STOP_FLAG_WAIT)
-  pthread_join (downloader->thread, NULL);
+    pthread_join (downloader->thread, NULL);
 }
 
 void

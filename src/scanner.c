@@ -397,17 +397,17 @@ vh_scanner_stop (scanner_t *scanner, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&scanner->mutex_run);
-  scanner->run = 0;
-  pthread_mutex_unlock (&scanner->mutex_run);
+    pthread_mutex_lock (&scanner->mutex_run);
+    scanner->run = 0;
+    pthread_mutex_unlock (&scanner->mutex_run);
 
-  vh_fifo_queue_push (scanner->fifo,
-                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
-  vh_timer_thread_stop (scanner->timer);
+    vh_fifo_queue_push (scanner->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    vh_timer_thread_stop (scanner->timer);
   }
 
   if (f & STOP_FLAG_WAIT)
-  pthread_join (scanner->thread, NULL);
+    pthread_join (scanner->thread, NULL);
 }
 
 void

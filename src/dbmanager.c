@@ -370,16 +370,16 @@ vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&dbmanager->mutex_run);
-  dbmanager->run = 0;
-  pthread_mutex_unlock (&dbmanager->mutex_run);
+    pthread_mutex_lock (&dbmanager->mutex_run);
+    dbmanager->run = 0;
+    pthread_mutex_unlock (&dbmanager->mutex_run);
 
-  vh_fifo_queue_push (dbmanager->fifo,
-                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (dbmanager->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   }
 
   if (f & STOP_FLAG_WAIT)
-  pthread_join (dbmanager->thread, NULL);
+    pthread_join (dbmanager->thread, NULL);
 }
 
 void

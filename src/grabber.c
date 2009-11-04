@@ -402,22 +402,22 @@ vh_grabber_stop (grabber_t *grabber, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&grabber->mutex_run);
-  grabber->run = 0;
-  pthread_mutex_unlock (&grabber->mutex_run);
+    pthread_mutex_lock (&grabber->mutex_run);
+    grabber->run = 0;
+    pthread_mutex_unlock (&grabber->mutex_run);
 
-  vh_fifo_queue_push (grabber->fifo,
-                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (grabber->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
-  /* wake up the thread if this is asleep by dbmanager */
-  pthread_mutex_lock (&grabber->mutex_grabber);
-  if (grabber->sem_grabber)
-    sem_post (grabber->sem_grabber);
-  pthread_mutex_unlock (&grabber->mutex_grabber);
+    /* wake up the thread if this is asleep by dbmanager */
+    pthread_mutex_lock (&grabber->mutex_grabber);
+    if (grabber->sem_grabber)
+      sem_post (grabber->sem_grabber);
+    pthread_mutex_unlock (&grabber->mutex_grabber);
   }
 
   if (f & STOP_FLAG_WAIT)
-  pthread_join (grabber->thread, NULL);
+    pthread_join (grabber->thread, NULL);
 }
 
 void

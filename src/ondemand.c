@@ -259,16 +259,16 @@ vh_ondemand_stop (ondemand_t *ondemand, int f)
 
   if (f & STOP_FLAG_REQUEST)
   {
-  pthread_mutex_lock (&ondemand->mutex_run);
-  ondemand->run = 0;
-  pthread_mutex_unlock (&ondemand->mutex_run);
+    pthread_mutex_lock (&ondemand->mutex_run);
+    ondemand->run = 0;
+    pthread_mutex_unlock (&ondemand->mutex_run);
 
-  vh_fifo_queue_push (ondemand->fifo,
-                      FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    vh_fifo_queue_push (ondemand->fifo,
+                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
   }
 
   if (f & STOP_FLAG_WAIT)
-  pthread_join (ondemand->thread, NULL);
+    pthread_join (ondemand->thread, NULL);
 }
 
 void
