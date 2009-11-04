@@ -200,7 +200,7 @@ valhalla_force_stop (valhalla_t *handle)
 void
 valhalla_uninit (valhalla_t *handle)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  valhalla_log (VALHALLA_MSG_VERBOSE, "%s: begin", __FUNCTION__);
 
   if (!handle)
     return;
@@ -221,6 +221,8 @@ valhalla_uninit (valhalla_t *handle)
 #if USE_GRABBER
   vh_url_global_uninit ();
 #endif /* USE_GRABBER */
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, "%s: end", __FUNCTION__);
 
   free (handle);
 }
