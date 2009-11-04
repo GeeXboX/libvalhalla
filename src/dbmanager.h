@@ -48,6 +48,9 @@ void vh_dbmanager_action_send (dbmanager_t *dbmanager,
 void vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data);
 void vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager);
 
+void vh_dbmanager_db_begin_transaction (dbmanager_t *dbmanager);
+void vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager);
+
 int vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                                   valhalla_db_item_t *search,
                                   valhalla_db_restrict_t *restriction,

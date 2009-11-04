@@ -472,6 +472,28 @@ vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
   vh_database_delete_dlcontext (dbmanager->database);
 }
 
+void
+vh_dbmanager_db_begin_transaction (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  vh_database_begin_transaction (dbmanager->database);
+}
+
+void
+vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return;
+
+  vh_database_end_transaction (dbmanager->database);
+}
+
 int
 vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                               valhalla_db_item_t *search,

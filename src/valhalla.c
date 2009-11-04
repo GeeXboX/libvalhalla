@@ -71,6 +71,8 @@ valhalla_mrproper (valhalla_t *handle)
     return;
 
 #ifdef USE_GRABBER
+  vh_dbmanager_db_begin_transaction (handle->dbmanager);
+
   /* remove all previous contexts */
   vh_dbmanager_db_dlcontext_delete (handle->dbmanager);
 #endif /* USE_GRABBER */
@@ -133,6 +135,10 @@ valhalla_mrproper (valhalla_t *handle)
     }
     while (e != ACTION_CLEANUP_END);
   }
+
+#ifdef USE_GRABBER
+  vh_dbmanager_db_end_transaction (handle->dbmanager);
+#endif /* USE_GRABBER */
 
   vh_queue_cleanup (fifo_o);
   vh_fifo_queue_free (fifo_o);
