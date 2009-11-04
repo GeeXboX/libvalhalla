@@ -269,11 +269,12 @@ dbmanager_thread (void *arg)
       if (dbmanager_is_stopped (dbmanager))
         rst = 1;
     }
-    vh_database_end_transaction (dbmanager->database);
 
     /* Clean all relations */
     if (stats.file_update || stats.grab_update || stats_delete)
       stats_cleanup = vh_database_cleanup (dbmanager->database);
+
+    vh_database_end_transaction (dbmanager->database);
 
     /* Statistics */
     valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
