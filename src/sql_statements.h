@@ -403,39 +403,39 @@
 
 /* Cleanup */
 
-#define CLEANUP_META                               \
- "DELETE FROM meta "                               \
- "WHERE meta_id NOT IN ( "                         \
-   "SELECT meta_id "                               \
-   "FROM assoc_file_metadata "                     \
+#define CLEANUP_META                \
+ "DELETE FROM meta "                \
+ "WHERE meta_id NOT IN ( "          \
+   "SELECT meta_id "                \
+   "FROM assoc_file_metadata "      \
  ");"
 
-#define CLEANUP_DATA                               \
- "DELETE FROM data "                               \
- "WHERE data_id NOT IN ( "                         \
-   "SELECT data_id "                               \
-   "FROM assoc_file_metadata "                     \
+#define CLEANUP_DATA                \
+ "DELETE FROM data "                \
+ "WHERE data_id NOT IN ( "          \
+   "SELECT data_id "                \
+   "FROM assoc_file_metadata "      \
  ");"
 
-#define CLEANUP_GRABBER                            \
- "DELETE FROM grabber "                            \
- "WHERE grabber_id NOT IN ( "                      \
-   "SELECT grabber_id "                            \
-   "FROM assoc_file_grabber "                      \
+#define CLEANUP_GRABBER             \
+ "DELETE FROM grabber "             \
+ "WHERE grabber_id NOT IN ( "       \
+   "SELECT grabber_id "             \
+   "FROM assoc_file_grabber "       \
  ");"
 
-#define CLEANUP_ASSOC_FILE_METADATA     \
- "DELETE FROM assoc_file_metadata "     \
- "WHERE file_id NOT IN ( "              \
-   "SELECT file_id "                    \
-   "FROM file "                         \
+#define CLEANUP_ASSOC_FILE_METADATA \
+ "DELETE FROM assoc_file_metadata " \
+ "WHERE file_id NOT IN ( "          \
+   "SELECT file_id "                \
+   "FROM file "                     \
  ");"
 
-#define CLEANUP_ASSOC_FILE_GRABBER      \
- "DELETE FROM assoc_file_grabber "      \
- "WHERE file_id NOT IN ( "              \
-   "SELECT file_id "                    \
-   "FROM file "                         \
+#define CLEANUP_ASSOC_FILE_GRABBER  \
+ "DELETE FROM assoc_file_grabber "  \
+ "WHERE file_id NOT IN ( "          \
+   "SELECT file_id "                \
+   "FROM file "                     \
  ");"
 
 #endif /* VALHALLA_SQL_STATEMENTS_H */
