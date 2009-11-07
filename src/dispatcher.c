@@ -45,6 +45,7 @@ struct dispatcher_s {
   fifo_queue_t *fifo;
   int           priority;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -248,10 +249,7 @@ vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
   if (!dispatcher)
     return;
 
-  if (dispatcher_is_stopped (dispatcher))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !dispatcher_is_stopped (dispatcher))
   {
     pthread_mutex_lock (&dispatcher->mutex_run);
     dispatcher->run = 0;
@@ -259,10 +257,14 @@ vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
 
     vh_fifo_queue_push (dispatcher->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    dispatcher->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && dispatcher->wait)
+  {
     pthread_join (dispatcher->thread, NULL);
+    dispatcher->wait = 0;
+  }
 }
 
 void

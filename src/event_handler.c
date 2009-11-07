@@ -39,6 +39,7 @@ struct event_handler_s {
   void (*cb) (const char *file, valhalla_event_t e, const char *id, void *data);
   void  *data;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 };
@@ -144,10 +145,7 @@ vh_event_handler_stop (event_handler_t *event_handler, int f)
   if (!event_handler)
     return;
 
-  if (event_handler_is_stopped (event_handler))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !event_handler_is_stopped (event_handler))
   {
     pthread_mutex_lock (&event_handler->mutex_run);
     event_handler->run = 0;
@@ -155,10 +153,14 @@ vh_event_handler_stop (event_handler_t *event_handler, int f)
 
     vh_fifo_queue_push (event_handler->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    event_handler->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && event_handler->wait)
+  {
     pthread_join (event_handler->thread, NULL);
+    event_handler->wait = 0;
+  }
 }
 
 void

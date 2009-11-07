@@ -52,6 +52,7 @@ struct parser_s {
   int    decrapifier;
   char **bl_list;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -600,10 +601,7 @@ vh_parser_stop (parser_t *parser, int f)
   if (!parser)
     return;
 
-  if (parser_is_stopped (parser))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !parser_is_stopped (parser))
   {
     pthread_mutex_lock (&parser->mutex_run);
     parser->run = 0;
@@ -612,11 +610,15 @@ vh_parser_stop (parser_t *parser, int f)
     for (i = 0; i < parser->nb; i++)
       vh_fifo_queue_push (parser->fifo,
                           FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    parser->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && parser->wait)
+  {
     for (i = 0; i < parser->nb; i++)
       pthread_join (parser->thread[i], NULL);
+    parser->wait = 0;
+  }
 }
 
 void

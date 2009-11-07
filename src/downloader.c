@@ -40,6 +40,7 @@ struct downloader_s {
   fifo_queue_t *fifo;
   int           priority;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -203,10 +204,7 @@ vh_downloader_stop (downloader_t *downloader, int f)
   if (!downloader)
     return;
 
-  if (downloader_is_stopped (downloader))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !downloader_is_stopped (downloader))
   {
     pthread_mutex_lock (&downloader->mutex_run);
     downloader->run = 0;
@@ -214,10 +212,14 @@ vh_downloader_stop (downloader_t *downloader, int f)
 
     vh_fifo_queue_push (downloader->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    downloader->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && downloader->wait)
+  {
     pthread_join (downloader->thread, NULL);
+    downloader->wait = 0;
+  }
 }
 
 void

@@ -44,6 +44,7 @@ struct dbmanager_s {
   fifo_queue_t *fifo;
   int           priority;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -366,10 +367,7 @@ vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
   if (!dbmanager)
     return;
 
-  if (dbmanager_is_stopped (dbmanager))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !dbmanager_is_stopped (dbmanager))
   {
     pthread_mutex_lock (&dbmanager->mutex_run);
     dbmanager->run = 0;
@@ -377,10 +375,14 @@ vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
 
     vh_fifo_queue_push (dbmanager->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    dbmanager->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && dbmanager->wait)
+  {
     pthread_join (dbmanager->thread, NULL);
+    dbmanager->wait = 0;
+  }
 }
 
 void

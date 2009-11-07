@@ -81,6 +81,7 @@ struct grabber_s {
   fifo_queue_t *fifo;
   int           priority;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -397,10 +398,7 @@ vh_grabber_stop (grabber_t *grabber, int f)
   if (!grabber)
     return;
 
-  if (grabber_is_stopped (grabber))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !grabber_is_stopped (grabber))
   {
     pthread_mutex_lock (&grabber->mutex_run);
     grabber->run = 0;
@@ -408,6 +406,7 @@ vh_grabber_stop (grabber_t *grabber, int f)
 
     vh_fifo_queue_push (grabber->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    grabber->wait = 1;
 
     /* wake up the thread if this is asleep by dbmanager */
     pthread_mutex_lock (&grabber->mutex_grabber);
@@ -416,8 +415,11 @@ vh_grabber_stop (grabber_t *grabber, int f)
     pthread_mutex_unlock (&grabber->mutex_grabber);
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && grabber->wait)
+  {
     pthread_join (grabber->thread, NULL);
+    grabber->wait = 0;
+  }
 }
 
 void

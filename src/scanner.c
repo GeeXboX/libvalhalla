@@ -49,6 +49,7 @@ struct scanner_s {
   int           priority;
   int           loop;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 
@@ -392,10 +393,7 @@ vh_scanner_stop (scanner_t *scanner, int f)
   if (!scanner)
     return;
 
-  if (scanner_is_stopped (scanner))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !scanner_is_stopped (scanner))
   {
     pthread_mutex_lock (&scanner->mutex_run);
     scanner->run = 0;
@@ -403,11 +401,15 @@ vh_scanner_stop (scanner_t *scanner, int f)
 
     vh_fifo_queue_push (scanner->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    scanner->wait = 1;
     vh_timer_thread_stop (scanner->timer);
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && scanner->wait)
+  {
     pthread_join (scanner->thread, NULL);
+    scanner->wait = 0;
+  }
 }
 
 void

@@ -47,6 +47,7 @@ struct ondemand_s {
   fifo_queue_t *fifo;
   int           priority;
 
+  int             wait;
   int             run;
   pthread_mutex_t mutex_run;
 };
@@ -254,10 +255,7 @@ vh_ondemand_stop (ondemand_t *ondemand, int f)
   if (!ondemand)
     return;
 
-  if (ondemand_is_stopped (ondemand))
-    return;
-
-  if (f & STOP_FLAG_REQUEST)
+  if (f & STOP_FLAG_REQUEST && !ondemand_is_stopped (ondemand))
   {
     pthread_mutex_lock (&ondemand->mutex_run);
     ondemand->run = 0;
@@ -265,10 +263,14 @@ vh_ondemand_stop (ondemand_t *ondemand, int f)
 
     vh_fifo_queue_push (ondemand->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+    ondemand->wait = 1;
   }
 
-  if (f & STOP_FLAG_WAIT)
+  if (f & STOP_FLAG_WAIT && ondemand->wait)
+  {
     pthread_join (ondemand->thread, NULL);
+    ondemand->wait = 0;
+  }
 }
 
 void
