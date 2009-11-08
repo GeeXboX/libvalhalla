@@ -997,8 +997,7 @@ vh_database_init (const char *path)
   {
     valhalla_log (VALHALLA_MSG_ERROR,
                   "Can't open database: %s", sqlite3_errmsg (database->db));
-    sqlite3_close (database->db);
-    return NULL;
+    goto err;
   }
 
   database->path = strdup (path);
