@@ -981,6 +981,13 @@ vh_database_init (const char *path)
   if (!path)
     return NULL;
 
+  if (sqlite3_threadsafe () != 1)
+  {
+    valhalla_log (VALHALLA_MSG_ERROR,
+                  "SQLite3 is not compiled with serialized threading mode!");
+    return NULL;
+  }
+
   database = calloc (1, sizeof (database_t));
   if (!database)
     return NULL;
