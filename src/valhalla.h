@@ -122,8 +122,8 @@ typedef enum valhalla_event {
  * updated in one pass. A value between 100 and 200 is a good choice. If the
  * value is <=0, then the default interval is used (128).
  *
- * Events
- * ~~~~~~
+ * \b Events
+ *
  * When \p od_cb is defined, an event is sent for each step with an on demand
  * query. If an event arrives, the data are really inserted in the DB. The
  * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
