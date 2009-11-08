@@ -43,6 +43,7 @@ typedef struct grabber_local_s {
   /* unused */
 } grabber_local_t;
 
+
 static char *
 grabber_local_get (const char *filename)
 {

@@ -47,7 +47,7 @@ typedef struct grabber_allocine_s {
 
 static int
 grabber_allocine_get (url_t *handler, file_data_t *fdata,
-                    const char *keywords, char *escaped_keywords)
+                      const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
