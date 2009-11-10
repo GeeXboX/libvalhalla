@@ -488,11 +488,17 @@ void
 vh_scanner_suffix_add (scanner_t *scanner, const char *suffix)
 {
   int n;
+  char *const *it;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
+
+  /* check if the suffix is already in the list */
+  for (it = scanner->suffix; it && *it; it++)
+    if (!strcasecmp (*it, suffix))
+      return;
 
   n = vh_get_list_length (scanner->suffix) + 1;
 
