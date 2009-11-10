@@ -553,11 +553,17 @@ void
 vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 {
   int n;
+  char *const *it;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser || !parser->decrapifier)
     return;
+
+  /* check if the keyword is already in the list */
+  for (it = parser->bl_list; it && *it; it++)
+    if (!strcasecmp (*it, keyword))
+      return;
 
   n = vh_get_list_length (parser->bl_list) + 1;
   parser->bl_list =
