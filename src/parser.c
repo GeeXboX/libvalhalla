@@ -556,7 +556,7 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!parser || !parser->decrapifier || !keyword)
+  if (!parser || !parser->decrapifier)
     return;
 
   n = vh_get_list_length (parser->bl_list) + 1;
