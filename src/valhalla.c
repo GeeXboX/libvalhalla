@@ -319,7 +319,8 @@ void
 valhalla_downloader_dest_set (valhalla_t *handle,
                               valhalla_dl_t dl, const char *dst)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : (%i) %s", __FUNCTION__, dl, dst);
+  valhalla_log (VALHALLA_MSG_VERBOSE,
+                "%s : (%i) %s", __FUNCTION__, dl, dst ? dst : "?");
 
   if (!handle || !dst)
     return;
@@ -335,7 +336,8 @@ valhalla_downloader_dest_set (valhalla_t *handle,
 void
 valhalla_grabber_state_set (valhalla_t *handle, const char *id, int enable)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  valhalla_log (VALHALLA_MSG_VERBOSE,
+                "%s : %s (%i)", __FUNCTION__, id ? id : "?", enable);
 
   if (!handle || !id)
     return;
@@ -351,7 +353,7 @@ valhalla_grabber_state_set (valhalla_t *handle, const char *id, int enable)
 const char *
 valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, id ? id : "");
 
   if (!handle)
     return NULL;
