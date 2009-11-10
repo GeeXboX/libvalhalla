@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <!--
+      This web site is (c) 2009 Mathieu Schroeter
+
+      Original copyright :
+      uShare web site is (c) 2005-2006 Zores Benjamin
+      HomePage for the uShare UPnP Media Server Project (http://ushare.geexbox.org/)
+      Feel free to get inspiration from this site, as long as you leave this comment here.
+    -->
+  <head>
+    <title>GeeXboX Valhalla (or libvalhalla)</title>
+    <meta http-equiv="Content-language" content="en"/>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+    <meta name="description" content="GeeXboX Valhalla (or libvalhalla)"/>
+    <meta name="author" content="Mathieu Schroeter, Benjamin Zores"/>
+    <meta name="robots" content="index, follow"/>
+    <meta name="keywords" content=""/>
+    <style type="text/css">
+      body {
+        margin : 0;
+        padding: 0;
+        font: small sans-serif;
+      }
+      pre {
+        font-size: medium;
+        color: #ffffff;
+        background-color: #666666;
+        padding: 10px;
+        border: 1px solid #000000;
+        margin: 10px 50px 10px 15px;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 30px;
+      }
+      h2 {
+        margin-top: 35px;
+        margin-bottom: 10px;
+        background-color: #eeeeee;
+        color: #000000;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        font-weight: normal;
+      }
+      h3 {
+        margin-top: 20px;
+        margin-bottom: 5px;
+        margin-left: 12px;
+        font-weight: bold;
+        color: #333333;
+        font-variant: small-caps;
+      }
+      p {
+        margin-left: 12px;
+        margin-right: 12px;
+      }
+      li {
+        list-style-type: square;
+      }
+      fieldset#contents {
+        border: 1px solid #c0c0c0;
+        margin-bottom: 20px;
+        width: 250px;
+      }
+      fieldset#contents a {
+        text-decoration: none;
+        font-weight: bold;
+      }
+      fieldset#contents legend {
+        font-size: 1.2em;
+        font-weight: bold;
+        padding: 0 5px 0 5px;
+        margin-left: 20px;
+      }
+      #page {
+        margin: 20px;
+      }
+      #content {
+        margin-top: 150px;
+      }
+      h2 .top {
+        font-size : 0.5em;
+        float: right;
+      }
+      h2 .top a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page">
+
+    <h1 id="top" style="text-align: center">
+      <tt>GeeXboX Valhalla</tt><br/>
+      A tiny media scanner API.
+    </h1>
+
+    <div style="float: right;margin-right: 20px">
+      <img src="valhalla.png" alt="libvalhalla" title="libvalhalla" />
+    </div>
+
+    <fieldset id="contents">
+      <legend>Contents</legend>
+      <ul>
+        <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Copyright_and_License">Copyright and License</a></li>
+        <li><a href="#Download">Download</a></li>
+        <li><a href="#Feedback">Feedback</a></li>
+        <li><a href="#Links">Links</a></li>
+      </ul>
+    </fieldset>
+
+    <div id="content">
+    <h2 id="Introduction">
+      <span class="top"><a href="#top">top</a></span>
+      Introduction
+    </h2>
+      <p>
+      libvalhalla is a library written in C. It is a media scanner, that stores
+      various information in an <a href="http://www.sqlite.org">SQLite</a>
+      database and relies on <a href="http://www.ffmpeg.org">FFmpeg</a>
+      (libavformat and libavutil) and <a href="http://curl.haxx.se">libcurl</a>.
+      It features many Internet grabbers that allows automatic download of
+      covers, lyrics, informations on media files, tags retrival in video and
+      music files and so on.
+      </p>
+      <p>
+      It is a free software - it is licensed under the terms of the
+      <a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">
+      GNU Lesser General Public License</a> (GNU/LGPL) version 2.1.
+      </p>
+
+    <h2 id="Copyright_and_License">
+      <span class="top"><a href="#top">top</a></span>
+      Copyright and License
+    </h2>
+      <p>
+      libvalhalla is copyright (C) 2009 Mathieu Schroeter, Benjamin Zores.
+      </p>
+      <p>
+      This library is free software; you can redistribute it and/or modify it
+      under the terms of the GNU Lesser General Public License as published by
+      the Free Software Foundation; either version 2.1 of the License, or
+      (at your option) any later version.
+      </p>
+      <p>
+      This library is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+      General Public License for more details.
+      </p>
+      <p>
+      You should have received a copy of the GNU Lesser General Public License
+      along with this library; If not, see &lt;http://www.gnu.org/licenses/&gt;.
+      </p>
+
+    <h2 id="Download">
+      <span class="top"><a href="#top">top</a></span>
+      Download
+    </h2>
+      <p>
+      There's no official public release right now.
+      </p>
+
+      <h3>Development Tree</h3>
+        <p>
+        The latest libvalhalla development tree can be grabbed using
+        <a href="http://www.selenic.com/mercurial/">Mercurial</a>, a revision
+        control system, similar in purpose to tools such as CVS, SCCS, SVN and
+        Arch. It is used to keep track of the changes made to a source tree
+        and to help programmers combine and otherwise manipulate changes made
+        by multiple people or at different times.
+        </p>
+        <p>
+        There are currently 2 ways of accessing the Mercurial tree :
+        via command-line or (to just have a look to some changes on a specific
+        file, for example) You can directly access to the web interface with
+        your browser from :
+        </p>
+        <p>
+        <a href="http://hg.geexbox.org/libvalhalla/">libvalhalla Mercurial</a>
+        </p>
+        <p>
+        In order to access to Mercurial via command line, create and enter a
+        new directory and do the following (be sure that you have installed the
+        mercurial package).<br/>
+        </p>
+        <ul>
+          <li>
+            To get a local copy of the libvalhalla Mercurial repository :
+            <pre>hg clone http://hg.geexbox.org/libvalhalla</pre>
+          </li>
+          <li>
+            To update your local copy of the Mercurial, synchronizing with
+            our server :
+            <pre>hg pull -u</pre>
+          </li>
+        </ul>
+
+    <h2 id="Feedback"><span class="top"><a href="#top">top</a></span>Feedback</h2>
+      <p>
+      The author of libvalhalla and this document, <i>Mathieu Schroeter</i>,
+      can be contacted by
+      <a href="mailto:mathieu.schroeter@gamesover.ch">e-mail</a>.
+      </p>
+      <p>
+      Please send bug reports, suggestions, ideas, comments or patches to :
+      <a href="mailto:mathieu.schroeter@gamesover.ch">mathieu.schroeter@gamesover.ch</a>
+      <br/>
+      Patches can be sent to the
+      <a href="http://www.geexbox.org/en/mailing.html">GeeXboX devel mailing
+      list</a> as well.
+      </p>
+
+    <h2 id="Links">
+      <span class="top"><a href="#top">top</a></span>
+      Links
+    </h2>
+      <ul>
+        <li><b><a href="http://www.geexbox.org">GeeXboX</a></b></li>
+        <li><b><a href="http://enna.geexbox.org">Enna Media Center</a></b></li>
+      </ul>
+
+    </div>
+    </div>
+  </body>
+</html>
