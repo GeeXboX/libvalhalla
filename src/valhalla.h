@@ -171,7 +171,8 @@ void valhalla_verbosity (valhalla_verb_t level);
  * \brief Add a path to the scanner.
  *
  * At least one path must be added to the scanner, otherwise an error is
- * returned by valhalla_run().
+ * returned by valhalla_run(). If the same path is added several times,
+ * only one is saved in the scanner.
  *
  * \warning This function must be called before valhalla_run()!
  * \param[in] handle      Handle on the scanner.
@@ -186,7 +187,9 @@ void valhalla_path_add (valhalla_t *handle,
  *
  * If no suffix is added to the scanner, then all files will be parsed by
  * FFmpeg without exception and it can be very slow. It is highly recommanded
- * to always set at least one suffix (file extension)!
+ * to always set at least one suffix (file extension)! If the same suffix is
+ * added several times, only one is saved in the scanner. The suffixes are
+ * case insensitive.
  *
  * \warning This function must be called before valhalla_run()!
  * \param[in] handle      Handle on the scanner.
