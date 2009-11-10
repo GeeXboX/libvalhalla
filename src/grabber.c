@@ -271,7 +271,7 @@ grabber_thread (void *arg)
       pdata->grabber_name = it->name;
       res = it->grab (it->priv, pdata);
       if (res)
-        valhalla_log (VALHALLA_MSG_WARNING,
+        valhalla_log (VALHALLA_MSG_VERBOSE,
                       "[%s] grabbing failed (%i): %s",
                       it->name, res, pdata->file);
 
