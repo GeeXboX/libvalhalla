@@ -483,7 +483,6 @@ vh_scanner_suffix_cmp (scanner_t *scanner, const char *file)
   return suffix_cmp (scanner->suffix, file);
 }
 
-
 void
 vh_scanner_suffix_add (scanner_t *scanner, const char *suffix)
 {
