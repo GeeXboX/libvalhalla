@@ -460,6 +460,11 @@ vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive)
   if (!scanner)
     return;
 
+  /* check if the path is already in the list */
+  for (path = scanner->paths; path; path = path->next)
+    if (!strcmp (path->location, location))
+      return;
+
   if (!scanner->paths)
   {
     scanner->paths = path_new (location, recursive);
