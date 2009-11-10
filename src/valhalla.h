@@ -211,6 +211,9 @@ void valhalla_suffix_add (valhalla_t *handle, const char *suffix);
  *   Blacklist : "xvid", "foobar", "sNUMeNUM"
  *   Result    : "My Movie"
  *
+ * If the same keyword is added several times, only one is saved in the
+ * decrapifier.
+ *
  * \warning This function must be called before valhalla_run()!
  * \param[in] handle      Handle on the scanner.
  * \param[in] keyword     Keyword to blacklist.
