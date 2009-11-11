@@ -899,7 +899,7 @@ restore_flags
 #################################################
 grabber="no"
 xml="no"
-md5="no"
+avutil="no"
 gcrypt="no"
 exif="no"
 nfo="no"
@@ -934,7 +934,7 @@ if enabled grabber_amazon; then
   add_cflags -DHAVE_GRABBER_AMAZON
   grabber="yes"
   xml="yes"
-  md5="yes"
+  avutil="yes"
   gcrypt="yes"
 fi
 
@@ -983,14 +983,14 @@ if enabled grabber_tmdb; then
   add_cflags -DHAVE_GRABBER_TMDB
   grabber="yes"
   xml="yes"
-  md5="yes"
+  avutil="yes"
 fi
 
 if enabled grabber_tvdb; then
   add_cflags -DHAVE_GRABBER_TVDB
   grabber="yes"
   xml="yes"
-  md5="yes"
+  avutil="yes"
 fi
 
 if enabled grabber_tvrage; then
@@ -1086,7 +1086,7 @@ if enabled gcrypt; then
   check_lib gcrypt.h gcry_md_open -lgcrypt || die "Error, can't find libgcrypt !"
 fi
 
-if enabled md5; then
+if enabled avutil; then
   ###############################################
   #   check for FFmpeg libavutil
   ###############################################
@@ -1213,7 +1213,7 @@ fi
 append_config "XML=$xml"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
-append_config "MD5=$md5"
+append_config "MD5=$avutil"
 append_config "HMAC_SHA256=$gcrypt"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
