@@ -71,6 +71,7 @@ show_help(){
   echo "  --with-xml2-dir=DIR         check for libxml-2.0 installed in DIR"
   echo "  --with-exif-dir=DIR         check for libexif installed in DIR"
   echo "  --with-nfo-dir=DIR          check for libnfo installed in DIR"
+  echo "  --with-gcrypt-dir=DIR       check for libgcrypt installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -506,6 +507,8 @@ for opt do
   ;;
   --with-nfo-dir=*) nfodir="$optval";
   ;;
+  --with-gcrypt-dir=*) gcryptdir="$optval";
+  ;;
   --enable-grabbers) grabber_all="yes";
   ;;
   --disable-grabbers) grabber_all="no";
@@ -897,6 +900,7 @@ restore_flags
 grabber="no"
 xml="no"
 md5="no"
+gcrypt="no"
 exif="no"
 nfo="no"
 
@@ -931,6 +935,7 @@ if enabled grabber_amazon; then
   grabber="yes"
   xml="yes"
   md5="yes"
+  gcrypt="yes"
 fi
 
 if enabled grabber_exif; then
@@ -1064,6 +1069,23 @@ if enabled nfo; then
   add_pkgconfig_requires libnfo
 fi
 
+if enabled gcrypt; then
+  ###############################################
+  #   check for libgcrypt
+  ###############################################
+  if [ -n "$gcryptdir" ]; then
+    check_cflags -I$gcryptdir
+    check_ldflags -L$gcryptdir
+  fi
+  if [ -z  "$gcryptdir" ]; then
+     add_cflags `libgcrypt-config --cflags`
+     add_extralibs `libgcrypt-config --libs`
+  fi
+
+  echolog "Checking for libgcrypt ..."
+  check_lib gcrypt.h gcry_md_open -lgcrypt || die "Error, can't find libgcrypt !"
+fi
+
 if enabled md5; then
   ###############################################
   #   check for FFmpeg libavutil
@@ -1192,6 +1214,7 @@ append_config "XML=$xml"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
 append_config "MD5=$md5"
+append_config "HMAC_SHA256=$gcrypt"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_ALLOCINE=$grabber_allocine"

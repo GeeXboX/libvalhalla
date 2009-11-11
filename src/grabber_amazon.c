@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+
+#include <libavutil/base64.h>
 
 #include "grabber_common.h"
 #include "grabber_amazon.h"
@@ -31,6 +34,7 @@
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
+#include "hmac_sha256.h"
 #include "list.h"
 
 #define GRABBER_CAP_FLAGS \
@@ -42,27 +46,105 @@
 #define MAX_BUF_LEN         65535
 
 #define AMAZON_HOSTNAME     "webservices.amazon.com"
-#define AMAZON_LICENSE_KEY  "0P1862RFDFSF4KYZQNG2"
+#define AMAZON_ACCESS_KEY   "AKIAJ27VCT7XRCSVPROQ"
+#define AMAZON_KEYSIGN      "onViRIliSg2hOg5XzxkEkFieFgB0WA0G0k19NiUT"
 
-#define AMAZON_SEARCH "http://%s/onca/xml?Service=AWSECommerceService&SubscriptionId=%s&Operation=ItemSearch&Keywords=%s&SearchIndex=%s"
+/* The arguments in the queries MUST BE sorted by first byte value! */
+#define AMAZON_ARGS         "AWSAccessKeyId=%s"           "&" \
+                            "Keywords=%s"                 "&" \
+                            "Operation=ItemSearch"        "&" \
+                            "SearchIndex=%s"              "&" \
+                            "Service=AWSECommerceService" "&" \
+                            "Timestamp=%s"
+#define AMAZON_ARGS_COVER   "AWSAccessKeyId=%s"           "&" \
+                            "ItemId=%s"                   "&" \
+                            "Operation=ItemLookup"        "&" \
+                            "ResponseGroup=Images"        "&" \
+                            "Service=AWSECommerceService" "&" \
+                            "Timestamp=%s"
+#define AMAZON_PAGE         "/onca/xml"
+#define AMAZON_SEARCH       "http://%s" AMAZON_PAGE "?"
+
 #define AMAZON_SEARCH_MUSIC "Music"
 #define AMAZON_SEARCH_MOVIE "DVD"
-
-#define AMAZON_SEARCH_COVER "http://%s/onca/xml?Service=AWSECommerceService&SubscriptionId=%s&Operation=ItemLookup&ItemId=%s&ResponseGroup=Images"
 
 typedef struct grabber_amazon_s {
   url_t  *handler;
   list_t *list;
+  hmac_sha256_t *hd;
 } grabber_amazon_t;
 
 
+#define BASE64_OUTSIZE(size) ((((size) + 2) / 3) * 4 + 1)
+
+#define APPEND_STRING(dst, src, len) \
+  memcpy (dst + off, src, len);      \
+  off += len;
+
+static char *
+grabber_amazon_signature (hmac_sha256_t *hd, const char *args)
+{
+  char *src;
+  size_t size, off = 0;
+  unsigned char *sign;
+  char *sign64, *res;
+
+  if (!args)
+    return NULL;
+
+  /*
+   * GET\n                        (4)
+   * webservices.amazon.com\n     (strlen (AMAZON_HOSTNAME) + 1)
+   * /onca/xml\n                  (strlen (AMAZON_PAGE) + 1)
+   * AWSAccessKeyId=...           (strlen (args))
+   */
+  size = strlen (AMAZON_HOSTNAME) + strlen (AMAZON_PAGE) + strlen (args) + 6;
+
+  src = calloc (1, size + 1);
+  if (!src)
+    return NULL;
+
+  /* Prepare string for the signature */
+  APPEND_STRING (src, "GET\n",              4)
+  APPEND_STRING (src, AMAZON_HOSTNAME "\n", strlen (AMAZON_HOSTNAME) + 1)
+  APPEND_STRING (src, AMAZON_PAGE "\n",     strlen (AMAZON_PAGE) + 1)
+  APPEND_STRING (src, args,                 strlen (args))
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, "String to be signed:\n%s", src);
+
+  /* Compute signature */
+  sign = vh_hmac_sha256_compute (hd, src, size);
+  free (src);
+  if (!sign)
+    goto out;
+
+  sign64 = calloc (1, BASE64_OUTSIZE (size) + 1);
+  if (!sign64)
+    goto out;
+
+  res =
+    av_base64_encode (sign64, BASE64_OUTSIZE (size), sign, VH_HMAC_SHA256_SIZE);
+  if (!res)
+    free (sign64);
+
+ out:
+  vh_hmac_sha256_reset (hd);
+  return res;
+}
+
 static int
-grabber_amazon_cover_get (url_t *handler, char **dl_url,
-                          const char *search_type,
+grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
+                          char **dl_url, const char *search_type,
                           const char *keywords, char *escaped_keywords)
 {
+  char args[MAX_URL_SIZE];
   char url[MAX_URL_SIZE];
+  char timestamp[32];
+  char *sign64, *escaped_sign64;
   url_data_t data;
+
+  time_t rawtime;
+  struct tm timeinfo;
 
   xmlDocPtr doc;
   xmlNode  *img;
@@ -71,9 +153,30 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   if (!search_type || !keywords || !escaped_keywords)
     return -1;
 
+  time (&rawtime);
+  if (gmtime_r (&rawtime, &timeinfo))
+    strftime (timestamp,
+              sizeof (timestamp), "%Y-%m-%dT%H%%3A%M%%3A%SZ", &timeinfo);
+  else
+    return -1;
+
   /* 2. Prepare Amazon WebService URL for Search */
-  snprintf (url, MAX_URL_SIZE, AMAZON_SEARCH,
-            AMAZON_HOSTNAME, AMAZON_LICENSE_KEY, escaped_keywords, search_type);
+  snprintf (args, MAX_URL_SIZE, AMAZON_ARGS, AMAZON_ACCESS_KEY,
+            escaped_keywords, search_type, timestamp);
+
+  sign64 = grabber_amazon_signature (hd, args);
+  if (!sign64)
+    return -1;
+
+  escaped_sign64 = vh_url_escape_string (handler, sign64);
+  free (sign64);
+  if (!escaped_sign64)
+    return -1;
+
+  snprintf (url, sizeof (url),
+            AMAZON_SEARCH "%s&Signature=%s",
+            AMAZON_HOSTNAME, args, escaped_sign64);
+  free (escaped_sign64);
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
@@ -104,9 +207,23 @@ grabber_amazon_cover_get (url_t *handler, char **dl_url,
   valhalla_log (VALHALLA_MSG_VERBOSE, "Found Amazon ASIN: %s", asin);
 
   /* 5. Prepare Amazon WebService URL for Cover Search */
-  snprintf (url, MAX_URL_SIZE, AMAZON_SEARCH_COVER,
-            AMAZON_HOSTNAME, AMAZON_LICENSE_KEY, asin);
+  snprintf (args, MAX_URL_SIZE,
+            AMAZON_ARGS_COVER, AMAZON_ACCESS_KEY, asin, timestamp);
   xmlFree (asin);
+
+  sign64 = grabber_amazon_signature (hd, args);
+  if (!sign64)
+    return -1;
+
+  escaped_sign64 = vh_url_escape_string (handler, sign64);
+  free (sign64);
+  if (!escaped_sign64)
+    return -1;
+
+  snprintf (url, sizeof (url),
+            AMAZON_SEARCH "%s&Signature=%s",
+            AMAZON_HOSTNAME, args, escaped_sign64);
+  free (escaped_sign64);
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Cover Search Request: %s", url);
 
@@ -199,6 +316,10 @@ grabber_amazon_init (void *priv)
   if (!amazon)
     return -1;
 
+  amazon->hd = vh_hmac_sha256_new (AMAZON_KEYSIGN);
+  if (!amazon->hd)
+    return -1;
+
   amazon->handler = vh_url_new ();
   return amazon->handler ? 0 : -1;
 }
@@ -213,6 +334,7 @@ grabber_amazon_uninit (void *priv)
   if (!amazon)
     return;
 
+  vh_hmac_sha256_free (amazon->hd);
   if (amazon->handler)
     vh_url_free (amazon->handler);
   if (amazon->list)
@@ -281,7 +403,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
     return -2;
   }
 
-  res = grabber_amazon_cover_get (amazon->handler, &url,
+  res = grabber_amazon_cover_get (amazon->handler, amazon->hd, &url,
                                   search_type, keywords, escaped_keywords);
   free (escaped_keywords);
   if (!res)
