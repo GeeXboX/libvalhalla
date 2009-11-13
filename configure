@@ -1032,6 +1032,7 @@ if enabled xml; then
   fi
 
   echolog "Checking for libxml2 ..."
+  echolog " \_ dep for grabbers\t: allocine, amazon, imdb, lastfm, lyricsfly, lyricwiki, tmdb, tvdb, tvrage"
   check_lib libxml/parser.h xmlReadMemory -lxml2 || die "Error, can't find libxml2 !"
   add_pkgconfig_requires libxml-2.0
 fi
@@ -1049,6 +1050,7 @@ if enabled exif; then
   fi
 
   echolog "Checking for libexif ..."
+  echolog " \_ dep for grabber\t: exif"
   check_lib libexif/exif-data.h exif_entry_get_value -lexif || die "Error, can't find libexif !"
   add_pkgconfig_requires libexif
 fi
@@ -1066,6 +1068,7 @@ if enabled nfo; then
   fi
 
   echolog "Checking for libnfo ..."
+  echolog " \_ dep for grabber\t: nfo"
   check_lib nfo.h nfo_init -lnfo || die "Error, can't find libnfo !"
   add_pkgconfig_requires libnfo
 fi
@@ -1084,6 +1087,7 @@ if enabled gcrypt; then
   fi
 
   echolog "Checking for libgcrypt ..."
+  echolog " \_ dep for grabber\t: amazon"
   check_lib gcrypt.h gcry_md_open -lgcrypt || die "Error, can't find libgcrypt !"
 fi
 
@@ -1106,6 +1110,7 @@ if enabled avutil; then
   fi
 
   echolog "Checking for libavutil ..."
+  echolog " \_ dep for grabbers\t: amazon, lastfm, tmdb, tvdb"
   check_lib libavutil/md5.h av_md5_sum -lavutil || die "Error, can't find libavutil !"
   add_pkgconfig_requires libavutil
 fi
