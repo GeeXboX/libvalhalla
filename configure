@@ -961,16 +961,16 @@ if enabled grabber_local; then
   grabber="yes"
 fi
 
-if enabled grabber_lyricsfly; then
-  add_cflags -DHAVE_GRABBER_LYRICSFLY
-  grabber="yes"
-  xml="yes"
-fi
-
 if enabled grabber_nfo; then
   add_cflags -DHAVE_GRABBER_NFO
   grabber="yes"
   nfo="yes"
+fi
+
+if enabled grabber_lyricsfly; then
+  add_cflags -DHAVE_GRABBER_LYRICSFLY
+  grabber="yes"
+  xml="yes"
 fi
 
 if enabled grabber_lyricwiki; then
