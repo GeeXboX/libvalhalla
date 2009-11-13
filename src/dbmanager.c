@@ -278,6 +278,8 @@ dbmanager_thread (void *arg)
     vh_database_end_transaction (dbmanager->database);
 
     /* Statistics */
+    if (vh_log_test (VALHALLA_MSG_INFO))
+    {
     valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
                   __FUNCTION__, stats.file_insert);
     valhalla_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
@@ -288,6 +290,7 @@ dbmanager_thread (void *arg)
                   __FUNCTION__, stats.file_nochange);
     valhalla_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
                   __FUNCTION__, stats_cleanup);
+    }
   }
   while (rc == ACTION_DB_NEXT_LOOP);
 
