@@ -280,16 +280,16 @@ dbmanager_thread (void *arg)
     /* Statistics */
     if (vh_log_test (VALHALLA_MSG_INFO))
     {
-    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
-                  __FUNCTION__, stats.file_insert);
-    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
-                  __FUNCTION__, stats.file_update);
-    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
-                  __FUNCTION__, stats_delete);
-    valhalla_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
-                  __FUNCTION__, stats.file_nochange);
-    valhalla_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
-                  __FUNCTION__, stats_cleanup);
+      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
+                    __FUNCTION__, stats.file_insert);
+      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
+                    __FUNCTION__, stats.file_update);
+      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
+                    __FUNCTION__, stats_delete);
+      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
+                    __FUNCTION__, stats.file_nochange);
+      valhalla_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
+                    __FUNCTION__, stats_cleanup);
     }
   }
   while (rc == ACTION_DB_NEXT_LOOP);
