@@ -7,8 +7,7 @@
     $allocine_search_url = 'http://www.allocine.fr/recherche/?motcle=';
 
     /* function of creation of the document */
-    function
-    createDocument ()
+    function createDocument ()
     {
         $document = new DomDocument ();
         $document->encoding = "utf-8";
@@ -106,32 +105,32 @@
         $data = utf8_encode ($html);
 
         /* title attribute */
-        preg_match_all ('#<title>(.+)</title>#SUmis', $data, $infos,PREG_SET_ORDER);
+        preg_match_all ('#<title>(.+)</title>#SUmis', $data, $infos, PREG_SET_ORDER);
         foreach ($infos[0] as $info)
         {
-          $alternative_title = $document->CreateElement('alternative_title',htmlspecialchars(strip_tags(strip_allocine($info))));
-          $at_attr = $document->CreateAttribute('lower');
-          $textForAtAttr = $document->CreateTextNode(strtolower(strip_tags(strip_allocine($info))));
-          $at_attr->appendChild($textForAtAttr);
-          $alternative_title->appendChild($at_attr);
+          $alternative_title = $document->CreateElement ('alternative_title', htmlspecialchars (strip_tags (strip_allocine ($info))));
+          $at_attr = $document->CreateAttribute ('lower');
+          $textForAtAttr = $document->CreateTextNode (strtolower (strip_tags (strip_allocine ($info))));
+          $at_attr->appendChild ($textForAtAttr);
+          $alternative_title->appendChild ($at_attr);
         }
 
         /* french title */
-        if (preg_match_all('#<h3 class="SpProse">Titre original : <i>(.+)</i>#SUmis', $data,$infos, PREG_SET_ORDER) != 0)
-             $title = $document->CreateElement('title',htmlspecialchars(strip_tags($infos[0][1])));
+        if (preg_match_all ('#<h3 class="SpProse">Titre original : <i>(.+)</i>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
+             $title = $document->CreateElement ('title',htmlspecialchars (strip_tags ($infos[0][1])));
         else
-             $title = $document->CreateElement('title',htmlspecialchars($alternative_title->nodeValue));
+             $title = $document->CreateElement ('title',htmlspecialchars ($alternative_title->nodeValue));
 
-        $t_attr = $document->CreateAttribute('lower');
-        $textForTattr = $document->CreateTextNode(strtolower($title->nodeValue));
-        $t_attr->appendChild($textForTattr);
-        $title->appendChild($t_attr);
+        $t_attr = $document->CreateAttribute ('lower');
+        $textForTattr = $document->CreateTextNode (strtolower ($title->nodeValue));
+        $t_attr->appendChild ($textForTattr);
+        $title->appendChild ($t_attr);
 
         /* release date (to be modified) */
         $date = '';
-        if (preg_match_all('#<h3 class="SpProse">Date de sortie : .+  class="link1"> (.+)</a></b>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<h3 class="SpProse">Date de sortie : .+  class="link1"> (.+)</a></b>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
         {
-            $date = convert_date(strip_tags ($infos[0][1]));
+            $date = convert_date (strip_tags ($infos[0][1]));
             $release = $document->CreateElement ('release', $date);
         }
         else
@@ -141,9 +140,9 @@
         $people = $document->CreateElement ('people', '');
 
         /* director of movie */
-        if (preg_match_all('#<h3 class="SpProse">Réalisé par <a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<h3 class="SpProse">Réalisé par <a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
         {
-            if (preg_match_all('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis',$infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
+            if (preg_match_all ('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis', $infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
             {
                 foreach ($infos_supp as $info)
                 {
@@ -166,9 +165,9 @@
         }
 
         /* actors information */
-        if (preg_match_all('#Avec\s+<a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#Avec\s+<a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
         {
-            if (preg_match_all('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis',$infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
+            if (preg_match_all ('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis', $infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
             {
                 foreach ($infos_supp as $info)
                 {
@@ -179,7 +178,7 @@
 
                     $name = $document->createElement ('name', $info[2]);
                     $role = $document->createElement ('role', '');
-                    $url = $document->createElement ('url','http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
+                    $url = $document->createElement ('url', 'http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
 
                     $person->appendChild ($job);
                     $person->appendChild ($name);
@@ -192,12 +191,12 @@
 
         /* categories information */
         $categories = $document->CreateElement ('categories', '');
-        if (preg_match_all('#<a href="/film/alaffiche_genre_gen_genre=(.+)\.html" class="link1">(.+)</a>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<a href="/film/alaffiche_genre_gen_genre=(.+)\.html" class="link1">(.+)</a>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
         {
             foreach ($infos as $info)
             {
                 $category = $document->CreateElement ('category');
-                $category_url = $document->CreateElement ('url',preg_replace ("#&#SUmis", "&amp;",'http://www.allocine.fr/film/alaffiche_genre_gen_genre='. $info[1].'.html'));
+                $category_url = $document->CreateElement ('url', preg_replace ("#&#SUmis", "&amp;", 'http://www.allocine.fr/film/alaffiche_genre_gen_genre='.$info[1].'.html'));
                 $category_name = $document->CreateElement ('name', $info[2]);
                 $category->appendChild ($category_name);
                 $category->appendChild ($category_url);
@@ -206,26 +205,26 @@
         }
 
         /* homepage information */
-        if (preg_match_all('#<td valign="top" style="padding:10 0 0 0"><img src=".+" border="0" style="margin: 0 6 0 0" width="4" height="9" class="flechejaune"/><a href="(.+)" class="link1" target="\_blank"><h4><b>Site officiel.+#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<td valign="top" style="padding:10 0 0 0"><img src=".+" border="0" style="margin: 0 6 0 0" width="4" height="9" class="flechejaune"/><a href="(.+)" class="link1" target="\_blank"><h4><b>Site officiel.+#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
             $homepage = $document->CreateElement ('homepage', strip_tags ($infos[0][1]));
         else
             $homepage = $document->CreateElement ('homepage', '');
 
         /* description information */
-        if (preg_match_all('#<td valign="top" style="padding:10 0 0 0"><div align="justify"><h4>([^&]*)</h4></div>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
-            $short_overview = $document->CreateElement ('short_overview',strip_tags ($infos[0][1]));
+        if (preg_match_all ('#<td valign="top" style="padding:10 0 0 0"><div align="justify"><h4>([^&]*)</h4></div>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
+            $short_overview = $document->CreateElement ('short_overview', strip_tags ($infos[0][1]));
         else
-            $short_overview = $document->CreateElement ('short_overview','No overview found for this movie');
+            $short_overview = $document->CreateElement ('short_overview', 'No overview found for this movie');
 
         /* runtime information */
-        if (preg_match_all('#<div style="padding: 2 0 2 0;"><h3 class="SpProse">Durée : (\d+)h (\d+)min\.&nbsp;</h3>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<div style="padding: 2 0 2 0;"><h3 class="SpProse">Durée : (\d+)h (\d+)min\.&nbsp;</h3>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
             $runtime = $document->CreateElement ('runtime',strip_tags ($infos[0][1] * 60 + $infos[0][2]));
         else
             $runtime = $document->CreateElement ('runtime', '');
 
         /* budget information */
-        if (preg_match_all('#<b>Budget</b> : (.+) \$</h4>#SUmis', $data, $infos,PREG_SET_ORDER) != 0)
-            $budget = $document->CreateElement ('budget',preg_replace ("#\s#SUmis", "",strip_tags ($infos[0][1])));
+        if (preg_match_all ('#<b>Budget</b> : (.+) \$</h4>#SUmis', $data, $infos,PREG_SET_ORDER) != 0)
+            $budget = $document->CreateElement ('budget', preg_replace ("#\s#SUmis", "", strip_tags ($infos[0][1])));
         else
             $budget = $document->CreateElement ('budget', '');
 
@@ -233,14 +232,14 @@
         $revenue = $document->CreateElement ('revenue', '');
 
         /* revenue fr information */
-        if (preg_match_all('#<h4><b>Box Office France</b> : (.+) entrées</h4>#SUmis', $data,$infos, PREG_SET_ORDER) != 0)
-            $revenuefr = $document->CreateElement ('fr',preg_replace ("#\s#SUmis", "",strip_tags ($infos[0][1])));
+        if (preg_match_all ('#<h4><b>Box Office France</b> : (.+) entrées</h4>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
+            $revenuefr = $document->CreateElement ('fr',preg_replace ("#\s#SUmis", "", strip_tags ($infos[0][1])));
         else
             $revenuefr = $document->CreateElement ('fr', '');
 
         /* revenue usa information */
-        if (preg_match_all('#<h4><b>Box Office USA</b> : (.+) \$</h4>#SUmis', $data, $infos,PREG_SET_ORDER) != 0)
-            $revenueus = $document->CreateElement ('usa',preg_replace ("#\s#SUmis", "",strip_tags ($infos[0][1])));
+        if (preg_match_all ('#<h4><b>Box Office USA</b> : (.+) \$</h4>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
+            $revenueus = $document->CreateElement ('usa',preg_replace ("#\s#SUmis", "", strip_tags ($infos[0][1])));
         else
             $revenueus = $document->CreateElement ('usa', '');
 
@@ -248,13 +247,13 @@
         $revenue->appendChild ($revenueus);
 
         /* score information */
-        if (preg_match_all('#<h5><a href=".+" class="link1" target="_parent">Presse</a></h5></td><td .+><img src="http://a69.g.akamai.net/n/69/10688/v1/img5.allocine.fr/acmedia/skin/empty.gif" width="52" height="13" class="etoile_(\d)" border="0" /></td>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<h5><a href=".+" class="link1" target="_parent">Presse</a></h5></td><td .+><img src="http://a69.g.akamai.net/n/69/10688/v1/img5.allocine.fr/acmedia/skin/empty.gif" width="52" height="13" class="etoile_(\d)" border="0" /></td>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
             $score = $document->CreateElement ('score', strip_tags ($infos[0][1]));
         else
             $score = $document->CreateElement ('score', '');
 
         /* popularity information */
-        if (preg_match_all('#<h5><a href=".+" class="link1" target="_parent">Spectateurs</a></h5></td><td .+><img src="http://a69.g.akamai.net/n/69/10688/v1/img5.allocine.fr/acmedia/skin/empty.gif" width="52" height="13" class="etoile_(\d)" border="0" /></td>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#<h5><a href=".+" class="link1" target="_parent">Spectateurs</a></h5></td><td .+><img src="http://a69.g.akamai.net/n/69/10688/v1/img5.allocine.fr/acmedia/skin/empty.gif" width="52" height="13" class="etoile_(\d)" border="0" /></td>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
             $popularity = $document->CreateElement ('popularity', strip_tags ($infos[0][1]));
         else
             $popularity = $document->CreateElement ('popularity', '');
@@ -279,33 +278,33 @@
         $document->appendChild ($movietag);
 
         /* if the release date is earlier or does not exist, save the file */
-        if ($date && (strtotime($date) - strtotime(date("Y-m-d")) < 0))
+        if ($date && (strtotime ($date) - strtotime (date ("Y-m-d")) < 0))
         {
             if (!file_exists ("/tmp/allocine_api"))
-                mkdir("/tmp/allocine_api",0755);
-            $fd = fopen('/tmp/allocine_api/'.$allocineid.".xml", "w");
+                mkdir ("/tmp/allocine_api",0755);
+            $fd = fopen ('/tmp/allocine_api/'.$allocineid.".xml", "w");
             if ($fd)
             {
-                fwrite($fd,$document->saveXML());
-                fclose($fd);
+                fwrite ($fd, $document->saveXML ());
+                fclose ($fd);
             }
         }
 
         return $movietag;
     }
 
-    function convert_date($date)
+    function convert_date ($date)
     {
-        $matches = array();
-        $monthes = array('01' => 'Janvier', '02' => 'Février', '03' => 'Mars', '04' => 'Avril', '05' => 'Mai', '06' => 'Juin', '07' => 'Juillet', '08' => 'Août', '09' => 'Septembre', '10' => 'Octobre', '11' => 'Novembre', '12' => 'Décembre');
+        $matches = array ();
+        $monthes = array ('01' => 'Janvier', '02' => 'Février', '03' => 'Mars', '04' => 'Avril', '05' => 'Mai', '06' => 'Juin', '07' => 'Juillet', '08' => 'Août', '09' => 'Septembre', '10' => 'Octobre', '11' => 'Novembre', '12' => 'Décembre');
 
         if (!$date)
             return '';
 
-        $matches = preg_split("#\s#SUmis", $date);
-        if (!$matches && sizeof($matches != 3))
+        $matches = preg_split ("#\s#SUmis", $date);
+        if (!$matches && sizeof ($matches != 3))
            return '';
-        return $matches[2] . '-' . array_search($matches[1],$monthes) . '-' . $matches[0];
+        return $matches[2] . '-' . array_search ($matches[1], $monthes) . '-' . $matches[0];
     }
 
     /* function generating the main movie tag */
@@ -313,7 +312,7 @@
     {
         $moviematchestag = $document->CreateElement ('moviematches');
         $matches = array ();
-        preg_match_all("#<td valign=\"top\"><h4><a href=\"/film/fichefilm_gen_cfilm=(\d+)\.html\"#SUmis",$html_content, $matches);
+        preg_match_all("#<td valign=\"top\"><h4><a href=\"/film/fichefilm_gen_cfilm=(\d+)\.html\"#SUmis", $html_content, $matches);
 
         foreach ($matches[1] as $resultat)
         {
@@ -377,14 +376,14 @@
     function request_treatment ($html_content, $keywords)
     {
         $matches = array ();
-        if (preg_match("^.+Films <h4>\(([0-9]+) réponse[s]{0,1}\)^",utf8_encode ($html_content), $matches) == 0)
+        if (preg_match ("^.+Films <h4>\(([0-9]+) réponse[s]{0,1}\)^", utf8_encode ($html_content), $matches) == 0)
             return generate_no_search_results ($keywords);
         else
             return generate_search_results ($html_content, $keywords, $matches[1]);
     }
 
     $matches = array ();
-    if (preg_match("^title=(.+)$^", $_SERVER['QUERY_STRING'], $matches) == 0)
+    if (preg_match ("^title=(.+)$^", $_SERVER['QUERY_STRING'], $matches) == 0)
         echo error_xml ();
     else
     {
