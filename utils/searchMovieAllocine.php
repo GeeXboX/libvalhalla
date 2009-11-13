@@ -34,87 +34,87 @@
         $resultsTag->appendChild ($opSearchAttr);
 
         return $resultsTag;
-    } 
+    }
 
     /* generate main xml tag */
     function generateOpenSearchQueryTag ($keywords, $document)
     {
         $queryTag = $document->CreateElement ('opensearch:Query');
-  	$searchKeyAttr = $document->CreateAttribute ('searchTerms');
-  	$searchKeyAttrText = $document->CreateTextNode ($keywords);
-  	$searchKeyAttr->appendChild ($searchKeyAttrText);
+        $searchKeyAttr = $document->CreateAttribute ('searchTerms');
+        $searchKeyAttrText = $document->CreateTextNode ($keywords);
+        $searchKeyAttr->appendChild ($searchKeyAttrText);
 
-  	$queryTag->appendChild ($searchKeyAttr);
+        $queryTag->appendChild ($searchKeyAttr);
 
-  	return $queryTag;
+        return $queryTag;
     }
 
     /* function generating the total results tag */
     function generateOpenSearchTotResultsTag ($totalRes, $document)
     {
-  	$totalResults = $document->CreateElement ('opensearch:totalResults');
-  	$totalResultsText = $document->CreateTextNode ($totalRes);
-  	$totalResults->appendChild ($totalResultsText);
+        $totalResults = $document->CreateElement ('opensearch:totalResults');
+        $totalResultsText = $document->CreateTextNode ($totalRes);
+        $totalResults->appendChild ($totalResultsText);
 
-  	return $totalResults;
+        return $totalResults;
     }
 
     /* function generating no search results xml */
     function generate_no_search_results ($keywords)
     {
-  	$searchResultsDocument = createDocument ();
-  	$resultsTag = generateResultsTag ($keywords, $searchResultsDocument);
-  	$opensearchQueryTag = generateOpenSearchQueryTag ($keywords, $searchResultsDocument);
-  	$openSearchTotResultTag = generateOpenSearchTotResultsTag ('0', $searchResultsDocument);
+        $searchResultsDocument = createDocument ();
+        $resultsTag = generateResultsTag ($keywords, $searchResultsDocument);
+        $opensearchQueryTag = generateOpenSearchQueryTag ($keywords, $searchResultsDocument);
+        $openSearchTotResultTag = generateOpenSearchTotResultsTag ('0', $searchResultsDocument);
 
-  	$moviematchestag = $searchResultsDocument->CreateElement ('moviematches');
-  	$movietag = $searchResultsDocument->CreateElement ('movie');
-  	$content = $searchResultsDocument->CreateTextNode (utf8_encode ('Your query didn\'t return any results.'));
-  	$movietag->appendChild ($content);
-  	$moviematchestag->appendChild ($movietag);
+        $moviematchestag = $searchResultsDocument->CreateElement ('moviematches');
+        $movietag = $searchResultsDocument->CreateElement ('movie');
+        $content = $searchResultsDocument->CreateTextNode (utf8_encode ('Your query didn\'t return any results.'));
+        $movietag->appendChild ($content);
+        $moviematchestag->appendChild ($movietag);
 
-  	$resultsTag->appendChild ($opensearchQueryTag);
-  	$resultsTag->appendChild ($openSearchTotResultTag);
-  	$resultsTag->appendChild ($moviematchestag);
+        $resultsTag->appendChild ($opensearchQueryTag);
+        $resultsTag->appendChild ($openSearchTotResultTag);
+        $resultsTag->appendChild ($moviematchestag);
 
-  	$searchResultsDocument->appendChild ($resultsTag);
+        $searchResultsDocument->appendChild ($resultsTag);
 
-  	return $searchResultsDocument->saveXML ();
+        return $searchResultsDocument->saveXML ();
     }
 
     /* strip the string in parameter in order to keep the string without allocine specific text */
     function strip_allocine ($string)
     {
-  	return str_ireplace (" - Allociné", "", $string);
+        return str_ireplace (" - Allociné", "", $string);
     }
 
     /* generate the movie tag with the information of the movie */
     function generate_movietag ($allocineid, $document)
     {
-  	$movietag = $document->CreateElement ('movie');
+        $movietag = $document->CreateElement ('movie');
 
-  	$url = 'http://www.allocine.fr/film/fichefilm_gen_cfilm='.$allocineid.'.html';
-  	$urltag = $document->CreateElement ('url', $url);
-  	$idtag = $document->CreateElement ('id', $allocineid);
-  	$type = $document->CreateElement ('type', 'movie');
+        $url = 'http://www.allocine.fr/film/fichefilm_gen_cfilm='.$allocineid.'.html';
+        $urltag = $document->CreateElement ('url', $url);
+        $idtag = $document->CreateElement ('id', $allocineid);
+        $type = $document->CreateElement ('type', 'movie');
 
-  	$ch = curl_init ();
-  	curl_setopt ($ch, CURLOPT_URL, $url);
-  	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-  	$html = curl_exec ($ch);
-  	curl_close ($ch);
-  	$data = utf8_encode ($html);
+        $ch = curl_init ();
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        $html = curl_exec ($ch);
+        curl_close ($ch);
+        $data = utf8_encode ($html);
 
-  	/* title attribute */
-  	preg_match_all ('#<title>(.+)</title>#SUmis', $data, $infos,PREG_SET_ORDER);
-  	foreach ($infos[0] as $info)
-  	{
-    	  $alternative_title = $document->CreateElement('alternative_title',htmlspecialchars(strip_tags(strip_allocine($info))));
-	  $at_attr = $document->CreateAttribute('lower');
-	  $textForAtAttr = $document->CreateTextNode(strtolower(strip_tags(strip_allocine($info))));
-	  $at_attr->appendChild($textForAtAttr);
-	  $alternative_title->appendChild($at_attr);
-  	}
+        /* title attribute */
+        preg_match_all ('#<title>(.+)</title>#SUmis', $data, $infos,PREG_SET_ORDER);
+        foreach ($infos[0] as $info)
+        {
+          $alternative_title = $document->CreateElement('alternative_title',htmlspecialchars(strip_tags(strip_allocine($info))));
+          $at_attr = $document->CreateAttribute('lower');
+          $textForAtAttr = $document->CreateTextNode(strtolower(strip_tags(strip_allocine($info))));
+          $at_attr->appendChild($textForAtAttr);
+          $alternative_title->appendChild($at_attr);
+        }
 
         /* french title */
         if (preg_match_all('#<h3 class="SpProse">Titre original : <i>(.+)</i>#SUmis', $data,$infos, PREG_SET_ORDER) != 0)
@@ -128,12 +128,12 @@
         $title->appendChild($t_attr);
 
         /* release date (to be modified) */
-	$date = '';
+        $date = '';
         if (preg_match_all('#<h3 class="SpProse">Date de sortie : .+  class="link1"> (.+)</a></b>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
-	{
-	    $date = convert_date(strip_tags ($infos[0][1]));
+        {
+            $date = convert_date(strip_tags ($infos[0][1]));
             $release = $document->CreateElement ('release', $date);
-	}
+        }
         else
             $release = $document->CreateElement ('release','');
 
@@ -144,50 +144,50 @@
         if (preg_match_all('#<h3 class="SpProse">Réalisé par <a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
         {
             if (preg_match_all('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis',$infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
-	    {
-	        foreach ($infos_supp as $info)
-	        {
-	            $person = $document->CreateElement ('person');
-	            $job = $document->CreateAttribute ('job');
-	            $textForAttr = $document->CreateTextNode ('director');
-	            $job->appendChild ($textForAttr);
+            {
+                foreach ($infos_supp as $info)
+                {
+                    $person = $document->CreateElement ('person');
+                    $job = $document->CreateAttribute ('job');
+                    $textForAttr = $document->CreateTextNode ('director');
+                    $job->appendChild ($textForAttr);
 
-	            $name = $document->createElement ('name', $info[2]);
-	            $role = $document->createElement ('role', '');
-	            $url = $document->createElement ('url','http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
+                    $name = $document->createElement ('name', $info[2]);
+                    $role = $document->createElement ('role', '');
+                    $url = $document->createElement ('url','http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
 
-	            $person->appendChild ($job);
-	            $person->appendChild ($name);
-	            $person->appendChild ($role);
-	            $person->appendChild ($url);
-	            $people->appendChild ($person);
-	        }
-	    }
+                    $person->appendChild ($job);
+                    $person->appendChild ($name);
+                    $person->appendChild ($role);
+                    $person->appendChild ($url);
+                    $people->appendChild ($person);
+                }
+            }
         }
 
         /* actors information */
         if (preg_match_all('#Avec\s+<a class="link1" href="/personne/fichepersonne_gen_cpersonne=\d+\.html">.+</a>.+</div>#SUmis',$data, $infos, PREG_SET_ORDER) != 0)
         {
             if (preg_match_all('#<a class="link1" href="/personne/fichepersonne_gen_cpersonne=(\d+)\.html">(.+)</a>#SUmis',$infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
-	    {
-	        foreach ($infos_supp as $info)
-	        {
-	            $person = $document->CreateElement ('person');
-	            $job = $document->CreateAttribute ('job');
-	            $textForAttr = $document->CreateTextNode ('actor');
-	            $job->appendChild ($textForAttr);
+            {
+                foreach ($infos_supp as $info)
+                {
+                    $person = $document->CreateElement ('person');
+                    $job = $document->CreateAttribute ('job');
+                    $textForAttr = $document->CreateTextNode ('actor');
+                    $job->appendChild ($textForAttr);
 
-	            $name = $document->createElement ('name', $info[2]);
-	            $role = $document->createElement ('role', '');
-	            $url = $document->createElement ('url','http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
+                    $name = $document->createElement ('name', $info[2]);
+                    $role = $document->createElement ('role', '');
+                    $url = $document->createElement ('url','http://www.allocine.fr/personne/fichepersonne_gen_cpersonne='.$info[1].'.html');
 
-	            $person->appendChild ($job);
-	            $person->appendChild ($name);
-	            $person->appendChild ($role);
-	            $person->appendChild ($url);
-	            $people->appendChild ($person);
-	        }
-	    }
+                    $person->appendChild ($job);
+                    $person->appendChild ($name);
+                    $person->appendChild ($role);
+                    $person->appendChild ($url);
+                    $people->appendChild ($person);
+                }
+            }
         }
 
         /* categories information */
@@ -196,12 +196,12 @@
         {
             foreach ($infos as $info)
             {
-	        $category = $document->CreateElement ('category');
-	        $category_url = $document->CreateElement ('url',preg_replace ("#&#SUmis", "&amp;",'http://www.allocine.fr/film/alaffiche_genre_gen_genre='. $info[1].'.html'));
-	        $category_name = $document->CreateElement ('name', $info[2]);
-	        $category->appendChild ($category_name);
-	        $category->appendChild ($category_url);
-	        $categories->appendChild ($category);
+                $category = $document->CreateElement ('category');
+                $category_url = $document->CreateElement ('url',preg_replace ("#&#SUmis", "&amp;",'http://www.allocine.fr/film/alaffiche_genre_gen_genre='. $info[1].'.html'));
+                $category_name = $document->CreateElement ('name', $info[2]);
+                $category->appendChild ($category_name);
+                $category->appendChild ($category_url);
+                $categories->appendChild ($category);
             }
         }
 
@@ -243,7 +243,7 @@
             $revenueus = $document->CreateElement ('usa',preg_replace ("#\s#SUmis", "",strip_tags ($infos[0][1])));
         else
             $revenueus = $document->CreateElement ('usa', '');
-    
+
         $revenue->appendChild ($revenuefr);
         $revenue->appendChild ($revenueus);
 
@@ -279,33 +279,33 @@
         $document->appendChild ($movietag);
 
         /* if the release date is earlier or does not exist, save the file */
-	if ($date && (strtotime($date) - strtotime(date("Y-m-d")) < 0))
-	{
-	    if (!file_exists ("/tmp/allocine_api"))
-		mkdir("/tmp/allocine_api",0755);
-	    $fd = fopen('/tmp/allocine_api/'.$allocineid.".xml", "w");
-	    if ($fd) 
-	    { 
-	        fwrite($fd,$document->saveXML()); 
+        if ($date && (strtotime($date) - strtotime(date("Y-m-d")) < 0))
+        {
+            if (!file_exists ("/tmp/allocine_api"))
+                mkdir("/tmp/allocine_api",0755);
+            $fd = fopen('/tmp/allocine_api/'.$allocineid.".xml", "w");
+            if ($fd)
+            {
+                fwrite($fd,$document->saveXML());
                 fclose($fd);
-	    }
-	}
+            }
+        }
 
         return $movietag;
     }
 
     function convert_date($date)
     {
-	$matches = array();
-	$monthes = array('01' => 'Janvier', '02' => 'Février', '03' => 'Mars', '04' => 'Avril', '05' => 'Mai', '06' => 'Juin', '07' => 'Juillet', '08' => 'Août', '09' => 'Septembre', '10' => 'Octobre', '11' => 'Novembre', '12' => 'Décembre');
- 
+        $matches = array();
+        $monthes = array('01' => 'Janvier', '02' => 'Février', '03' => 'Mars', '04' => 'Avril', '05' => 'Mai', '06' => 'Juin', '07' => 'Juillet', '08' => 'Août', '09' => 'Septembre', '10' => 'Octobre', '11' => 'Novembre', '12' => 'Décembre');
+
         if (!$date)
             return '';
 
         $matches = preg_split("#\s#SUmis", $date);
-	if (!$matches && sizeof($matches != 3))
-	   return '';
-	return $matches[2] . '-' . array_search($matches[1],$monthes) . '-' . $matches[0];
+        if (!$matches && sizeof($matches != 3))
+           return '';
+        return $matches[2] . '-' . array_search($matches[1],$monthes) . '-' . $matches[0];
     }
 
     /* function generating the main movie tag */
@@ -319,18 +319,18 @@
         {
             if (file_exists ("allocine_api/".$resultat.".xml"))
             {
-	        $doc = createDocument ();
-	        $doc->load ("/tmp/allocine_api/".$resultat.".xml");
-	        $nodeList = $doc->getElementsByTagName ('movie')->item (0)->childNodes;
-	        $movietag = $document->CreateElement ('movie');
-	        if ($nodeList)
-	        {
-	            foreach ($nodeList as $node)
-	    	    {
-	      	        $tmp = $document->importNode ($node, true);
-	                $movietag->appendChild ($tmp);
-	            }
-	        }
+                $doc = createDocument ();
+                $doc->load ("/tmp/allocine_api/".$resultat.".xml");
+                $nodeList = $doc->getElementsByTagName ('movie')->item (0)->childNodes;
+                $movietag = $document->CreateElement ('movie');
+                if ($nodeList)
+                {
+                    foreach ($nodeList as $node)
+                    {
+                        $tmp = $document->importNode ($node, true);
+                        $movietag->appendChild ($tmp);
+                    }
+                }
             }
             else
                 $movietag = generate_movietag ($resultat, $document);
@@ -389,13 +389,13 @@
     else
     {
         $keywords = $matches[1];
-	$url = $allocine_search_url.$keywords;
-	$ch = curl_init ();
+        $url = $allocine_search_url.$keywords;
+        $ch = curl_init ();
 
-	curl_setopt ($ch, CURLOPT_URL, $url);
-	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-	$html = curl_exec ($ch);
-	curl_close ($ch);
-	echo request_treatment ($html, urldecode ($keywords));
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        $html = curl_exec ($ch);
+        curl_close ($ch);
+        echo request_treatment ($html, urldecode ($keywords));
     }
 ?>

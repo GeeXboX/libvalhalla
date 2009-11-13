@@ -4,7 +4,7 @@
 
     /* set the content type to be XML, so that the browser will recognise it as XML */
     header ('content-type: application/xml; charset=utf-8');
-    
+
     /* function of creation of the document */
     function
     createDocument ()
@@ -33,7 +33,7 @@
         $resultsTag->appendChild ($opSearchAttr);
 
         return $resultsTag;
-    } 
+    }
 
     /* generate main xml tag */
     function generateOpenSearchQueryTag ($keywords, $document)
@@ -90,12 +90,12 @@
         $name = $document->createElement ('name', $person['name']);
         $role = $document->createElement ('role', $person['role']);
         $url = $document->createElement ('url', 'http://www.imdb.com/name/'.$person['imdb']);
-            
+
         $person_tag->appendChild ($job_tag);
         $person_tag->appendChild ($name);
         $person_tag->appendChild ($role);
         $person_tag->appendChild ($url);
-        
+
         return $person_tag;
     }
 
@@ -103,14 +103,14 @@
     function generate_movietag ($result, $document)
     {
         $movietag = $document->CreateElement ('movie');
-        
+
         $imdbid = $result->imdbid ();
 
         $url = 'http://www.imdb.com/title/'.$imdbid;
         $urltag = $document->CreateElement ('url', $url);
         $idtag = $document->CreateElement ('id', $imdbid);
         $type = $document->CreateElement ('type', 'movie');
-        
+
         /* title attribute */
         $title = $document->CreateElement ('title', $result->title ());
         $t_attr = $document->CreateAttribute('lower');
@@ -120,7 +120,7 @@
 
         /* alternative title attribute */
         foreach ($result->alsoknow () as $alt_title)
-        {  
+        {
             $alternative_title = $document->CreateElement('alternative_title', $alt_title['title']);
             $at_attr = $document->CreateAttribute('lower');
             $textForAtAttr = $document->CreateTextNode(strtolower($alternative_title->nodeValue));
@@ -128,7 +128,7 @@
             $alternative_title->appendChild($at_attr);
             $movietag->appendChild ($alternative_title);
         }
-        
+
         /* check for people */
         $people = $document->CreateElement ('people', '');
 
@@ -167,7 +167,7 @@
             $homepage = $document->CreateElement ('homepage', $sites[0]['url']);
         else
             $homepage = $document->CreateElement ('homepage', '');
-        
+
         /* description information */
         $plots = $result->plot();
         if (count($plots) > 0)
@@ -175,7 +175,7 @@
             $plot = trim(substr($plots[0], 0, -strlen(stristr($plots[0], '<i>'))));
             $short_overview = $document->CreateElement ('short_overview', $plot);
         } else {
-           $short_overview = $document->CreateElement ('short_overview', $result->plotoutline());
+            $short_overview = $document->CreateElement ('short_overview', $result->plotoutline());
         }
 
         /* production countries */
@@ -187,10 +187,10 @@
             $country_tag->appendChild($country_sname);
             $countries->appendChild($country_tag);
         }
-         
+
         /* runtime information */
         $runtime = $document->CreateElement ('runtime', $result->runtime());
-    
+
         /* rating information */
         $rating = $document->CreateElement ('rating', $result->rating ());
 
@@ -219,7 +219,7 @@
     function generate_movies_tags ($results, $document, $limit = 0)
     {
         $moviematchestag = $document->CreateElement ('moviematches');
-        
+
         $i = 1;
         foreach ($results as $res)
         {
@@ -228,7 +228,7 @@
             if ($limit > 0)
                 if (++$i > $limit) break;
         }
-        
+
         return $moviematchestag;
     }
 
@@ -237,7 +237,7 @@
     {
         $searchResultsDocument = createDocument ();
         $resultsTag = generateResultsTag ($keywords, $searchResultsDocument);
-        
+
         $opensearchQueryTag = generateOpenSearchQueryTag ($keywords, $searchResultsDocument);
         if ($limit > 0)
             $rescount = $limit;
@@ -278,7 +278,7 @@
         $search = new imdbsearch();
         $search->setsearchname($keywords);
         $results = $search->results();
-        
+
         if (count($results) > 0)
             echo generate_search_results($keywords, $results, 3);
         else
