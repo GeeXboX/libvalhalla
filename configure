@@ -954,6 +954,7 @@ if enabled grabber_lastfm; then
   add_cflags -DHAVE_GRABBER_LASTFM
   grabber="yes"
   xml="yes"
+  avutil="yes"
 fi
 
 if enabled grabber_local; then
