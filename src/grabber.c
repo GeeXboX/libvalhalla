@@ -271,9 +271,14 @@ grabber_thread (void *arg)
       pdata->grabber_name = it->name;
       res = it->grab (it->priv, pdata);
       if (res)
+      {
+        it->stat_failure++;
         valhalla_log (VALHALLA_MSG_VERBOSE,
                       "[%s] grabbing failed (%i): %s",
                       it->name, res, pdata->file);
+      }
+      else
+        it->stat_success++;
 
       /* at least still one grabber for this file ? */
       GRABBER_IS_AVAILABLE
@@ -289,6 +294,17 @@ grabber_thread (void *arg)
                                pdata->priority, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
+
+  /* Statistics */
+  if (vh_log_test (VALHALLA_MSG_INFO))
+    for (it = grabber->list; it; it = it->next)
+    {
+      unsigned int total = it->stat_success + it->stat_failure;
+      valhalla_log (VALHALLA_MSG_INFO,
+                    "[%s] Stats %-10s : %6i/%-6i (%6.2f%%)",
+                    __FUNCTION__, it->name, it->stat_success, total,
+                    total ? 100.0 * it->stat_success / total : 100.0);
+    }
 
   /* the thread is locked by vh_grabber_run() */
   pthread_mutex_unlock (&grabber->mutex_grabber);

@@ -151,6 +151,8 @@ typedef struct grabber_list_s {
 
   /** \brief Different of 0 if the grabber is enabled. */
   int enable;
+  /** \brief Total of successes and failures for the session. */
+  unsigned int stat_success, stat_failure;
 } grabber_list_t;
 
 
