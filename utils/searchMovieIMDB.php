@@ -6,8 +6,7 @@
     header ('content-type: application/xml; charset=utf-8');
 
     /* function of creation of the document */
-    function
-    createDocument ()
+    function createDocument ()
     {
         $document = new DomDocument ();
         $document->encoding = "utf-8";
@@ -113,19 +112,19 @@
 
         /* title attribute */
         $title = $document->CreateElement ('title', $result->title ());
-        $t_attr = $document->CreateAttribute('lower');
-        $textForTattr = $document->CreateTextNode(strtolower($title->nodeValue));
-        $t_attr->appendChild($textForTattr);
-        $title->appendChild($t_attr);
+        $t_attr = $document->CreateAttribute ('lower');
+        $textForTattr = $document->CreateTextNode (strtolower ($title->nodeValue));
+        $t_attr->appendChild ($textForTattr);
+        $title->appendChild ($t_attr);
 
         /* alternative title attribute */
         foreach ($result->alsoknow () as $alt_title)
         {
-            $alternative_title = $document->CreateElement('alternative_title', $alt_title['title']);
-            $at_attr = $document->CreateAttribute('lower');
-            $textForAtAttr = $document->CreateTextNode(strtolower($alternative_title->nodeValue));
-            $at_attr->appendChild($textForAtAttr);
-            $alternative_title->appendChild($at_attr);
+            $alternative_title = $document->CreateElement ('alternative_title', $alt_title['title']);
+            $at_attr = $document->CreateAttribute ('lower');
+            $textForAtAttr = $document->CreateTextNode (strtolower ($alternative_title->nodeValue));
+            $at_attr->appendChild ($textForAtAttr);
+            $alternative_title->appendChild ($at_attr);
             $movietag->appendChild ($alternative_title);
         }
 
@@ -135,7 +134,7 @@
         /* director of movie */
         foreach ($result->director () as $director)
         {
-            $person = generatePersonTag($document, $director, 'director');
+            $person = generatePersonTag ($document, $director, 'director');
             $people->appendChild ($person);
         }
 
@@ -143,7 +142,7 @@
         $i = 1;
         foreach ($result->cast () as $actor)
         {
-            $person = generatePersonTag($document, $actor, 'actor');
+            $person = generatePersonTag ($document, $actor, 'actor');
             $people->appendChild ($person);
             /* HACK return only the first five actors */
             if (++$i > 5) break;
@@ -162,34 +161,34 @@
         }
 
         /* homepage information */
-        $sites = $result->officialSites();
+        $sites = $result->officialSites ();
         if (count($sites) > 0)
             $homepage = $document->CreateElement ('homepage', $sites[0]['url']);
         else
             $homepage = $document->CreateElement ('homepage', '');
 
         /* description information */
-        $plots = $result->plot();
+        $plots = $result->plot ();
         if (count($plots) > 0)
         {
-            $plot = trim(substr($plots[0], 0, -strlen(stristr($plots[0], '<i>'))));
+            $plot = trim (substr ($plots[0], 0, -strlen (stristr ($plots[0], '<i>'))));
             $short_overview = $document->CreateElement ('short_overview', $plot);
         } else {
-            $short_overview = $document->CreateElement ('short_overview', $result->plotoutline());
+            $short_overview = $document->CreateElement ('short_overview', $result->plotoutline ());
         }
 
         /* production countries */
         $countries = $document->CreateElement ('countries', '');
-        foreach($result->country() as $country)
+        foreach ($result->country () as $country)
         {
             $country_tag = $document->CreateElement ('country');
             $country_sname = $document->CreateElement ('short_name', $country);
-            $country_tag->appendChild($country_sname);
-            $countries->appendChild($country_tag);
+            $country_tag->appendChild ($country_sname);
+            $countries->appendChild ($country_tag);
         }
 
         /* runtime information */
-        $runtime = $document->CreateElement ('runtime', $result->runtime());
+        $runtime = $document->CreateElement ('runtime', $result->runtime ());
 
         /* rating information */
         $rating = $document->CreateElement ('rating', $result->rating ());
@@ -242,7 +241,7 @@
         if ($limit > 0)
             $rescount = $limit;
         else
-            $rescount = count($results);
+            $rescount = count ($results);
         $openSearchTotResultTag = generateOpenSearchTotResultsTag ($rescount, $searchResultsDocument);
 
         $moviematchestag = generate_movies_tags ($results, $searchResultsDocument, $limit);
@@ -270,18 +269,18 @@
     }
 
     $matches = array ();
-    if (preg_match("^title=(.+)$^", $_SERVER['QUERY_STRING'], $matches) == 0)
+    if (preg_match ("^title=(.+)$^", $_SERVER['QUERY_STRING'], $matches) == 0)
         echo error_xml ();
     else
     {
         $keywords = $matches[1];
-        $search = new imdbsearch();
-        $search->setsearchname($keywords);
-        $results = $search->results();
+        $search = new imdbsearch ();
+        $search->setsearchname ($keywords);
+        $results = $search->results ();
 
-        if (count($results) > 0)
-            echo generate_search_results($keywords, $results, 3);
+        if (count ($results) > 0)
+            echo generate_search_results ($keywords, $results, 3);
         else
-            echo generate_no_search_results($keywords);
+            echo generate_no_search_results ($keywords);
     }
 ?>
