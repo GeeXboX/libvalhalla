@@ -674,7 +674,7 @@ vh_database_file_delete (database_t *database, const char *file)
 }
 
 void
-vh_database_file_data_delete2 (database_t *database, const char *file)
+vh_database_file_data_delete (database_t *database, const char *file)
 {
   int64_t file_id;
   int res, err = -1;

@@ -187,7 +187,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
          * metadata have changed.
          */
         else if ((int) pdata->mtime != mtime)
-          vh_database_file_data_delete2 (dbmanager->database, pdata->file);
+          vh_database_file_data_delete (dbmanager->database, pdata->file);
       }
       else
       {
