@@ -398,6 +398,10 @@
  "DELETE FROM file " \
  "WHERE file_path = ?;"
 
+#define DELETE_ASSOC_FILE_METADATA  \
+ "DELETE FROM assoc_file_metadata " \
+ "WHERE file_id = ?;"
+
 #define DELETE_DLCONTEXT  \
  "DELETE FROM dlcontext;"
 
