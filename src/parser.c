@@ -424,7 +424,14 @@ parser_metadata (parser_t *parser, file_data_t *data)
   int res;
   const char *name;
   AVFormatContext   *ctx;
+  AVFormatParameters ap;
   AVInputFormat     *fmt = NULL;
+
+  ctx = avformat_alloc_context ();
+  if (!ctx)
+    return;
+
+  ctx->flags |= AVFMT_FLAG_IGNIDX;
 
   /*
    * Try a format in function of the suffix.
@@ -443,7 +450,10 @@ parser_metadata (parser_t *parser, file_data_t *data)
       fmt = NULL;
   }
 
-  res = av_open_input_file (&ctx, data->file, fmt, 0, NULL);
+  memset (&ap, 0, sizeof (ap));
+  ap.prealloced_context = 1;
+
+  res = av_open_input_file (&ctx, data->file, fmt, 0, &ap);
   if (res)
   {
     valhalla_log (VALHALLA_MSG_WARNING,
