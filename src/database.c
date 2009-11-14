@@ -109,6 +109,7 @@ typedef enum database_stmt {
   STMT_UPDATE_FILE,
   STMT_DELETE_FILE,
   STMT_DELETE_ASSOC_FILE_METADATA,
+  STMT_DELETE_ASSOC_FILE_GRABBER,
   STMT_DELETE_DLCONTEXT,
 
   STMT_CLEANUP_ASSOC_FILE_METADATA,
@@ -148,6 +149,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
   [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
   [STMT_DELETE_ASSOC_FILE_METADATA]  = { DELETE_ASSOC_FILE_METADATA,  NULL },
+  [STMT_DELETE_ASSOC_FILE_GRABBER]   = { DELETE_ASSOC_FILE_GRABBER,   NULL },
   [STMT_DELETE_DLCONTEXT]            = { DELETE_DLCONTEXT,            NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
@@ -694,6 +696,31 @@ vh_database_file_data_delete (database_t *database, const char *file)
   sqlite3_clear_bindings (STMT_GET (STMT_DELETE_ASSOC_FILE_METADATA));
  out_reset:
   sqlite3_reset (STMT_GET (STMT_DELETE_ASSOC_FILE_METADATA));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+void
+vh_database_file_grab_delete (database_t *database, const char *file)
+{
+  int64_t file_id;
+  int res, err = -1;
+
+  file_id = database_table_get_id (database,
+                                   STMT_GET (STMT_SELECT_FILE_ID), file);
+  if (!file_id)
+    return;
+
+  VH_DB_BIND_INT64_OR_GOTO
+    (STMT_GET (STMT_DELETE_ASSOC_FILE_GRABBER), 1, file_id, out_reset);
+
+  res = sqlite3_step (STMT_GET (STMT_DELETE_ASSOC_FILE_GRABBER));
+  if (res == SQLITE_DONE)
+    err = 0;
+
+  sqlite3_clear_bindings (STMT_GET (STMT_DELETE_ASSOC_FILE_GRABBER));
+ out_reset:
+  sqlite3_reset (STMT_GET (STMT_DELETE_ASSOC_FILE_GRABBER));
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }

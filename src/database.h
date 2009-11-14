@@ -33,6 +33,7 @@ void vh_database_file_delete (database_t *database, const char *file);
 void vh_database_file_data_delete (database_t *database, const char *file);
 void vh_database_file_grab_insert (database_t *database, file_data_t *data);
 void vh_database_file_grab_update (database_t *database, file_data_t *data);
+void vh_database_file_grab_delete (database_t *database, const char *file);
 int vh_database_file_get_mtime (database_t *db, const char *file);
 void vh_database_file_get_grabber (database_t *database,
                                    const char *file, list_t **l);

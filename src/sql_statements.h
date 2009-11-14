@@ -402,6 +402,10 @@
  "DELETE FROM assoc_file_metadata " \
  "WHERE file_id = ?;"
 
+#define DELETE_ASSOC_FILE_GRABBER   \
+ "DELETE FROM assoc_file_grabber "  \
+ "WHERE file_id = ?;"
+
 #define DELETE_DLCONTEXT  \
  "DELETE FROM dlcontext;"
 
