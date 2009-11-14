@@ -655,7 +655,7 @@ vh_database_file_grab_update (database_t *database, file_data_t *data)
 }
 
 void
-vh_database_file_data_delete (database_t *database, const char *file)
+vh_database_file_delete (database_t *database, const char *file)
 {
   int res, err = -1;
 

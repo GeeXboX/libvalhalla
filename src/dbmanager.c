@@ -270,7 +270,7 @@ dbmanager_thread (void *arg)
         vh_database_step_transaction (dbmanager->database,
                                       dbmanager->commit_int, stats_delete);
 
-        vh_database_file_data_delete (dbmanager->database, file);
+        vh_database_file_delete (dbmanager->database, file);
         stats_delete++;
       }
 
