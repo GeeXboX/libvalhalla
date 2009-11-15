@@ -468,11 +468,15 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_AUDIO_CHANNELS             "audio_channels"
 #define VALHALLA_METADATA_AUDIO_CODEC                "audio_codec"
 #define VALHALLA_METADATA_AUDIO_LANG                 "audio_lang"
+#define VALHALLA_METADATA_AUDIO_STREAMS              "audio_streams"
 #define VALHALLA_METADATA_HEIGHT                     "height"
 #define VALHALLA_METADATA_PICTURE_ORIENTATION        "picture_orientation"
 #define VALHALLA_METADATA_SUB_LANG                   "sub_lang"
+#define VALHALLA_METADATA_SUB_STREAMS                "sub_streams"
+#define VALHALLA_METADATA_VIDEO_ASPECT               "video_aspect"
 #define VALHALLA_METADATA_VIDEO_BITRATE              "video_bitrate"
 #define VALHALLA_METADATA_VIDEO_CODEC                "video_codec"
+#define VALHALLA_METADATA_VIDEO_STREAMS              "video_streams"
 #define VALHALLA_METADATA_WIDTH                      "width"
 
 /* Temporal */
