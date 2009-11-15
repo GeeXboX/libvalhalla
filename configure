@@ -42,7 +42,7 @@ show_help(){
   echo "Grabbers options:"
   echo "  --enable-grabbers           build all grabbers (dummy excepted) [default=no]"
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
-  echo "  --enable-grabber-allocine   build Allocine grabber [default=yes]"
+  echo "  --enable-grabber-allocine   build Allocine grabber [default=no]"
   echo "  --enable-grabber-amazon     build Amazon grabber [default=yes]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=yes]"
   echo "  --enable-grabber-ffmpeg     build FFmpeg grabber [default=yes]"
