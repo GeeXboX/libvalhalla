@@ -47,6 +47,9 @@
 #ifdef HAVE_GRABBER_EXIF
 #include "grabber_exif.h"
 #endif /* HAVE_GRABBER_EXIF */
+#ifdef HAVE_GRABBER_FFMPEG
+#include "grabber_ffmpeg.h"
+#endif /* HAVE_GRABBER_FFMPEG */
 #ifdef HAVE_GRABBER_IMDB
 #include "grabber_imdb.h"
 #endif /* HAVE_GRABBER_IMDB */
@@ -99,6 +102,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
   vh_grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
+#ifdef HAVE_GRABBER_FFMPEG
+  vh_grabber_ffmpeg_register,
+#endif /* HAVE_GRABBER_FFMPEG */
 #ifdef HAVE_GRABBER_LOCAL
   vh_grabber_local_register,
 #endif /* HAVE_GRABBER_LOCAL */

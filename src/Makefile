@@ -45,6 +45,7 @@ SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c
 SRCS_GRABBER-$(GRABBER_ALLOCINE)	+= grabber_allocine.c
 SRCS_GRABBER-$(GRABBER_AMAZON)		+= grabber_amazon.c
 SRCS_GRABBER-$(GRABBER_EXIF)		+= grabber_exif.c
+SRCS_GRABBER-$(GRABBER_FFMPEG)		+= grabber_ffmpeg.c
 SRCS_GRABBER-$(GRABBER_IMDB)		+= grabber_imdb.c
 SRCS_GRABBER-$(GRABBER_LASTFM)		+= grabber_lastfm.c
 SRCS_GRABBER-$(GRABBER_LOCAL)		+= grabber_local.c

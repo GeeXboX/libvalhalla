@@ -45,6 +45,7 @@ show_help(){
   echo "  --enable-grabber-allocine   build Allocine grabber [default=yes]"
   echo "  --enable-grabber-amazon     build Amazon grabber [default=yes]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=yes]"
+  echo "  --enable-grabber-ffmpeg     build FFmpeg grabber [default=yes]"
   echo "  --enable-grabber-imdb       build ImDB grabber [default=yes]"
   echo "  --enable-grabber-lastfm     build Last.fm grabber [default=yes]"
   echo "  --enable-grabber-local      build localfiles grabber [default=yes]"
@@ -436,6 +437,7 @@ grabber_dummy="no"
 grabber_allocine="no"
 grabber_amazon="yes"
 grabber_exif="yes"
+grabber_ffmpeg="yes"
 grabber_imdb="yes"
 grabber_lastfm="yes"
 grabber_local="yes"
@@ -539,6 +541,10 @@ for opt do
   --enable-grabber-exif) grabber_exif="yes";
   ;;
   --disable-grabber-exif) grabber_exif="no";
+  ;;
+  --enable-grabber-ffmpeg) grabber_ffmpeg="yes";
+  ;;
+  --disable-grabber-ffmpeg) grabber_ffmpeg="no";
   ;;
   --enable-grabber-imdb) grabber_imdb="yes";
   ;;
@@ -941,6 +947,7 @@ if [ "$grabber_all" != "auto" ]; then
   grabber_allocine=$grabber_all
   grabber_amazon=$grabber_all
   grabber_exif=$grabber_all
+  grabber_ffmpeg=$grabber_all
   grabber_imdb=$grabber_all
   grabber_lastfm=$grabber_all
   grabber_local=$grabber_all
@@ -975,6 +982,11 @@ if enabled grabber_exif; then
   add_cflags -DHAVE_GRABBER_EXIF
   grabber="yes"
   exif="yes"
+fi
+
+if enabled grabber_ffmpeg; then
+  add_cflags -DHAVE_GRABBER_FFMPEG
+  grabber="yes"
 fi
 
 if enabled grabber_imdb; then
@@ -1195,6 +1207,7 @@ echolog "    Dummy            $grabber_dummy"
 echolog "    Allocine         $grabber_allocine"
 echolog "    Amazon           $grabber_amazon"
 echolog "    EXIF             $grabber_exif"
+echolog "    FFmpeg           $grabber_ffmpeg"
 echolog "    ImDB             $grabber_imdb"
 echolog "    Last.fm          $grabber_lastfm"
 echolog "    Local Files      $grabber_local"
@@ -1261,6 +1274,7 @@ append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_ALLOCINE=$grabber_allocine"
 append_config "GRABBER_AMAZON=$grabber_amazon"
 append_config "GRABBER_EXIF=$grabber_exif"
+append_config "GRABBER_FFMPEG=$grabber_ffmpeg"
 append_config "GRABBER_IMDB=$grabber_imdb"
 append_config "GRABBER_LASTFM=$grabber_lastfm"
 append_config "GRABBER_LOCAL=$grabber_local"
