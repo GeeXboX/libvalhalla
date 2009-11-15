@@ -60,21 +60,6 @@ struct parser_s {
 };
 
 
-static const char *
-suffix_fmt_guess (const char *file)
-{
-  const char *it;
-
-  if (!file)
-    return NULL;
-
-  it = strrchr (file, '.');
-  if (it)
-    it++;
-
-  return vh_lavf_utils_fmtname_get (it);
-}
-
 static inline int
 parser_is_stopped (parser_t *parser)
 {
@@ -317,73 +302,6 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   return meta;
 }
 
-#define PROBE_BUF_MIN 2048
-#define PROBE_BUF_MAX (1 << 20)
-
-/*
- * This function is fully inspired of (libavformat/utils.c v52.28.0
- * "av_open_input_file()") to probe data in order to test if *ftm argument
- * is the right fmt or not.
- *
- * The original function from avformat "av_probe_input_format2()" is really
- * slow because it probes the fmt of _all_ demuxers for each probe_data
- * buffer. Here, the test is only for _one_ fmt and returns the score
- * (if > score_max) provided by fmt->probe().
- *
- * WARNING: this function depends of some internal behaviours of libavformat
- *          and can be "broken" with future versions of FFmpeg.
- */
-static int
-parser_probe (AVInputFormat *fmt, const char *file)
-{
-  FILE *fd;
-  int rc = 0;
-  int p_size;
-  AVProbeData p_data;
-
-  if ((fmt->flags & AVFMT_NOFILE) || !fmt->read_probe)
-    return 0;
-
-  fd = fopen (file, "r");
-  if (!fd)
-    return 0;
-
-  p_data.filename = file;
-  p_data.buf = NULL;
-
-  for (p_size = PROBE_BUF_MIN; p_size <= PROBE_BUF_MAX; p_size <<= 1)
-  {
-    int score;
-    int score_max = p_size < PROBE_BUF_MAX ? AVPROBE_SCORE_MAX / 4 : 0;
-
-    p_data.buf = realloc (p_data.buf, p_size + AVPROBE_PADDING_SIZE);
-    if (!p_data.buf)
-      break;
-
-    p_data.buf_size = fread (p_data.buf, 1, p_size, fd);
-    if (p_data.buf_size != p_size) /* EOF is reached? */
-      break;
-
-    memset (p_data.buf + p_data.buf_size, 0, AVPROBE_PADDING_SIZE);
-
-    if (fseek (fd, 0, SEEK_SET))
-      break;
-
-    score = fmt->read_probe (&p_data);
-    if (score > score_max)
-    {
-      rc = score;
-      break;
-    }
-  }
-
-  if (p_data.buf)
-    free (p_data.buf);
-
-  fclose (fd);
-  return rc;
-}
-
 static valhalla_file_type_t
 parser_stream_info (AVFormatContext *ctx)
 {
@@ -421,45 +339,11 @@ parser_stream_info (AVFormatContext *ctx)
 static void
 parser_metadata (parser_t *parser, file_data_t *data)
 {
-  int res;
-  const char *name;
   AVFormatContext   *ctx;
-  AVFormatParameters ap;
-  AVInputFormat     *fmt = NULL;
 
-  ctx = avformat_alloc_context ();
+  ctx = vh_lavf_utils_open_input_file (data->file);
   if (!ctx)
     return;
-
-  ctx->flags |= AVFMT_FLAG_IGNIDX;
-
-  /*
-   * Try a format in function of the suffix.
-   * We gain a lot of speed if the fmt is already the right.
-   */
-  name = suffix_fmt_guess (data->file);
-  if (name)
-    fmt = av_find_input_format (name);
-
-  if (fmt)
-  {
-    int score = parser_probe (fmt, data->file);
-    valhalla_log (VALHALLA_MSG_VERBOSE,
-                  "Probe score (%i) [%s] : %s", score, name, data->file);
-    if (!score) /* Bad score? */
-      fmt = NULL;
-  }
-
-  memset (&ap, 0, sizeof (ap));
-  ap.prealloced_context = 1;
-
-  res = av_open_input_file (&ctx, data->file, fmt, 0, &ap);
-  if (res)
-  {
-    valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't open file (%i) : %s", res, data->file);
-    return;
-  }
 
   data->type = parser_stream_info (ctx);
   data->meta_parser = parser_metadata_get (parser, ctx, data->file);

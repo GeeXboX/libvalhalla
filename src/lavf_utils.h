@@ -23,5 +23,6 @@
 #define VALHALLA_LAVF_UTILS
 
 const char *vh_lavf_utils_fmtname_get (const char *suffix);
+AVFormatContext *vh_lavf_utils_open_input_file (const char *file);
 
 #endif /* VALHALLA_LAVF_UTILS */
