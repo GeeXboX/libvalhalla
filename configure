@@ -1110,8 +1110,8 @@ if enabled gcrypt; then
   fi
   if [ -z  "$gcryptdir" ]; then
     if `which libgcrypt-config 1>/dev/null 2>&1`; then
-     add_cflags `libgcrypt-config --cflags`
-     add_extralibs `libgcrypt-config --libs`
+      add_cflags `libgcrypt-config --cflags`
+      add_extralibs `libgcrypt-config --libs`
     fi
   fi
 
