@@ -339,7 +339,7 @@ parser_stream_info (AVFormatContext *ctx)
 static void
 parser_metadata (parser_t *parser, file_data_t *data)
 {
-  AVFormatContext   *ctx;
+  AVFormatContext *ctx;
 
   ctx = vh_lavf_utils_open_input_file (data->file);
   if (!ctx)
