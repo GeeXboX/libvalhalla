@@ -462,20 +462,6 @@ parser_metadata (parser_t *parser, file_data_t *data)
   }
 
   data->type = parser_stream_info (ctx);
-#if 0
-  /*
-   * Can be useful in the future in order to detect if the file
-   * is audio or video.
-   */
-  res = av_find_stream_info (ctx);
-  if (res < 0)
-  {
-    valhalla_log (VALHALLA_MSG_WARNING,
-                  "FFmpeg can't find stream info: %s", data->file);
-  }
-  else
-#endif /* 0 */
-
   data->meta_parser = parser_metadata_get (parser, ctx, data->file);
 
   av_close_input_file (ctx);
