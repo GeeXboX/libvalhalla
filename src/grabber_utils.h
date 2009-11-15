@@ -27,6 +27,7 @@
 #endif /* USE_XML */
 
 void vh_grabber_parse_int (file_data_t *fdata, int val, const char *name);
+void vh_grabber_parse_int64 (file_data_t *fdata, int64_t val, const char *name);
 void vh_grabber_parse_float (file_data_t *fdata, float val, const char *name);
 
 #ifdef USE_XML
