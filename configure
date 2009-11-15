@@ -1145,9 +1145,9 @@ fi
 if enabled avcodec; then
   add_cflags -DUSE_LAVC
 
-  #################################################
+  ###############################################
   #   check for FFmpeg libavcodec
-  #################################################
+  ###############################################
   if [ -n "$lavcdir" ]; then
     check_cflags -I${lavcdir}/include
     check_ldflags -L${lavcdir}/lib
