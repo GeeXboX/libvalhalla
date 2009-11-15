@@ -1053,6 +1053,8 @@ if enabled grabber; then
 fi
 
 if enabled xml; then
+  add_cflags -DUSE_XML
+
   ###############################################
   #   check for libxml2
   ###############################################

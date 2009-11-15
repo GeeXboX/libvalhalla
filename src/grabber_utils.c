@@ -24,7 +24,9 @@
 #include <string.h>
 
 #include "utils.h"
+#ifdef USE_XML
 #include "xml_utils.h"
+#endif /* USE_XML */
 
 static const struct {
   const char *tag;
@@ -60,6 +62,7 @@ vh_grabber_parse_float (file_data_t *fdata, float val, const char *name)
   vh_metadata_add_auto (&fdata->meta_grabber, name, v);
 }
 
+#ifdef USE_XML
 void
 vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
                       const char *name)
@@ -163,3 +166,4 @@ vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
     xmlFree (ch);
   }
 }
+#endif /* USE_XML */

@@ -22,15 +22,20 @@
 #ifndef VALHALLA_GRABBER_UTILS_H
 #define VALHALLA_GRABBER_UTILS_H
 
-void vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                           const char *name);
+#ifdef USE_XML
+#include "xml_utils.h"
+#endif /* USE_XML */
 
 void vh_grabber_parse_int (file_data_t *fdata, int val,
                            const char *name);
 void vh_grabber_parse_float (file_data_t *fdata, float val, const char *name);
 
+#ifdef USE_XML
+void vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
+                           const char *name);
 void vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node);
 
 void vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node);
+#endif /* USE_XML */
 
 #endif /* VALHALLA_GRABBER_UTILS_H */
