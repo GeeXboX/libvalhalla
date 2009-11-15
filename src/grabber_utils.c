@@ -43,6 +43,15 @@ static const struct {
 
 
 void
+vh_grabber_parse_int (file_data_t *fdata, int val, const char *name)
+{
+  char v[32] = { 0 };
+
+  snprintf (v, sizeof (v), "%d", val);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
+}
+
+void
 vh_grabber_parse_float (file_data_t *fdata, float val, const char *name)
 {
   char v[32] = { 0 };
@@ -67,15 +76,6 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
     free (res);
     res = NULL;
   }
-}
-
-void
-vh_grabber_parse_int (file_data_t *fdata, int val, const char *name)
-{
-  char v[32] = { 0 };
-
-  snprintf (v, sizeof (v), "%d", val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
 }
 
 void
