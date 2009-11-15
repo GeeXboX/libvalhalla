@@ -27,6 +27,7 @@ void vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
 
 void vh_grabber_parse_int (file_data_t *fdata, int val,
                            const char *name);
+void vh_grabber_parse_float (file_data_t *fdata, float val, const char *name);
 
 void vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node);
 
