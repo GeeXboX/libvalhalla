@@ -61,6 +61,11 @@ show_help(){
   echo "                                       plus --with-lavf-lib=PATH/lib"
   echo "  --with-lavf-inc=PATH        specify directory for libavformat include files"
   echo "  --with-lavf-lib=PATH        specify directory for libavformat library"
+  echo "  --with-lavc=PATH            specify prefix directory for libavcodec package."
+  echo "                              Equivalent to --with-lavc-inc=PATH/include"
+  echo "                                       plus --with-lavc-lib=PATH/lib"
+  echo "  --with-lavc-inc=PATH        specify directory for libavcodec include files"
+  echo "  --with-lavc-lib=PATH        specify directory for libavcodec library"
   echo "  --with-lavu=PATH            specify prefix directory for libavutil package."
   echo "                              Equivalent to --with-lavu-inc=PATH/include"
   echo "                                       plus --with-lavu-lib=PATH/lib"
@@ -491,6 +496,12 @@ for opt do
   ;;
   --with-lavf-lib=*) lavflibdir="$optval";
   ;;
+  --with-lavc=*) lavcdir="$optval";
+  ;;
+  --with-lavc-inc=*) lavcincdir="$optval";
+  ;;
+  --with-lavc-lib=*) lavclibdir="$optval";
+  ;;
   --with-lavu=*) lavudir="$optval";
   ;;
   --with-lavu-inc=*) lavuincdir="$optval";
@@ -859,6 +870,28 @@ fi
 echolog "Checking for libavformat ..."
 check_lib libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can't find libavformat !"
 add_pkgconfig_requires libavformat
+
+
+#################################################
+#   check for FFmpeg libavcodec
+#################################################
+if [ -n "$lavcdir" ]; then
+  check_cflags -I${lavcdir}/include
+  check_ldflags -L${lavcdir}/lib
+fi
+if [ -n "$lavcincdir" ]; then
+  check_cflags -I${lavcincdir}
+fi
+if [ -n "$lavclibdir" ]; then
+  check_ldflags -L${lavclibdir}
+fi
+if [ -z  "$lavcdir" -a -z "$lavcincdir" -a -z "$lavclibdir" ]; then
+  add_pkgconfig_deps libavcodec
+fi
+
+echolog "Checking for libavcodec ..."
+check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec || die "Error, can't find libavcodec !"
+add_pkgconfig_requires libavcodec
 
 
 #################################################

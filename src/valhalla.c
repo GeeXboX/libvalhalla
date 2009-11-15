@@ -19,8 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <pthread.h>
 #include <stdlib.h>
 
+#include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
 #include "valhalla.h"
@@ -373,6 +375,33 @@ valhalla_verbosity (valhalla_verb_t level)
   vh_log_verb (level);
 }
 
+static int
+valhalla_avlock (void **mutex, enum AVLockOp op)
+{
+  switch (op)
+  {
+  case AV_LOCK_CREATE:
+    *mutex = malloc (sizeof (pthread_mutex_t));
+    if (!*mutex)
+      return 1;
+    return !!pthread_mutex_init (*mutex, NULL);
+
+  case AV_LOCK_OBTAIN:
+    return !!pthread_mutex_lock (*mutex);
+
+  case AV_LOCK_RELEASE:
+    return !!pthread_mutex_unlock (*mutex);
+
+  case AV_LOCK_DESTROY:
+    pthread_mutex_destroy (*mutex);
+    free (*mutex);
+    return 0;
+
+  default:
+    return 1;
+  }
+}
+
 valhalla_t *
 valhalla_init (const char *db,
                unsigned int parser_nb, int decrapifier, unsigned int commit_int,
@@ -435,6 +464,8 @@ valhalla_init (const char *db,
 
   if (!preinit)
   {
+    if (av_lockmgr_register (valhalla_avlock))
+      goto err;
     av_log_set_level (AV_LOG_FATAL);
     av_register_all ();
     preinit = 1;
