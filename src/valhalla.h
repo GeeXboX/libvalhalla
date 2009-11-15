@@ -469,6 +469,7 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_AUDIO_CODEC                "audio_codec"
 #define VALHALLA_METADATA_AUDIO_LANG                 "audio_lang"
 #define VALHALLA_METADATA_AUDIO_STREAMS              "audio_streams"
+#define VALHALLA_METADATA_DURATION                   "duration"
 #define VALHALLA_METADATA_HEIGHT                     "height"
 #define VALHALLA_METADATA_PICTURE_ORIENTATION        "picture_orientation"
 #define VALHALLA_METADATA_SUB_LANG                   "sub_lang"
