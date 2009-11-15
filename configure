@@ -879,28 +879,6 @@ add_pkgconfig_requires libavformat
 
 
 #################################################
-#   check for FFmpeg libavcodec
-#################################################
-if [ -n "$lavcdir" ]; then
-  check_cflags -I${lavcdir}/include
-  check_ldflags -L${lavcdir}/lib
-fi
-if [ -n "$lavcincdir" ]; then
-  check_cflags -I${lavcincdir}
-fi
-if [ -n "$lavclibdir" ]; then
-  check_ldflags -L${lavclibdir}
-fi
-if [ -z  "$lavcdir" -a -z "$lavcincdir" -a -z "$lavclibdir" ]; then
-  add_pkgconfig_deps libavcodec
-fi
-
-echolog "Checking for libavcodec ..."
-check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec || die "Error, can't find libavcodec !"
-add_pkgconfig_requires libavcodec
-
-
-#################################################
 #   check for SQLite sqlite3
 #################################################
 if [ -n "$sqlite3dir" ]; then
@@ -939,6 +917,7 @@ restore_flags
 grabber="no"
 xml="no"
 avutil="no"
+avcodec="no"
 gcrypt="no"
 exif="no"
 nfo="no"
@@ -987,6 +966,7 @@ fi
 if enabled grabber_ffmpeg; then
   add_cflags -DHAVE_GRABBER_FFMPEG
   grabber="yes"
+  avcodec="yes"
 fi
 
 if enabled grabber_imdb; then
@@ -1162,6 +1142,31 @@ if enabled avutil; then
   add_pkgconfig_requires libavutil
 fi
 
+if enabled avcodec; then
+  add_cflags -DUSE_LAVC
+
+  #################################################
+  #   check for FFmpeg libavcodec
+  #################################################
+  if [ -n "$lavcdir" ]; then
+    check_cflags -I${lavcdir}/include
+    check_ldflags -L${lavcdir}/lib
+  fi
+  if [ -n "$lavcincdir" ]; then
+    check_cflags -I${lavcincdir}
+  fi
+  if [ -n "$lavclibdir" ]; then
+    check_ldflags -L${lavclibdir}
+  fi
+  if [ -z  "$lavcdir" -a -z "$lavcincdir" -a -z "$lavclibdir" ]; then
+    add_pkgconfig_deps libavcodec
+  fi
+
+  echolog "Checking for libavcodec ..."
+  echolog " \_ dep for grabber\t: ffmpeg"
+  check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec || die "Error, can't find libavcodec !"
+  add_pkgconfig_requires libavcodec
+fi
 
 #################################################
 #   Miscellaneous

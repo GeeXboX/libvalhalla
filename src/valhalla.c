@@ -22,7 +22,9 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#ifdef USE_LAVC
 #include <libavcodec/avcodec.h>
+#endif /* USE_LAVC */
 #include <libavformat/avformat.h>
 
 #include "valhalla.h"
@@ -375,6 +377,7 @@ valhalla_verbosity (valhalla_verb_t level)
   vh_log_verb (level);
 }
 
+#ifdef USE_LAVC
 static int
 valhalla_avlock (void **mutex, enum AVLockOp op)
 {
@@ -401,6 +404,7 @@ valhalla_avlock (void **mutex, enum AVLockOp op)
     return 1;
   }
 }
+#endif /* USE_LAVC */
 
 valhalla_t *
 valhalla_init (const char *db,
@@ -464,8 +468,10 @@ valhalla_init (const char *db,
 
   if (!preinit)
   {
+#ifdef USE_LAVC
     if (av_lockmgr_register (valhalla_avlock))
       goto err;
+#endif /* USE_LAVC */
     av_log_set_level (AV_LOG_FATAL);
     av_register_all ();
     preinit = 1;
