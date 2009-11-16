@@ -305,7 +305,7 @@ dbmanager_thread (void *arg)
                     __FUNCTION__, stats_cleanup);
     }
   }
-  while (rc == ACTION_DB_NEXT_LOOP);
+  while (rc == ACTION_DB_NEXT_LOOP && !dbmanager_is_stopped (dbmanager));
 
   pthread_exit (NULL);
 }
