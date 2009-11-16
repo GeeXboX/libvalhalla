@@ -33,10 +33,6 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
-typedef struct grabber_nfo_s {
-  /* unused */
-} grabber_nfo_t;
-
 
 /****************************************************************************/
 /* Common Grabber                                                           */
@@ -311,7 +307,7 @@ grabber_nfo_priv (void)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return calloc (1, sizeof (grabber_nfo_t));
+  return NULL;
 }
 
 static int
@@ -323,13 +319,9 @@ grabber_nfo_init (vh_unused void *priv)
 }
 
 static void
-grabber_nfo_uninit (void *priv)
+grabber_nfo_uninit (vh_unused void *priv)
 {
-  grabber_nfo_t *nfo = priv;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  free (nfo);
 }
 
 static int

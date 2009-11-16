@@ -36,10 +36,6 @@
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
-typedef struct grabber_local_s {
-  /* unused */
-} grabber_local_t;
-
 
 static char *
 grabber_local_get (const char *filename)
@@ -116,7 +112,7 @@ grabber_local_priv (void)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return calloc (1, sizeof (grabber_local_t));
+  return NULL;
 }
 
 static int
@@ -128,13 +124,9 @@ grabber_local_init (vh_unused void *priv)
 }
 
 static void
-grabber_local_uninit (void *priv)
+grabber_local_uninit (vh_unused void *priv)
 {
-  grabber_local_t *local = priv;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  free (local);
 }
 
 static int

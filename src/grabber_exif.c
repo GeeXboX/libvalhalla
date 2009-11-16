@@ -36,10 +36,6 @@
 
 #define BUF_SIZE 2048
 
-typedef struct grabber_exif_s {
-  /* dummy structure */
-} grabber_exif_t;
-
 
 static void
 exif_content_foreach_func (ExifEntry *entry, void *data)
@@ -73,7 +69,7 @@ grabber_exif_priv (void)
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return calloc (1, sizeof (grabber_exif_t));
+  return NULL;
 }
 
 static int
@@ -85,16 +81,9 @@ grabber_exif_init (vh_unused void *priv)
 }
 
 static void
-grabber_exif_uninit (void *priv)
+grabber_exif_uninit (vh_unused void *priv)
 {
-  grabber_exif_t *exif = priv;
-
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
-
-  if (!exif)
-    return;
-
-  free (exif);
 }
 
 static int
