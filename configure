@@ -109,6 +109,11 @@ echolog(){
     echo "$@"
 }
 
+echologn(){
+    log "$@"
+    echo -n "$@"
+}
+
 clean(){
     rm -f $TMPC $TMPO $TMPE $TMPS
 }
@@ -435,18 +440,18 @@ pkgconfig_requires=""
 grabber_all="auto"
 grabber_dummy="no"
 grabber_allocine="no"
-grabber_amazon="yes"
-grabber_exif="yes"
-grabber_ffmpeg="no"
-grabber_imdb="yes"
-grabber_lastfm="yes"
-grabber_local="yes"
+grabber_amazon="auto"
+grabber_exif="auto"
+grabber_ffmpeg="auto"
+grabber_imdb="auto"
+grabber_lastfm="auto"
+grabber_local="auto"
 grabber_lyricsfly="no"
-grabber_lyricwiki="yes"
-grabber_nfo="yes"
-grabber_tmdb="yes"
-grabber_tvdb="yes"
-grabber_tvrage="yes"
+grabber_lyricwiki="auto"
+grabber_nfo="auto"
+grabber_tmdb="auto"
+grabber_tvdb="auto"
+grabber_tvrage="auto"
 logcolor="yes"
 doc="no"
 
@@ -914,139 +919,72 @@ restore_flags
 #################################################
 #   Grabber
 #################################################
+
+grabber_enabled(){
+    local grabup value
+    for grab in $@; do
+      grabup=`echo $grab | tr "[:lower:]" "[:upper:]"`
+      eval value=\$grabber_$grab
+      if test "$value" = "auto" -o "$value" = "yes"; then
+        add_cflags -DHAVE_GRABBER_$grabup
+        grabber="yes"
+        eval grabber_$grab="yes"
+      fi
+    done
+}
+
+grabber_set_no(){
+    for grab in $@; do
+      eval grabber_$grab="no"
+    done
+}
+
+grabber_set_yes(){
+    for grab in $@; do
+      eval grabber_$grab="yes"
+    done
+}
+
+grabber_enable_dep(){
+    local value list dep
+    eval list=\$$1
+    dep=`echo $1 | sed "s/\([a-z]*\)_.*/\\1/"`
+    eval $dep="no"
+    for grab in $list; do
+      eval value=\$grabber_$grab
+      if test "$value" = "auto" -o "$value" = "yes"; then
+        eval $dep="yes"
+        break
+      fi
+    done
+}
+
 grabber="no"
-xml="no"
-avutil="no"
-avcodec="no"
-gcrypt="no"
-exif="no"
-nfo="no"
+grabbers="allocine amazon exif ffmpeg imdb lastfm local lyricsfly lyricwiki nfo tmdb tvdb tvrage"
 
 if [ "$grabber_all" != "auto" ]; then
-  grabber_allocine=$grabber_all
-  grabber_amazon=$grabber_all
-  grabber_exif=$grabber_all
-  grabber_ffmpeg=$grabber_all
-  grabber_imdb=$grabber_all
-  grabber_lastfm=$grabber_all
-  grabber_local=$grabber_all
-  grabber_lyricsfly=$grabber_all
-  grabber_lyricwiki=$grabber_all
-  grabber_nfo=$grabber_all
-  grabber_tmdb=$grabber_all
-  grabber_tvdb=$grabber_all
-  grabber_tvrage=$grabber_all
+  eval grabber_set_$grabber_all \$grabbers
 fi
 
-if enabled grabber_dummy; then
-  add_cflags -DHAVE_GRABBER_DUMMY
-  grabber="yes"
-fi
+avcodec_dep_grabber="ffmpeg"
+grabber_enable_dep avcodec_dep_grabber
 
-if enabled grabber_allocine; then
-  add_cflags -DHAVE_GRABBER_ALLOCINE
-  grabber="yes"
-  xml="yes"
-fi
+avutil_dep_grabber="amazon lastfm tmdb tvdb"
+grabber_enable_dep avutil_dep_grabber
 
-if enabled grabber_amazon; then
-  add_cflags -DHAVE_GRABBER_AMAZON
-  grabber="yes"
-  xml="yes"
-  avutil="yes"
-  gcrypt="yes"
-fi
+exif_dep_grabber="exif"
+grabber_enable_dep exif_dep_grabber
 
-if enabled grabber_exif; then
-  add_cflags -DHAVE_GRABBER_EXIF
-  grabber="yes"
-  exif="yes"
-fi
+gcrypt_dep_grabber="amazon"
+grabber_enable_dep gcrypt_dep_grabber
 
-if enabled grabber_ffmpeg; then
-  add_cflags -DHAVE_GRABBER_FFMPEG
-  grabber="yes"
-  avcodec="yes"
-fi
+nfo_dep_grabber="nfo"
+grabber_enable_dep nfo_dep_grabber
 
-if enabled grabber_imdb; then
-  add_cflags -DHAVE_GRABBER_IMDB
-  grabber="yes"
-  xml="yes"
-fi
-
-if enabled grabber_lastfm; then
-  add_cflags -DHAVE_GRABBER_LASTFM
-  grabber="yes"
-  xml="yes"
-  avutil="yes"
-fi
-
-if enabled grabber_local; then
-  add_cflags -DHAVE_GRABBER_LOCAL
-  grabber="yes"
-fi
-
-if enabled grabber_nfo; then
-  add_cflags -DHAVE_GRABBER_NFO
-  grabber="yes"
-  nfo="yes"
-fi
-
-if enabled grabber_lyricsfly; then
-  add_cflags -DHAVE_GRABBER_LYRICSFLY
-  grabber="yes"
-  xml="yes"
-fi
-
-if enabled grabber_lyricwiki; then
-  add_cflags -DHAVE_GRABBER_LYRICWIKI
-  grabber="yes"
-  xml="yes"
-fi
-
-if enabled grabber_tmdb; then
-  add_cflags -DHAVE_GRABBER_TMDB
-  grabber="yes"
-  xml="yes"
-  avutil="yes"
-fi
-
-if enabled grabber_tvdb; then
-  add_cflags -DHAVE_GRABBER_TVDB
-  grabber="yes"
-  xml="yes"
-  avutil="yes"
-fi
-
-if enabled grabber_tvrage; then
-  add_cflags -DHAVE_GRABBER_TVRAGE
-  grabber="yes"
-  xml="yes"
-fi
-
-if enabled grabber; then
-  add_cflags -DUSE_GRABBER
-
-  ###############################################
-  #   check for cURL
-  ###############################################
-  if [ -n "$curldir" ]; then
-    check_cflags -I$curldir
-    check_ldflags -L$curldir
-  fi
-  if [ -z  "$curldir" ]; then
-    add_pkgconfig_deps libcurl
-  fi
-
-  echolog "Checking for libcurl ..."
-  check_lib curl/curl.h curl_global_init -lcurl || die "Error, can't find libcurl !"
-  add_pkgconfig_requires libcurl
-fi
+xml_dep_grabber="allocine amazon imdb lastfm lyricsfly lyricwiki tmdb tvdb tvrage"
+grabber_enable_dep xml_dep_grabber
 
 if enabled xml; then
-  add_cflags -DUSE_XML
-
   ###############################################
   #   check for libxml2
   ###############################################
@@ -1058,66 +996,17 @@ if enabled xml; then
     add_pkgconfig_deps libxml-2.0
   fi
 
-  echolog "Checking for libxml2 ..."
-  echolog " \_ dep for grabbers\t: allocine, amazon, imdb, lastfm, lyricsfly, lyricwiki, tmdb, tvdb, tvrage"
-  check_lib libxml/parser.h xmlReadMemory -lxml2 || die "Error, can't find libxml2 !"
-  add_pkgconfig_requires libxml-2.0
-fi
-
-if enabled exif; then
-  ###############################################
-  #   check for libexif
-  ###############################################
-  if [ -n "$exifdir" ]; then
-    check_cflags -I$exifdir
-    check_ldflags -L$exifdir
+  echologn "Checking for libxml2 ... "
+  check_lib libxml/parser.h xmlReadMemory -lxml2
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_cflags -DUSE_XML
+    add_pkgconfig_requires libxml-2.0
+  else
+    echolog "(no)"
+    xml="no"
+    grabber_set_no $xml_dep_grabber
   fi
-  if [ -z  "$exifdir" ]; then
-    add_pkgconfig_deps libexif
-  fi
-
-  echolog "Checking for libexif ..."
-  echolog " \_ dep for grabber\t: exif"
-  check_lib libexif/exif-data.h exif_entry_get_value -lexif || die "Error, can't find libexif !"
-  add_pkgconfig_requires libexif
-fi
-
-if enabled nfo; then
-  ###############################################
-  #   check for libnfo
-  ###############################################
-  if [ -n "$nfodir" ]; then
-    check_cflags -I$nfodir
-    check_ldflags -L$nfodir
-  fi
-  if [ -z  "$nfodir" ]; then
-    add_pkgconfig_deps libnfo
-  fi
-
-  echolog "Checking for libnfo ..."
-  echolog " \_ dep for grabber\t: nfo"
-  check_lib nfo.h nfo_init -lnfo || die "Error, can't find libnfo !"
-  add_pkgconfig_requires libnfo
-fi
-
-if enabled gcrypt; then
-  ###############################################
-  #   check for libgcrypt
-  ###############################################
-  if [ -n "$gcryptdir" ]; then
-    check_cflags -I$gcryptdir
-    check_ldflags -L$gcryptdir
-  fi
-  if [ -z  "$gcryptdir" ]; then
-    if `which libgcrypt-config 1>/dev/null 2>&1`; then
-      add_cflags `libgcrypt-config --cflags`
-      add_extralibs `libgcrypt-config --libs`
-    fi
-  fi
-
-  echolog "Checking for libgcrypt ..."
-  echolog " \_ dep for grabber\t: amazon"
-  check_lib gcrypt.h gcry_md_open -lgcrypt || die "Error, can't find libgcrypt !"
 fi
 
 if enabled avutil; then
@@ -1138,15 +1027,70 @@ if enabled avutil; then
     add_pkgconfig_deps libavutil
   fi
 
-  echolog "Checking for libavutil ..."
-  echolog " \_ dep for grabbers\t: amazon, lastfm, tmdb, tvdb"
-  check_lib libavutil/md5.h av_md5_sum -lavutil || die "Error, can't find libavutil !"
-  add_pkgconfig_requires libavutil
+  echologn "Checking for libavutil ... "
+  check_lib libavutil/md5.h av_md5_sum -lavutil
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_pkgconfig_requires libavutil
+  else
+    echolog "(no)"
+    avutil="no"
+    grabber_set_no $avutil_dep_grabber
+  fi
+fi
+
+if enabled gcrypt; then
+  ###############################################
+  #   check for libgcrypt
+  ###############################################
+  if [ -n "$gcryptdir" ]; then
+    check_cflags -I$gcryptdir
+    check_ldflags -L$gcryptdir
+  fi
+  if [ -z  "$gcryptdir" ]; then
+    if `which libgcrypt-config 1>/dev/null 2>&1`; then
+      add_cflags `libgcrypt-config --cflags`
+      add_extralibs `libgcrypt-config --libs`
+    fi
+  fi
+
+  echologn "Checking for libgcrypt ... "
+  check_lib gcrypt.h gcry_md_open -lgcrypt
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_pkgconfig_requires libavutil
+  else
+    echolog "(no)"
+    gcrypt="no"
+    grabber_set_no $gcrypt_dep_grabber
+  fi
+fi
+
+if enabled exif; then
+  ###############################################
+  #   check for libexif
+  ###############################################
+  if [ -n "$exifdir" ]; then
+    check_cflags -I$exifdir
+    check_ldflags -L$exifdir
+  fi
+  if [ -z  "$exifdir" ]; then
+    add_pkgconfig_deps libexif
+  fi
+
+  echologn "Checking for libexif ... "
+  check_lib libexif/exif-data.h exif_entry_get_value -lexif
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_pkgconfig_requires libexif
+  else
+    echolog "(no)"
+    exif="no"
+    grabber_set_no $exif_dep_grabber
+  fi
 fi
 
 if enabled avcodec; then
-  add_cflags -DUSE_LAVC
-
   ###############################################
   #   check for FFmpeg libavcodec
   ###############################################
@@ -1164,10 +1108,71 @@ if enabled avcodec; then
     add_pkgconfig_deps libavcodec
   fi
 
-  echolog "Checking for libavcodec ..."
-  echolog " \_ dep for grabber\t: ffmpeg"
-  check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec || die "Error, can't find libavcodec !"
-  add_pkgconfig_requires libavcodec
+  echologn "Checking for libavcodec ... "
+  check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_cflags -DUSE_LAVC
+    add_pkgconfig_requires libavcodec
+  else
+    echolog "(no)"
+    avcodec="no"
+    grabber_set_no $avcodec_dep_grabber
+  fi
+fi
+
+if enabled nfo; then
+  ###############################################
+  #   check for libnfo
+  ###############################################
+  if [ -n "$nfodir" ]; then
+    check_cflags -I$nfodir
+    check_ldflags -L$nfodir
+  fi
+  if [ -z  "$nfodir" ]; then
+    add_pkgconfig_deps libnfo
+  fi
+
+  echologn "Checking for libnfo ... "
+  check_lib nfo.h nfo_init -lnfo
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_pkgconfig_requires libnfo
+  else
+    echolog "(no)"
+    nfo="no"
+    grabber_set_no $nfo_dep_grabber
+  fi
+fi
+
+grabber_enabled dummy $grabbers
+
+if enabled grabber; then
+  ###############################################
+  #   check for libcurl
+  ###############################################
+  if [ -n "$curldir" ]; then
+    check_cflags -I$curldir
+    check_ldflags -L$curldir
+  fi
+  if [ -z  "$curldir" ]; then
+    add_pkgconfig_deps libcurl
+  fi
+
+  echologn "Checking for libcurl ... "
+  check_lib curl/curl.h curl_global_init -lcurl
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_cflags -DUSE_GRABBER
+    add_pkgconfig_requires libcurl
+  else
+    echolog "(no)"
+    if enabled grabber_all; then
+      die "Error, can't find libcurl (mandatory for the grabbers) !"
+    fi
+    grabber="no"
+    grabber_set_no dummy $grabbers
+  fi
 fi
 
 #################################################
