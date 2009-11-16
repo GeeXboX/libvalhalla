@@ -933,6 +933,15 @@ grabber_enabled(){
     done
 }
 
+grabber_forced(){
+    local value
+    for grab in $@; do
+      eval value=\$grabber_$grab
+      [ "$value" = "yes" ] && return 1
+    done
+    return 0
+}
+
 grabber_set_no(){
     for grab in $@; do
       eval grabber_$grab="no"
@@ -1004,6 +1013,8 @@ if enabled xml; then
     add_pkgconfig_requires libxml-2.0
   else
     echolog "(no)"
+    grabber_forced $xml_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libxml2 !"
     xml="no"
     grabber_set_no $xml_dep_grabber
   fi
@@ -1034,6 +1045,8 @@ if enabled avutil; then
     add_pkgconfig_requires libavutil
   else
     echolog "(no)"
+    grabber_forced $avutil_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libavutil !"
     avutil="no"
     grabber_set_no $avutil_dep_grabber
   fi
@@ -1061,6 +1074,8 @@ if enabled gcrypt; then
     add_pkgconfig_requires libavutil
   else
     echolog "(no)"
+    grabber_forced $gcrypt_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libgcrypt !"
     gcrypt="no"
     grabber_set_no $gcrypt_dep_grabber
   fi
@@ -1085,6 +1100,8 @@ if enabled exif; then
     add_pkgconfig_requires libexif
   else
     echolog "(no)"
+    grabber_forced $exif_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libexif !"
     exif="no"
     grabber_set_no $exif_dep_grabber
   fi
@@ -1116,6 +1133,8 @@ if enabled avcodec; then
     add_pkgconfig_requires libavcodec
   else
     echolog "(no)"
+    grabber_forced $avcodec_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libavcodec !"
     avcodec="no"
     grabber_set_no $avcodec_dep_grabber
   fi
@@ -1140,6 +1159,8 @@ if enabled nfo; then
     add_pkgconfig_requires libnfo
   else
     echolog "(no)"
+    grabber_forced $nfo_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libnfo !"
     nfo="no"
     grabber_set_no $nfo_dep_grabber
   fi
