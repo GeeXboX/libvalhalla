@@ -69,7 +69,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
    * have the same unit as libplayer.
    */
   if (data->type != VALHALLA_FILE_TYPE_IMAGE && ctx->duration)
-    vh_grabber_parse_int64 (data, (int64_t) (ctx->duration / 1000.0),
+    vh_grabber_parse_int64 (data, ROUNDED_DIV (ctx->duration, 1000),
                             VALHALLA_METADATA_DURATION);
 
   for (i = 0; i < ctx->nb_streams; i++)
