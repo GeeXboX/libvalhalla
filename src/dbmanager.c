@@ -94,13 +94,13 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       continue;
 
     if (e == ACTION_KILL_THREAD)
-      return e;
+      goto out;
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
       vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                  FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
-      return e;
+      goto out;
     }
 
     pdata = data;
@@ -223,10 +223,13 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
   }
   while (!dbmanager_is_stopped (dbmanager));
 
+  e = ACTION_KILL_THREAD;
+
+ out:
   /* Change files where interrupted__ is -1 to 1. */
   vh_database_file_interrupted_fix (dbmanager->database);
 
-  return ACTION_KILL_THREAD;
+  return e;
 }
 
 static void *
