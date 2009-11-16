@@ -244,6 +244,12 @@ dbmanager_thread (void *arg)
 
   vh_setpriority (dbmanager->priority);
 
+  /*
+   * Change files where interrupted__ is -1 to 1, in the case where Valhalla
+   * was not closed properly (by a signal for example).
+   */
+  vh_database_file_interrupted_fix (dbmanager->database);
+
   do
   {
     dbmanager_stats_t stats = {
