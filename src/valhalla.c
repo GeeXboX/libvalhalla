@@ -74,16 +74,16 @@ valhalla_mrproper (valhalla_t *handle)
   if (!handle)
     return;
 
+  fifo_o = vh_fifo_queue_new ();
+  if (!fifo_o)
+    return;
+
 #ifdef USE_GRABBER
   vh_dbmanager_db_begin_transaction (handle->dbmanager);
 
   /* remove all previous contexts */
   vh_dbmanager_db_dlcontext_delete (handle->dbmanager);
 #endif /* USE_GRABBER */
-
-  fifo_o = vh_fifo_queue_new ();
-  if (!fifo_o)
-    return;
 
   /*
    * The same data pointer can exist in several queues at the same time.
