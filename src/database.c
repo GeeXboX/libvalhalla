@@ -284,7 +284,8 @@ database_create_table (database_t *database)
   char *msg = NULL;
 
   /* Create tables */
-  sqlite3_exec (database->db, CREATE_TABLE_FILE
+  sqlite3_exec (database->db, BEGIN_TRANSACTION
+                              CREATE_TABLE_FILE
                               CREATE_TABLE_TYPE
                               CREATE_TABLE_META
                               CREATE_TABLE_DATA
@@ -292,13 +293,15 @@ database_create_table (database_t *database)
                               CREATE_TABLE_GRABBER
                               CREATE_TABLE_DLCONTEXT
                               CREATE_TABLE_ASSOC_FILE_METADATA
-                              CREATE_TABLE_ASSOC_FILE_GRABBER,
+                              CREATE_TABLE_ASSOC_FILE_GRABBER
+                              END_TRANSACTION,
                 NULL, NULL, &msg);
   if (msg)
     goto err;
 
   /* Create indexes */
-  sqlite3_exec (database->db, CREATE_INDEX_FILE_PATH
+  sqlite3_exec (database->db, BEGIN_TRANSACTION
+                              CREATE_INDEX_FILE_PATH
                               CREATE_INDEX_CHECKED
                               CREATE_INDEX_INTERRUPTED
                               CREATE_INDEX_OUTOFPATH
@@ -307,7 +310,8 @@ database_create_table (database_t *database)
                               CREATE_INDEX_DATA_VALUE
                               CREATE_INDEX_GROUP_NAME
                               CREATE_INDEX_GRABBER_NAME
-                              CREATE_INDEX_ASSOC,
+                              CREATE_INDEX_ASSOC
+                              END_TRANSACTION,
                 NULL, NULL, &msg);
   if (msg)
     goto err;
