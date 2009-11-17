@@ -419,7 +419,6 @@ typedef enum valhalla_meta_grp {
 
 /* Classification */
 #define VALHALLA_METADATA_CATEGORY                   "category"
-#define VALHALLA_METADATA_DURATION                   "duration"
 #define VALHALLA_METADATA_EPISODE                    "episode"
 #define VALHALLA_METADATA_GENRE                      "genre"
 #define VALHALLA_METADATA_MPAA                       "mpaa"
