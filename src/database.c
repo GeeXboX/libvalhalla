@@ -284,34 +284,35 @@ database_create_table (database_t *database)
   char *msg = NULL;
 
   /* Create tables */
-  sqlite3_exec (database->db, BEGIN_TRANSACTION
-                              CREATE_TABLE_FILE
-                              CREATE_TABLE_TYPE
-                              CREATE_TABLE_META
-                              CREATE_TABLE_DATA
-                              CREATE_TABLE_GROUP
-                              CREATE_TABLE_GRABBER
-                              CREATE_TABLE_DLCONTEXT
-                              CREATE_TABLE_ASSOC_FILE_METADATA
-                              CREATE_TABLE_ASSOC_FILE_GRABBER
-                              END_TRANSACTION,
+  sqlite3_exec (database->db,
+                BEGIN_TRANSACTION
+                CREATE_TABLE_FILE
+                CREATE_TABLE_TYPE
+                CREATE_TABLE_META
+                CREATE_TABLE_DATA
+                CREATE_TABLE_GROUP
+                CREATE_TABLE_GRABBER
+                CREATE_TABLE_DLCONTEXT
+                CREATE_TABLE_ASSOC_FILE_METADATA
+                CREATE_TABLE_ASSOC_FILE_GRABBER
+                END_TRANSACTION,
                 NULL, NULL, &msg);
   if (msg)
     goto err;
 
   /* Create indexes */
   sqlite3_exec (database->db, BEGIN_TRANSACTION
-                              CREATE_INDEX_FILE_PATH
-                              CREATE_INDEX_CHECKED
-                              CREATE_INDEX_INTERRUPTED
-                              CREATE_INDEX_OUTOFPATH
-                              CREATE_INDEX_TYPE_NAME
-                              CREATE_INDEX_META_NAME
-                              CREATE_INDEX_DATA_VALUE
-                              CREATE_INDEX_GROUP_NAME
-                              CREATE_INDEX_GRABBER_NAME
-                              CREATE_INDEX_ASSOC
-                              END_TRANSACTION,
+                CREATE_INDEX_FILE_PATH
+                CREATE_INDEX_CHECKED
+                CREATE_INDEX_INTERRUPTED
+                CREATE_INDEX_OUTOFPATH
+                CREATE_INDEX_TYPE_NAME
+                CREATE_INDEX_META_NAME
+                CREATE_INDEX_DATA_VALUE
+                CREATE_INDEX_GROUP_NAME
+                CREATE_INDEX_GRABBER_NAME
+                CREATE_INDEX_ASSOC
+                END_TRANSACTION,
                 NULL, NULL, &msg);
   if (msg)
     goto err;
