@@ -96,7 +96,7 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 
   d = exif_data_new_from_file (data->file);
   if (!d)
-    return 1;
+    return -1;
 
   e = exif_data_get_entry (d, EXIF_TAG_ORIENTATION);
   if (e)

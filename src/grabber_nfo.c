@@ -334,7 +334,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
 
   nfo = nfo_init (data->file);
   if (!nfo)
-    return 1;
+    return -1;
 
   type = nfo_get_type (nfo);
   switch (type)
