@@ -145,15 +145,23 @@ lavf_utils_probe (AVInputFormat *fmt, const char *file)
   int p_size;
   AVProbeData p_data;
 
-  if ((fmt->flags & AVFMT_NOFILE) || !fmt->read_probe)
-    return 0;
-
-  fd = fopen (file, "r");
-  if (!fd)
+  if (!fmt->read_probe)
     return 0;
 
   p_data.filename = file;
   p_data.buf = NULL;
+  p_data.buf_size = 0;
+
+  /* No file should be opened here. */
+  if (fmt->flags & AVFMT_NOFILE)
+  {
+    rc = fmt->read_probe (&p_data);
+    goto out;
+  }
+
+  fd = fopen (file, "r");
+  if (!fd)
+    return 0;
 
   for (p_size = PROBE_BUF_MIN; p_size <= PROBE_BUF_MAX; p_size <<= 1)
   {
@@ -181,10 +189,11 @@ lavf_utils_probe (AVInputFormat *fmt, const char *file)
     }
   }
 
+  fclose (fd);
+
+ out:
   if (p_data.buf)
     free (p_data.buf);
-
-  fclose (fd);
   return rc;
 }
 
