@@ -165,6 +165,17 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       /*
        * File is parsed only if mtime has changed, if the grabbing/downloading
        * was interrupted or if it is unexistant in the database.
+       *
+       * 'interrup' takes three possible values.
+       *   0: the file is fully handled (set by ACTION_DB_END).
+       *  -1: the file is only inserted in the DB (set by ACTION_DB_NEWFILE),
+       *      but the data provided by the parser are not available. This
+       *      state is only useful in the case where an ondemand query is
+       *      running for the same file between ACTION_DB_NEWFILE and
+       *      ACTION_DB_INSERT_P.
+       *   1: the data from the parser are in the DB, but the file is not
+       *      fully handled by the grabbers and the downloader (set by
+       *      ACTION_DB_INSERT_P/UPDATE_P).
        */
       if (mtime >= 0)
       {
