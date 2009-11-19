@@ -122,10 +122,17 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     lyrics = calloc (1, strlen (txt));
     for (i = 0, j = 0; i < strlen (txt); i++)
     {
+      unsigned int c;
+
       if (txt[i] == '<') /* escape <br /> */
       {
         i += 5;
         lyrics[j] = '\n';
+      }
+      else if (txt[i] == '&' && sscanf (txt + i, "&#%u;", &c) == 1)
+      {
+        i = strchr (txt + i, ';') - txt;
+        lyrics[j] = (char) c;
       }
       else
         lyrics[j] = txt[i];
