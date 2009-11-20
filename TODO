@@ -4,12 +4,7 @@
         instead of the stderr (if the callback is defined).
 
  * Database
-     -> Add a new SQLite table to store some informations related to the
-        library and to the version of the db file.
-     -> Add support for file properties (codec, length, bitrate, etc, ...).
-     -> Update/delete metadata that were inserted in the DB by a previous
-        grabbing when a file is updated.
-        When files are downloaded and the reference on this file is no longer
+     -> When files are downloaded and the reference on this file is no longer
         available in the DB, the file must be removed (covers, etc, ...).
 
  * Scanner
@@ -22,6 +17,3 @@
         increase a lot the speed.
         It is already possible to do that but it needs to create a
         valhalla object for each path.
-
- * Parser
-     -> Retrieve all properties (codec, length, bitrate, etc, ...).
