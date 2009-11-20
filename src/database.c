@@ -585,13 +585,6 @@ vh_database_file_grab_insert (database_t *database, file_data_t *data)
   database_file_grab (database, data);
 }
 
-/*
- * FIXME: old associations are not deleted, no update is performed. The right
- *        behaviour is to remove all associations different of the fields set
- *        by the parser.
- *        The current behaviour adds new associations with each update and
- *        keeps previous 'as it'.
- */
 void
 vh_database_file_grab_update (database_t *database, file_data_t *data)
 {
