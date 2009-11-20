@@ -420,9 +420,9 @@ database_assoc_filemd_insert (sqlite3_stmt *stmt,
 {
   int res, err = -1;
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,  out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id,  out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
 
   res = sqlite3_step (stmt);
@@ -444,7 +444,7 @@ database_assoc_filegrab_insert (sqlite3_stmt *stmt,
 {
   int res, err = -1;
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,    out_reset);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, grabber_id, out_clear);
 
   res = sqlite3_step (stmt);
@@ -466,9 +466,9 @@ database_file_insert (database_t *database, file_data_t *data)
   int res, err = -1;
 
   VH_DB_BIND_TEXT_OR_GOTO
-    (STMT_GET (STMT_INSERT_FILE), 1, data->file, out_reset);
+    (STMT_GET (STMT_INSERT_FILE), 1, data->file,      out_reset);
   VH_DB_BIND_INT_OR_GOTO
-    (STMT_GET (STMT_INSERT_FILE), 2, data->mtime, out_clear);
+    (STMT_GET (STMT_INSERT_FILE), 2, data->mtime,     out_clear);
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_INSERT_FILE), 3, data->outofpath, out_clear);
 
@@ -490,7 +490,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   int res, err = -1;
 
   VH_DB_BIND_INT_OR_GOTO
-    (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime, out_reset);
+    (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime,     out_reset);
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_UPDATE_FILE), 2, data->outofpath, out_clear);
 
@@ -831,13 +831,13 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
   int res, err = -1;
 
   VH_DB_BIND_TEXT_OR_GOTO
-    (STMT_GET (STMT_INSERT_DLCONTEXT), 1, dl->url, out_reset);
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 1, dl->url,  out_reset);
   VH_DB_BIND_INT_OR_GOTO
-    (STMT_GET (STMT_INSERT_DLCONTEXT), 2, dl->dst, out_clear);
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 2, dl->dst,  out_clear);
   VH_DB_BIND_TEXT_OR_GOTO
     (STMT_GET (STMT_INSERT_DLCONTEXT), 3, dl->name, out_clear);
   VH_DB_BIND_INT64_OR_GOTO
-    (STMT_GET (STMT_INSERT_DLCONTEXT), 4, file_id, out_clear);
+    (STMT_GET (STMT_INSERT_DLCONTEXT), 4, file_id,  out_clear);
 
   res = sqlite3_step (STMT_GET (STMT_INSERT_DLCONTEXT));
   if (res == SQLITE_DONE)
