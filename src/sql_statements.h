@@ -40,6 +40,12 @@
 /*                                                                            */
 /******************************************************************************/
 
+#define CREATE_TABLE_INFO                                 \
+ "CREATE TABLE IF NOT EXISTS info ( "                     \
+   "info_name        TEXT    PRIMARY KEY, "               \
+   "info_value       TEXT    NOT NULL "                   \
+ ");"
+
 #define CREATE_TABLE_FILE                                 \
  "CREATE TABLE IF NOT EXISTS file ( "                     \
    "file_id          INTEGER PRIMARY KEY AUTOINCREMENT, " \
@@ -244,6 +250,11 @@
 
 /* Internal */
 
+#define SELECT_INFO_VALUE \
+ "SELECT info_value "     \
+ "FROM info "             \
+ "WHERE info_name = ?;"
+
 #define SELECT_FILE_INTERRUP \
  "SELECT interrupted__ "     \
  "FROM file "                \
@@ -310,6 +321,11 @@
 /*                                                                            */
 /******************************************************************************/
 
+#define INSERT_INFO                   \
+ "INSERT "                            \
+ "INTO info (info_name, info_value) " \
+ "VALUES (?, ?);"
+
 #define INSERT_FILE           \
  "INSERT "                    \
  "INTO file (file_path, "     \
@@ -364,6 +380,11 @@
 /*                                  Update                                    */
 /*                                                                            */
 /******************************************************************************/
+
+#define UPDATE_INFO     \
+ "UPDATE info "         \
+ "SET info_value = ? "  \
+ "WHERE info_name = ?;"
 
 #define UPDATE_FILE          \
  "UPDATE file "              \

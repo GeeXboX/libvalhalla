@@ -112,6 +112,10 @@ typedef enum database_stmt {
   STMT_DELETE_ASSOC_FILE_GRABBER,
   STMT_DELETE_DLCONTEXT,
 
+  STMT_SELECT_INFO_VALUE,
+  STMT_INSERT_INFO,
+  STMT_UPDATE_INFO,
+
   STMT_CLEANUP_ASSOC_FILE_METADATA,
   STMT_CLEANUP_ASSOC_FILE_GRABBER,
   STMT_CLEANUP_META,
@@ -151,6 +155,10 @@ static const stmt_list_t g_stmts[] = {
   [STMT_DELETE_ASSOC_FILE_METADATA]  = { DELETE_ASSOC_FILE_METADATA,  NULL },
   [STMT_DELETE_ASSOC_FILE_GRABBER]   = { DELETE_ASSOC_FILE_GRABBER,   NULL },
   [STMT_DELETE_DLCONTEXT]            = { DELETE_DLCONTEXT,            NULL },
+
+  [STMT_SELECT_INFO_VALUE]           = { SELECT_INFO_VALUE,           NULL },
+  [STMT_INSERT_INFO]                 = { INSERT_INFO,                 NULL },
+  [STMT_UPDATE_INFO]                 = { UPDATE_INFO,                 NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
   [STMT_CLEANUP_ASSOC_FILE_GRABBER]  = { CLEANUP_ASSOC_FILE_GRABBER,  NULL },
@@ -286,6 +294,7 @@ database_create_table (database_t *database)
   /* Create tables */
   sqlite3_exec (database->db,
                 BEGIN_TRANSACTION
+                CREATE_TABLE_INFO
                 CREATE_TABLE_FILE
                 CREATE_TABLE_TYPE
                 CREATE_TABLE_META
@@ -1001,6 +1010,87 @@ vh_database_cleanup (database_t *database)
   return val - val_tmp;
 }
 
+static char *
+database_info_get (database_t *database, const char *name)
+{
+  char *ret = NULL;
+  int res, err = -1;
+
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_SELECT_INFO_VALUE), 1, name, out);
+
+  res = sqlite3_step (STMT_GET (STMT_SELECT_INFO_VALUE));
+  if (res == SQLITE_ROW)
+  {
+    const char *val;
+    val = (const char *)
+      sqlite3_column_text (STMT_GET (STMT_SELECT_INFO_VALUE), 0);
+    ret = strdup (val);
+  }
+
+  sqlite3_clear_bindings (STMT_GET (STMT_SELECT_INFO_VALUE));
+  err = 0;
+
+ out:
+  sqlite3_reset (STMT_GET (STMT_SELECT_INFO_VALUE));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return ret;
+}
+
+static void
+database_info_insert (database_t *database, const char *name, const char *value)
+{
+  int res, err = -1;
+
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_INSERT_INFO), 1, name,  out_reset);
+  VH_DB_BIND_TEXT_OR_GOTO (STMT_GET (STMT_INSERT_INFO), 2, value, out_clear);
+
+  res = sqlite3_step (STMT_GET (STMT_INSERT_INFO));
+  if (res == SQLITE_DONE)
+    err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (STMT_GET (STMT_INSERT_INFO));
+ out_reset:
+  sqlite3_reset (STMT_GET (STMT_INSERT_INFO));
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+#define VH_INFO_DB_VERSION  "vh_db_version"   /* LIBVALHALLA_DB_VERSION     */
+
+static int
+database_info (database_t *database)
+{
+  int ver = LIBVALHALLA_DB_VERSION;
+  char *val;
+
+  val = database_info_get (database, VH_INFO_DB_VERSION);
+  if (val)
+  {
+    ver = (int) strtol (val, NULL, 10);
+    free (val);
+  }
+  else
+    database_info_insert (database, VH_INFO_DB_VERSION,
+                          VH_TOSTRING (LIBVALHALLA_DB_VERSION));
+
+  valhalla_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
+  if (ver > LIBVALHALLA_DB_VERSION)
+  {
+    valhalla_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
+                                      "build (the version of your database is "
+                                      "unsupported)");
+    return -1;
+  }
+#if 0
+  /* TODO: for future versions (upgrade) */
+  else if (ver < LIBVALHALLA_DB_VERSION)
+#endif /* 0 */
+
+  return 0;
+}
+
 void
 vh_database_uninit (database_t *database)
 {
@@ -1067,6 +1157,10 @@ vh_database_init (const char *path)
   database_create_table (database);
 
   res = database_prepare_stmt (database);
+  if (res)
+    goto err;
+
+  res = database_info (database);
   if (res)
     goto err;
 

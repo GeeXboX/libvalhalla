@@ -43,6 +43,8 @@ extern "C" {
 #define LIBVALHALLA_VERSION_MINOR  0
 #define LIBVALHALLA_VERSION_MICRO  1
 
+#define LIBVALHALLA_DB_VERSION     0
+
 #define LIBVALHALLA_VERSION_INT VH_VERSION_INT(LIBVALHALLA_VERSION_MAJOR, \
                                                LIBVALHALLA_VERSION_MINOR, \
                                                LIBVALHALLA_VERSION_MICRO)
