@@ -1051,6 +1051,10 @@ vh_database_init (const char *path)
   if (!database)
     return NULL;
 
+  res = sqlite3_initialize ();
+  if (res != SQLITE_OK)
+    return NULL;
+
   res = sqlite3_open (path, &database->db);
   if (res)
   {
