@@ -182,11 +182,20 @@ valhalla_force_stop (valhalla_t *handle)
 {
   unsigned int i;
 
+  /*
+   * Because the ondemand thread can send other threads like the dbmanager,
+   * the parser, the grabber, etc, ... in waiting list, thisi one must be
+   * the first to be stopped.
+   *
+   * TODO: a better way is to improve the pause functionality in order
+   *       to wake up a thread when its stop function is called.
+   */
+  vh_ondemand_stop (handle->ondemand, STOP_FLAG_REQUEST | STOP_FLAG_WAIT);
+
   for (i = 0; i < 2; i++)
   {
     int f = !i ? STOP_FLAG_REQUEST : STOP_FLAG_WAIT;
 
-    vh_ondemand_stop (handle->ondemand, f);
     vh_scanner_stop (handle->scanner, f);
     vh_dbmanager_stop (handle->dbmanager, f);
     vh_dispatcher_stop (handle->dispatcher, f);
