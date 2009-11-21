@@ -130,9 +130,10 @@ typedef enum valhalla_event {
  * query. If an event arrives, the data are really inserted in the DB. The
  * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
  * sent before VALHALLA_EVENT_PARSED. VALHALLA_EVENT_GRABBED is sent for each
- * grabber and \p id is its identifier. Only VALHALLA_EVENT_ENDED is always
- * sent at the end. If the file is already (completely) inserted in the DB,
- * only VALHALLA_EVENT_ENDED is sent to the callback.
+ * grabber and \p id is its textual identifier (for example: "amazon", "exif",
+ * etc, ...). Only VALHALLA_EVENT_ENDED is always sent at the end. If the file
+ * is already (fully) inserted in the DB, only VALHALLA_EVENT_ENDED is sent to
+ * the callback.
  *
  * \param[in] db          Path on the database.
  * \param[in] parser_nb   Number of parsers to create.
