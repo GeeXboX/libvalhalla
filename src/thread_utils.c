@@ -29,6 +29,6 @@
 inline void
 vh_setpriority (int prio)
 {
-  pid_t pid = syscall (__NR_gettid); /* gettid() is not available with glibc */
+  pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
   setpriority (PRIO_PROCESS, pid, prio);
 }
