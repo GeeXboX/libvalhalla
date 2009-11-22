@@ -111,6 +111,9 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_NFO
   vh_grabber_nfo_register,
 #endif /* HAVE_GRABBER_NFO */
+#ifdef HAVE_GRABBER_TMDB
+  vh_grabber_tmdb_register,
+#endif /* HAVE_GRABBER_TMDB */
 #ifdef HAVE_GRABBER_AMAZON
   vh_grabber_amazon_register,
 #endif /* HAVE_GRABBER_AMAZON */
@@ -126,9 +129,6 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_LYRICWIKI
   vh_grabber_lyricwiki_register,
 #endif /* HAVE_GRABBER_LYRICWIKI */
-#ifdef HAVE_GRABBER_TMDB
-  vh_grabber_tmdb_register,
-#endif /* HAVE_GRABBER_TMDB */
 #ifdef HAVE_GRABBER_TVDB
   vh_grabber_tvdb_register,
 #endif /* HAVE_GRABBER_TVDB */
