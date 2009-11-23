@@ -165,7 +165,7 @@ vh_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data)
 }
 
 void *
-vh_fifo_queue_search (fifo_queue_t *queue, const void *tocmp,
+vh_fifo_queue_search (fifo_queue_t *queue, int *id, const void *tocmp,
                       int (*cmp_fct) (const void *tocmp,
                                       int id, const void *data))
 {
@@ -180,6 +180,7 @@ vh_fifo_queue_search (fifo_queue_t *queue, const void *tocmp,
   for (item = queue->item; item; item = item->next)
     if (!cmp_fct (tocmp, item->id, item->data))
     {
+      *id  = item->id;
       data = item->data;
       break;
     }

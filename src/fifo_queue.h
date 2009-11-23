@@ -44,7 +44,7 @@ int vh_fifo_queue_push (fifo_queue_t *queue,
                         fifo_queue_prio_t p, int id, void *data);
 int vh_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data);
 
-void *vh_fifo_queue_search (fifo_queue_t *queue, const void *tocmp,
+void *vh_fifo_queue_search (fifo_queue_t *queue, int *id, const void *tocmp,
                             int (*cmp_fct) (const void *tocmp,
                                             int id, const void *data));
 void vh_fifo_queue_moveup (fifo_queue_t *queue, const void *tomove,
