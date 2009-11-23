@@ -166,8 +166,7 @@ scanner_readdir (scanner_t *scanner,
                  const char *path, const char *dir, int recursive, int *files)
 {
   DIR *dirp;
-  struct dirent dp;
-  struct dirent *dp_n = NULL;
+  struct dirent *dp;
   struct stat st;
   char *file;
   char *new_path;
@@ -206,27 +205,27 @@ scanner_readdir (scanner_t *scanner,
 
   do
   {
-    readdir_r (dirp, &dp, &dp_n);
-    if (!dp_n)
+    dp = readdir (dirp);
+    if (!dp)
       break;
 
-    if (!strcmp (dp.d_name, ".") || !strcmp (dp.d_name, ".."))
+    if (!strcmp (dp->d_name, ".") || !strcmp (dp->d_name, ".."))
       continue;
 
-    size = strlen (new_path) + strlen (dp.d_name) + 2;
+    size = strlen (new_path) + strlen (dp->d_name) + 2;
 
     file = malloc (size);
     if (!file)
       continue;
 
-    snprintf (file, size, "%s/%s", new_path, dp.d_name);
+    snprintf (file, size, "%s/%s", new_path, dp->d_name);
     if (lstat (file, &st))
     {
       free (file);
       continue;
     }
 
-    if (S_ISREG (st.st_mode) && !suffix_cmp (scanner->suffix, dp.d_name))
+    if (S_ISREG (st.st_mode) && !suffix_cmp (scanner->suffix, dp->d_name))
     {
       file_data_t *data;
 
@@ -240,7 +239,7 @@ scanner_readdir (scanner_t *scanner,
       }
     }
     else if (S_ISDIR (st.st_mode) && recursive)
-      scanner_readdir (scanner, new_path, dp.d_name, recursive, files);
+      scanner_readdir (scanner, new_path, dp->d_name, recursive, files);
 
     free (file);
   }
