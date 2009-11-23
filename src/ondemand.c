@@ -132,6 +132,7 @@ ondemand_thread (void *arg)
 
   do
   {
+    int id = 0;
     struct stat st;
     e = ACTION_NO_OPERATION;
     data = NULL;
@@ -163,12 +164,14 @@ ondemand_thread (void *arg)
     for (i = 0; i < ARRAY_NB_ELEMENTS (pause) && !fdata; i++)
     {
       fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
-      fdata = vh_fifo_queue_search (queue, file, ondemand_cmp_fct);
+      fdata = vh_fifo_queue_search (queue, &id, file, ondemand_cmp_fct);
     }
 
     /* Already in queues? */
     if (fdata)
     {
+      if (id != ACTION_DB_END)
+      {
       fdata->priority = FIFO_QUEUE_PRIORITY_HIGH;
 
       /* Move up this entry in the queues. */
@@ -176,6 +179,7 @@ ondemand_thread (void *arg)
       {
         fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
         vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
+      }
       }
     }
     /* Check if the file is available and consistent. */
