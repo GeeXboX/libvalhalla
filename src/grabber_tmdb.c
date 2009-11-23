@@ -210,7 +210,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   vh_grabber_parse_casting (fdata, n);
 
   /* fetch movie poster */
-  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "cover");
+  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "mid");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_COVER);
