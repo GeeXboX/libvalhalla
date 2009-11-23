@@ -172,14 +172,14 @@ ondemand_thread (void *arg)
     {
       if (id != ACTION_DB_END)
       {
-      fdata->priority = FIFO_QUEUE_PRIORITY_HIGH;
+        fdata->priority = FIFO_QUEUE_PRIORITY_HIGH;
 
-      /* Move up this entry in the queues. */
-      for (i = 0; i < ARRAY_NB_ELEMENTS (pause); i++)
-      {
-        fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
-        vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
-      }
+        /* Move up this entry in the queues. */
+        for (i = 0; i < ARRAY_NB_ELEMENTS (pause); i++)
+        {
+          fifo_queue_t *queue = pause[i].fct_fifo_get (pause[i].handler);
+          vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
+        }
       }
     }
     /* Check if the file is available and consistent. */
