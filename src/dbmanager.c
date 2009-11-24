@@ -504,8 +504,8 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
     if (mt != mtime)
       res = 1; /* must be updated */
     else
-    vh_event_handler_send (dbmanager->valhalla->event_handler,
-                           file, VALHALLA_EVENT_ENDED, NULL);
+      vh_event_handler_send (dbmanager->valhalla->event_handler,
+                             file, VALHALLA_EVENT_ENDED, NULL);
   }
 
   return !res;
