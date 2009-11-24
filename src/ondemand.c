@@ -155,7 +155,10 @@ ondemand_thread (void *arg)
      * The ENDED event is sent by this function if the return value is 1.
      */
     if (vh_dbmanager_file_complete (ondemand->valhalla->dbmanager, file))
+    {
+      free (file);
       continue;
+    }
 
     /*
      * On-demand engaged, all threads must be in pause mode.
