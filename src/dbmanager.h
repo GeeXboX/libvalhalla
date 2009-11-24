@@ -45,6 +45,8 @@ dbmanager_t *vh_dbmanager_init (valhalla_t *handle,
 void vh_dbmanager_action_send (dbmanager_t *dbmanager,
                                fifo_queue_prio_t prio, int action, void *data);
 
+int vh_dbmanager_file_complete (dbmanager_t *dbmanager, const char *file);
+
 void vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data);
 void vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager);
 

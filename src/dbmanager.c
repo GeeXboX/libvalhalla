@@ -486,6 +486,24 @@ vh_dbmanager_action_send (dbmanager_t *dbmanager,
   vh_fifo_queue_push (dbmanager->fifo, prio, action, data);
 }
 
+int
+vh_dbmanager_file_complete (dbmanager_t *dbmanager, const char *file)
+{
+  int res;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager || !file)
+    return 0;
+
+  res = vh_database_file_get_interrupted (dbmanager->database, file);
+  if (!res)
+    vh_event_handler_send (dbmanager->valhalla->event_handler,
+                           file, VALHALLA_EVENT_ENDED, NULL);
+
+  return !res;
+}
+
 void
 vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
 {

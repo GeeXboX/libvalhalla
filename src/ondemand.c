@@ -151,6 +151,13 @@ ondemand_thread (void *arg)
     file  = data;
 
     /*
+     * Ignore the ondemand query if the file is already fully available.
+     * The ENDED event is sent by this function if the return value is 1.
+     */
+    if (vh_dbmanager_file_complete (ondemand->valhalla->dbmanager, file))
+      continue;
+
+    /*
      * On-demand engaged, all threads must be in pause mode.
      * After this loop, we are sure that "all" threads are in waiting list.
      */
