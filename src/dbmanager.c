@@ -487,7 +487,8 @@ vh_dbmanager_action_send (dbmanager_t *dbmanager,
 }
 
 int
-vh_dbmanager_file_complete (dbmanager_t *dbmanager, const char *file)
+vh_dbmanager_file_complete (dbmanager_t *dbmanager,
+                            const char *file, int64_t mtime)
 {
   int res;
 
@@ -498,8 +499,14 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager, const char *file)
 
   res = vh_database_file_get_interrupted (dbmanager->database, file);
   if (!res)
+  {
+    int64_t mt = vh_database_file_get_mtime (dbmanager->database, file);
+    if (mt != mtime)
+      res = 1; /* must be updated */
+    else
     vh_event_handler_send (dbmanager->valhalla->event_handler,
                            file, VALHALLA_EVENT_ENDED, NULL);
+  }
 
   return !res;
 }

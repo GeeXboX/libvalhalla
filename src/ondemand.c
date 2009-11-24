@@ -150,11 +150,20 @@ ondemand_thread (void *arg)
     fdata = NULL;
     file  = data;
 
+    if (lstat (file, &st))
+    {
+      valhalla_log (VALHALLA_MSG_WARNING,
+                    "[%s] File %s unavailable", __FUNCTION__, file);
+      free (file);
+      continue;
+    }
+
     /*
      * Ignore the ondemand query if the file is already fully available.
      * The ENDED event is sent by this function if the return value is 1.
      */
-    if (vh_dbmanager_file_complete (ondemand->valhalla->dbmanager, file))
+    if (vh_dbmanager_file_complete (ondemand->valhalla->dbmanager,
+                                    file, (int64_t) st.st_mtime))
     {
       free (file);
       continue;
@@ -194,8 +203,7 @@ ondemand_thread (void *arg)
       fdata->od = 1;
     }
     /* Check if the file is available and consistent. */
-    else if (!lstat (file, &st)
-             && S_ISREG (st.st_mode)
+    else if (S_ISREG (st.st_mode)
              && !vh_scanner_suffix_cmp (ondemand->valhalla->scanner, file))
     {
       int outofpath =
@@ -209,8 +217,7 @@ ondemand_thread (void *arg)
     }
     else
       valhalla_log (VALHALLA_MSG_WARNING,
-                    "[%s] File %s unavailable or unsupported",
-                    __FUNCTION__, file);
+                    "[%s] File %s unsupported", __FUNCTION__, file);
 
     free (file);
 
