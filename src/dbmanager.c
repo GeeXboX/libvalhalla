@@ -161,7 +161,8 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     case ACTION_DB_NEWFILE:
     {
       int interrup = 0;
-      int mtime = vh_database_file_get_mtime (dbmanager->database, pdata->file);
+      int64_t mtime =
+        vh_database_file_get_mtime (dbmanager->database, pdata->file);
       /*
        * File is parsed only if mtime has changed, if the grabbing/downloading
        * was interrupted or if it is unexistant in the database.
@@ -186,7 +187,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
          * and search if there are files to download since the interruption.
          * But if mtime has changed, the file must be _fully_ updated.
          */
-        if (interrup == 1 && (int) pdata->mtime == mtime)
+        if (interrup == 1 && (int64_t) pdata->mtime == mtime)
         {
           vh_database_file_get_grabber (dbmanager->database,
                                         pdata->file, &pdata->grabber_list);
@@ -197,7 +198,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
          * Delete all previous associations on the file because the main
          * metadata have changed.
          */
-        else if ((int) pdata->mtime != mtime)
+        else if ((int64_t) pdata->mtime != mtime)
         {
           vh_database_file_data_delete (dbmanager->database, pdata->file);
           vh_database_file_grab_delete (dbmanager->database, pdata->file);
@@ -209,7 +210,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         stats->file_insert++;
       }
 
-      if (mtime < 0 || (int) pdata->mtime != mtime || interrup == 1)
+      if (mtime < 0 || (int64_t) pdata->mtime != mtime || interrup == 1)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                    pdata->priority,

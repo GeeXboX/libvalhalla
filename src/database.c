@@ -467,7 +467,7 @@ database_file_insert (database_t *database, file_data_t *data)
 
   VH_DB_BIND_TEXT_OR_GOTO
     (STMT_GET (STMT_INSERT_FILE), 1, data->file,      out_reset);
-  VH_DB_BIND_INT_OR_GOTO
+  VH_DB_BIND_INT64_OR_GOTO
     (STMT_GET (STMT_INSERT_FILE), 2, data->mtime,     out_clear);
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_INSERT_FILE), 3, data->outofpath, out_clear);
@@ -489,7 +489,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
 {
   int res, err = -1;
 
-  VH_DB_BIND_INT_OR_GOTO
+  VH_DB_BIND_INT64_OR_GOTO
     (STMT_GET (STMT_UPDATE_FILE), 1, data->mtime,     out_reset);
   VH_DB_BIND_INT_OR_GOTO
     (STMT_GET (STMT_UPDATE_FILE), 2, data->outofpath, out_clear);
@@ -660,10 +660,11 @@ vh_database_file_grab_delete (database_t *database, const char *file)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
-int
+int64_t
 vh_database_file_get_mtime (database_t *database, const char *file)
 {
-  int res, err = -1, val = -1;
+  int res, err = -1;
+  int64_t val = -1;
 
   if (!file)
     return -1;
@@ -672,7 +673,7 @@ vh_database_file_get_mtime (database_t *database, const char *file)
 
   res = sqlite3_step (STMT_GET (STMT_SELECT_FILE_MTIME));
   if (res == SQLITE_ROW)
-    val = sqlite3_column_int (STMT_GET (STMT_SELECT_FILE_MTIME), 0);
+    val = sqlite3_column_int64 (STMT_GET (STMT_SELECT_FILE_MTIME), 0);
 
   sqlite3_clear_bindings (STMT_GET (STMT_SELECT_FILE_MTIME));
   err = 0;
