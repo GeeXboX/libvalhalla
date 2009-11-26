@@ -33,8 +33,7 @@
 
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO | \
-  GRABBER_CAP_VIDEO | \
-  GRABBER_CAP_IMAGE
+  GRABBER_CAP_VIDEO
 
 
 static const char *
