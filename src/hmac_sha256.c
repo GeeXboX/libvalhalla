@@ -19,10 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <errno.h>
+#include <pthread.h>
 #include <gcrypt.h>
 
 #include "hmac_sha256.h"
 
+
+GCRY_THREAD_OPTION_PTHREAD_IMPL;
 
 hmac_sha256_t *
 vh_hmac_sha256_new (const char *key)
@@ -31,6 +35,7 @@ vh_hmac_sha256_new (const char *key)
   
   if (!gcry_control (GCRYCTL_INITIALIZATION_FINISHED_P))
   {
+    gcry_control (GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
     gcry_check_version (GCRYPT_VERSION);
     gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
     gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
