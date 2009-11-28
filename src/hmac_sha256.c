@@ -32,7 +32,7 @@ hmac_sha256_t *
 vh_hmac_sha256_new (const char *key)
 {
   gcry_md_hd_t hd;
-  
+
   if (!gcry_control (GCRYCTL_INITIALIZATION_FINISHED_P))
   {
     gcry_control (GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
