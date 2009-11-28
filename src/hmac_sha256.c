@@ -28,6 +28,13 @@ hmac_sha256_t *
 vh_hmac_sha256_new (const char *key)
 {
   gcry_md_hd_t hd;
+  
+  if (!gcry_control (GCRYCTL_INITIALIZATION_FINISHED_P))
+  {
+    gcry_check_version (GCRYPT_VERSION);
+    gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
+    gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+  }
 
   gcry_md_open (&hd, GCRY_MD_SHA256, GCRY_MD_FLAG_HMAC);
   if (!hd)
