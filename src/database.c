@@ -1093,7 +1093,8 @@ database_create_table (database_t *database)
     goto err;
 
   /* Create indexes */
-  sqlite3_exec (database->db, BEGIN_TRANSACTION
+  sqlite3_exec (database->db,
+                BEGIN_TRANSACTION
                 CREATE_INDEX_FILE_PATH
                 CREATE_INDEX_CHECKED
                 CREATE_INDEX_INTERRUPTED
