@@ -200,7 +200,7 @@ ondemand_thread (void *arg)
           vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
         }
       }
-      fdata->od = 1;
+      fdata->od = 2;
     }
     /* Check if the file is available and consistent. */
     else if (S_ISREG (st.st_mode)

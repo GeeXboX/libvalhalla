@@ -227,7 +227,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
     }
 
-    if (!pdata->od) /* Must not come from "On-demand" */
+    if (!pdata->od || pdata->od == 2) /* Must not come from "On-demand" */
       vh_scanner_action_send (dbmanager->valhalla->scanner,
                               FIFO_QUEUE_PRIORITY_NORMAL,
                               ACTION_ACKNOWLEDGE, NULL);
