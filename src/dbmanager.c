@@ -70,6 +70,23 @@ dbmanager_is_stopped (dbmanager_t *dbmanager)
   return !run;
 }
 
+void
+vh_dbmanager_extmd_free (dbmanager_extmd_t *extmd)
+{
+  if (!extmd)
+    return;
+
+  if (extmd->path)
+    free (extmd->path);
+  if (extmd->meta)
+    free (extmd->meta);
+  if (extmd->data)
+    free (extmd->data);
+  if (extmd->ndata)
+    free (extmd->ndata);
+  free (extmd);
+}
+
 #define METADATA_GRABBER_POST             \
   vh_metadata_free (pdata->meta_grabber); \
   pdata->meta_grabber = NULL;             \
@@ -103,12 +120,58 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       goto out;
     }
 
-    pdata = data;
+    /* External Metadata Handling */
+    switch (e)
+    {
+    default:
+      break;
+
+    case ACTION_DB_EXT_INSERT:
+    {
+      dbmanager_extmd_t *extmd = data;
+
+      if (!extmd)
+        continue;
+
+      vh_database_metadata_insert (dbmanager->database, extmd->path,
+                                   extmd->meta, extmd->data, extmd->group);
+      vh_dbmanager_extmd_free (extmd);
+      continue;
+    }
+
+    case ACTION_DB_EXT_UPDATE:
+    {
+      dbmanager_extmd_t *extmd = data;
+
+      if (!extmd)
+        continue;
+
+      vh_database_metadata_update (dbmanager->database, extmd->path,
+                                   extmd->meta, extmd->data, extmd->ndata);
+      vh_dbmanager_extmd_free (extmd);
+      continue;
+    }
+
+    case ACTION_DB_EXT_DELETE:
+    {
+      dbmanager_extmd_t *extmd = data;
+
+      if (!extmd)
+        continue;
+
+      vh_database_metadata_delete (dbmanager->database, extmd->path,
+                                   extmd->meta, extmd->data);
+      vh_dbmanager_extmd_free (extmd);
+      continue;
+    }
+    }
 
     /* Manage BEGIN / COMMIT transactions */
     vh_database_step_transaction (dbmanager->database, dbmanager->commit_int,
                                   stats->file_insert + stats->file_update +
                                   stats->grab_insert + stats->grab_update);
+
+    pdata = data;
 
     switch (e)
     {

@@ -43,7 +43,7 @@ extern "C" {
 #define LIBVALHALLA_VERSION_MINOR  0
 #define LIBVALHALLA_VERSION_MICRO  1
 
-#define LIBVALHALLA_DB_VERSION     0
+#define LIBVALHALLA_DB_VERSION     1
 
 #define LIBVALHALLA_VERSION_INT VH_VERSION_INT(LIBVALHALLA_VERSION_MAJOR, \
                                                LIBVALHALLA_VERSION_MINOR, \
@@ -509,6 +509,7 @@ typedef enum valhalla_db_operator {
   VALHALLA_DB_OPERATOR_EQUAL,
 } valhalla_db_operator_t;
 
+/** \brief Main structure to search in the DB. */
 typedef struct valhalla_db_item_s {
   valhalla_db_type_t type;
   int64_t     id;
@@ -516,18 +517,22 @@ typedef struct valhalla_db_item_s {
   valhalla_meta_grp_t group;
 } valhalla_db_item_t;
 
+/** \brief Results for valhalla_db_metalist_get(). */
 typedef struct valhalla_db_metares_s {
   int64_t     meta_id,    data_id;
   const char *meta_name, *data_value;
   valhalla_meta_grp_t group;
+  int         external;
 } valhalla_db_metares_t;
 
+/** \brief Results for valhalla_db_filelist_get(). */
 typedef struct valhalla_db_fileres_s {
   int64_t     id;
   const char *path;
   valhalla_file_type_t type;
 } valhalla_db_fileres_t;
 
+/** \brief Restriction. */
 typedef struct valhalla_db_restrict_s {
   struct valhalla_db_restrict_s *next;
   valhalla_db_operator_t op;
@@ -535,6 +540,7 @@ typedef struct valhalla_db_restrict_s {
   valhalla_db_item_t data;
 } valhalla_db_restrict_t;
 
+/** \brief Results for valhalla_db_file_get(). */
 typedef struct valhalla_db_filemeta_s {
   struct valhalla_db_filemeta_s *next;
   int64_t  meta_id;
@@ -542,6 +548,7 @@ typedef struct valhalla_db_filemeta_s {
   char    *meta_name;
   char    *data_value;
   valhalla_meta_grp_t group;
+  int      external;
 } valhalla_db_filemeta_t;
 
 #define VALHALLA_DB_SEARCH(_id, _text, _group, _type) \
@@ -684,6 +691,118 @@ int valhalla_db_file_get (valhalla_t *handle,
                           int64_t id, const char *path,
                           valhalla_db_restrict_t *restriction,
                           valhalla_db_filemeta_t **res);
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ * \name Database insertions/updates/deletions.
+ *
+ * With these functions, you can insert/update and delete metadata for a
+ * particular file (\p path). They should not be used to provide grabbing
+ * functionalities with the front-end (implement a grabber in Valhalla is the
+ * better way); but in some exceptional cases it can be necessary.
+ *
+ * For example, you can use this functionality to write data like "playcount"
+ * or "last_position" (to replay a file from the last position).
+ *
+ * @{
+ *
+ * \page ext_metadata External Metadata
+ *
+ * \section ext_metadata External Metadata rules
+ *
+ * \see valhalla_db_metadata_insert().
+ * \see valhalla_db_metadata_update().
+ * \see valhalla_db_metadata_delete().
+ *
+ * <ol start="0">
+ * <li>A data inserted/updated by these functions can not be updated by
+ * Valhalla.</li>
+ *
+ * <li>The metadata are only inserted/updated and deleted in the database, the
+ * tags in the files are not modified.</li>
+ *
+ * <li>If a metadata is changed in a file, a new metadata will be inserted by
+ * Valhalla but your entries (inserted or updated by these functions) will
+ * not be altered (consequence, you can have duplicated informations if the
+ * value is not exactly the same).</li>
+ *
+ * <li>If a metadata was already inserted by Valhalla and you use these
+ * functions to insert or to update the same entry, this metadata will be
+ * changed to be considered like an external metadata (see point 0).</li>
+ *
+ * <li>If a file is no longer available, when Valhalla removes all metadata,
+ * the metadata inserted and updated with these functions are removed too.</li>
+ *
+ * <li>If valhalla_uninit() is called shortly after one of these functions,
+ * there is no guarenteed that the metadata is handled.</li>
+ * </ol>
+ */
+
+/**
+ * \brief Insert an external metadata in the database.
+ *
+ * When a metadata is inserted with this function, you must use
+ * valhalla_db_metadata_update() to change the value, else two metadata will
+ * be available (for both values).
+ *
+ * If the metadata is already available in the database and the \p group
+ * passed with this function is not the same, then the insertion is canceled
+ * and no error is returned, else the 'external' flag is set to 1.
+ * \see ::valhalla_db_metares_t
+ * \see ::valhalla_db_filemeta_t
+ *
+ * Please, refer to \ref ext_metadata.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] path        Path on the file.
+ * \param[in] meta        Meta name.
+ * \param[in] data        Data value.
+ * \param[in] group       Group.
+ * \return !=0 on error.
+ */
+int valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
+                                 const char *meta, const char *data,
+                                 valhalla_meta_grp_t group);
+
+/**
+ * \brief Update an external metadata in the database.
+ *
+ * The previous \p data is necessary for Valhalla to identify the
+ * association for the update.
+ *
+ * Please, refer to \ref ext_metadata.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] path        Path on the file.
+ * \param[in] meta        Meta name.
+ * \param[in] data        Current data value.
+ * \param[in] ndata       New data value.
+ * \return !=0 on error.
+ */
+int valhalla_db_metadata_update (valhalla_t *handle, const char *path,
+                                 const char *meta, const char *data,
+                                 const char *ndata);
+
+/**
+ * \brief Delete an external metadata in the database.
+ *
+ * Only a metadata inserted or updated with valhalla_db_metadata_insert(), and
+ * valhalla_db_metadata_update() can be deleted with this function.
+ *
+ * Please, refer to \ref ext_metadata.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] path        Path on the file.
+ * \param[in] meta        Meta name.
+ * \param[in] data        Data value.
+ * \return !=0 on error.
+ */
+int valhalla_db_metadata_delete (valhalla_t *handle, const char *path,
+                                 const char *meta, const char *data);
 
 /**
  * @}

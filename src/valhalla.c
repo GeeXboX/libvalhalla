@@ -21,6 +21,7 @@
 
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef USE_LAVC
 #include <libavcodec/avcodec.h>
@@ -132,6 +133,9 @@ valhalla_mrproper (valhalla_t *handle)
         break;
       }
 
+      case ACTION_DB_EXT_INSERT:
+      case ACTION_DB_EXT_UPDATE:
+      case ACTION_DB_EXT_DELETE:
       case ACTION_EH_EVENT:
         vh_fifo_queue_push (fifo_o, FIFO_QUEUE_PRIORITY_NORMAL, e, data);
         break;
@@ -565,4 +569,80 @@ valhalla_db_file_get (valhalla_t *handle,
 
   return
     vh_dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
+}
+
+int
+valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
+                             const char *meta, const char *data,
+                             valhalla_meta_grp_t group)
+{
+  dbmanager_extmd_t *extmd;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !path || !meta || !data)
+    return -1;
+
+  extmd = calloc (1, sizeof (dbmanager_extmd_t));
+  if (!extmd)
+    return -1;
+
+  extmd->path  = strdup (path);
+  extmd->meta  = strdup (meta);
+  extmd->data  = strdup (data);
+  extmd->group = group;
+
+  vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
+                            ACTION_DB_EXT_INSERT, extmd);
+  return 0;
+}
+
+int
+valhalla_db_metadata_update (valhalla_t *handle, const char *path,
+                             const char *meta, const char *data,
+                             const char *ndata)
+{
+  dbmanager_extmd_t *extmd;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !path || !meta || !data || !ndata)
+    return -1;
+
+  extmd = calloc (1, sizeof (dbmanager_extmd_t));
+  if (!extmd)
+    return -1;
+
+  extmd->path  = strdup (path);
+  extmd->meta  = strdup (meta);
+  extmd->data  = strdup (data);
+  extmd->ndata = strdup (ndata);
+
+  vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
+                            ACTION_DB_EXT_UPDATE, extmd);
+  return 0;
+}
+
+int
+valhalla_db_metadata_delete (valhalla_t *handle, const char *path,
+                             const char *meta, const char *data)
+{
+  dbmanager_extmd_t *extmd;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !path || !meta || !data)
+    return -1;
+
+  extmd = calloc (1, sizeof (dbmanager_extmd_t));
+  if (!extmd)
+    return -1;
+
+  extmd->path  = strdup (path);
+  extmd->meta  = strdup (meta);
+  extmd->data  = strdup (data);
+
+  vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
+                            ACTION_DB_EXT_DELETE, extmd);
+  return 0;
 }

@@ -102,6 +102,7 @@
    "meta_id          INTEGER NOT NULL, "                  \
    "data_id          INTEGER NOT NULL, "                  \
    "_grp_id          INTEGER NOT NULL, "                  \
+   "external         INTEGER NOT NULL, "                  \
    "PRIMARY KEY (file_id, meta_id, data_id) "             \
  ");"
 
@@ -170,7 +171,8 @@
 
 #define SELECT_FILE_FROM                                               \
  "SELECT file.file_id, assoc._grp_id, "                                \
-        "meta.meta_id, data.data_id, meta.meta_name, data.data_value " \
+        "meta.meta_id, data.data_id, "                                 \
+        "meta.meta_name, data.data_value, assoc.external "             \
  "FROM (( "                                                            \
      "file INNER JOIN assoc_file_metadata AS assoc "                   \
      "ON file.file_id = assoc.file_id "                                \
@@ -203,7 +205,8 @@
 
 #define SELECT_LIST_METADATA_FROM                         \
  "SELECT meta.meta_id, data.data_id, "                    \
-        "meta.meta_name, data.data_value, assoc._grp_id " \
+        "meta.meta_name, data.data_value, "               \
+        "assoc._grp_id, assoc.external "                  \
  "FROM ( "                                                \
    "data INNER JOIN assoc_file_metadata AS assoc "        \
    "ON data.data_id = assoc.data_id "                     \
@@ -295,6 +298,22 @@
  "FROM file "            \
  "WHERE file_path = ?;"
 
+#define SELECT_FILE_ID_BY_METADATA                    \
+ "SELECT file.file_id "                               \
+ "FROM (( "                                           \
+     "file INNER JOIN assoc_file_metadata AS assoc "  \
+     "ON file.file_id = assoc.file_id "               \
+   ") INNER JOIN data "                               \
+   "ON data.data_id = assoc.data_id "                 \
+ ") INNER JOIN meta "                                 \
+ "ON assoc.meta_id = meta.meta_id "                   \
+ "WHERE file.file_path = ? AND meta.meta_name = ? AND data.data_value = ?;"
+
+#define SELECT_ASSOC_FILE_METADATA \
+ "SELECT _grp_id, external "       \
+ "FROM assoc_file_metadata "       \
+ "WHERE file_id = ? AND meta_id = ? AND data_id = ?;"
+
 #define SELECT_FILE_CHECKED_CLEAR \
  "SELECT file_path "              \
  "FROM file "                     \
@@ -367,8 +386,8 @@
 
 #define INSERT_ASSOC_FILE_METADATA                                \
  "INSERT "                                                        \
- "INTO assoc_file_metadata (file_id, meta_id, data_id, _grp_id) " \
- "VALUES (?, ?, ?, ?);"
+ "INTO assoc_file_metadata (file_id, meta_id, data_id, _grp_id, external) " \
+ "VALUES (?, ?, ?, ?, ?);"
 
 #define INSERT_ASSOC_FILE_GRABBER                                 \
  "INSERT "                                                        \
@@ -409,6 +428,12 @@
  "SET interrupted__ = 1 "        \
  "WHERE interrupted__ = -1;"
 
+#define UPDATE_ASSOC_FILE_METADATA \
+ "UPDATE assoc_file_metadata "     \
+ "SET _grp_id  = ?, "              \
+ "    external = ?  "              \
+ "WHERE file_id = ? AND meta_id = ? AND data_id = ?; "
+
 /******************************************************************************/
 /*                                                                            */
 /*                                  Delete                                    */
@@ -421,7 +446,11 @@
 
 #define DELETE_ASSOC_FILE_METADATA  \
  "DELETE FROM assoc_file_metadata " \
- "WHERE file_id = ?;"
+ "WHERE file_id = ? AND external = 0;"
+
+#define DELETE_ASSOC_FILE_METADATA2  \
+ "DELETE FROM assoc_file_metadata "  \
+ "WHERE file_id = ? AND meta_id = ? AND data_id = ?;"
 
 #define DELETE_ASSOC_FILE_GRABBER   \
  "DELETE FROM assoc_file_grabber "  \

@@ -33,6 +33,15 @@ enum dbmanager_errno {
   DBMANAGER_SUCCESS       =  0,
 };
 
+typedef struct dbmanager_extmd_s {
+  char *path;
+  char *meta, *data, *ndata;
+  valhalla_meta_grp_t group;
+} dbmanager_extmd_t;
+
+
+void vh_dbmanager_extmd_free (dbmanager_extmd_t *extmd);
+
 int vh_dbmanager_run (dbmanager_t *dbmanager, int priority);
 void vh_dbmanager_pause (dbmanager_t *dbmanager);
 fifo_queue_t *vh_dbmanager_fifo_get (dbmanager_t *dbmanager);

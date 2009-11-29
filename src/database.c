@@ -95,8 +95,10 @@ typedef enum database_stmt {
   STMT_SELECT_GROUP_ID,
   STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
+  STMT_SELECT_FILE_ID_BY_METADATA,
   STMT_SELECT_FILE_GRABBER_NAME,
   STMT_SELECT_FILE_DLCONTEXT,
+  STMT_SELECT_ASSOC_FILE_METADATA,
   STMT_INSERT_FILE,
   STMT_INSERT_TYPE,
   STMT_INSERT_META,
@@ -107,8 +109,10 @@ typedef enum database_stmt {
   STMT_INSERT_ASSOC_FILE_METADATA,
   STMT_INSERT_ASSOC_FILE_GRABBER,
   STMT_UPDATE_FILE,
+  STMT_UPDATE_ASSOC_FILE_METADATA,
   STMT_DELETE_FILE,
   STMT_DELETE_ASSOC_FILE_METADATA,
+  STMT_DELETE_ASSOC_FILE_METADATA2,
   STMT_DELETE_ASSOC_FILE_GRABBER,
   STMT_DELETE_DLCONTEXT,
 
@@ -139,8 +143,10 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
   [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
+  [STMT_SELECT_FILE_ID_BY_METADATA]  = { SELECT_FILE_ID_BY_METADATA,  NULL },
   [STMT_SELECT_FILE_GRABBER_NAME]    = { SELECT_FILE_GRABBER_NAME,    NULL },
   [STMT_SELECT_FILE_DLCONTEXT]       = { SELECT_FILE_DLCONTEXT,       NULL },
+  [STMT_SELECT_ASSOC_FILE_METADATA]  = { SELECT_ASSOC_FILE_METADATA,  NULL },
   [STMT_INSERT_FILE]                 = { INSERT_FILE,                 NULL },
   [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
   [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
@@ -151,8 +157,10 @@ static const stmt_list_t g_stmts[] = {
   [STMT_INSERT_ASSOC_FILE_METADATA]  = { INSERT_ASSOC_FILE_METADATA,  NULL },
   [STMT_INSERT_ASSOC_FILE_GRABBER]   = { INSERT_ASSOC_FILE_GRABBER,   NULL },
   [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
+  [STMT_UPDATE_ASSOC_FILE_METADATA]  = { UPDATE_ASSOC_FILE_METADATA,  NULL },
   [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
   [STMT_DELETE_ASSOC_FILE_METADATA]  = { DELETE_ASSOC_FILE_METADATA,  NULL },
+  [STMT_DELETE_ASSOC_FILE_METADATA2] = { DELETE_ASSOC_FILE_METADATA2, NULL },
   [STMT_DELETE_ASSOC_FILE_GRABBER]   = { DELETE_ASSOC_FILE_GRABBER,   NULL },
   [STMT_DELETE_DLCONTEXT]            = { DELETE_DLCONTEXT,            NULL },
 
@@ -414,16 +422,18 @@ database_grabber_insert (database_t *database, const char *name)
 }
 
 static void
-database_assoc_filemd_insert (sqlite3_stmt *stmt,
+database_assoc_filemd_insert (database_t *database,
                               int64_t file_id, int64_t meta_id,
-                              int64_t data_id, int64_t group_id)
+                              int64_t data_id, int64_t group_id, int ext)
 {
   int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA);
 
   VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,  out_reset);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 5, ext,      out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -434,8 +444,113 @@ database_assoc_filemd_insert (sqlite3_stmt *stmt,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
-    valhalla_log (VALHALLA_MSG_ERROR,
-                  "%s", sqlite3_errmsg (sqlite3_db_handle (stmt)));
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+static void
+database_assoc_filemd_update (database_t *database,
+                              int64_t file_id, int64_t meta_id,
+                              int64_t data_id, int64_t group_id, int ext)
+{
+  int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_METADATA);
+
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, group_id, out_reset);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 2, ext,      out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, file_id,  out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 4, meta_id,  out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 5, data_id,  out_clear);
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+    err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out_reset:
+  sqlite3_reset (stmt);
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+static void
+database_assoc_filemd_delete (database_t *database,
+                              int64_t file_id, int64_t meta_id,
+                              int64_t data_id)
+{
+  int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_DELETE_ASSOC_FILE_METADATA2);
+
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+    err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out_reset:
+  sqlite3_reset (stmt);
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+static int
+database_assoc_filemd_get (database_t *database,
+                           int64_t file_id, int64_t meta_id, int64_t data_id,
+                           int64_t *group_id, int *ext)
+{
+  int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_ASSOC_FILE_METADATA);
+
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_ROW)
+  {
+    *group_id = sqlite3_column_int64 (stmt, 0);
+    *ext      = sqlite3_column_int (stmt, 1);
+    err = 0;
+  }
+
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out_reset:
+  sqlite3_reset (stmt);
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return err;
+}
+
+static int64_t
+database_file_id_by_metadata (database_t *database, const char *path,
+                              const char *meta, const char *data)
+{
+  int64_t val = 0;
+  int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_FILE_ID_BY_METADATA);
+
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, path, out_reset);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, meta, out_clear);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 3, data, out_clear);
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_ROW)
+    val = sqlite3_column_int64 (stmt, 0);
+
+  err = 0;
+
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out_reset:
+  sqlite3_reset (stmt);
+  if (err < 0)
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return val;
 }
 
 static void
@@ -514,7 +629,8 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
 }
 
 static void
-database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
+database_file_metadata (database_t *database,
+                        int64_t file_id, metadata_t *meta, int ext)
 {
   int64_t meta_id = 0, data_id = 0, group_id = 0;
   metadata_t *tag = NULL;
@@ -528,8 +644,8 @@ database_file_metadata (database_t *database, int64_t file_id, metadata_t *meta)
     data_id  = database_data_insert (database, tag->value);
     group_id = database_groupid_get (database, tag->group);
 
-    database_assoc_filemd_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA),
-                                  file_id, meta_id, data_id, group_id);
+    database_assoc_filemd_insert (database,
+                                  file_id, meta_id, data_id, group_id, ext);
   }
 }
 
@@ -546,7 +662,7 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     database_file_update (database, data, type_id);
     file_id = database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID),
                                      data->file);
-    database_file_metadata (database, file_id, data->meta_parser);
+    database_file_metadata (database, file_id, data->meta_parser, 0);
   }
 }
 
@@ -557,7 +673,7 @@ database_file_grab (database_t *database, file_data_t *data)
 
   file_id = database_table_get_id (database,
                                    STMT_GET (STMT_SELECT_FILE_ID), data->file);
-  database_file_metadata (database, file_id, data->meta_grabber);
+  database_file_metadata (database, file_id, data->meta_grabber, 0);
 
   if (!data->grabber_name)
     return;
@@ -1361,7 +1477,7 @@ database_select_metalist_cb (void *user_data,
   database_cb_t *data_cb = user_data;
   valhalla_db_metares_t res;
 
-  if (argc != 5)
+  if (argc != 6)
     return 0;
 
   res.meta_id    = (int64_t) strtoimax (argv[0], NULL, 10);
@@ -1370,6 +1486,7 @@ database_select_metalist_cb (void *user_data,
   res.data_value = argv[3];
   res.group      = database_group_get (data_cb->database,
                                        (int64_t) strtoimax (argv[4], NULL, 10));
+  res.external   = (int) strtol (argv[5], NULL, 10);
 
   /* send to the frontend */
   return data_cb->cb_mr (data_cb->data, &res);
@@ -1482,7 +1599,7 @@ database_select_file_cb (void *user_data,
   database_cb_t *data_cb = user_data;
   valhalla_db_filemeta_t **res, *new;
 
-  if (argc != 6)
+  if (argc != 7)
     return 0;
 
   res = data_cb->data;
@@ -1510,6 +1627,7 @@ database_select_file_cb (void *user_data,
 
   new->group = database_group_get (data_cb->database,
                                    (int64_t) strtoimax (argv[1], NULL, 10));
+  new->external   = (int) strtol (argv[6], NULL, 10);
 
   return 0;
 }
@@ -1549,4 +1667,128 @@ vh_database_file_get (database_t *database,
 
   DATABASE_RETURN_SQL_EXEC (database->db,
                             sql, database_select_file_cb, data_cb, msg)
+}
+
+/******************************************************************************/
+/*                                                                            */
+/*                  For Public Insertions/Updates/Deletions                   */
+/*                                                                            */
+/******************************************************************************/
+
+int
+vh_database_metadata_insert (database_t *database, const char *path,
+                             const char *meta, const char *data,
+                             valhalla_meta_grp_t group)
+{
+  int res = -1;
+  int64_t file_id, meta_id, data_id, group_id;
+
+  if (!path || !meta || !data)
+    return -1;
+
+  file_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID), path);
+  if (!file_id)
+    return -1; /* file unknown */
+
+  meta_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_META_ID), meta);
+  data_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_DATA_ID), data);
+  if (meta_id && data_id)
+  {
+    int ext;
+    int64_t ngroup_id;
+    res = database_assoc_filemd_get (database, file_id, meta_id, data_id,
+                                     &ngroup_id, &ext);
+    if (!res)
+    {
+      group_id = database_groupid_get (database, group);
+      if (ngroup_id != group_id)
+        return -2; /* go out because an entry exists with an other group ID */
+
+      if (ext == 1)
+        return 0; /* already inserted */
+    }
+  }
+
+  if (!res)
+    database_assoc_filemd_update (database,
+                                  file_id, meta_id, data_id, group_id, 1);
+  else
+  {
+    if (!meta_id)
+      meta_id = database_meta_insert (database, meta);
+    if (!data_id)
+      data_id = database_data_insert (database, data);
+    group_id = database_groupid_get (database, group);
+    database_assoc_filemd_insert (database,
+                                  file_id, meta_id, data_id, group_id, 1);
+  }
+
+  return 0;
+}
+
+int
+vh_database_metadata_update (database_t *database, const char *path,
+                             const char *meta, const char *data,
+                             const char *ndata)
+{
+  int res, ext;
+  int64_t file_id, meta_id, data_id, group_id;
+
+  if (!path || !meta || !data || !ndata)
+    return -1;
+
+  file_id = database_file_id_by_metadata (database, path, meta, data);
+  if (!file_id)
+    return -1; /* association unknown */
+
+  meta_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_META_ID), meta);
+  data_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_DATA_ID), data);
+  if (!meta_id || !data_id)
+    return -2; /* at least one association is not cleanup'ed */
+
+  res = database_assoc_filemd_get (database, file_id, meta_id, data_id,
+                                   &group_id, &ext);
+  if (res)
+    return -3;
+
+  database_assoc_filemd_delete (database, file_id, meta_id, data_id);
+  data_id = database_data_insert (database, ndata);
+  database_assoc_filemd_insert (database,
+                                file_id, meta_id, data_id, group_id, 1);
+  return 0;
+}
+
+int
+vh_database_metadata_delete (database_t *database, const char *path,
+                             const char *meta, const char *data)
+{
+  int res, ext = 0;
+  int64_t file_id, meta_id, data_id, group_id;
+
+  if (!path || !meta || !data)
+    return -1;
+
+  file_id = database_file_id_by_metadata (database, path, meta, data);
+  if (!file_id)
+    return 0; /* association unknown */
+
+  meta_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_META_ID), meta);
+  data_id =
+    database_table_get_id (database, STMT_GET (STMT_SELECT_DATA_ID), data);
+  if (!meta_id || !data_id)
+    return -1; /* at least one association is not cleanup'ed */
+
+  res = database_assoc_filemd_get (database, file_id, meta_id, data_id,
+                                   &group_id, &ext);
+  if (res || !ext)
+    return -2;
+
+  database_assoc_filemd_delete (database, file_id, meta_id, data_id);
+  return 0;
 }

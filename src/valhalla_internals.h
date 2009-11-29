@@ -33,6 +33,9 @@ typedef enum action_list {
   ACTION_DB_END,            /* dispatcher: end metadata */
   ACTION_DB_NEWFILE,        /* scanner: new file to handle */
   ACTION_DB_NEXT_LOOP,      /* scanner: stop db manage queue for next loop */
+  ACTION_DB_EXT_INSERT,     /* external metadata to insert */
+  ACTION_DB_EXT_UPDATE,     /* external metadata to update */
+  ACTION_DB_EXT_DELETE,     /* external metadata to delete */
   ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
   ACTION_OD_ENGAGE,         /* engage ondemand procedure */
   ACTION_EH_EVENT,          /* event for the user */

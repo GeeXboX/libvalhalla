@@ -80,4 +80,13 @@ int vh_database_file_get (database_t *database,
                           valhalla_db_restrict_t *restriction,
                           valhalla_db_filemeta_t **res);
 
+int vh_database_metadata_insert (database_t *database, const char *path,
+                                 const char *meta, const char *data,
+                                 valhalla_meta_grp_t group);
+int vh_database_metadata_update (database_t *database, const char *path,
+                                 const char *meta, const char *data,
+                                 const char *ndata);
+int vh_database_metadata_delete (database_t *database, const char *path,
+                                 const char *meta, const char *data);
+
 #endif /* VALHALLA_DATABASE_H */

@@ -34,6 +34,7 @@
 #include "valhalla_internals.h"
 #include "event_handler.h"
 #include "ondemand.h"
+#include "dbmanager.h"
 #include "metadata.h"
 #include "fifo_queue.h"
 #include "utils.h"
@@ -312,6 +313,13 @@ vh_queue_cleanup (fifo_queue_t *queue)
     case ACTION_DB_NEWFILE:
       if (data)
         vh_file_data_free (data);
+      break;
+
+    case ACTION_DB_EXT_INSERT:
+    case ACTION_DB_EXT_UPDATE:
+    case ACTION_DB_EXT_DELETE:
+      if (data)
+        vh_dbmanager_extmd_free (data);
       break;
 
     case ACTION_OD_ENGAGE:
