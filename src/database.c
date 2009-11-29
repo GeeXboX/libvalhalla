@@ -982,10 +982,21 @@ database_info (database_t *database)
                                       "unsupported)");
     return -1;
   }
-#if 0
-  /* TODO: for future versions (upgrade) */
   else if (ver < LIBVALHALLA_DB_VERSION)
-#endif /* 0 */
+  {
+    /*
+     * XXX: The mechanisms to provide the upgrades must be implemented when
+     *      the first version of libvalhalla will be released.
+     *      For devel, it is acceptable to delete the database for each new
+     *      versions.
+     */
+    valhalla_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
+                                      "version (%i) is too old and can not be "
+                                      "upgraded to the version %i.",
+                                      database->path, ver,
+                                      LIBVALHALLA_DB_VERSION);
+    return -1;
+  }
 
   return 0;
 }
