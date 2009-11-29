@@ -384,8 +384,8 @@
  "INTO dlcontext (dlcontext_url, dlcontext_dst, dlcontext_name, _file_id) " \
  "VALUES (?, ?, ?, ?);"
 
-#define INSERT_ASSOC_FILE_METADATA                                \
- "INSERT "                                                        \
+#define INSERT_ASSOC_FILE_METADATA                                          \
+ "INSERT "                                                                  \
  "INTO assoc_file_metadata (file_id, meta_id, data_id, _grp_id, external) " \
  "VALUES (?, ?, ?, ?, ?);"
 
