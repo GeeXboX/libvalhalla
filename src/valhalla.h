@@ -694,10 +694,6 @@ int valhalla_db_file_get (valhalla_t *handle,
 
 /**
  * @}
- */
-
-/**
- * @}
  * \name Database insertions/updates/deletions.
  *
  * With these functions, you can insert/update and delete metadata for a
