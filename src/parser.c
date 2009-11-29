@@ -252,6 +252,7 @@ parser_decrapify (parser_t *parser, const char *file)
   /* decrapify */
   for (; *it; it++)
     if ((unsigned) *it <= 0x7F /* limit to ASCII 7 bits */
+        && *it != '\''
         && !isspace (*it)
         && !isalnum (*it))
       *it = ' ';
