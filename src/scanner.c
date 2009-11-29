@@ -229,7 +229,7 @@ scanner_readdir (scanner_t *scanner,
     {
       file_data_t *data;
 
-      data = vh_file_data_new (file, st.st_mtime, 0, 0,
+      data = vh_file_data_new (file, st.st_mtime, 0, OD_TYPE_DEF,
                                FIFO_QUEUE_PRIORITY_NORMAL, STEP_PARSING);
       if (data)
       {

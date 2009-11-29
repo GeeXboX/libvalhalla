@@ -200,7 +200,7 @@ ondemand_thread (void *arg)
           vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
         }
       }
-      fdata->od = 2;
+      fdata->od = OD_TYPE_UPD;
     }
     /* Check if the file is available and consistent. */
     else if (S_ISREG (st.st_mode)
@@ -209,7 +209,7 @@ ondemand_thread (void *arg)
       int outofpath =
         !!vh_scanner_path_cmp (ondemand->valhalla->scanner, file);
 
-      fdata = vh_file_data_new (file, st.st_mtime, outofpath, 1,
+      fdata = vh_file_data_new (file, st.st_mtime, outofpath, OD_TYPE_NEW,
                                 FIFO_QUEUE_PRIORITY_HIGH, STEP_PARSING);
       if (fdata)
         vh_dbmanager_action_send (ondemand->valhalla->dbmanager,

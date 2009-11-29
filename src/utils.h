@@ -31,6 +31,12 @@
 #include "fifo_queue.h"
 #include "list.h"
 
+typedef enum od_type {
+  OD_TYPE_DEF = 0,  /* created by "scanner" (default value) */
+  OD_TYPE_NEW,      /* created by "ondemand" */
+  OD_TYPE_UPD,      /* created by "scanner"; updated by "ondemand" */
+} od_type_t;
+
 typedef struct file_dl_s {
   struct file_dl_s *next;
   char         *url;
@@ -43,7 +49,7 @@ typedef struct file_data_s {
   time_t               mtime;
   valhalla_file_type_t type;
   int                  outofpath;
-  int                  od;
+  od_type_t            od;
   fifo_queue_prio_t    priority;
   metadata_t          *meta_parser;
   processing_step_t    step;
@@ -71,8 +77,8 @@ void vh_file_dl_add (file_dl_t **dl,
                      const char *url, const char *name, valhalla_dl_t dst);
 void vh_file_data_free (file_data_t *data);
 file_data_t *vh_file_data_new (const char *file, time_t mtime,
-                               int outofpath, int od, fifo_queue_prio_t prio,
-                               processing_step_t step);
+                               int outofpath, od_type_t od,
+                               fifo_queue_prio_t prio, processing_step_t step);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
 void vh_queue_cleanup (fifo_queue_t *queue);

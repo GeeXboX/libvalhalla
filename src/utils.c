@@ -198,8 +198,8 @@ vh_file_data_free (file_data_t *data)
 }
 
 file_data_t *
-vh_file_data_new (const char *file, time_t mtime, int outofpath, int od,
-                  fifo_queue_prio_t prio, processing_step_t step)
+vh_file_data_new (const char *file, time_t mtime, int outofpath,
+                  od_type_t od, fifo_queue_prio_t prio, processing_step_t step)
 {
   file_data_t *fdata;
 

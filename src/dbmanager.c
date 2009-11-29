@@ -185,7 +185,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     /* received from the dispatcher */
     case ACTION_DB_END:
       vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
-      if (pdata->od)
+      if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler,
                                pdata->file, VALHALLA_EVENT_ENDED, NULL);
       break;
@@ -193,7 +193,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
-      if (pdata->od)
+      if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
                                VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
@@ -205,7 +205,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       stats->file_update++;
     case ACTION_DB_INSERT_P:
       vh_database_file_data_update (dbmanager->database, pdata);
-      if (pdata->od)
+      if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler,
                                pdata->file, VALHALLA_EVENT_PARSED, NULL);
       continue;
@@ -213,7 +213,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_UPDATE_G:
       vh_database_file_grab_update (dbmanager->database, pdata);
-      if (pdata->od)
+      if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
                                VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
@@ -283,14 +283,15 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         continue;
       }
 
-      if (pdata->od)
+      if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler,
                                pdata->file, VALHALLA_EVENT_ENDED, NULL);
       stats->file_nochange++;
     }
     }
 
-    if (!pdata->od || pdata->od == 2) /* Must not come from "On-demand" */
+    /* Must not come from "On-demand" */
+    if (pdata->od == OD_TYPE_DEF || pdata->od == OD_TYPE_UPD)
       vh_scanner_action_send (dbmanager->valhalla->scanner,
                               FIFO_QUEUE_PRIORITY_NORMAL,
                               ACTION_ACKNOWLEDGE, NULL);
