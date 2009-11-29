@@ -23,6 +23,7 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
@@ -272,10 +273,13 @@ grabber_thread (void *arg)
     if (grab) /* next child available */
     {
       int res;
+      struct timespec ts, te, td;
 
       pdata->grabber_cnt = cnt + 1;
       pdata->grabber_name = it->name;
+      clock_gettime (CLOCK_REALTIME, &ts);
       res = it->grab (it->priv, pdata);
+      clock_gettime (CLOCK_REALTIME, &te);
       if (res)
       {
         it->stat_failure++;
@@ -285,6 +289,9 @@ grabber_thread (void *arg)
       }
       else
         it->stat_success++;
+
+      VH_TIMERSUB (&te, &ts, &td);
+      VH_TIMERADD (&it->stat_difftime, &td, &it->stat_difftime);
 
       /* at least still one grabber for this file ? */
       GRABBER_IS_AVAILABLE
@@ -306,10 +313,15 @@ grabber_thread (void *arg)
     for (it = grabber->list; it; it = it->next)
     {
       unsigned int total = it->stat_success + it->stat_failure;
+      float diff_time =
+        it->stat_difftime.tv_sec + it->stat_difftime.tv_nsec / 1000000000.0;
+
       valhalla_log (VALHALLA_MSG_INFO,
-                    "[%s] Stats %-10s : %6i/%-6i (%6.2f%%)",
+                    "[%s] Stats %-10s : %6i/%-6i (%6.2f%%) "
+                    "(%7.2f sec, %7.2f sec/file)",
                     __FUNCTION__, it->name, it->stat_success, total,
-                    total ? 100.0 * it->stat_success / total : 100.0);
+                    total ? 100.0 * it->stat_success / total : 100.0,
+                    diff_time, diff_time / total);
     }
 
   /* the thread is locked by vh_grabber_run() */

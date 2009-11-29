@@ -59,6 +59,8 @@
  * \see grabber_list_t for details on the functions.
  */
 
+#include <time.h>
+
 #include "utils.h"
 
 /** \name Flags for the capabilities of the grabbers.
@@ -153,6 +155,8 @@ typedef struct grabber_list_s {
   int enable;
   /** \brief Total of successes and failures for the session. */
   unsigned int stat_success, stat_failure;
+  /** \brief Total time used by the grabber. */
+  struct timespec stat_difftime;
 } grabber_list_t;
 
 

@@ -84,4 +84,30 @@ void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
 void vh_queue_cleanup (fifo_queue_t *queue);
 int vh_get_list_length (void *list);
 
+#define VH_TIMERSUB(a, b, result)                     \
+  do                                                  \
+  {                                                   \
+    (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;     \
+    (result)->tv_nsec = (a)->tv_nsec - (b)->tv_nsec;  \
+    if ((result)->tv_nsec < 0)                        \
+    {                                                 \
+      --(result)->tv_sec;                             \
+      (result)->tv_nsec += 1000000000;                \
+    }                                                 \
+  }                                                   \
+  while (0)
+
+#define VH_TIMERADD(a, b, result)                     \
+  do                                                  \
+  {                                                   \
+    (result)->tv_sec = (a)->tv_sec + (b)->tv_sec;     \
+    (result)->tv_nsec = (a)->tv_nsec + (b)->tv_nsec;  \
+    if ((result)->tv_nsec >= 1000000000)              \
+    {                                                 \
+      ++(result)->tv_sec;                             \
+      (result)->tv_nsec -= 1000000000;                \
+    }                                                 \
+  }                                                   \
+  while (0)
+
 #endif /* VALHALLA_UTILS_H */
