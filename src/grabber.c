@@ -321,7 +321,7 @@ grabber_thread (void *arg)
                     "(%7.2f sec, %7.2f sec/file)",
                     __FUNCTION__, it->name, it->stat_success, total,
                     total ? 100.0 * it->stat_success / total : 100.0,
-                    diff_time, diff_time / total);
+                    diff_time, total ? diff_time / total : 0.0);
     }
 
   /* the thread is locked by vh_grabber_run() */
