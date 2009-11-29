@@ -554,10 +554,11 @@ database_file_id_by_metadata (database_t *database, const char *path,
 }
 
 static void
-database_assoc_filegrab_insert (sqlite3_stmt *stmt,
+database_assoc_filegrab_insert (database_t *database,
                                 int64_t file_id, int64_t grabber_id)
 {
   int res, err = -1;
+  sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_ASSOC_FILE_GRABBER);
 
   VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,    out_reset);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, grabber_id, out_clear);
@@ -571,8 +572,7 @@ database_assoc_filegrab_insert (sqlite3_stmt *stmt,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
-    valhalla_log (VALHALLA_MSG_ERROR,
-                  "%s", sqlite3_errmsg (sqlite3_db_handle (stmt)));
+    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -679,8 +679,7 @@ database_file_grab (database_t *database, file_data_t *data)
     return;
 
   grabber_id = database_grabber_insert (database, data->grabber_name);
-  database_assoc_filegrab_insert (STMT_GET (STMT_INSERT_ASSOC_FILE_GRABBER),
-                                  file_id, grabber_id);
+  database_assoc_filegrab_insert (database, file_id, grabber_id);
 }
 
 void
