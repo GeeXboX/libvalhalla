@@ -25,9 +25,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <sys/time.h>
+#include <time.h>
 
 #include "valhalla.h"
+#include "utils.h"    /* for macro VH_TIMERSUB */
 
 
 #define TESTVALHALLA_HELP \
@@ -82,8 +83,7 @@ main (int argc, char **argv)
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
   const char *grabbers[GRABBER_MAX];
-  struct timeval tvs, tve;
-  long long diff;
+  struct timespec tss, tse, tsd;
 
   int c, index;
   const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:";
@@ -271,7 +271,7 @@ main (int argc, char **argv)
   }
 #endif /* USE_GRABBER */
 
-  gettimeofday (&tvs, NULL);
+  clock_gettime (CLOCK_REALTIME, &tss);
 
   rc = valhalla_run (handle, loop_nb, loop_wait, priority);
   if (rc)
@@ -286,12 +286,12 @@ main (int argc, char **argv)
   else
     usleep (time_limit * 1000);
 
-  gettimeofday (&tve, NULL);
+  clock_gettime (CLOCK_REALTIME, &tse);
 
   valhalla_uninit (handle);
 
-  diff = (tve.tv_sec - tvs.tv_sec) * 1000000L + tve.tv_usec - tvs.tv_usec;
-  printf ("Time elapsing: %f msec, %f sec\n", diff / 1000.0, diff / 1000000.0);
+  VH_TIMERSUB (&tse, &tss, &tsd);
+  printf ("Time : %f sec\n", tsd.tv_sec + tsd.tv_nsec / 1000000000.0);
 
   return 0;
 }
