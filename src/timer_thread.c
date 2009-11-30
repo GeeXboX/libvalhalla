@@ -49,6 +49,15 @@ vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
 }
 
 void
+vh_timer_thread_wakeup (timer_thread_t *timer)
+{
+  pthread_mutex_lock (&timer->mutex);
+  if (timer->run)
+    pthread_cond_signal (&timer->cond);
+  pthread_mutex_unlock (&timer->mutex);
+}
+
+void
 vh_timer_thread_stop (timer_thread_t *timer)
 {
   if (!timer)
