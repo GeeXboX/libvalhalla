@@ -20,7 +20,7 @@
  */
 
 #include <pthread.h>
-#include <sys/time.h>
+#include <time.h>
 #include <stdlib.h>
 
 #include "timer_thread.h"
@@ -36,16 +36,11 @@ void
 vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
 {
   struct timespec ts;
-  struct timeval  tp;
 
   pthread_mutex_lock (&timer->mutex);
   if (timer->run)
   {
-    gettimeofday (&tp, NULL);
-
-    /* Convert from timeval to timespec. */
-    ts.tv_sec  = tp.tv_sec;
-    ts.tv_nsec = tp.tv_usec * 1000;
+    clock_gettime (CLOCK_REALTIME, &ts);
     ts.tv_sec += timeout;
 
     pthread_cond_timedwait (&timer->cond, &timer->mutex, &ts);
