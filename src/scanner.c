@@ -319,6 +319,17 @@ scanner_thread (void *arg)
   pthread_exit (NULL);
 }
 
+void
+vh_scanner_wakeup (scanner_t *scanner)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!scanner)
+    return;
+
+  vh_timer_thread_wakeup (scanner->timer);
+}
+
 int
 vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
 {

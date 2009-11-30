@@ -33,6 +33,8 @@ enum scanner_errno {
   SCANNER_SUCCESS       =  0,
 };
 
+
+void vh_scanner_wakeup (scanner_t *scanner);
 int vh_scanner_run (scanner_t *scanner,
                     int loop, uint16_t timeout, int priority);
 void vh_scanner_wait (scanner_t *scanner);

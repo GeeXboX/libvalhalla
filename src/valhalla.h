@@ -299,6 +299,19 @@ int valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority);
 void valhalla_wait (valhalla_t *handle);
 
 /**
+ * \brief Force to wake up the scanner.
+ *
+ * If the scanner is sleeping, this function will wake up this one independently
+ * of the time (\p timeout) set with valhalla_run(). If the number of loops is
+ * already reached or if the scanner is already working, this function has no
+ * effect.
+ *
+ * \warning This function can be used only after valhalla_run()!
+ * \param[in] handle      Handle on the scanner.
+ */
+void valhalla_scanner_wakeup (valhalla_t *handle);
+
+/**
  * \brief Force Valhalla to retrieve metadata on-demand for a file.
  *
  * This functionality can be used on files in/out of paths defined for

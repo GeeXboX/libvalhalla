@@ -501,6 +501,17 @@ valhalla_init (const char *db,
 }
 
 void
+valhalla_scanner_wakeup (valhalla_t *handle)
+{
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return;
+
+  vh_scanner_wakeup (handle->scanner);
+}
+
+void
 valhalla_ondemand (valhalla_t *handle, const char *file)
 {
   char *odfile;
