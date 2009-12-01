@@ -131,24 +131,51 @@ parser_metadata_group (metadata_t **meta,
 #endif /* 0 */
 
 #define PATTERN_NUMBER "NUM"
+#define PATTERN_SEASON  "SE"
+#define PATTERN_EPISODE "EP"
 
 static void
-parser_decrap_pattern (char *str, const char *bl)
+parser_decrap_pattern (char *str, const char *bl,
+                       unsigned int *se, unsigned int *ep)
 {
   char pattern[64];
   int res, len_s = 0, len_e = 0;
-  char *it;
+  char *it, *it1, *it2;
 
   /* prepare pattern */
-  snprintf (pattern, sizeof (pattern), "%%*[^0-9]%%n%s%%n", bl);
+  snprintf (pattern, sizeof (pattern), "%%*[^ ]%%n%s%%n", bl);
   while ((it = strstr (pattern, PATTERN_NUMBER)))
     memcpy (it, "%*u", 3);
+
+  it1 = strstr (pattern, PATTERN_SEASON);
+  it2 = strstr (pattern, PATTERN_EPISODE);
+  if (it1)
+    memcpy (it1, "%u", 2);
+  if (it2)
+    memcpy (it2, "%u", 2);
 
   /* search pattern in the string */
   it = str;
   do
   {
     len_s = 0;
+    if (!it1 && it2) /* only EP */
+      res = sscanf (it, pattern, &len_s, ep, &len_e);
+    else if (!it2 && it1) /* only SE */
+      res = sscanf (it, pattern, &len_s, se, &len_e);
+    else if (it1 && it2) /* SE & EP */
+    {
+      if (it1 < it2)
+        res = sscanf (it, pattern, &len_s, se, ep, &len_e);
+      else
+        res = sscanf (it, pattern, &len_s, ep, se, &len_e);
+      /* Both must return something with sscanf. */
+      if (!*ep)
+        *se = 0;
+      if (!*se)
+        *ep = 0;
+    }
+    else /* NUM */
     res = sscanf (it, pattern, &len_s, &len_e);
     it += len_s + 1;
   }
@@ -162,7 +189,7 @@ parser_decrap_pattern (char *str, const char *bl)
 }
 
 static void
-parser_decrap_blacklist (char **list, char *str)
+parser_decrap_blacklist (char **list, char *str, metadata_t **meta)
 {
   char **l;
 
@@ -171,9 +198,27 @@ parser_decrap_blacklist (char **list, char *str)
     size_t size;
     char *p;
 
-    if (strstr (*l, PATTERN_NUMBER))
+    if (   strstr (*l, PATTERN_NUMBER)
+        || strstr (*l, PATTERN_SEASON)
+        || strstr (*l, PATTERN_EPISODE))
     {
-      parser_decrap_pattern (str, *l);
+      unsigned int i, se = 0, ep = 0;
+
+      parser_decrap_pattern (str, *l, &se, &ep);
+      for (i = 0; i < 2; i++)
+      {
+        unsigned int val = i ? ep : se;
+        char v[32];
+
+        if (!val)
+          continue;
+
+        snprintf (v, sizeof (v), "%u", val);
+        if (i)
+          vh_metadata_add_auto (meta, VALHALLA_METADATA_EPISODE, v);
+        else
+          vh_metadata_add_auto (meta, VALHALLA_METADATA_SEASON, v);
+      }
       continue;
     }
 
@@ -227,7 +272,7 @@ parser_decrap_cleanup (char *str)
 }
 
 static char *
-parser_decrapify (parser_t *parser, const char *file)
+parser_decrapify (parser_t *parser, const char *file, metadata_t **meta)
 {
   char *it, *filename, *res;
   char *file_tmp = strdup (file);
@@ -257,7 +302,7 @@ parser_decrapify (parser_t *parser, const char *file)
         && !isalnum (*it))
       *it = ' ';
 
-  parser_decrap_blacklist (parser->bl_list, filename);
+  parser_decrap_blacklist (parser->bl_list, filename, meta);
   parser_decrap_cleanup (filename);
 
   res = strdup (filename);
@@ -292,7 +337,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   if (parser->decrapifier
       && vh_metadata_get (meta, VALHALLA_METADATA_TITLE, 0, &title_tag))
   {
-    char *title = parser_decrapify (parser, file);
+    char *title = parser_decrapify (parser, file, &meta);
     if (title)
     {
       vh_metadata_add_auto (&meta, VALHALLA_METADATA_TITLE, title);

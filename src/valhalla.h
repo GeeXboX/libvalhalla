@@ -206,13 +206,32 @@ void valhalla_suffix_add (valhalla_t *handle, const char *suffix);
  * This function is useful only if the decrapifier is enabled with
  * valhalla_init().
  *
- * The blacklisted keywords are case insensitive. Sometimes it is useful to
- * blacklist a keyword composed with a number. you can specify the pattern
- * with NUM where a number is located.
- * For example:
- *   Filename  : "{XvID-Foobar}.My_Movie.s01e02.avi"
- *   Blacklist : "xvid", "foobar", "sNUMeNUM"
- *   Result    : "My Movie"
+ * The keywords are case insensitive except when a pattern (NUM, SE or EP)
+ * is used.
+ *
+ * Available patterns (unsigned int):
+ * - NUM to trim a number
+ * - SE  to trim and retrieve a "season" number (at least >= 1)
+ * - EP  to trim and retrieve an "episode" number (at least >= 1)
+ *
+ * NUM can be used several time in the same keyword, like "NUMxNUM". But SE and
+ * EP must be used only one time by keyword. When a season or an episode is
+ * found, a new metadata is added for each one.
+ *
+ * Examples:
+ * - Blacklist : "xvid", "foobar", "fileNUM", "sSEeEP", "divx", "SExEP", "NumEP"
+ *
+ * - Filename  : "{XvID-Foobar}.file01.My_Movie.s02e10.avi"
+ * - Result    : "My Movie", season=2 and episode=10
+ *
+ * - Filename  : "My_Movie_2.s02e10_(5x3)_.mkv"
+ * - Result    : "My Movie 2", season=2, episode=10, season=5, episode=3
+ *
+ * - Filename  : "The-Episode.-.Pilot_DivX.(01x01)_FooBar.mkv"
+ * - Result    : "The Episode Pilot", season=1 and episode=1
+ *
+ * - Filename  : "_Name_of_the_episode_Num05.ogg"
+ * - Result    : "Name of the episode", episode=5
  *
  * If the same keyword is added several times, only one is saved in the
  * decrapifier.
