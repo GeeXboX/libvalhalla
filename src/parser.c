@@ -176,7 +176,7 @@ parser_decrap_pattern (char *str, const char *bl,
         *ep = 0;
     }
     else /* NUM */
-    res = sscanf (it, pattern, &len_s, &len_e);
+      res = sscanf (it, pattern, &len_s, &len_e);
     it += len_s + 1;
   }
   while (!len_e && res != EOF);
