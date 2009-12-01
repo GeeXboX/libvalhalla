@@ -100,6 +100,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
 
   vh_metadata_add_auto (&fdata->meta_grabber, type, cover);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
+  free (cover);
 }
 
 static int
