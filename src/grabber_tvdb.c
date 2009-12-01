@@ -202,7 +202,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   free (tmp2);
 
   if (!title)
-    return -1;
+    goto error;
 #else
   if (!orig_keywords)
     return -1;
