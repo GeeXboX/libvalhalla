@@ -36,6 +36,13 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
+/*
+ * When defined, an API unofficial (undocumented) is used in order to found
+ * a name which can be used to return something interesting in the result,
+ * else most of time nothing is found with the standard search engine.
+ */
+#define GRABBER_TVDB_UNOFFICIAL_API
+
 #define MAX_URL_SIZE      1024
 
 #define TVDB_DEFAULT_LANGUAGE   "en"
@@ -47,6 +54,7 @@
 
 /* See http://thetvdb.com/wiki/index.php?title=Programmers_API */
 #define TVDB_QUERY_SEARCH       "http://%s/api/GetSeries.php?seriesname=%s"
+#define TVDB_QUERY_SEARCH_NEW   "http://%s/api/GetSeriesNew.php?seriesname=%s"
 #define TVDB_QUERY_INFO         "http://%s/api/%s/series/%s/%s.xml"
 #define TVDB_COVERS_URL         "http://%s/banners/%s"
 
@@ -103,31 +111,27 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   free (cover);
 }
 
-static int
-grabber_tvdb_get (url_t *handler, file_data_t *fdata,
-                  const char *keywords, char *escaped_keywords)
+static char *
+grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
+                     const char *query, const char *item, const char *value)
 {
   char url[MAX_URL_SIZE];
   url_data_t udata;
-  int res_int = 0;
+  char *res = NULL;
 
   xmlDocPtr doc;
   xmlChar *tmp = NULL;
   xmlNode *n;
 
-  if (!keywords || !escaped_keywords)
-    return -1;
-
   /* proceed with TVDB search request */
   memset (url, '\0', MAX_URL_SIZE);
-  snprintf (url, MAX_URL_SIZE, TVDB_QUERY_SEARCH,
-            TVDB_HOSTNAME, escaped_keywords);
+  snprintf (url, MAX_URL_SIZE, query, TVDB_HOSTNAME, escaped_keywords);
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
-    return -1;
+    return NULL;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
@@ -136,30 +140,90 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   free (udata.buffer);
 
   if (!doc)
-    return -1;
+    return NULL;
 
   /* check for a known DB entry */
-  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), "Series");
+  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), item);
   if (!n)
   {
     valhalla_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
-    goto error;
+  }
+  else
+  {
+    /* get value */
+    tmp = vh_get_prop_value_from_xml_tree (n, value);
+    if (tmp)
+    {
+      res = strdup ((const char *) tmp);
+      xmlFree (tmp);
+    }
   }
 
-  /* get TVDB show id */
-  tmp = vh_get_prop_value_from_xml_tree (n, "seriesid");
-  if (!tmp)
-    goto error;
-
   xmlFreeDoc (doc);
-  doc = NULL;
+  return res;
+}
+
+static int
+grabber_tvdb_get (url_t *handler, file_data_t *fdata,
+                  char *orig_keywords, char *escaped_keywords)
+{
+  char url[MAX_URL_SIZE];
+  url_data_t udata;
+  int res_int = 0;
+  char *title, *seriesid, *keywords;
+#ifdef GRABBER_TVDB_UNOFFICIAL_API
+  char *tmp2;
+#endif /* GRABBER_TVDB_UNOFFICIAL_API */
+
+  xmlDocPtr doc = NULL;
+  xmlChar *tmp = NULL;
+  xmlNode *n;
+
+  if (!escaped_keywords)
+    return -1;
+
+#ifdef GRABBER_TVDB_UNOFFICIAL_API
+  (void) orig_keywords;
+
+  /* search the exact name for a movie */
+  tmp2 = grabber_tvdb_search (handler, escaped_keywords,
+                              TVDB_QUERY_SEARCH_NEW, "Series", "SeriesName");
+  if (!tmp2)
+    return -1;
+
+  keywords = strdup (tmp2);
+  if (!keywords)
+  {
+    free (tmp2);
+    return -1;
+  }
+  title = vh_url_escape_string (handler, tmp2);
+  free (tmp2);
+
+  if (!title)
+    return -1;
+#else
+  if (!orig_keywords)
+    return -1;
+
+  keywords = strdup (orig_keywords);
+  if (!keywords)
+    return -1;
+  title = strdup (escaped_keywords);
+#endif /* GRABBER_TVDB_UNOFFICIAL_API */
+
+  seriesid = grabber_tvdb_search (handler, title,
+                                  TVDB_QUERY_SEARCH, "Series", "seriesid");
+  free (title);
+  if (!seriesid)
+    goto error;
 
   /* proceed with TVDB search request */
   memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, TVDB_QUERY_INFO,
-            TVDB_HOSTNAME, TVDB_API_KEY, tmp, TVDB_DEFAULT_LANGUAGE);
-  xmlFree (tmp);
+            TVDB_HOSTNAME, TVDB_API_KEY, seriesid, TVDB_DEFAULT_LANGUAGE);
+  free (seriesid);
 
   valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
@@ -216,11 +280,13 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   xmlFreeDoc (doc);
+  free (keywords);
   return 0;
 
  error:
   if (doc)
     xmlFreeDoc (doc);
+  free (keywords);
 
   return -1;
 }
