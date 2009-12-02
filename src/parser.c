@@ -42,9 +42,9 @@
 #define PARSER_NB_MAX 8
 #endif /* PARSER_NB_MAX */
 
-#define IS_TO_DECRAPIFY(c)              \
- ((unsigned) (c) <= 0x7F                \
-  && (c) != '\''                        \
+#define IS_TO_DECRAPIFY(c)                \
+ ((unsigned) (c) <= 0x7F                  \
+  && (c) != '\''                          \
   && !isspace ((int) (unsigned char) (c)) \
   && !isalnum ((int) (unsigned char) (c)))
 
