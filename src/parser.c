@@ -149,7 +149,7 @@ parser_decrap_pattern (char *str, const char *bl,
   char *it, *it1, *it2;
 
   /* prepare pattern */
-  snprintf (pattern, sizeof (pattern), "%%*[^ ]%%n%s%%n", bl);
+  snprintf (pattern, sizeof (pattern), "%%n%s%%n", bl);
   while ((it = strstr (pattern, PATTERN_NUMBER)))
     memcpy (it, "%*u", 3);
 
@@ -190,8 +190,23 @@ parser_decrap_pattern (char *str, const char *bl,
   if (len_e <= len_s)
     return;
 
-  /* cleanup */
-  memset (it - 1, ' ', len_e - len_s);
+  it--;
+
+  /*
+   * Check if the pattern found is not into a string. Space, start or end
+   * of string must be found before and after the part corresponding to
+   * the pattern.
+   */
+  if ((it == str || *it == ' ' || *(it - 1) == ' ') /* nothing or ' ' before */
+      && (   *(it + len_e - len_s) == ' '           /* ' ' or nothing after  */
+          || *(it + len_e - len_s) == '\0'))
+    /* cleanup */
+    memset (it, ' ', len_e - len_s);
+  else
+  {
+    *se = 0;
+    *ep = 0;
+  }
 }
 
 static void
