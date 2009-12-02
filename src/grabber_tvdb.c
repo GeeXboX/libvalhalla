@@ -200,9 +200,6 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
   title = vh_url_escape_string (handler, tmp2);
   free (tmp2);
-
-  if (!title)
-    goto error;
 #else
   if (!orig_keywords)
     return -1;
@@ -212,6 +209,9 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
     return -1;
   title = strdup (escaped_keywords);
 #endif /* GRABBER_TVDB_UNOFFICIAL_API */
+
+  if (!title)
+    goto error;
 
   seriesid = grabber_tvdb_search (handler, title,
                                   TVDB_QUERY_SEARCH, "Series", "seriesid");
