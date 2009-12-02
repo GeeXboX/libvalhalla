@@ -45,8 +45,8 @@
 #define IS_TO_DECRAPIFY(c)  \
  ((unsigned) (c) <= 0x7F    \
   && (c) != '\''            \
-  && !isspace (c)           \
-  && !isalnum (c))
+  && !isspace ((int) (unsigned char) c) \
+  && !isalnum ((int) (unsigned char) c))
 
 struct parser_s {
   valhalla_t   *valhalla;
