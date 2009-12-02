@@ -496,7 +496,7 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 
   /* check if the keyword is already in the list */
   for (it = parser->bl_list; it && *it; it++)
-    if (!strcasecmp (*it, keyword))
+    if (!strcmp (*it, keyword))
       return;
 
   n = vh_get_list_length (parser->bl_list) + 1;
