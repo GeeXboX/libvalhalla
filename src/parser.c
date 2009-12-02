@@ -42,6 +42,12 @@
 #define PARSER_NB_MAX 8
 #endif /* PARSER_NB_MAX */
 
+#define IS_TO_DECRAPIFY(c)  \
+ ((unsigned) (c) <= 0x7F    \
+  && (c) != '\''            \
+  && !isspace (c)           \
+  && !isalnum (c))
+
 struct parser_s {
   valhalla_t   *valhalla;
   pthread_t     thread[PARSER_NB_MAX];
@@ -296,10 +302,7 @@ parser_decrapify (parser_t *parser, const char *file, metadata_t **meta)
 
   /* decrapify */
   for (; *it; it++)
-    if ((unsigned) *it <= 0x7F /* limit to ASCII 7 bits */
-        && *it != '\''
-        && !isspace (*it)
-        && !isalnum (*it))
+    if (IS_TO_DECRAPIFY (*it))
       *it = ' ';
 
   parser_decrap_blacklist (parser->bl_list, filename, meta);
@@ -480,11 +483,16 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 {
   int n;
   char *const *it;
+  const char *it2;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser || !parser->decrapifier)
     return;
+
+  for (it2 = keyword; *it2; it2++)
+    if (IS_TO_DECRAPIFY (*it2))
+      return;
 
   /* check if the keyword is already in the list */
   for (it = parser->bl_list; it && *it; it++)
