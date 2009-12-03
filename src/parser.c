@@ -248,7 +248,8 @@ parser_decrap_blacklist (char **list, char *str, metadata_t **meta)
       continue;
 
     size = strlen (*l);
-    if (!isgraph (*(p + size)) && (p == str || !isgraph (*(p - 1))))
+    if (!isgraph ((int) (unsigned char) *(p + size))
+        && (p == str || !isgraph ((int) (unsigned char) *(p - 1))))
       memset (p, ' ', size);
   }
 }
@@ -266,12 +267,12 @@ parser_decrap_cleanup (char *str)
 
   for (it = str; *it; it++)
   {
-    if (!isspace (*it))
+    if (!isspace ((int) (unsigned char) *it))
     {
       *clean_it = *it;
       clean_it++;
     }
-    else if (!isspace (*(it + 1)) && *(it + 1) != '\0')
+    else if (!isspace ((int) (unsigned char) *(it + 1)) && *(it + 1) != '\0')
     {
       *clean_it = ' ';
       clean_it++;
@@ -279,7 +280,7 @@ parser_decrap_cleanup (char *str)
   }
 
   /* remove spaces after */
-  while (clean_it > str && isspace (*(clean_it - 1)))
+  while (clean_it > str && isspace ((int) (unsigned char) *(clean_it - 1)))
     clean_it--;
   *clean_it = '\0';
 
