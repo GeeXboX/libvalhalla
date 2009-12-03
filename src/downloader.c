@@ -77,6 +77,8 @@ downloader_thread (void *arg)
 
   do
   {
+    int interrup = 0;
+
     e = ACTION_NO_OPERATION;
     data = NULL;
 
@@ -106,7 +108,10 @@ downloader_thread (void *arg)
         int err;
 
         if (downloader_is_stopped (downloader))
+        {
+          interrup = 1;
           break;
+        }
 
         if (!it->url || dst >= VALHALLA_DL_LAST)
           continue;
@@ -136,6 +141,7 @@ downloader_thread (void *arg)
       }
     }
 
+    if (!interrup)
     vh_file_data_step_increase (pdata, &e);
     vh_dispatcher_action_send (downloader->valhalla->dispatcher,
                                pdata->priority, e, pdata);
