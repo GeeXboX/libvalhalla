@@ -287,7 +287,7 @@ parser_decrap_cleanup (char *str)
 
   /* remove spaces before */
   clean_it = clean;
-  while (isspace (*clean_it))
+  while (isspace ((int) (unsigned char) *clean_it))
     clean_it++;
 
   strcpy (str, clean_it);
