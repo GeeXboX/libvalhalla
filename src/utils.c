@@ -323,12 +323,9 @@ vh_queue_cleanup (fifo_queue_t *queue)
       break;
 
     case ACTION_OD_ENGAGE:
-    {
-      char *file = data;
-      if (file)
-        free (file);
+      if (data)
+        free (data);
       break;
-    }
 
     case ACTION_EH_EVENT:
     {
