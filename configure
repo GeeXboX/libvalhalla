@@ -388,8 +388,8 @@ EOF
 
 add_pkgconfig_deps() {
     if `which pkg-config 1>/dev/null 2>&1`; then
-      add_cflags `pkg-config "$1" --cflags`
-      add_extralibs `pkg-config "$1" --libs`
+      add_cflags `pkg-config "$1" --cflags >>$logfile 2>&1`
+      add_extralibs `pkg-config "$1" --libs >>$logfile 2>&1`
     fi
 }
 
