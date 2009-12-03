@@ -142,7 +142,7 @@ downloader_thread (void *arg)
     }
 
     if (!interrup)
-    vh_file_data_step_increase (pdata, &e);
+      vh_file_data_step_increase (pdata, &e);
     vh_dispatcher_action_send (downloader->valhalla->dispatcher,
                                pdata->priority, e, pdata);
   }
