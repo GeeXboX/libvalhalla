@@ -23,7 +23,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include <libavformat/avformat.h>
 
@@ -46,8 +45,8 @@
 #define IS_TO_DECRAPIFY(c)                \
  ((unsigned) (c) <= 0x7F                  \
   && (c) != '\''                          \
-  && !isspace ((int) (unsigned char) (c)) \
-  && !isalnum ((int) (unsigned char) (c)))
+  && !VH_ISSPACE (c)                      \
+  && !VH_ISALNUM (c))
 
 struct parser_s {
   valhalla_t   *valhalla;
@@ -249,8 +248,7 @@ parser_decrap_blacklist (char **list, char *str, metadata_t **meta)
       continue;
 
     size = strlen (*l);
-    if (!isgraph ((int) (unsigned char) *(p + size))
-        && (p == str || !isgraph ((int) (unsigned char) *(p - 1))))
+    if (!VH_ISGRAPH (*(p + size)) && (p == str || !VH_ISGRAPH (*(p - 1))))
       memset (p, ' ', size);
   }
 }
@@ -268,12 +266,12 @@ parser_decrap_cleanup (char *str)
 
   for (it = str; *it; it++)
   {
-    if (!isspace ((int) (unsigned char) *it))
+    if (!VH_ISSPACE (*it))
     {
       *clean_it = *it;
       clean_it++;
     }
-    else if (!isspace ((int) (unsigned char) *(it + 1)) && *(it + 1) != '\0')
+    else if (!VH_ISSPACE (*(it + 1)) && *(it + 1) != '\0')
     {
       *clean_it = ' ';
       clean_it++;
@@ -281,13 +279,13 @@ parser_decrap_cleanup (char *str)
   }
 
   /* remove spaces after */
-  while (clean_it > str && isspace ((int) (unsigned char) *(clean_it - 1)))
+  while (clean_it > str && VH_ISSPACE (*(clean_it - 1)))
     clean_it--;
   *clean_it = '\0';
 
   /* remove spaces before */
   clean_it = clean;
-  while (isspace ((int) (unsigned char) *clean_it))
+  while (VH_ISSPACE (*clean_it))
     clean_it++;
 
   strcpy (str, clean_it);

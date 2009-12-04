@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -47,7 +46,7 @@ vh_strtolower (char *str)
     return;
 
   for (; *str; str++)
-    *str = (char) tolower ((int) (unsigned char) *str);
+    *str = (char) VH_TOLOWER (*str);
 }
 
 char *

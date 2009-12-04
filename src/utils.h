@@ -22,6 +22,7 @@
 #ifndef VALHALLA_UTILS_H
 #define VALHALLA_UTILS_H
 
+#include <ctype.h>
 #include <time.h>
 #include <semaphore.h>
 
@@ -83,6 +84,11 @@ void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
 void vh_queue_cleanup (fifo_queue_t *queue);
 int vh_get_list_length (void *list);
+
+#define VH_ISALNUM(c) isalnum ((int) (unsigned char) (c))
+#define VH_ISGRAPH(c) isgraph ((int) (unsigned char) (c))
+#define VH_ISSPACE(c) isspace ((int) (unsigned char) (c))
+#define VH_TOLOWER(c) tolower ((int) (unsigned char) (c))
 
 #define VH_TIMERSUB(a, b, result)                     \
   do                                                  \
