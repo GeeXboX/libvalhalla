@@ -53,8 +53,12 @@ distclean: clean docs-clean
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-pkgconfig install-docs
+install: install-lib install-pkgconfig install-test install-docs
+
+install-lib: lib
 	$(MAKE) -C src install
+
+install-test: test
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(TESTVALHALLA) $(bindir)
 
@@ -65,10 +69,16 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
 
-uninstall: uninstall-docs
-	$(MAKE) -C src uninstall
-	rm -f $(bindir)/$(TESTVALHALLA)
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-test uninstall-docs
+
+uninstall-pkgconfig:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+
+uninstall-lib:
+	$(MAKE) -C src uninstall
+
+uninstall-test:
+	rm -f $(bindir)/$(TESTVALHALLA)
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
