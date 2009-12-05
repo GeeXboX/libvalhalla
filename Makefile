@@ -27,8 +27,8 @@ EXTRADIST = \
 
 SUBDIRS = \
 	DOCS \
-	utils \
 	src \
+	utils \
 
 all: lib test docs
 
