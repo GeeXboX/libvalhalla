@@ -8,12 +8,17 @@ EXTRADIST = \
 	valhalla-db.png \
 	valhalla-internals.png \
 
+all: doxygen
+
 doxygen:
 ifeq (,$(wildcard doxygen))
 	PROJECT_NUMBER="$(VERSION)" doxygen Doxyfile
 endif
 
+clean:
+	rm -rf doxygen
+
 dist-all:
 	cp $(EXTRADIST) Makefile $(DIST)
 
-.PHONY: dist-all doxygen
+.PHONY: clean dist-all doxygen

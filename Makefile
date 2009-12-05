@@ -16,10 +16,10 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-DOXYGEN =
+DOCS =
 
 ifeq ($(DOC),yes)
-  DOXYGEN = doxygen
+  DOCS = docs
 endif
 
 DISTFILE = libvahalla-$(VERSION).tar.bz2
@@ -36,7 +36,7 @@ SUBDIRS = \
 	utils \
 	src \
 
-all: lib test $(DOXYGEN)
+all: lib test $(DOCS)
 
 lib:
 	$(MAKE) -C src
@@ -44,18 +44,20 @@ lib:
 test: lib
 	$(CC) $(TESTVALHALLA_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVALHALLA)
 
-doxygen:
-	$(MAKE) -C DOCS doxygen
+docs:
+	$(MAKE) -C DOCS
+
+docs-clean:
+	$(MAKE) -C DOCS clean
 
 clean:
 	$(MAKE) -C src clean
 	rm -f $(TESTVALHALLA)
 
-distclean: clean
+distclean: clean docs-clean
 	rm -f config.log
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
-	rm -rf DOCS/doxygen
 
 install: install-pkgconfig
 	$(MAKE) -C src install
@@ -73,7 +75,7 @@ uninstall:
 
 .PHONY: clean distclean
 .PHONY: install install-pkgconfig uninstall
-.PHONY: doxygen
+.PHONY: docs
 
 dist:
 	-$(RM) $(DISTFILE)
