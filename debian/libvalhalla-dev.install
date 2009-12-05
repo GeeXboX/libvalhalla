@@ -1,0 +1,3 @@
+usr/include/*.h
+usr/lib/pkgconfig/*.pc
+usr/lib/libvalhalla.a

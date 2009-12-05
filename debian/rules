@@ -1,0 +1,35 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+
+# make targets
+DEB_MAKE_CLEAN_TARGET    := distclean
+DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(DEB_DESTDIR)
+
+# Common configuration flags
+confflags += --prefix=/usr
+confflags += --enable-static
+confflags += --enable-shared
+confflags += --disable-grabber-dummy
+confflags += --enable-grabber-allocine
+confflags += --enable-grabber-amazon
+confflags += --enable-grabber-exif
+confflags += --disable-grabber-ffmpeg
+confflags += --enable-grabber-imdb
+confflags += --enable-grabber-lastfm
+confflags += --enable-grabber-local
+confflags += --disable-grabber-lyricsfly
+confflags += --enable-grabber-lyricwiki
+confflags += --enable-grabber-nfo
+confflags += --enable-grabber-tvdb
+confflags += --enable-grabber-tmdb
+confflags += --enable-grabber-tvrage
+confflags += --disable-debug
+confflags += --enable-logcolor
+confflags += --enable-doc
+
+configure/libvalhalla configure/libvalhalla-dev configure/libvalhalla-bin configure/libvalhalla-doc::
+	[ -f config.mak ] || ./configure $(confflags)
