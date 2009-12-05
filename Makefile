@@ -83,9 +83,7 @@ uninstall-test:
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
 
-.PHONY: clean distclean
-.PHONY: *install*
-.PHONY: docs
+.PHONY: *clean *install* docs
 
 dist:
 	-$(RM) $(DISTFILE)
