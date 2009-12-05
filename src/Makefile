@@ -33,6 +33,48 @@ SRCS =  database.c \
 	utils.c \
 	valhalla.c \
 
+EXTRADIST = \
+	database.h \
+	dbmanager.h \
+	dispatcher.h \
+	downloader.h \
+	event_handler.h \
+	fifo_queue.h \
+	grabber.h \
+	grabber_allocine.h \
+	grabber_amazon.h \
+	grabber_common.h \
+	grabber_dummy.h \
+	grabber_exif.h \
+	grabber_ffmpeg.h \
+	grabber_imdb.h \
+	grabber_lastfm.h \
+	grabber_local.h \
+	grabber_lyricsfly.h \
+	grabber_lyricwiki.h \
+	grabber_nfo.h \
+	grabber_tmdb.h \
+	grabber_tvdb.h \
+	grabber_tvrage.h \
+	grabber_utils.h \
+	hmac_sha256.h \
+	lavf_utils.h \
+	list.h \
+	logs.h \
+	md5.h \
+	metadata.h \
+	ondemand.h \
+	parser.h \
+	scanner.h \
+	sql_statements.h \
+	thread_utils.h \
+	timer_thread.h \
+	url_utils.h \
+	utils.h \
+	valhalla.h \
+	valhalla_internals.h \
+	xml_utils.h \
+
 SRCS_GRABBER-$(GRABBER)			+= downloader.c \
 					   grabber.c \
 					   grabber_utils.c \
@@ -102,6 +144,11 @@ depend:
 
 .PHONY: clean depend
 .PHONY: uninstall
+
+dist-all:
+	cp $(EXTRADIST) $(SRCS) Makefile $(DIST)
+
+.PHONY: dist-all
 
 #
 # include dependency files if they exist

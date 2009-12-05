@@ -22,6 +22,20 @@ ifeq ($(DOC),yes)
   DOXYGEN = doxygen
 endif
 
+DISTFILE = libvahalla-$(VERSION).tar.bz2
+
+EXTRADIST = \
+	AUTHORS \
+	configure \
+	COPYING \
+	README \
+	TODO \
+
+SUBDIRS = \
+	DOCS \
+	utils \
+	src \
+
 all: lib test $(DOXYGEN)
 
 lib:
@@ -62,3 +76,18 @@ uninstall:
 .PHONY: clean distclean
 .PHONY: install install-pkgconfig uninstall
 .PHONY: doxygen
+
+dist:
+	-$(RM) $(DISTFILE)
+	dist=$(shell pwd)/libvalhalla-$(VERSION) && \
+	for subdir in . $(SUBDIRS); do \
+		mkdir -p "$$dist/$$subdir"; \
+		$(MAKE) -C $$subdir dist-all DIST="$$dist/$$subdir"; \
+	done && \
+	tar cjf $(DISTFILE) libvalhalla-$(VERSION)
+	-$(RM) -rf libvalhalla-$(VERSION)
+
+dist-all:
+	cp $(EXTRADIST) $(TESTVALHALLA_SRCS) Makefile $(DIST)
+
+.PHONY: dist dist-all
