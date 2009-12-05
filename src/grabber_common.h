@@ -153,8 +153,10 @@ typedef struct grabber_list_s {
 
   /** \brief Different of 0 if the grabber is enabled. */
   int enable;
-  /** \brief Total of successes and failures for the session. */
-  unsigned int stat_success, stat_failure;
+  /** \brief Total of successes for the session. */
+  unsigned int stat_success;
+  /** \brief Total of failures for the session. */
+  unsigned int stat_failure;
   /** \brief Total time used by the grabber. */
   struct timespec stat_difftime;
 } grabber_list_t;
