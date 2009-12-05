@@ -16,12 +16,6 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-DOCS =
-
-ifeq ($(DOC),yes)
-  DOCS = docs
-endif
-
 DISTFILE = libvahalla-$(VERSION).tar.bz2
 
 EXTRADIST = \
@@ -36,7 +30,7 @@ SUBDIRS = \
 	utils \
 	src \
 
-all: lib test $(DOCS)
+all: lib test docs
 
 lib:
 	$(MAKE) -C src
@@ -59,22 +53,28 @@ distclean: clean docs-clean
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-pkgconfig
+install: install-pkgconfig install-docs
 	$(MAKE) -C src install
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(TESTVALHALLA) $(bindir)
+
+install-docs: docs
+	$(MAKE) -C DOCS install
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
 
-uninstall:
+uninstall: uninstall-docs
 	$(MAKE) -C src uninstall
 	rm -f $(bindir)/$(TESTVALHALLA)
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
+uninstall-docs:
+	$(MAKE) -C DOCS uninstall
+
 .PHONY: clean distclean
-.PHONY: install install-pkgconfig uninstall
+.PHONY: *install*
 .PHONY: docs
 
 dist:

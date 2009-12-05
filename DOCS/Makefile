@@ -11,14 +11,27 @@ EXTRADIST = \
 all: doxygen
 
 doxygen:
+ifeq ($(DOC),yes)
 ifeq (,$(wildcard doxygen))
 	PROJECT_NUMBER="$(VERSION)" doxygen Doxyfile
+endif
 endif
 
 clean:
 	rm -rf doxygen
 
+install:
+ifeq ($(DOC),yes)
+	if [ -d doxygen/html ]; then \
+		$(INSTALL) -d $(docdir)/libvalhalla; \
+		$(INSTALL) -c -m 755 doxygen/html/* $(docdir)/libvalhalla; \
+	fi
+endif
+
+uninstall:
+	rm -rf $(docdir)/libvalhalla
+
 dist-all:
 	cp $(EXTRADIST) Makefile $(DIST)
 
-.PHONY: clean dist-all doxygen
+.PHONY: clean dist-all doxygen *install
