@@ -34,7 +34,7 @@ Package: libvalhalla-bin
 Architecture: any
 Depends: libvalhalla (= ${binary:Version}), ${shlibs:Depends}
 Description: a tiny media scanner library
- This package contains test-valhalla
+ This package contains libvalhalla-test
 
 Package: libvalhalla-doc
 Section: doc
