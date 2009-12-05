@@ -28,6 +28,7 @@ confflags += --enable-grabber-tvdb
 confflags += --enable-grabber-tmdb
 confflags += --enable-grabber-tvrage
 confflags += --disable-debug
+confflags += --disable-optimize
 confflags += --enable-logcolor
 confflags += --enable-doc
 
