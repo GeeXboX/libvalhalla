@@ -58,6 +58,10 @@ install: install-lib install-pkgconfig install-test install-docs
 install-lib: lib
 	$(MAKE) -C src install
 
+install-pkgconfig: $(PKGCONFIG_FILE)
+	$(INSTALL) -d "$(PKGCONFIG_DIR)"
+	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
+
 install-test: test
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(VHTEST) $(bindir)
@@ -65,17 +69,13 @@ install-test: test
 install-docs: docs
 	$(MAKE) -C DOCS install
 
-install-pkgconfig: $(PKGCONFIG_FILE)
-	$(INSTALL) -d "$(PKGCONFIG_DIR)"
-	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
-
 uninstall: uninstall-lib uninstall-pkgconfig uninstall-test uninstall-docs
-
-uninstall-pkgconfig:
-	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
+
+uninstall-pkgconfig:
+	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 uninstall-test:
 	rm -f $(bindir)/$(VHTEST)
