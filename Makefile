@@ -51,6 +51,7 @@ clean:
 distclean: clean docs-clean
 	rm -f config.log
 	rm -f config.mak
+	rm -f $(DISTFILE)
 	rm -f $(PKGCONFIG_FILE)
 
 install: install-lib install-pkgconfig install-test install-docs
