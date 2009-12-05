@@ -45,9 +45,7 @@ test: lib
 	$(CC) $(TESTVALHALLA_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVALHALLA)
 
 doxygen:
-ifeq (,$(wildcard DOCS/doxygen))
-	PROJECT_NUMBER="$(VERSION)" doxygen DOCS/Doxyfile
-endif
+	$(MAKE) -C DOCS doxygen
 
 clean:
 	$(MAKE) -C src clean
