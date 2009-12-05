@@ -334,8 +334,8 @@ void valhalla_scanner_wakeup (valhalla_t *handle);
  * \brief Force Valhalla to retrieve metadata on-demand for a file.
  *
  * This functionality can be used on files in/out of paths defined for
- * the scanner. This function is non-blocking and it is priority over
- * the files retrieved by the scanner.
+ * the scanner. This function is non-blocked and it has the top priority
+ * over the files retrieved by the scanner.
  *
  * \warning This function can be used only after valhalla_run()!
  * \param[in] handle      Handle on the scanner.
