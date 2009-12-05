@@ -6,8 +6,8 @@ include config.mak
 PKGCONFIG_DIR = $(libdir)/pkgconfig
 PKGCONFIG_FILE = libvalhalla.pc
 
-TESTVALHALLA = test-valhalla
-TESTVALHALLA_SRCS = test-valhalla.c
+VHTEST = libvalhalla-test
+VHTEST_SRCS = libvalhalla-test.c
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
@@ -36,7 +36,7 @@ lib:
 	$(MAKE) -C src
 
 test: lib
-	$(CC) $(TESTVALHALLA_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVALHALLA)
+	$(CC) $(VHTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(VHTEST)
 
 docs:
 	$(MAKE) -C DOCS
@@ -46,7 +46,7 @@ docs-clean:
 
 clean:
 	$(MAKE) -C src clean
-	rm -f $(TESTVALHALLA)
+	rm -f $(VHTEST)
 
 distclean: clean docs-clean
 	rm -f config.log
@@ -60,7 +60,7 @@ install-lib: lib
 
 install-test: test
 	$(INSTALL) -d $(bindir)
-	$(INSTALL) -c -m 755 $(TESTVALHALLA) $(bindir)
+	$(INSTALL) -c -m 755 $(VHTEST) $(bindir)
 
 install-docs: docs
 	$(MAKE) -C DOCS install
@@ -78,7 +78,7 @@ uninstall-lib:
 	$(MAKE) -C src uninstall
 
 uninstall-test:
-	rm -f $(bindir)/$(TESTVALHALLA)
+	rm -f $(bindir)/$(VHTEST)
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
@@ -98,6 +98,6 @@ dist:
 	-$(RM) -rf libvalhalla-$(VERSION)
 
 dist-all:
-	cp $(EXTRADIST) $(TESTVALHALLA_SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(VHTEST_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
