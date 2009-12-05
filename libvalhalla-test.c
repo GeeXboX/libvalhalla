@@ -30,11 +30,12 @@
 #include "valhalla.h"
 #include "utils.h"    /* for macro VH_TIMERSUB */
 
+#define APPNAME "libvalhalla-test"
 
 #define TESTVALHALLA_HELP \
-  "test-valhalla for libvalhalla-" LIBVALHALLA_VERSION_STR "\n" \
+  APPNAME " for libvalhalla-" LIBVALHALLA_VERSION_STR "\n" \
   "\n" \
-  "Usage: test-valhalla [options ...] paths ...\n" \
+  "Usage: " APPNAME " [options ...] paths ...\n" \
   "\n" \
   "Options:\n" \
   " -h --help               this help\n" \
@@ -53,7 +54,7 @@
   " -g --grabber            grabber to be used\n" \
   "\n" \
   "Example:\n" \
-  " $ test-valhalla -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
+  " $ " APPNAME " -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
   "\n" \
   "Default values are loop=1, timewait=0, database=./valhalla.db,\n" \
   "                   commit-int=128, parser=2, priority=19,\n" \
