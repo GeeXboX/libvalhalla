@@ -1160,14 +1160,16 @@ if enabled nfo; then
   fi
 
   echologn "Checking for libnfo ... "
-  check_lib nfo.h nfo_init -lnfo
+  check_lib_version libnfo "1.0.0" "2.0.0"
   if [ "$?" = 0 ]; then
+    check_lib nfo.h nfo_init -lnfo
+    [ "$?" != 0 ] && die "Error, libnfo available but the compilation failed !"
     echolog "(yes)"
     add_pkgconfig_requires libnfo
   else
     echolog "(no)"
     grabber_forced $nfo_dep_grabber
-    [ "$?" != 0 ] && die "Error, can't find libnfo !"
+    [ "$?" != 0 ] && die "Error, can't find libnfo or bad version !"
     nfo="no"
     grabber_set_no $nfo_dep_grabber
   fi
