@@ -16,7 +16,7 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-DISTFILE = libvahalla-$(VERSION).tar.bz2
+DISTFILE = libvalhalla-$(VERSION).tar.bz2
 
 EXTRADIST = \
 	AUTHORS \
