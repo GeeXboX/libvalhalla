@@ -49,6 +49,9 @@
         -webkit-border-radius: 10px;
         font-weight: normal;
       }
+      h2:hover {
+        background-color: #dddddd;
+      }
       h3 {
         margin-top: 20px;
         margin-bottom: 5px;
@@ -110,7 +113,9 @@
       <legend>Contents</legend>
       <ul>
         <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Latest_News">Latest News</a></li>
         <li><a href="#Copyright_and_License">Copyright and License</a></li>
+        <li><a href="#Documentation">Documentation</a></li>
         <li><a href="#Download">Download</a></li>
         <li><a href="#Feedback">Feedback</a></li>
         <li><a href="#Links">Links</a></li>
@@ -137,6 +142,41 @@
       GNU Lesser General Public License</a> (GNU/LGPL) version 2.1.
       </p>
 
+    <h2 id="Latest_News">
+      <span class="top"><a href="#top">top</a></span>
+      Latest News
+    </h2>
+      <p>
+      libvalhalla is work in progress right now. If you're interested in its
+      development, you're highly welcomed to join in.
+      </p>
+      <p>
+      Current release is 1.0.0, featuring with the following changes :
+      </p>
+      <ul>
+        <li>Initial project release</li>
+        <li>Full scanning, parsing and grabbing support</li>
+      </ul>
+      <p>Supported grabbers :</p>
+      <ul>
+        <li><b><a href="http://www.allocine.fr">Allocine</a></b></li>
+        <li><b><a href="http://webservices.amazon.com">Amazon</a></b></li>
+        <li><b>EXIF</b><br />
+            relies on <a href="http://libexif.sourceforge.net">libexif</a></li>
+        <li><b>FFmpeg</b><br />
+            relies on <a href="http://ffmpeg.org">libavcodec</a></li>
+        <li><b><a href="http://www.imdb.com">ImDB</a></b></li>
+        <li><b><a href="http://www.last.fm">Last.fm</a></b></li>
+        <li><b>localfiles</b></li>
+        <li><b><a href="http://lyricsfly.com">LyricsFly.com</a></b></li>
+        <li><b><a href="http://lyrics.wikia.com">LyricWiki.org</a></b></li>
+        <li><b>NFO</b><br />
+            relies on <a href="http://libnfo.geexbox.org">libnfo</a></li>
+        <li><b><a href="http://thetvdb.com">TheTVDB.com</a></b></li>
+        <li><b><a href="http://www.themoviedb.org">TheMovieDB.org</a></b></li>
+        <li><b><a href="http://tvrage.com">TVRage.com</a></b></li>
+      </ul>
+
     <h2 id="Copyright_and_License">
       <span class="top"><a href="#top">top</a></span>
       Copyright and License
@@ -161,13 +201,41 @@
       along with this library; If not, see &lt;http://www.gnu.org/licenses/&gt;.
       </p>
 
+    <h2 id="Documentation">
+      <span class="top"><a href="#top">top</a></span>
+      Documentation
+    </h2>
+      <p>
+      More documentation will be provided in some time.<br />
+      You can find the public API documentation
+      <a href="http://libvalhalla.geexbox.org/doxygen/html/index.html">HTML</a>
+      /
+      <a href="http://libvalhalla.geexbox.org/doxygen/pdf/libvalhalla-1.0.0.pdf">
+      PDF</a> automatically generated from the libvalhalla source code, using
+      <a href="http://www.doxygen.org">Doxygen</a>.
+      </p>
+
     <h2 id="Download">
       <span class="top"><a href="#top">top</a></span>
       Download
     </h2>
       <p>
-      There's no official public release right now.
+      The currently available libvalhalla release is 1.0.0.<br />
+      Sources can be downloaded
+      <a href="http://libvalhalla.geexbox.org/releases/libvalhalla-1.0.0.tar.bz2">
+      here</a>.
       </p>
+
+      <h3>Packages</h3>
+        <p>
+        If you're using Ubuntu 9.10 (Karmic) GNU/Linux distribution, libvalhalla
+        packages are available through your packet manager for your i386 and
+        amd64 architectures.
+        </p>
+        <p>Simply add the following line to your /etc/apt/sources.list file :</p>
+        <pre>deb http://packages.geexbox.org/ karmic main</pre>
+        <p>and install libvalhalla with : </p>
+        <pre>sudo aptitude update &amp;&amp; sudo aptitude install libvalhalla</pre>
 
       <h3>Development Tree</h3>
         <p>
@@ -211,12 +279,9 @@
       <a href="mailto:mathieu.schroeter@gamesover.ch">e-mail</a>.
       </p>
       <p>
-      Please send bug reports, suggestions, ideas, comments or patches to :
-      <a href="mailto:mathieu.schroeter@gamesover.ch">mathieu.schroeter@gamesover.ch</a>
-      <br/>
-      Patches can be sent to the
-      <a href="http://www.geexbox.org/en/mailing.html">GeeXboX devel mailing
-      list</a> as well.
+      Please send bug reports, suggestions, ideas, comments or patches to the
+      GeeXboX <a href="https://www.geexbox.org/sympa/info/devel">devel mailing
+      list</a> : <a href="mailto:devel@geexbox.org">devel@geexbox.org</a>
       </p>
 
     <h2 id="Links">
