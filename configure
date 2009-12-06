@@ -53,7 +53,7 @@ show_help(){
   echo "  --enable-grabber-lyricsfly  build LyricsFly.com grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=yes]"
   echo "  --enable-grabber-nfo        build NFO grabber [default=yes]"
-  echo "  --enable-grabber-tvdb       build TheTVDB.org grabber [default=yes]"
+  echo "  --enable-grabber-tvdb       build TheTVDB.com grabber [default=yes]"
   echo "  --enable-grabber-tmdb       build TheMovieDB.org grabber [default=yes]"
   echo "  --enable-grabber-tvrage     build TVRage.com grabber [default=yes]"
   echo ""
