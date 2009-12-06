@@ -1,5 +1,6 @@
-libvalhalla (0.0.1) karmic; urgency=low
+libvalhalla (1.0.0) karmic; urgency=low
 
-  * initial release.
+  * Initial project release (v1.0.0).
+  * Full scanning, parsing and grabbing support.
 
- -- Benjamin Zores <ben@geexbox.org>  Fri, 4 Dec 2009 21:00:00 +0200
+ -- Benjamin Zores <ben@geexbox.org>  Sun, 6 Dec 2009 13:22:00 +0200
