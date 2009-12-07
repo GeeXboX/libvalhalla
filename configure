@@ -220,6 +220,10 @@ add_cflags(){
     append CFLAGS "$@"
 }
 
+add_extracflags(){
+    append extracflags "$@"
+}
+
 add_ldflags(){
     append LDFLAGS "$@"
 }
@@ -436,6 +440,7 @@ cpu="generic"
 optimize="yes"
 debug="yes"
 dostrip="yes"
+extracflags=""
 extralibs=""
 installstrip="-s"
 cross_compile="no"
@@ -934,7 +939,7 @@ grabber_enabled(){
       grabup=`echo $grab | tr "[:lower:]" "[:upper:]"`
       eval value=\$grabber_$grab
       if test "$value" = "auto" -o "$value" = "yes"; then
-        add_cflags -DHAVE_GRABBER_$grabup
+        add_extracflags -DHAVE_GRABBER_$grabup
         grabber="yes"
         eval grabber_$grab="yes"
       fi
@@ -1017,7 +1022,7 @@ if enabled xml; then
   check_lib libxml/parser.h xmlReadMemory -lxml2
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_cflags -DUSE_XML
+    add_extracflags -DUSE_XML
     add_pkgconfig_requires libxml-2.0
   else
     echolog "(no)"
@@ -1137,7 +1142,7 @@ if enabled avcodec; then
   check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_cflags -DUSE_LAVC
+    add_extracflags -DUSE_LAVC
     add_pkgconfig_requires libavcodec
   else
     echolog "(no)"
@@ -1194,7 +1199,7 @@ if enabled grabber; then
   check_lib curl/curl.h curl_global_init -lcurl
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_cflags -DUSE_GRABBER
+    add_extracflags -DUSE_GRABBER
     add_pkgconfig_requires libcurl
   else
     echolog "(no)"
@@ -1300,6 +1305,7 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
+append_config "EXTRACFLAGS=$extracflags"
 append_config "OPTFLAGS=$CFLAGS"
 append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
