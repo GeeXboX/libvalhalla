@@ -179,6 +179,10 @@ temp_cflags(){
     temp_append CFLAGS "$@"
 }
 
+temp_extracflags(){
+    temp_append extracflags "$@"
+}
+
 temp_host_cflags(){
     temp_append HOST_CFLAGS "$@"
 }
