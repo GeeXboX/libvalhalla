@@ -8,6 +8,7 @@ PKGCONFIG_FILE = libvalhalla.pc
 
 VHTEST = libvalhalla-test
 VHTEST_SRCS = libvalhalla-test.c
+VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
@@ -31,13 +32,24 @@ SUBDIRS = \
 	src \
 	utils \
 
+.SUFFIXES: .c .o
+
 all: lib test docs
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib:
 	$(MAKE) -C src
 
-test: lib
-	$(CC) $(VHTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(VHTEST)
+$(VHTEST): $(VHTEST_OBJS)
+	$(CC) $(VHTEST_OBJS) $(LDFLAGS) -o $(VHTEST)
+
+test-dep:
+	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(VHTEST_SRCS) 1>.depend
+
+test: test-dep lib
+	$(MAKE) $(VHTEST)
 
 docs:
 	$(MAKE) -C DOCS
@@ -47,7 +59,9 @@ docs-clean:
 
 clean:
 	$(MAKE) -C src clean
+	rm -f *.o
 	rm -f $(VHTEST)
+	rm -f .depend
 
 distclean: clean docs-clean
 	rm -f config.log
@@ -85,7 +99,7 @@ uninstall-test:
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
 
-.PHONY: *clean *install* docs
+.PHONY: *clean *install* docs test*
 
 dist:
 	-$(RM) $(DISTFILE)
@@ -101,3 +115,10 @@ dist-all:
 	cp $(EXTRADIST) $(VHTEST_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend),)
+include .depend
+endif
