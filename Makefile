@@ -34,7 +34,7 @@ SUBDIRS = \
 
 .SUFFIXES: .c .o
 
-all: lib test docs
+all: lib apps docs
 
 .c.o:
 	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
@@ -45,10 +45,10 @@ lib:
 $(VHTEST): $(VHTEST_OBJS)
 	$(CC) $(VHTEST_OBJS) $(LDFLAGS) -o $(VHTEST)
 
-test-dep:
+apps-dep:
 	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(VHTEST_SRCS) 1>.depend
 
-test: test-dep lib
+apps: apps-dep lib
 	$(MAKE) $(VHTEST)
 
 docs:
@@ -69,7 +69,7 @@ distclean: clean docs-clean
 	rm -f $(DISTFILE)
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-lib install-pkgconfig install-test install-docs
+install: install-lib install-pkgconfig install-apps install-docs
 
 install-lib: lib
 	$(MAKE) -C src install
@@ -78,14 +78,14 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
 
-install-test: test
+install-apps: apps
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(VHTEST) $(bindir)
 
 install-docs: docs
 	$(MAKE) -C DOCS install
 
-uninstall: uninstall-lib uninstall-pkgconfig uninstall-test uninstall-docs
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
@@ -93,13 +93,13 @@ uninstall-lib:
 uninstall-pkgconfig:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
-uninstall-test:
+uninstall-apps:
 	rm -f $(bindir)/$(VHTEST)
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
 
-.PHONY: *clean *install* docs test*
+.PHONY: *clean *install* docs apps*
 
 dist:
 	-$(RM) $(DISTFILE)
