@@ -4,8 +4,13 @@ endif
 include ../config.mak
 
 EXTRADIST = \
+	curl.png \
 	Doxyfile \
+	ffmpeg.png \
+	sqlite3.png \
+	valhalla-db.dia \
 	valhalla-db.png \
+	valhalla-internals.dia \
 	valhalla-internals.png \
 
 all: doxygen
