@@ -10,8 +10,8 @@ VHTEST = libvalhalla-test
 VHTEST_SRCS = libvalhalla-test.c
 VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
 
-CFLAGS += -Isrc
-LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
+override CFLAGS += -Isrc
+override LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
 
 ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
