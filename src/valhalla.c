@@ -582,6 +582,12 @@ valhalla_db_file_get (valhalla_t *handle,
     vh_dbmanager_db_file_get (handle->dbmanager, id, path, restriction, res);
 }
 
+/******************************************************************************/
+/*                                                                            */
+/*                  For Public Insertions/Updates/Deletions                   */
+/*                                                                            */
+/******************************************************************************/
+
 int
 valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
                              const char *meta, const char *data,
