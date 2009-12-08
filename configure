@@ -158,6 +158,7 @@ save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
     SAVE_extracflags="$extracflags"
+    SAVE_HOST_CFLAGS="$HOST_CFLAGS"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
 }
