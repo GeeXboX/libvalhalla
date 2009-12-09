@@ -746,7 +746,7 @@ int valhalla_db_file_get (valhalla_t *handle,
  * \see valhalla_db_metadata_update().
  * \see valhalla_db_metadata_delete().
  *
- * <ol start="0">
+ * <ol>
  * <li>A data inserted/updated by these functions can not be updated by
  * Valhalla.</li>
  *
@@ -760,7 +760,7 @@ int valhalla_db_file_get (valhalla_t *handle,
  *
  * <li>If a metadata was already inserted by Valhalla and you use these
  * functions to insert or to update the same entry, this metadata will be
- * changed to be considered like an external metadata (see point 0).</li>
+ * changed to be considered like an external metadata (see point 1).</li>
  *
  * <li>If a file is no longer available, when Valhalla removes all metadata,
  * the metadata inserted and updated with these functions are removed too.</li>
