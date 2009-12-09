@@ -521,7 +521,7 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
   if (!dbmanager->database)
     goto err;
 
-  if (commit_int <= 0)
+  if (!commit_int)
     commit_int = DBMANAGER_COMMIT_INTERVAL_DEF;
   dbmanager->commit_int = commit_int;
 
