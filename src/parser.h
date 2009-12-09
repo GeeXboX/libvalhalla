@@ -32,6 +32,9 @@ enum parser_errno {
   PARSER_SUCCESS       =  0,
 };
 
+#define PARSER_NUMBER_DEF 2
+
+
 int vh_parser_run (parser_t *parser, int priority);
 void vh_parser_pause (parser_t *parser);
 fifo_queue_t *vh_parser_fifo_get (parser_t *parser);

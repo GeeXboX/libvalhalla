@@ -613,7 +613,7 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, unsigned int decrapifier)
   if (!parser)
     return NULL;
 
-  if (!nb || nb > ARRAY_NB_ELEMENTS (parser->thread))
+  if (nb > ARRAY_NB_ELEMENTS (parser->thread))
     goto err;
 
   parser->fifo = vh_fifo_queue_new ();
@@ -621,7 +621,7 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, unsigned int decrapifier)
     goto err;
 
   parser->valhalla    = handle;
-  parser->nb          = nb;
+  parser->nb          = nb ? nb : PARSER_NUMBER_DEF;
   parser->decrapifier = !!decrapifier;
 
   pthread_mutex_init (&parser->mutex_run, NULL);
