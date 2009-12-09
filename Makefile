@@ -14,7 +14,7 @@ override CFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
 
 ifeq ($(BUILD_STATIC),yes)
-  LDFLAGS += $(EXTRALIBS)
+  override LDFLAGS += $(EXTRALIBS)
 endif
 
 DISTFILE = libvalhalla-$(VERSION).tar.bz2
