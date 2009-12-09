@@ -74,6 +74,7 @@ main (int argc, char **argv)
   int loop_nb = 1, loop_wait = 0, time_limit = 0;
   int priority = 19, commit = 128, decrap = 0;
   valhalla_t *handle;
+  valhalla_init_param_t param;
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
   const char *database = "./valhalla.db";
   const char *download = NULL;
@@ -187,7 +188,12 @@ main (int argc, char **argv)
 
   valhalla_verbosity (verbosity);
 
-  handle = valhalla_init (database, parser_nb, decrap, commit, NULL, NULL);
+  memset (&param, 0, sizeof (param));
+  param.parser_nb   = parser_nb;
+  param.commit_int  = commit;
+  param.decrapifier = decrap;
+
+  handle = valhalla_init (database, &param);
   if (!handle)
     return -1;
 

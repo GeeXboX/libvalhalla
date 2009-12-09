@@ -423,19 +423,22 @@ valhalla_avlock (void **mutex, enum AVLockOp op)
 #endif /* USE_LAVC */
 
 valhalla_t *
-valhalla_init (const char *db,
-               unsigned int parser_nb, int decrapifier, unsigned int commit_int,
-               void (*od_cb) (const char *file, valhalla_event_t e,
-                              const char *id, void *data),
-               void *od_data)
+valhalla_init (const char *db, valhalla_init_param_t *param)
 {
   static int preinit = 0;
   valhalla_t *handle;
+  valhalla_init_param_t p;
+  const valhalla_init_param_t *pp = &p;
 
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!db)
     return NULL;
+
+  if (param)
+    pp = param;
+  else
+    memset (&p, 0, sizeof (p));
 
   handle = calloc (1, sizeof (valhalla_t));
   if (!handle)
@@ -445,9 +448,10 @@ valhalla_init (const char *db,
   vh_url_global_init ();
 #endif /* USE_GRABBER */
 
-  if (od_cb)
+  if (pp->od_cb)
   {
-    handle->event_handler = vh_event_handler_init (handle, od_cb, od_data);
+    handle->event_handler =
+      vh_event_handler_init (handle, pp->od_cb, pp->od_data);
     if (!handle->event_handler)
       goto err;
   }
@@ -456,7 +460,7 @@ valhalla_init (const char *db,
   if (!handle->dispatcher)
     goto err;
 
-  handle->parser = vh_parser_init (handle, parser_nb, decrapifier);
+  handle->parser = vh_parser_init (handle, pp->parser_nb, pp->decrapifier);
   if (!handle->parser)
     goto err;
 
@@ -474,7 +478,7 @@ valhalla_init (const char *db,
   if (!handle->scanner)
     goto err;
 
-  handle->dbmanager = vh_dbmanager_init (handle, db, commit_int);
+  handle->dbmanager = vh_dbmanager_init (handle, db, pp->commit_int);
   if (!handle->dbmanager)
     goto err;
 

@@ -101,6 +101,45 @@ typedef enum valhalla_event {
   VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
 } valhalla_event_t;
 
+/** \brief Parameters for valhalla_init(). */
+typedef struct valhalla_init_param_s {
+  /**
+   * Number of parsers (max 8) to initialize for metadata retrieving (all
+   * parsers are parallelized). The default number of parsers is 2.
+   */
+  unsigned int parser_nb;
+  /**
+   * Number of data (set of metadata) to be inserted or updated in one pass
+   * in the database (BEGIN and COMMIT sql mechanism). A value between 100
+   * and 200 is a good choice. The default interval is 128.
+   */
+  unsigned int commit_int;
+  /**
+   * If the "title" metadata is not available with a file, the decrapifier
+   * can be used to create this metadata by using the filename. This feature
+   * is very useful when the grabbing support is enabled, because the title
+   * is used as keywords in a lot of grabbers. By default the decrapifier is
+   * disabled.
+   */
+  unsigned int decrapifier;
+
+  /**
+   * When \p od_cb is defined, an event is sent for each step with an on demand
+   * query. If an event arrives, the data are really inserted in the DB. The
+   * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
+   * sent before VALHALLA_EVENT_PARSED. VALHALLA_EVENT_GRABBED is sent for each
+   * grabber and \p id is its textual identifier (for example: "amazon", "exif",
+   * etc, ...). Only VALHALLA_EVENT_ENDED is always sent at the end, but this
+   * one has not a high priority unlike other events. If the file is already
+   * (fully) inserted in the DB, only VALHALLA_EVENT_ENDED is sent to the
+   * callback.
+   */
+  void (*od_cb) (const char *file, valhalla_event_t e,
+                 const char *id, void *data);
+  /** User data for ondemand callback. */
+  void *od_data;
+} valhalla_init_param_t;
+
 /**
  * \name Valhalla Handling.
  * @{
@@ -113,42 +152,17 @@ typedef enum valhalla_event {
  * is created to \p db. If more than one handles are created, you can't use
  * the same database. You must specify a different \p db for each handle.
  *
- * Several parsers (\p parser_nb) for metadata can be created in parallel.
+ * For a description of each parameters supported by this function:
+ * \see ::valhalla_init_param_t
  *
- * If the "title" metadata is not available with a file, the decrapifier can
- * be used to create this metadata by using the filename.
- * This feature is very useful when the grabber support is compiled because
- * the title is used as keywords in a lot of grabbers.
- *
- * The interval for \p commit_int is the number of data to be inserted or
- * updated in one pass. A value between 100 and 200 is a good choice. If the
- * value is <=0, then the default interval is used (128).
- *
- * \b Events
- *
- * When \p od_cb is defined, an event is sent for each step with an on demand
- * query. If an event arrives, the data are really inserted in the DB. The
- * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
- * sent before VALHALLA_EVENT_PARSED. VALHALLA_EVENT_GRABBED is sent for each
- * grabber and \p id is its textual identifier (for example: "amazon", "exif",
- * etc, ...). Only VALHALLA_EVENT_ENDED is always sent at the end, but this one
- * has not a high priority unlike other events. If the file is already (fully)
- * inserted in the DB, only VALHALLA_EVENT_ENDED is sent to the callback.
+ * When a parameter in \p param is 0 (or NULL), its default value is used.
+ * If \p param is NULL, then all default values are forced for all parameters.
  *
  * \param[in] db          Path on the database.
- * \param[in] parser_nb   Number of parsers to create.
- * \param[in] decrapifier Use the decrapifier, !=0 to enable.
- * \param[in] commit_int  File Interval between database commits.
- * \param[in] od_cb       Callback for ondemand, NULL to ignore.
- * \param[in] od_data     User data for ondemand callback.
+ * \param[in] param       Parameters, NULL for default values.
  * \return The handle.
  */
-valhalla_t *valhalla_init (const char *db,
-                           unsigned int parser_nb, int decrapifier,
-                           unsigned int commit_int,
-                           void (*od_cb) (const char *file, valhalla_event_t e,
-                                          const char *id, void *data),
-                           void *od_data);
+valhalla_t *valhalla_init (const char *db, valhalla_init_param_t *param);
 
 /**
  * \brief Uninit an handle.
