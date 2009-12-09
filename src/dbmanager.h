@@ -39,6 +39,8 @@ typedef struct dbmanager_extmd_s {
   valhalla_meta_grp_t group;
 } dbmanager_extmd_t;
 
+#define DBMANAGER_COMMIT_INTERVAL_DEF 128
+
 
 void vh_dbmanager_extmd_free (dbmanager_extmd_t *extmd);
 

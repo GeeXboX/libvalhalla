@@ -36,8 +36,6 @@
 #include "dbmanager.h"
 #include "dispatcher.h"
 
-#define COMMIT_INTERVAL_DEFAULT 128
-
 struct dbmanager_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -524,7 +522,7 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
     goto err;
 
   if (commit_int <= 0)
-    commit_int = COMMIT_INTERVAL_DEFAULT;
+    commit_int = DBMANAGER_COMMIT_INTERVAL_DEF;
   dbmanager->commit_int = commit_int;
 
   dbmanager->valhalla = handle;
