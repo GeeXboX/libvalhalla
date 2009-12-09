@@ -121,7 +121,7 @@ typedef struct valhalla_init_param_s {
    * is used as keywords in a lot of grabbers. By default the decrapifier is
    * disabled.
    */
-  unsigned int decrapifier;
+  unsigned int decrapifier : 1;
 
   /**
    * When \p od_cb is defined, an event is sent for each step with an on demand
