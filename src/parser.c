@@ -600,7 +600,7 @@ vh_parser_uninit (parser_t *parser)
 }
 
 parser_t *
-vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier)
+vh_parser_init (valhalla_t *handle, unsigned int nb, unsigned int decrapifier)
 {
   parser_t *parser;
 

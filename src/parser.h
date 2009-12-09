@@ -37,7 +37,8 @@ void vh_parser_pause (parser_t *parser);
 fifo_queue_t *vh_parser_fifo_get (parser_t *parser);
 void vh_parser_stop (parser_t *parser, int f);
 void vh_parser_uninit (parser_t *parser);
-parser_t *vh_parser_init (valhalla_t *handle, unsigned int nb, int decrapifier);
+parser_t *vh_parser_init (valhalla_t *handle,
+                          unsigned int nb, unsigned int decrapifier);
 
 void vh_parser_bl_keyword_add (parser_t *parser, const char *keyword);
 
