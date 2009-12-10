@@ -299,8 +299,7 @@ vh_downloader_destination_set (downloader_t *downloader,
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!downloader || !downloader->dl_list
-      || dl >= VALHALLA_DL_LAST)
+  if (!downloader || !downloader->dl_list || dl >= VALHALLA_DL_LAST)
     return;
 
   if (downloader->dl_list[dl])
