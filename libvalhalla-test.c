@@ -199,36 +199,36 @@ main (int argc, char **argv)
 
   for (i = 0; i < sid; i++)
   {
-    valhalla_suffix_add (handle, suffix[i]);
+    valhalla_config_set (handle, SCANNER_SUFFIX, suffix[i]);
     printf ("Add suffix: %s\n", suffix[i]);
   }
 
   if (!sid)
   {
     /* audio */
-    valhalla_suffix_add (handle, "flac");
-    valhalla_suffix_add (handle, "m4a");
-    valhalla_suffix_add (handle, "mp3");
-    valhalla_suffix_add (handle, "ogg");
-    valhalla_suffix_add (handle, "wav");
-    valhalla_suffix_add (handle, "wma");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "flac");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "m4a");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "mp3");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "ogg");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "wav");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "wma");
 
     /* video */
-    valhalla_suffix_add (handle, "avi");
-    valhalla_suffix_add (handle, "mkv");
-    valhalla_suffix_add (handle, "mov");
-    valhalla_suffix_add (handle, "mpg");
-    valhalla_suffix_add (handle, "wmv");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "avi");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "mkv");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "mov");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "mpg");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "wmv");
 
     /* image */
-    valhalla_suffix_add (handle, "bmp");
-    valhalla_suffix_add (handle, "gif");
-    valhalla_suffix_add (handle, "jpeg");
-    valhalla_suffix_add (handle, "jpg");
-    valhalla_suffix_add (handle, "png");
-    valhalla_suffix_add (handle, "tga");
-    valhalla_suffix_add (handle, "tif");
-    valhalla_suffix_add (handle, "tiff");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "bmp");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "gif");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "jpeg");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "jpg");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "png");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "tga");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "tif");
+    valhalla_config_set (handle, SCANNER_SUFFIX, "tiff");
 
     printf ("Default suffixes: flac,m4a,mp3,ogg,wav,wma\n"
             "                  avi,mkv,mov,mpg,wmv\n"
@@ -237,19 +237,20 @@ main (int argc, char **argv)
 
   for (i = 0; i < kid; i++)
   {
-    valhalla_bl_keyword_add (handle, keyword[i]);
+    valhalla_config_set (handle, PARSER_KEYWORD, keyword[i]);
     printf ("Add keyword in the blacklist: %s\n", keyword[i]);
   }
 
   if (download)
   {
     printf ("Destination directory for downloaded files: %s\n", download);
-    valhalla_downloader_dest_set (handle, VALHALLA_DL_DEFAULT, download);
+    valhalla_config_set (handle,
+                         DOWNLOADER_DEST, download, VALHALLA_DL_DEFAULT);
   }
 
   while (optind < argc)
   {
-    valhalla_path_add (handle, argv[optind], 1);
+    valhalla_config_set (handle, SCANNER_PATH, argv[optind], 1);
     printf ("Add path: %s\n", argv[optind++]);
   }
 
@@ -264,12 +265,12 @@ main (int argc, char **argv)
       printf ("  %s\n", grabber);
     else
     {
-      valhalla_grabber_state_set (handle, grabber, 0);
+      valhalla_config_set (handle, GRABBER_STATE, grabber, 0);
       for (i = 0; i < gid; i++)
       {
         if (!strcmp (grabber, grabbers[i]))
         {
-          valhalla_grabber_state_set (handle, grabber, 1);
+          valhalla_config_set (handle, GRABBER_STATE, grabber, 1);
           printf ("  %s\n", grabber);
           break;
         }
