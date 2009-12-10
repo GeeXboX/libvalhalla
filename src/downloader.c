@@ -299,14 +299,14 @@ vh_downloader_destination_set (downloader_t *downloader,
 {
   valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!downloader || !downloader->dl_list || !dst
+  if (!downloader || !downloader->dl_list
       || dl >= VALHALLA_DL_LAST)
     return;
 
   if (downloader->dl_list[dl])
     free (downloader->dl_list[dl]);
 
-  downloader->dl_list[dl] = strdup (dst);
+  downloader->dl_list[dl] = dst ? strdup (dst) : NULL;
 }
 
 const char *

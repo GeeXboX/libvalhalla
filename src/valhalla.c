@@ -205,7 +205,6 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
   {
 #ifdef USE_GRABBER
   case VALHALLA_CFG_DOWNLOADER_DEST:
-    if (ccp)
       vh_downloader_destination_set (handle->downloader, vd, ccp);
     break;
 
