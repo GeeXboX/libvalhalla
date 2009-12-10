@@ -161,6 +161,85 @@ valhalla_mrproper (valhalla_t *handle)
   vh_queue_cleanup (fifo_o);
 }
 
+int
+valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
+{
+  int res = 0;
+  const char *ccp = NULL;
+  int i = 0;
+  valhalla_dl_t vd = VALHALLA_DL_DEFAULT;
+
+  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return -1;
+
+  if (conf >= (1 << VH_CFG_RANGE))
+  {
+    va_list ap;
+
+    va_start (ap, conf);
+
+    if (conf & VH_CHARP_T)
+      ccp = va_arg (ap, char *);
+    if (conf & VH_INT_T)
+      i   = va_arg (ap, int);
+    if (conf & VH_VHDL_T)
+      vd  = va_arg (ap, valhalla_dl_t);
+
+    if (va_arg (ap, int) != ~0) /* check for safeguard */
+    {
+      valhalla_log (VALHALLA_MSG_CRITICAL,
+                    "unrecoverable error with valhalla_config_set(), conf=%u, "
+                    "it is probably a bad use of this function", conf);
+      res = -2;
+    }
+
+    va_end (ap);
+  }
+
+  if (res)
+    return res;
+
+  switch (conf)
+  {
+#ifdef USE_GRABBER
+  case VALHALLA_CFG_DOWNLOADER_DEST:
+    if (ccp)
+      vh_downloader_destination_set (handle->downloader, vd, ccp);
+    break;
+
+  case VALHALLA_CFG_GRABBER_STATE:
+    if (ccp)
+      vh_grabber_state_set (handle->grabber, ccp, i);
+    break;
+#endif /* USE_GRABBER */
+
+  case VALHALLA_CFG_PARSER_KEYWORD:
+    if (ccp)
+      vh_parser_bl_keyword_add (handle->parser, ccp);
+    break;
+
+  case VALHALLA_CFG_SCANNER_PATH:
+    if (ccp)
+      vh_scanner_path_add (handle->scanner, ccp, i);
+    break;
+
+  case VALHALLA_CFG_SCANNER_SUFFIX:
+    if (ccp)
+      vh_scanner_suffix_add (handle->scanner, ccp);
+    break;
+
+  default:
+    valhalla_log (VALHALLA_MSG_WARNING,
+                  "%s: unsupported option %u", __FUNCTION__, conf);
+    res = -1;
+    break;
+  }
+
+  return res;
+}
+
 void
 valhalla_wait (valhalla_t *handle)
 {
@@ -300,74 +379,6 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
     return VALHALLA_ERROR_THREAD;
 
   return VALHALLA_SUCCESS;
-}
-
-void
-valhalla_path_add (valhalla_t *handle, const char *location, int recursive)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, location);
-
-  if (!handle || !location)
-    return;
-
-  vh_scanner_path_add (handle->scanner, location, recursive);
-}
-
-void
-valhalla_suffix_add (valhalla_t *handle, const char *suffix)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, suffix);
-
-  if (!handle || !suffix)
-    return;
-
-  vh_scanner_suffix_add (handle->scanner, suffix);
-}
-
-void
-valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, keyword);
-
-  if (!handle || !keyword)
-    return;
-
-  vh_parser_bl_keyword_add (handle->parser, keyword);
-}
-
-void
-valhalla_downloader_dest_set (valhalla_t *handle,
-                              valhalla_dl_t dl, const char *dst)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE,
-                "%s : (%i) %s", __FUNCTION__, dl, dst ? dst : "?");
-
-  if (!handle || !dst)
-    return;
-
-#ifdef USE_GRABBER
-  vh_downloader_destination_set (handle->downloader, dl, dst);
-#else
-  valhalla_log (VALHALLA_MSG_WARNING,
-                "This function is usable only with grabbing support!");
-#endif /* USE_GRABBER */
-}
-
-void
-valhalla_grabber_state_set (valhalla_t *handle, const char *id, int enable)
-{
-  valhalla_log (VALHALLA_MSG_VERBOSE,
-                "%s : %s (%i)", __FUNCTION__, id ? id : "?", enable);
-
-  if (!handle || !id)
-    return;
-
-#ifdef USE_GRABBER
-  vh_grabber_state_set (handle->grabber, id, enable);
-#else
-  valhalla_log (VALHALLA_MSG_WARNING,
-                "This function is usable only with grabbing support!");
-#endif /* USE_GRABBER */
 }
 
 const char *

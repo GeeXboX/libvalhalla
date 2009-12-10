@@ -55,6 +55,7 @@ extern "C" {
 #define LIBVALHALLA_BUILD       LIBVALHALLA_VERSION_INT
 
 #include <inttypes.h>
+#include <stdarg.h>
 
 
 /******************************************************************************/
@@ -101,6 +102,123 @@ typedef enum valhalla_event {
   VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
 } valhalla_event_t;
 
+#define VH_CFG_RANGE  8 /**< 256 possibilities for every combinations of type */
+
+#define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                 */
+#define VH_CHARP_T    (1 << VH_CFG_RANGE)  /**< char *               */
+#define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                  */
+#define VH_VHDL_T     (4 << VH_CFG_RANGE)  /**< ::valhalla_dl_t      */
+
+/** \brief Macro to init items in ::valhalla_cfg_t. */
+#define VH_CFG_INIT(name, type, num) VALHALLA_CFG_##name = ((type) + (num))
+
+/**
+ * \brief List of parameters available for the configuration.
+ *
+ * These parameters must be used with valhalla_config_set().
+ *
+ * <b>Parameter mandatory before using an handle:</b>
+ *
+ * - VALHALLA_CFG_SCANNER_PATH \n
+ *   At least one path must be added to the scanner, else an error is returned
+ *   by valhalla_run().
+ *
+ * <b>When adding a new entry in the enum:</b>
+ *
+ * When an entry must be added in this enum, keep this one by alphabetical
+ * order. ABI is safely preserved as long as the types and the number provided
+ * with VH_CFG_INIT() are not changed.
+ *
+ * Next \p num for the current combinations :
+ * <pre>
+ * VH_CHARP_T                 : 2
+ * VH_CHARP_T | VH_INT_T      : 2
+ * VH_CHARP_T | VH_VHDL_T     : 1
+ * </pre>
+ *
+ * \see VH_CFG_INIT().
+ */
+typedef enum valhalla_cfg {
+  /**
+   * Set a destination for the downloader. The default destination is used when
+   * a specific destination is NULL.
+   *
+   * \warning There is no effect if the grabber support is not compiled.
+   * \param[in] arg1 ::VH_CHARP_T  Path for the destination.
+   * \param[in] arg2 ::VH_VHDL_T   Type of destination to set.
+   */
+  VH_CFG_INIT (DOWNLOADER_DEST, VH_CHARP_T | VH_VHDL_T, 0),
+
+  /**
+   * Set the state of a grabber. By default, all grabbers are enabled.
+   *
+   * \warning There is no effect if the grabber support is not compiled.
+   * \param[in] arg1 ::VH_CHARP_T  Grabber ID.
+   * \param[in] arg2 ::VH_INT_T    0 to disable, !=0 to enable.
+   */
+  VH_CFG_INIT (GRABBER_STATE, VH_CHARP_T | VH_INT_T, 0),
+
+  /**
+   * This parameter is useful only if the decrapifier is enabled with
+   * valhalla_init().
+   *
+   * The keywords are case insensitive except when a pattern (NUM, SE or EP)
+   * is used.
+   *
+   * Available patterns (unsigned int):
+   * - NUM to trim a number
+   * - SE  to trim and retrieve a "season" number (at least >= 1)
+   * - EP  to trim and retrieve an "episode" number (at least >= 1)
+   *
+   * NUM can be used several time in the same keyword, like "NUMxNUM". But SE
+   * and EP must be used only one time by keyword. When a season or an episode
+   * is found, a new metadata is added for each one.
+   *
+   * Examples:
+   * - Blacklist : "xvid", "foobar", "fileNUM",
+   *               "sSEeEP", "divx", "SExEP", "NumEP"
+   * \n\n
+   * - Filename  : "{XvID-Foobar}.file01.My_Movie.s02e10.avi"
+   * - Result    : "My Movie", season=2 and episode=10
+   * \n\n
+   * - Filename  : "My_Movie_2.s02e10_(5x3)_.mkv"
+   * - Result    : "My Movie 2", season=2, episode=10, season=5, episode=3
+   * \n\n
+   * - Filename  : "The-Episode.-.Pilot_DivX.(01x01)_FooBar.mkv"
+   * - Result    : "The Episode Pilot", season=1 and episode=1
+   * \n\n
+   * - Filename  : "_Name_of_the_episode_Num05.ogg"
+   * - Result    : "Name of the episode", episode=5
+   *
+   * If the same keyword is added several times, only one is saved in the
+   * decrapifier.
+   *
+   * \param[in] arg1 ::VH_CHARP_T  Keyword to blacklist.
+   */
+  VH_CFG_INIT (PARSER_KEYWORD, VH_CHARP_T, 0),
+
+  /**
+   * Add a path to the scanner. If the same path is added several times,
+   * only one is saved in the scanner.
+   *
+   * \param[in] arg1 ::VH_CHARP_T  The path to be scanned.
+   * \param[in] arg2 ::VH_INT_T    1 to scan all dirs recursively, 0 otherwise.
+   */
+  VH_CFG_INIT (SCANNER_PATH, VH_CHARP_T | VH_INT_T, 1),
+
+  /**
+   * If no suffix is added to the scanner, then all files will be parsed by
+   * FFmpeg without exception and it can be very slow. It is highly recommanded
+   * to always set at least one suffix (file extension)! If the same suffix is
+   * added several times, only one is saved in the scanner. The suffixes are
+   * case insensitive.
+   *
+   * \param[in] arg1 ::VH_CHARP_T  File suffix to add.
+   */
+  VH_CFG_INIT (SCANNER_SUFFIX, VH_CHARP_T, 1),
+
+} valhalla_cfg_t;
+
 /** \brief Parameters for valhalla_init(). */
 typedef struct valhalla_init_param_s {
   /**
@@ -145,6 +263,36 @@ typedef struct valhalla_init_param_s {
  * @{
  */
 
+/** \cond */
+/* This function must not be used directly; refer to valhalla_config_set(). */
+int valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...);
+/** \endcond */
+
+/**
+ * \brief Configure an handle.
+ *
+ * The list of available parameters is defined by enum ::valhalla_cfg_t.
+ * VALHALLA_CFG_ is automatically prepended to \p conf.
+ *
+ * The function must be used as follow (for example):
+ * \code
+ * ret = valhalla_config_set (handle, GRABBER_STATE, "ffmpeg", 0);
+ * \endcode
+ *
+ * Because it uses variadic arguments, there is a check on the number of
+ * arguments passed to the function and it returns a critical error if it
+ * fails. But it can't detect all bad uses. It is the job of the programmer
+ * to use correctly this function in all cases.
+ *
+ * \warning This function must be called before valhalla_run()!
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] conf        Parameter to configure.
+ * \param[in] arg         List of arguments.
+ * \return !=0 on error.
+ */
+#define valhalla_config_set(handle, conf, arg...) \
+  valhalla_config_set_orig (handle, VALHALLA_CFG_##conf, ##arg, ~0)
+
 /**
  * \brief Init a scanner and the database.
  *
@@ -183,107 +331,6 @@ void valhalla_uninit (valhalla_t *handle);
  * \param[in] level       Level provided by valhalla_verb_t.
  */
 void valhalla_verbosity (valhalla_verb_t level);
-
-/**
- * \brief Add a path to the scanner.
- *
- * At least one path must be added to the scanner, otherwise an error is
- * returned by valhalla_run(). If the same path is added several times,
- * only one is saved in the scanner.
- *
- * \warning This function must be called before valhalla_run()!
- * \param[in] handle      Handle on the scanner.
- * \param[in] location    The path to be scanned.
- * \param[in] recursive   1 to scan all folders recursively, 0 otherwise.
- */
-void valhalla_path_add (valhalla_t *handle,
-                        const char *location, int recursive);
-
-/**
- * \brief Add a file suffix for the scanner.
- *
- * If no suffix is added to the scanner, then all files will be parsed by
- * FFmpeg without exception and it can be very slow. It is highly recommanded
- * to always set at least one suffix (file extension)! If the same suffix is
- * added several times, only one is saved in the scanner. The suffixes are
- * case insensitive.
- *
- * \warning This function must be called before valhalla_run()!
- * \param[in] handle      Handle on the scanner.
- * \param[in] suffix      File suffix to add.
- */
-void valhalla_suffix_add (valhalla_t *handle, const char *suffix);
-
-/**
- * \brief Add a keyword in the blacklist for the decrapifier.
- *
- * This function is useful only if the decrapifier is enabled with
- * valhalla_init().
- *
- * The keywords are case insensitive except when a pattern (NUM, SE or EP)
- * is used.
- *
- * Available patterns (unsigned int):
- * - NUM to trim a number
- * - SE  to trim and retrieve a "season" number (at least >= 1)
- * - EP  to trim and retrieve an "episode" number (at least >= 1)
- *
- * NUM can be used several time in the same keyword, like "NUMxNUM". But SE and
- * EP must be used only one time by keyword. When a season or an episode is
- * found, a new metadata is added for each one.
- *
- * Examples:
- * - Blacklist : "xvid", "foobar", "fileNUM", "sSEeEP", "divx", "SExEP", "NumEP"
- *
- * - Filename  : "{XvID-Foobar}.file01.My_Movie.s02e10.avi"
- * - Result    : "My Movie", season=2 and episode=10
- *
- * - Filename  : "My_Movie_2.s02e10_(5x3)_.mkv"
- * - Result    : "My Movie 2", season=2, episode=10, season=5, episode=3
- *
- * - Filename  : "The-Episode.-.Pilot_DivX.(01x01)_FooBar.mkv"
- * - Result    : "The Episode Pilot", season=1 and episode=1
- *
- * - Filename  : "_Name_of_the_episode_Num05.ogg"
- * - Result    : "Name of the episode", episode=5
- *
- * If the same keyword is added several times, only one is saved in the
- * decrapifier.
- *
- * \warning This function must be called before valhalla_run()!
- * \param[in] handle      Handle on the scanner.
- * \param[in] keyword     Keyword to blacklist.
- */
-void valhalla_bl_keyword_add (valhalla_t *handle, const char *keyword);
-
-/**
- * \brief Set a destination for the downloader.
- *
- * The default destination is used when a specific destination is NULL.
- * VALHALLA_DL_LAST is only used for internal purposes.
- *
- * \warning This function must be called before valhalla_run()!
- *          There is no effect if the grabber support is not compiled.
- * \param[in] handle      Handle on the scanner.
- * \param[in] dl          Type of destination to set.
- * \param[in] dst         Path for the destination.
- */
-void valhalla_downloader_dest_set (valhalla_t *handle,
-                                   valhalla_dl_t dl, const char *dst);
-
-/**
- * \brief Set the state of a grabber.
- *
- * By default, all grabbers are enabled.
- *
- * \warning This function must be called before valhalla_run()!
- *          There is no effect if the grabber support is not compiled.
- * \param[in] handle      Handle on the scanner.
- * \param[in] id          Grabber ID.
- * \param[in] enable      0 to disable, !=0 to enable.
- */
-void valhalla_grabber_state_set (valhalla_t *handle,
-                                 const char *id, int enable);
 
 /**
  * \brief Retrieve the ID of all grabbers compiled in Valhalla.
