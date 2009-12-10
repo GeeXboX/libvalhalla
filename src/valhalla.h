@@ -87,11 +87,11 @@ typedef enum valhalla_verb {
 
 /** \brief Destinations for downloading. */
 typedef enum valhalla_dl {
-  VALHALLA_DL_DEFAULT = 0,
-  VALHALLA_DL_COVER,
-  VALHALLA_DL_THUMBNAIL,
-  VALHALLA_DL_FAN_ART,
-  VALHALLA_DL_LAST
+  VALHALLA_DL_DEFAULT = 0,    /**< Destination by default.              */
+  VALHALLA_DL_COVER,          /**< Destination for covers.              */
+  VALHALLA_DL_THUMBNAIL,      /**< Destination for thumbnails.          */
+  VALHALLA_DL_FAN_ART,        /**< Destination for fan-arts.            */
+  VALHALLA_DL_LAST            /**< \internal Don't use it!              */
 } valhalla_dl_t;
 
 /** \brief Events for valhalla_ondemand() callback. */
