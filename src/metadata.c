@@ -179,7 +179,7 @@ vh_metadata_add (metadata_t **meta,
   it->value = strdup (value);
   it->group = group;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE,
+  vh_log (VALHALLA_MSG_VERBOSE,
                 "Adding new metadata '%s' with value '%s'.",
                 it->name, it->value);
 }

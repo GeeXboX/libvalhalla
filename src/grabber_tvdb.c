@@ -127,13 +127,13 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, query, TVDB_HOSTNAME, escaped_keywords);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return NULL;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -146,7 +146,7 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), item);
   if (!n)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
   }
   else
@@ -225,13 +225,13 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
             TVDB_HOSTNAME, TVDB_API_KEY, seriesid, TVDB_DEFAULT_LANGUAGE);
   free (seriesid);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     goto error;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -298,7 +298,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 static void *
 grabber_tvdb_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_tvdb_t));
 }
@@ -308,7 +308,7 @@ grabber_tvdb_init (void *priv)
 {
   grabber_tvdb_t *tvdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!tvdb)
     return -1;
@@ -322,7 +322,7 @@ grabber_tvdb_uninit (void *priv)
 {
   grabber_tvdb_t *tvdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!tvdb)
     return;
@@ -339,7 +339,7 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
   char *keywords;
   int err;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   err = vh_metadata_get (data->meta_parser, "title", 0, &tag);
   if (err)

@@ -152,7 +152,7 @@ ondemand_thread (void *arg)
 
     if (lstat (file, &st))
     {
-      valhalla_log (VALHALLA_MSG_WARNING,
+      vh_log (VALHALLA_MSG_WARNING,
                     "[%s] File %s unavailable", __FUNCTION__, file);
       free (file);
       continue;
@@ -216,7 +216,7 @@ ondemand_thread (void *arg)
                                   fdata->priority, ACTION_DB_NEWFILE, fdata);
     }
     else
-      valhalla_log (VALHALLA_MSG_WARNING,
+      vh_log (VALHALLA_MSG_WARNING,
                     "[%s] File %s unsupported", __FUNCTION__, file);
 
     free (file);
@@ -236,7 +236,7 @@ vh_ondemand_run (ondemand_t *ondemand, int priority)
   int res = ONDEMAND_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!ondemand)
     return ONDEMAND_ERROR_HANDLER;
@@ -261,7 +261,7 @@ vh_ondemand_run (ondemand_t *ondemand, int priority)
 fifo_queue_t *
 vh_ondemand_fifo_get (ondemand_t *ondemand)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!ondemand)
     return NULL;
@@ -272,7 +272,7 @@ vh_ondemand_fifo_get (ondemand_t *ondemand)
 void
 vh_ondemand_stop (ondemand_t *ondemand, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!ondemand)
     return;
@@ -298,7 +298,7 @@ vh_ondemand_stop (ondemand_t *ondemand, int f)
 void
 vh_ondemand_uninit (ondemand_t *ondemand)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!ondemand)
     return;
@@ -314,7 +314,7 @@ vh_ondemand_init (valhalla_t *handle)
 {
   ondemand_t *ondemand;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -342,7 +342,7 @@ void
 vh_ondemand_action_send (ondemand_t *ondemand,
                          fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!ondemand)
     return;

@@ -373,15 +373,15 @@ dbmanager_thread (void *arg)
     /* Statistics */
     if (vh_log_test (VALHALLA_MSG_INFO))
     {
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
                     __FUNCTION__, stats.file_insert);
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
                     __FUNCTION__, stats.file_update);
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
                     __FUNCTION__, stats_delete);
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
                     __FUNCTION__, stats.file_nochange);
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
                     __FUNCTION__, stats_cleanup);
     }
   }
@@ -396,7 +396,7 @@ vh_dbmanager_run (dbmanager_t *dbmanager, int priority)
   int res = DBMANAGER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return DBMANAGER_ERROR_HANDLER;
@@ -421,7 +421,7 @@ vh_dbmanager_run (dbmanager_t *dbmanager, int priority)
 fifo_queue_t *
 vh_dbmanager_fifo_get (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return NULL;
@@ -432,7 +432,7 @@ vh_dbmanager_fifo_get (dbmanager_t *dbmanager)
 void
 vh_dbmanager_pause (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -443,7 +443,7 @@ vh_dbmanager_pause (dbmanager_t *dbmanager)
 void
 vh_dbmanager_wait (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -458,7 +458,7 @@ vh_dbmanager_wait (dbmanager_t *dbmanager)
 void
 vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -484,7 +484,7 @@ vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
 void
 vh_dbmanager_uninit (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -504,7 +504,7 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
 {
   dbmanager_t *dbmanager;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -541,7 +541,7 @@ void
 vh_dbmanager_action_send (dbmanager_t *dbmanager,
                           fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -555,7 +555,7 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
 {
   int res;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager || !file)
     return 0;
@@ -577,7 +577,7 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
 void
 vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager || !data)
     return;
@@ -588,7 +588,7 @@ vh_dbmanager_db_dlcontext_save (dbmanager_t *dbmanager, file_data_t *data)
 void
 vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -599,7 +599,7 @@ vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager)
 void
 vh_dbmanager_db_begin_transaction (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -610,7 +610,7 @@ vh_dbmanager_db_begin_transaction (dbmanager_t *dbmanager)
 void
 vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return;
@@ -626,7 +626,7 @@ vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                                                 valhalla_db_metares_t *res),
                               void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;
@@ -643,7 +643,7 @@ vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
                                                 valhalla_db_fileres_t *res),
                               void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;
@@ -658,7 +658,7 @@ vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
                           valhalla_db_restrict_t *restriction,
                           valhalla_db_filemeta_t **res)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
     return -1;

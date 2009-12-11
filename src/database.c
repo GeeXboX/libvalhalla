@@ -286,7 +286,7 @@ database_prepare_stmt (database_t *database)
                                   -1, &database->stmts[i].stmt, NULL);
     if (res != SQLITE_OK)
     {
-      valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+      vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
       return -1;
     }
   }
@@ -316,7 +316,7 @@ database_table_get_id (database_t *database,
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
 }
 
@@ -347,7 +347,7 @@ database_insert_name (database_t *database,
  out:
   sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
 }
 
@@ -444,7 +444,7 @@ database_assoc_filemd_insert (database_t *database,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -470,7 +470,7 @@ database_assoc_filemd_update (database_t *database,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -494,7 +494,7 @@ database_assoc_filemd_delete (database_t *database,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static int
@@ -522,7 +522,7 @@ database_assoc_filemd_get (database_t *database,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return err;
 }
 
@@ -549,7 +549,7 @@ database_file_id_by_metadata (database_t *database, const char *path,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
 }
 
@@ -572,7 +572,7 @@ database_assoc_filegrab_insert (database_t *database,
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -594,7 +594,7 @@ database_file_insert (database_t *database, file_data_t *data)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -620,7 +620,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 static void
@@ -718,7 +718,7 @@ vh_database_file_delete (database_t *database, const char *file)
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 void
@@ -743,7 +743,7 @@ vh_database_file_data_delete (database_t *database, const char *file)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 void
@@ -768,7 +768,7 @@ vh_database_file_grab_delete (database_t *database, const char *file)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 int64_t
@@ -793,7 +793,7 @@ vh_database_file_get_mtime (database_t *database, const char *file)
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
 }
 
@@ -822,7 +822,7 @@ vh_database_file_get_grabber (database_t *database,
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 /******************************************************************************/
@@ -839,7 +839,7 @@ vh_database_file_checked_clear (database_t *database)
 
   sqlite3_reset (stmt);
   if (res != SQLITE_DONE)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 const char *
@@ -857,7 +857,7 @@ vh_database_file_get_checked_clear (database_t *database, int rst)
 
   sqlite3_reset (stmt);
   if (res != SQLITE_DONE && res != SQLITE_ROW)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 
   return NULL;
 }
@@ -886,7 +886,7 @@ vh_database_file_interrupted_clear (database_t *database, const char *file)
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 void
@@ -901,7 +901,7 @@ vh_database_file_interrupted_fix (database_t *database)
 
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 int
@@ -925,7 +925,7 @@ vh_database_file_get_interrupted (database_t *database, const char *file)
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
 }
 
@@ -953,7 +953,7 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 void
@@ -998,7 +998,7 @@ vh_database_file_get_dlcontext (database_t *database,
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 void
@@ -1013,7 +1013,7 @@ vh_database_delete_dlcontext (database_t *database)
 
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 /******************************************************************************/
@@ -1043,7 +1043,7 @@ database_info_get (database_t *database, const char *name)
  out:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return ret;
 }
 
@@ -1065,7 +1065,7 @@ database_info_insert (database_t *database, const char *name, const char *value)
  out_reset:
   sqlite3_reset (stmt);
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
 #define VH_INFO_DB_VERSION  "vh_db_version"   /* LIBVALHALLA_DB_VERSION     */
@@ -1086,10 +1086,10 @@ database_info (database_t *database)
     database_info_insert (database, VH_INFO_DB_VERSION,
                           VH_TOSTRING (LIBVALHALLA_DB_VERSION));
 
-  valhalla_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
+  vh_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
   if (ver > LIBVALHALLA_DB_VERSION)
   {
-    valhalla_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
+    vh_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
                                       "build (the version of your database is "
                                       "unsupported)");
     return -1;
@@ -1102,7 +1102,7 @@ database_info (database_t *database)
      *      For devel, it is acceptable to delete the database for each new
      *      versions.
      */
-    valhalla_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
+    vh_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
                                       "version (%i) is too old and can not be "
                                       "upgraded to the version %i.",
                                       database->path, ver,
@@ -1152,7 +1152,7 @@ vh_database_cleanup (database_t *database)
   sqlite3_reset (STMT_GET (STMT_CLEANUP_DATA));
   sqlite3_reset (STMT_GET (STMT_CLEANUP_GRABBER));
   if (err < 0)
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val - val_tmp;
 }
 
@@ -1225,7 +1225,7 @@ database_create_table (database_t *database)
   return;
 
  err:
-  valhalla_log (VALHALLA_MSG_ERROR, "%s", msg);
+  vh_log (VALHALLA_MSG_ERROR, "%s", msg);
   sqlite3_free (msg);
 }
 
@@ -1270,7 +1270,7 @@ vh_database_init (const char *path)
 
   if (sqlite3_threadsafe () != 1)
   {
-    valhalla_log (VALHALLA_MSG_ERROR,
+    vh_log (VALHALLA_MSG_ERROR,
                   "SQLite3 is not compiled with serialized threading mode!");
     return NULL;
   }
@@ -1286,7 +1286,7 @@ vh_database_init (const char *path)
   res = sqlite3_open (path, &database->db);
   if (res)
   {
-    valhalla_log (VALHALLA_MSG_ERROR,
+    vh_log (VALHALLA_MSG_ERROR,
                   "Can't open database: %s", sqlite3_errmsg (database->db));
     goto err;
   }
@@ -1363,7 +1363,7 @@ vh_database_init (const char *path)
   sqlite3_exec (db, sql, cb, &data, &msg);               \
   if (msg)                                               \
   {                                                      \
-    valhalla_log (VALHALLA_MSG_ERROR, "%s", msg);        \
+    vh_log (VALHALLA_MSG_ERROR, "%s", msg);              \
     sqlite3_free (msg);                                  \
     return -1;                                           \
   }                                                      \
@@ -1521,7 +1521,7 @@ vh_database_metalist_get (database_t *database,
 
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
+  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
 
   data_cb.cb_mr    = select_cb;
   data_cb.data     = data;
@@ -1578,7 +1578,7 @@ vh_database_filelist_get (database_t *database,
 
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
+  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
 
   data_cb.cb_fr    = select_cb;
   data_cb.data     = data;
@@ -1655,7 +1655,7 @@ vh_database_file_get (database_t *database,
 
   SQL_CONCAT (sql, SELECT_FILE_END);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
+  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
 
   *res = NULL;
   data_cb.data     = res;

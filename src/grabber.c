@@ -283,7 +283,7 @@ grabber_thread (void *arg)
       if (res)
       {
         it->stat_failure++;
-        valhalla_log (VALHALLA_MSG_VERBOSE,
+        vh_log (VALHALLA_MSG_VERBOSE,
                       "[%s] grabbing failed (%i): %s",
                       it->name, res, pdata->file);
       }
@@ -316,7 +316,7 @@ grabber_thread (void *arg)
       float diff_time =
         it->stat_difftime.tv_sec + it->stat_difftime.tv_nsec / 1000000000.0;
 
-      valhalla_log (VALHALLA_MSG_INFO,
+      vh_log (VALHALLA_MSG_INFO,
                     "[%s] Stats %-10s : %6i/%-6i (%6.2f%%) "
                     "(%7.2f sec, %7.2f sec/file)",
                     __FUNCTION__, it->name, it->stat_success, total,
@@ -336,7 +336,7 @@ vh_grabber_run (grabber_t *grabber, int priority)
   int res = GRABBER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return GRABBER_ERROR_HANDLER;
@@ -363,7 +363,7 @@ vh_grabber_run (grabber_t *grabber, int priority)
 fifo_queue_t *
 vh_grabber_fifo_get (grabber_t *grabber)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return NULL;
@@ -376,7 +376,7 @@ vh_grabber_state_set (grabber_t *grabber, const char *id, int enable)
 {
   grabber_list_t *it;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
@@ -394,7 +394,7 @@ vh_grabber_list_get (grabber_t *grabber, const char *id)
 {
   grabber_list_t *it;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return NULL;
@@ -416,7 +416,7 @@ vh_grabber_list_get (grabber_t *grabber, const char *id)
 void
 vh_grabber_pause (grabber_t *grabber)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
@@ -427,7 +427,7 @@ vh_grabber_pause (grabber_t *grabber)
 void
 vh_grabber_stop (grabber_t *grabber, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
@@ -461,7 +461,7 @@ vh_grabber_uninit (grabber_t *grabber)
 {
   grabber_list_t *it;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;
@@ -509,7 +509,7 @@ grabber_register_childs (void)
   grabber_list_t *list = NULL, *child;
   grabber_list_t *(**reg) (void);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   for (reg = g_grabber_register; *reg; reg++)
   {
@@ -527,7 +527,7 @@ vh_grabber_init (valhalla_t *handle)
   grabber_t *grabber;
   grabber_list_t *it;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -569,7 +569,7 @@ void
 vh_grabber_action_send (grabber_t *grabber,
                         fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
     return;

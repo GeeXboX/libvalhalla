@@ -58,7 +58,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
   res = av_find_stream_info (ctx);
   if (res < 0)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "FFmpeg can't find stream info: %s", data->file);
     return -1;
   }
@@ -150,7 +150,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
 static void *
 grabber_ffmpeg_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return NULL;
 }
@@ -158,7 +158,7 @@ grabber_ffmpeg_priv (void)
 static int
 grabber_ffmpeg_init (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return 0;
 }
@@ -166,7 +166,7 @@ grabber_ffmpeg_init (vh_unused void *priv)
 static void
 grabber_ffmpeg_uninit (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 }
 
 static int
@@ -175,7 +175,7 @@ grabber_ffmpeg_grab (vh_unused void *priv, file_data_t *data)
   int res;
   AVFormatContext *ctx;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   ctx = vh_lavf_utils_open_input_file (data->file);
   if (!ctx)

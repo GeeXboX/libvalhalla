@@ -132,7 +132,7 @@ dispatcher_thread (void *arg)
     {
       processing_step_t step = pdata->step;
 
-      valhalla_log (VALHALLA_MSG_VERBOSE,
+      vh_log (VALHALLA_MSG_VERBOSE,
                     "[%s] step: %i, file: \"%s\"",
                     __FUNCTION__, step, pdata->file);
 
@@ -196,7 +196,7 @@ vh_dispatcher_run (dispatcher_t *dispatcher, int priority)
   int res = DISPATCHER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return DISPATCHER_ERROR_HANDLER;
@@ -222,7 +222,7 @@ vh_dispatcher_run (dispatcher_t *dispatcher, int priority)
 fifo_queue_t *
 vh_dispatcher_fifo_get (dispatcher_t *dispatcher)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return NULL;
@@ -233,7 +233,7 @@ vh_dispatcher_fifo_get (dispatcher_t *dispatcher)
 void
 vh_dispatcher_pause (dispatcher_t *dispatcher)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
@@ -244,7 +244,7 @@ vh_dispatcher_pause (dispatcher_t *dispatcher)
 void
 vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
@@ -270,7 +270,7 @@ vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
 void
 vh_dispatcher_uninit (dispatcher_t *dispatcher)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;
@@ -287,7 +287,7 @@ vh_dispatcher_init (valhalla_t *handle)
 {
   dispatcher_t *dispatcher;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -316,7 +316,7 @@ void
 vh_dispatcher_action_send (dispatcher_t *dispatcher,
                            fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dispatcher)
     return;

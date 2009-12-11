@@ -97,13 +97,13 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   snprintf (url, MAX_URL_SIZE, TMDB_QUERY_SEARCH,
             TMDB_HOSTNAME, escaped_keywords, TMDB_API_KEY);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -117,7 +117,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
   tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
   if (!tmp)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
     goto error;
   }
@@ -145,13 +145,13 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
             TMDB_QUERY_INFO, TMDB_HOSTNAME, tmp, TMDB_API_KEY);
   xmlFree (tmp);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     goto error;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -242,7 +242,7 @@ grabber_tmdb_get (url_t *handler, file_data_t *fdata,
 static void *
 grabber_tmdb_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_tmdb_t));
 }
@@ -252,7 +252,7 @@ grabber_tmdb_init (void *priv)
 {
   grabber_tmdb_t *tmdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!tmdb)
     return -1;
@@ -266,7 +266,7 @@ grabber_tmdb_uninit (void *priv)
 {
   grabber_tmdb_t *tmdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!tmdb)
     return;
@@ -284,7 +284,7 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
   metadata_t *tag = NULL;
   int res;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /*
    * Try with the video's title.

@@ -305,7 +305,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
 static void *
 grabber_nfo_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return NULL;
 }
@@ -313,7 +313,7 @@ grabber_nfo_priv (void)
 static int
 grabber_nfo_init (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return 0;
 }
@@ -321,7 +321,7 @@ grabber_nfo_init (vh_unused void *priv)
 static void
 grabber_nfo_uninit (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 }
 
 static int
@@ -330,7 +330,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
   nfo_type_t type;
   nfo_t *nfo;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   nfo = nfo_init (data->file);
   if (!nfo)
@@ -346,7 +346,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
     grab_nfo_tvshow (nfo, data);
     break;
   default:
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "No NFO file available or unsupported type.");
     break;
   }

@@ -66,13 +66,13 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   snprintf (url, MAX_URL_SIZE, IMDB_QUERY,
             IMDB_HOSTNAME, escaped_keywords);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -87,7 +87,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
   if (!tmp)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
     goto error;
   }
@@ -164,7 +164,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
 static void *
 grabber_imdb_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_imdb_t));
 }
@@ -174,7 +174,7 @@ grabber_imdb_init (void *priv)
 {
   grabber_imdb_t *imdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!imdb)
     return -1;
@@ -188,7 +188,7 @@ grabber_imdb_uninit (void *priv)
 {
   grabber_imdb_t *imdb = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!imdb)
     return;
@@ -205,7 +205,7 @@ grabber_imdb_grab (void *priv, file_data_t *data)
   char *keywords;
   int err;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   err = vh_metadata_get (data->meta_parser, "title", 0, &tag);
   if (err)

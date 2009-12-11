@@ -70,7 +70,7 @@ valhalla_mrproper (valhalla_t *handle)
     vh_event_handler_fifo_get (handle->event_handler),
   };
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return;
@@ -169,7 +169,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
   int i = 0;
   valhalla_dl_t vd = VALHALLA_DL_DEFAULT;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return -1;
@@ -189,7 +189,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 
     if (va_arg (ap, int) != ~0) /* check for safeguard */
     {
-      valhalla_log (VALHALLA_MSG_CRITICAL,
+      vh_log (VALHALLA_MSG_CRITICAL,
                     "unrecoverable error with valhalla_config_set(), conf=%u, "
                     "it is probably a bad use of this function", conf);
       res = -2;
@@ -230,7 +230,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
     break;
 
   default:
-    valhalla_log (VALHALLA_MSG_WARNING,
+    vh_log (VALHALLA_MSG_WARNING,
                   "%s: unsupported option %u", __FUNCTION__, conf);
     res = -1;
     break;
@@ -244,7 +244,7 @@ valhalla_wait (valhalla_t *handle)
 {
   const int f = STOP_FLAG_REQUEST | STOP_FLAG_WAIT;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return;
@@ -298,7 +298,7 @@ valhalla_force_stop (valhalla_t *handle)
 void
 valhalla_uninit (valhalla_t *handle)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s: begin", __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, "%s: begin", __FUNCTION__);
 
   if (!handle)
     return;
@@ -320,7 +320,7 @@ valhalla_uninit (valhalla_t *handle)
   vh_url_global_uninit ();
 #endif /* USE_GRABBER */
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s: end", __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, "%s: end", __FUNCTION__);
 
   free (handle);
 }
@@ -330,7 +330,7 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 {
   int res;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return VALHALLA_ERROR_HANDLER;
@@ -383,7 +383,7 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 const char *
 valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, id ? id : "");
+  vh_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, id ? id : "");
 
   if (!handle)
     return NULL;
@@ -391,7 +391,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 #ifdef USE_GRABBER
   return vh_grabber_list_get (handle->grabber, id);
 #else
-  valhalla_log (VALHALLA_MSG_WARNING,
+  vh_log (VALHALLA_MSG_WARNING,
                 "This function is usable only with grabbing support!");
   return NULL;
 #endif /* USE_GRABBER */
@@ -440,7 +440,7 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
   valhalla_init_param_t p;
   const valhalla_init_param_t *pp = &p;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!db)
     return NULL;
@@ -517,7 +517,7 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
 void
 valhalla_scanner_wakeup (valhalla_t *handle)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return;
@@ -530,7 +530,7 @@ valhalla_ondemand (valhalla_t *handle, const char *file)
 {
   char *odfile;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !file)
     return;
@@ -556,7 +556,7 @@ int valhalla_db_metalist_get (valhalla_t *handle,
                                                 valhalla_db_metares_t *res),
                               void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !search || !result_cb)
     return -1;
@@ -572,7 +572,7 @@ int valhalla_db_filelist_get (valhalla_t *handle,
                                                 valhalla_db_fileres_t *res),
                               void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !result_cb)
     return -1;
@@ -587,7 +587,7 @@ valhalla_db_file_get (valhalla_t *handle,
                       valhalla_db_restrict_t *restriction,
                       valhalla_db_filemeta_t **res)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !res)
     return -1;
@@ -609,7 +609,7 @@ valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
 {
   dbmanager_extmd_t *extmd;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !path || !meta || !data)
     return -1;
@@ -635,7 +635,7 @@ valhalla_db_metadata_update (valhalla_t *handle, const char *path,
 {
   dbmanager_extmd_t *extmd;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !path || !meta || !data || !ndata)
     return -1;
@@ -660,7 +660,7 @@ valhalla_db_metadata_delete (valhalla_t *handle, const char *path,
 {
   dbmanager_extmd_t *extmd;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !path || !meta || !data)
     return -1;

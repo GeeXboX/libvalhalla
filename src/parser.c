@@ -326,7 +326,7 @@ parser_decrapify (parser_t *parser, const char *file, metadata_t **meta)
   res = strdup (filename);
   free (file_tmp);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "decrapifier: \"%s\"", res);
+  vh_log (VALHALLA_MSG_VERBOSE, "decrapifier: \"%s\"", res);
 
   return res;
 }
@@ -467,7 +467,7 @@ vh_parser_run (parser_t *parser, int priority)
   unsigned int i;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return PARSER_ERROR_HANDLER;
@@ -500,7 +500,7 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
   char *const *it;
   const char *it2;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser || !parser->decrapifier)
     return;
@@ -527,7 +527,7 @@ vh_parser_bl_keyword_add (parser_t *parser, const char *keyword)
 fifo_queue_t *
 vh_parser_fifo_get (parser_t *parser)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return NULL;
@@ -538,7 +538,7 @@ vh_parser_fifo_get (parser_t *parser)
 void
 vh_parser_pause (parser_t *parser)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;
@@ -551,7 +551,7 @@ vh_parser_stop (parser_t *parser, int f)
 {
   unsigned int i;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;
@@ -579,7 +579,7 @@ vh_parser_stop (parser_t *parser, int f)
 void
 vh_parser_uninit (parser_t *parser)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;
@@ -604,7 +604,7 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, unsigned int decrapifier)
 {
   parser_t *parser;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -638,7 +638,7 @@ void
 vh_parser_action_send (parser_t *parser,
                        fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!parser)
     return;

@@ -110,7 +110,7 @@ grabber_local_get (const char *filename)
 static void *
 grabber_local_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return NULL;
 }
@@ -118,7 +118,7 @@ grabber_local_priv (void)
 static int
 grabber_local_init (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return 0;
 }
@@ -126,7 +126,7 @@ grabber_local_init (vh_unused void *priv)
 static void
 grabber_local_uninit (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 }
 
 static int
@@ -134,7 +134,7 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
 {
   char *cover;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   cover = grabber_local_get (data->file);
   if (cover)

@@ -45,7 +45,7 @@ grabber_dummy_priv (void)
 {
   grabber_dummy_t *dummy;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   dummy = calloc (1, sizeof (grabber_dummy_t));
   if (!dummy)
@@ -61,7 +61,7 @@ grabber_dummy_init (void *priv)
 {
   grabber_dummy_t *dummy = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dummy)
     return -1;
@@ -74,7 +74,7 @@ grabber_dummy_uninit (void *priv)
 {
   grabber_dummy_t *dummy = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dummy)
     return;
@@ -85,7 +85,7 @@ grabber_dummy_uninit (void *priv)
 static int
 grabber_dummy_grab (vh_unused void *priv, vh_unused file_data_t *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return 0;
 }
@@ -93,7 +93,7 @@ grabber_dummy_grab (vh_unused void *priv, vh_unused file_data_t *data)
 static void
 grabber_dummy_loop (vh_unused void *priv)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return;
 }

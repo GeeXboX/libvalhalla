@@ -63,13 +63,13 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
   snprintf (url, MAX_URL_SIZE, LASTFM_QUERY_SEARCH,
             LASTFM_HOSTNAME, LASTFM_LICENSE_KEY, artist, album);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -122,7 +122,7 @@ grabber_lastfm_check (grabber_lastfm_t *lastfm, const char *cover)
 static void *
 grabber_lastfm_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_lastfm_t));
 }
@@ -132,7 +132,7 @@ grabber_lastfm_init (void *priv)
 {
   grabber_lastfm_t *lastfm = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!lastfm)
     return -1;
@@ -146,7 +146,7 @@ grabber_lastfm_uninit (void *priv)
 {
   grabber_lastfm_t *lastfm = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!lastfm)
     return;
@@ -166,7 +166,7 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   char name[1024] = { 0 };
   int res, err;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   err = vh_metadata_get (data->meta_parser, "album", 0, &album);
   if (err)
@@ -225,7 +225,7 @@ grabber_lastfm_loop (void *priv)
 {
   grabber_lastfm_t *lastfm = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
   VH_LIST_FREE (lastfm->list, NULL);

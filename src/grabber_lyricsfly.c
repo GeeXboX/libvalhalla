@@ -60,13 +60,13 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
   snprintf (url, MAX_URL_SIZE, LYRICSFLY_QUERY_SEARCH,
             LYRICSFLY_HOSTNAME, LYRICSFLY_LICENSE_KEY, artist, song);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   udata = vh_url_get_data (handler, url);
   if (udata.status != 0)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_get_xml_doc_from_memory (udata.buffer);
@@ -111,7 +111,7 @@ grabber_lyricsfly_get (url_t *handler, file_data_t *fdata,
 static void *
 grabber_lyricsfly_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_lyricsfly_t));
 }
@@ -121,7 +121,7 @@ grabber_lyricsfly_init (void *priv)
 {
   grabber_lyricsfly_t *lyricsfly = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!lyricsfly)
     return -1;
@@ -135,7 +135,7 @@ grabber_lyricsfly_uninit (void *priv)
 {
   grabber_lyricsfly_t *lyricsfly = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!lyricsfly)
     return;
@@ -152,7 +152,7 @@ grabber_lyricsfly_grab (void *priv, file_data_t *data)
   char *artist, *song;
   int res, err;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   err = vh_metadata_get (data->meta_parser, "title", 0, &title);
   if (err)

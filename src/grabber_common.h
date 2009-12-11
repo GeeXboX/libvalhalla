@@ -183,7 +183,7 @@ typedef struct grabber_list_s {
   {                                                                           \
     grabber_list_t *grabber;                                                  \
                                                                               \
-    valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);                        \
+    vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);                              \
                                                                               \
     grabber = calloc (1, sizeof (grabber_list_t));                            \
     if (!grabber)                                                             \

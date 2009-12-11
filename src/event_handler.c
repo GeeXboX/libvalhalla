@@ -103,7 +103,7 @@ vh_event_handler_run (event_handler_t *event_handler, int priority)
   int res = EVENT_HANDLER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler)
     return EVENT_HANDLER_ERROR_HANDLER;
@@ -129,7 +129,7 @@ vh_event_handler_run (event_handler_t *event_handler, int priority)
 fifo_queue_t *
 vh_event_handler_fifo_get (event_handler_t *event_handler)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler)
     return NULL;
@@ -140,7 +140,7 @@ vh_event_handler_fifo_get (event_handler_t *event_handler)
 void
 vh_event_handler_stop (event_handler_t *event_handler, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler)
     return;
@@ -166,7 +166,7 @@ vh_event_handler_stop (event_handler_t *event_handler, int f)
 void
 vh_event_handler_uninit (event_handler_t *event_handler)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler)
     return;
@@ -185,7 +185,7 @@ vh_event_handler_init (valhalla_t *handle,
 {
   event_handler_t *event_handler;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle || !cb)
     return NULL;
@@ -217,7 +217,7 @@ vh_event_handler_send (event_handler_t *event_handler,
 {
   event_handler_data_t *edata;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler)
     return;

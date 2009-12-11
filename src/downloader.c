@@ -135,7 +135,7 @@ downloader_thread (void *arg)
 
         err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
-          valhalla_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
+          vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
                         __FUNCTION__, it->url, downloader->dl_list[dst]);
         free (dest);
       }
@@ -157,7 +157,7 @@ vh_downloader_run (downloader_t *downloader, int priority)
   int res = DOWNLOADER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return DOWNLOADER_ERROR_HANDLER;
@@ -183,7 +183,7 @@ vh_downloader_run (downloader_t *downloader, int priority)
 fifo_queue_t *
 vh_downloader_fifo_get (downloader_t *downloader)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return NULL;
@@ -194,7 +194,7 @@ vh_downloader_fifo_get (downloader_t *downloader)
 void
 vh_downloader_pause (downloader_t *downloader)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;
@@ -205,7 +205,7 @@ vh_downloader_pause (downloader_t *downloader)
 void
 vh_downloader_stop (downloader_t *downloader, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;
@@ -231,7 +231,7 @@ vh_downloader_stop (downloader_t *downloader, int f)
 void
 vh_downloader_uninit (downloader_t *downloader)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;
@@ -260,7 +260,7 @@ vh_downloader_init (valhalla_t *handle)
 {
   downloader_t *downloader;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -297,7 +297,7 @@ void
 vh_downloader_destination_set (downloader_t *downloader,
                                valhalla_dl_t dl, const char *dst)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader || !downloader->dl_list || dl >= VALHALLA_DL_LAST)
     return;
@@ -311,7 +311,7 @@ vh_downloader_destination_set (downloader_t *downloader,
 const char *
 vh_downloader_destination_get (downloader_t *downloader, valhalla_dl_t dl)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader || !downloader->dl_list || dl >= VALHALLA_DL_LAST)
     return NULL;
@@ -323,7 +323,7 @@ void
 vh_downloader_action_send (downloader_t *downloader,
                            fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!downloader)
     return;

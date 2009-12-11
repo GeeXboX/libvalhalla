@@ -110,7 +110,7 @@ grabber_amazon_signature (hmac_sha256_t *hd, const char *args)
   APPEND_STRING (src, AMAZON_PAGE "\n",     strlen (AMAZON_PAGE) + 1)
   APPEND_STRING (src, args,                 strlen (args))
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "String to be signed:\n%s", src);
+  vh_log (VALHALLA_MSG_VERBOSE, "String to be signed:\n%s", src);
 
   /* Compute signature */
   sign = vh_hmac_sha256_compute (hd, src, size);
@@ -178,14 +178,14 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
             AMAZON_HOSTNAME, args, escaped_sign64);
   free (escaped_sign64);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
   /* 3. Perform request */
   data = vh_url_get_data (handler, url);
   if (data.status)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", data.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", data.buffer);
 
   /* 4. Parse the answer to get ASIN value */
   doc = vh_get_xml_doc_from_memory (data.buffer);
@@ -199,12 +199,12 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
 
   if (!asin)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the item \"%s\"", escaped_keywords);
     return -1;
   }
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Found Amazon ASIN: %s", asin);
+  vh_log (VALHALLA_MSG_VERBOSE, "Found Amazon ASIN: %s", asin);
 
   /* 5. Prepare Amazon WebService URL for Cover Search */
   snprintf (args, MAX_URL_SIZE,
@@ -225,14 +225,14 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
             AMAZON_HOSTNAME, args, escaped_sign64);
   free (escaped_sign64);
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Cover Search Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Cover Search Request: %s", url);
 
   /* 6. Perform request */
   data = vh_url_get_data (handler, url);
   if (data.status)
     return -1;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, "Cover Search Reply: %s", data.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Cover Search Reply: %s", data.buffer);
 
   /* 7. Parse the answer to get cover URL */
   doc = xmlReadMemory (data.buffer, data.size, NULL, NULL, 0);
@@ -256,7 +256,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   cover_url = vh_get_prop_value_from_xml_tree (img, "URL");
   if (!cover_url)
   {
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Unable to find the cover for %s", escaped_keywords);
     xmlFreeDoc (doc);
     return -1;
@@ -301,7 +301,7 @@ grabber_amazon_check (grabber_amazon_t *amazon, const char *cover)
 static void *
 grabber_amazon_priv (void)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   return calloc (1, sizeof (grabber_amazon_t));
 }
@@ -311,7 +311,7 @@ grabber_amazon_init (void *priv)
 {
   grabber_amazon_t *amazon = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!amazon)
     return -1;
@@ -329,7 +329,7 @@ grabber_amazon_uninit (void *priv)
 {
   grabber_amazon_t *amazon = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!amazon)
     return;
@@ -354,7 +354,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   char *cover, *url = NULL;
   metadata_t *tag = NULL;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /*
    * Try with the album's name, or with the title.
@@ -422,7 +422,7 @@ grabber_amazon_loop (void *priv)
 {
   grabber_amazon_t *amazon = priv;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
   VH_LIST_FREE (amazon->list, NULL);

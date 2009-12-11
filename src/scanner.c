@@ -199,7 +199,7 @@ scanner_readdir (scanner_t *scanner,
   {
     recursive--;
     if (!recursive)
-      valhalla_log (VALHALLA_MSG_WARNING,
+      vh_log (VALHALLA_MSG_WARNING,
                     "[scanner_thread] Max recursiveness reached : %s", new_path);
   }
 
@@ -261,7 +261,7 @@ scanner_thread (void *arg)
 
   vh_setpriority (scanner->priority);
 
-  valhalla_log (VALHALLA_MSG_INFO,
+  vh_log (VALHALLA_MSG_INFO,
                 "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
                 __FUNCTION__, scanner->loop, scanner->timeout);
 
@@ -269,14 +269,14 @@ scanner_thread (void *arg)
   {
     for (path = scanner->paths; path; path = path->next)
     {
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] Start scanning : %s",
+      vh_log (VALHALLA_MSG_INFO, "[%s] Start scanning : %s",
                     __FUNCTION__, path->location);
 
       path->nb_files = 0;
       scanner_readdir (scanner,
                        path->location, NULL, path->recursive, &path->nb_files);
 
-      valhalla_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
+      vh_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
                     __FUNCTION__, path->nb_files);
     }
 
@@ -315,14 +315,14 @@ scanner_thread (void *arg)
   pthread_exit (NULL);
 
  kill:
-  valhalla_log (VALHALLA_MSG_WARNING, "[%s] Kill forced", __FUNCTION__);
+  vh_log (VALHALLA_MSG_WARNING, "[%s] Kill forced", __FUNCTION__);
   pthread_exit (NULL);
 }
 
 void
 vh_scanner_wakeup (scanner_t *scanner)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -336,7 +336,7 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   int res = SCANNER_SUCCESS;
   pthread_attr_t attr;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return SCANNER_ERROR_HANDLER;
@@ -374,7 +374,7 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
 void
 vh_scanner_wait (scanner_t *scanner)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -387,7 +387,7 @@ vh_scanner_wait (scanner_t *scanner)
 fifo_queue_t *
 vh_scanner_fifo_get (scanner_t *scanner)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return NULL;
@@ -398,7 +398,7 @@ vh_scanner_fifo_get (scanner_t *scanner)
 void
 vh_scanner_stop (scanner_t *scanner, int f)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -425,7 +425,7 @@ vh_scanner_stop (scanner_t *scanner, int f)
 void
 vh_scanner_uninit (scanner_t *scanner)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -452,7 +452,7 @@ vh_scanner_uninit (scanner_t *scanner)
 int
 vh_scanner_path_cmp (scanner_t *scanner, const char *file)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return -1;
@@ -465,7 +465,7 @@ vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive)
 {
   struct path_s *path;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -490,7 +490,7 @@ vh_scanner_path_add (scanner_t *scanner, const char *location, int recursive)
 int
 vh_scanner_suffix_cmp (scanner_t *scanner, const char *file)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return -1;
@@ -504,7 +504,7 @@ vh_scanner_suffix_add (scanner_t *scanner, const char *suffix)
   int n;
   char *const *it;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;
@@ -530,7 +530,7 @@ vh_scanner_init (valhalla_t *handle)
 {
   scanner_t *scanner;
 
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!handle)
     return NULL;
@@ -562,7 +562,7 @@ void
 vh_scanner_action_send (scanner_t *scanner,
                         fifo_queue_prio_t prio, int action, void *data)
 {
-  valhalla_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!scanner)
     return;

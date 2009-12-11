@@ -223,7 +223,7 @@ vh_lavf_utils_open_input_file (const char *file)
   if (fmt)
   {
     int score = lavf_utils_probe (fmt, file);
-    valhalla_log (VALHALLA_MSG_VERBOSE,
+    vh_log (VALHALLA_MSG_VERBOSE,
                   "Probe score (%i) [%s] : %s", score, name, file);
     if (!score) /* Bad score? */
       fmt = NULL;
@@ -235,7 +235,7 @@ vh_lavf_utils_open_input_file (const char *file)
   res = av_open_input_file (&ctx, file, fmt, 0, &ap);
   if (res)
   {
-    valhalla_log (VALHALLA_MSG_WARNING,
+    vh_log (VALHALLA_MSG_WARNING,
                   "FFmpeg can't open file (%i) : %s", res, file);
     return NULL;
   }
