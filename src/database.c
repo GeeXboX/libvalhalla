@@ -1090,8 +1090,8 @@ database_info (database_t *database)
   if (ver > LIBVALHALLA_DB_VERSION)
   {
     vh_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
-                                      "build (the version of your database is "
-                                      "unsupported)");
+                                "build (the version of your database is "
+                                "unsupported)");
     return -1;
   }
   else if (ver < LIBVALHALLA_DB_VERSION)
@@ -1103,10 +1103,9 @@ database_info (database_t *database)
      *      versions.
      */
     vh_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
-                                      "version (%i) is too old and can not be "
-                                      "upgraded to the version %i.",
-                                      database->path, ver,
-                                      LIBVALHALLA_DB_VERSION);
+                                "version (%i) is too old and can not be "
+                                "upgraded to the version %i.",
+                                database->path, ver, LIBVALHALLA_DB_VERSION);
     return -1;
   }
 
@@ -1271,7 +1270,7 @@ vh_database_init (const char *path)
   if (sqlite3_threadsafe () != 1)
   {
     vh_log (VALHALLA_MSG_ERROR,
-                  "SQLite3 is not compiled with serialized threading mode!");
+            "SQLite3 is not compiled with serialized threading mode!");
     return NULL;
   }
 
@@ -1287,7 +1286,7 @@ vh_database_init (const char *path)
   if (res)
   {
     vh_log (VALHALLA_MSG_ERROR,
-                  "Can't open database: %s", sqlite3_errmsg (database->db));
+            "Can't open database: %s", sqlite3_errmsg (database->db));
     goto err;
   }
 

@@ -346,8 +346,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
     grab_nfo_tvshow (nfo, data);
     break;
   default:
-    vh_log (VALHALLA_MSG_VERBOSE,
-                  "No NFO file available or unsupported type.");
+    vh_log (VALHALLA_MSG_VERBOSE, "No NFO file available or unsupported type.");
     break;
   }
 

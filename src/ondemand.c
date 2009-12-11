@@ -153,7 +153,7 @@ ondemand_thread (void *arg)
     if (lstat (file, &st))
     {
       vh_log (VALHALLA_MSG_WARNING,
-                    "[%s] File %s unavailable", __FUNCTION__, file);
+              "[%s] File %s unavailable", __FUNCTION__, file);
       free (file);
       continue;
     }
@@ -217,7 +217,7 @@ ondemand_thread (void *arg)
     }
     else
       vh_log (VALHALLA_MSG_WARNING,
-                    "[%s] File %s unsupported", __FUNCTION__, file);
+              "[%s] File %s unsupported", __FUNCTION__, file);
 
     free (file);
 

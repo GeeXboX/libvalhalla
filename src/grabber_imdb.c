@@ -88,7 +88,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   if (!tmp)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
-                  "Unable to find the item \"%s\"", escaped_keywords);
+            "Unable to find the item \"%s\"", escaped_keywords);
     goto error;
   }
 

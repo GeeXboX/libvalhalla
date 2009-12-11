@@ -373,16 +373,16 @@ dbmanager_thread (void *arg)
     /* Statistics */
     if (vh_log_test (VALHALLA_MSG_INFO))
     {
-      vh_log (VALHALLA_MSG_INFO, "[%s] Files inserted    : %i",
-                    __FUNCTION__, stats.file_insert);
-      vh_log (VALHALLA_MSG_INFO, "[%s] Files updated     : %i",
-                    __FUNCTION__, stats.file_update);
-      vh_log (VALHALLA_MSG_INFO, "[%s] Files deleted     : %i",
-                    __FUNCTION__, stats_delete);
-      vh_log (VALHALLA_MSG_INFO, "[%s] Files unchanged   : %i",
-                    __FUNCTION__, stats.file_nochange);
-      vh_log (VALHALLA_MSG_INFO, "[%s] Relations cleanup : %i",
-                    __FUNCTION__, stats_cleanup);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Files inserted    : %i", __FUNCTION__, stats.file_insert);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Files updated     : %i", __FUNCTION__, stats.file_update);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Files deleted     : %i", __FUNCTION__, stats_delete);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Files unchanged   : %i", __FUNCTION__, stats.file_nochange);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Relations cleanup : %i", __FUNCTION__, stats_cleanup);
     }
   }
   while (rc == ACTION_DB_NEXT_LOOP && !dbmanager_is_stopped (dbmanager));

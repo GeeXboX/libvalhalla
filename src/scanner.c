@@ -200,7 +200,7 @@ scanner_readdir (scanner_t *scanner,
     recursive--;
     if (!recursive)
       vh_log (VALHALLA_MSG_WARNING,
-                    "[scanner_thread] Max recursiveness reached : %s", new_path);
+              "[scanner_thread] Max recursiveness reached : %s", new_path);
   }
 
   do
@@ -262,22 +262,22 @@ scanner_thread (void *arg)
   vh_setpriority (scanner->priority);
 
   vh_log (VALHALLA_MSG_INFO,
-                "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
-                __FUNCTION__, scanner->loop, scanner->timeout);
+          "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
+          __FUNCTION__, scanner->loop, scanner->timeout);
 
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
   {
     for (path = scanner->paths; path; path = path->next)
     {
-      vh_log (VALHALLA_MSG_INFO, "[%s] Start scanning : %s",
-                    __FUNCTION__, path->location);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] Start scanning : %s", __FUNCTION__, path->location);
 
       path->nb_files = 0;
       scanner_readdir (scanner,
                        path->location, NULL, path->recursive, &path->nb_files);
 
-      vh_log (VALHALLA_MSG_INFO, "[%s] End scanning   : %i files",
-                    __FUNCTION__, path->nb_files);
+      vh_log (VALHALLA_MSG_INFO,
+              "[%s] End scanning   : %i files", __FUNCTION__, path->nb_files);
     }
 
     /*

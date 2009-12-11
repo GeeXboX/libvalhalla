@@ -136,7 +136,7 @@ downloader_thread (void *arg)
         err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         if (!err)
           vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
-                        __FUNCTION__, it->url, downloader->dl_list[dst]);
+                  __FUNCTION__, it->url, downloader->dl_list[dst]);
         free (dest);
       }
     }

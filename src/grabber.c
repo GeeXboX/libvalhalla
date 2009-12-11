@@ -284,8 +284,7 @@ grabber_thread (void *arg)
       {
         it->stat_failure++;
         vh_log (VALHALLA_MSG_VERBOSE,
-                      "[%s] grabbing failed (%i): %s",
-                      it->name, res, pdata->file);
+                "[%s] grabbing failed (%i): %s", it->name, res, pdata->file);
       }
       else
         it->stat_success++;
@@ -317,11 +316,11 @@ grabber_thread (void *arg)
         it->stat_difftime.tv_sec + it->stat_difftime.tv_nsec / 1000000000.0;
 
       vh_log (VALHALLA_MSG_INFO,
-                    "[%s] Stats %-10s : %6i/%-6i (%6.2f%%) "
-                    "(%7.2f sec, %7.2f sec/file)",
-                    __FUNCTION__, it->name, it->stat_success, total,
-                    total ? 100.0 * it->stat_success / total : 100.0,
-                    diff_time, total ? diff_time / total : 0.0);
+              "[%s] Stats %-10s : %6i/%-6i (%6.2f%%) "
+              "(%7.2f sec, %7.2f sec/file)",
+              __FUNCTION__, it->name, it->stat_success, total,
+              total ? 100.0 * it->stat_success / total : 100.0,
+              diff_time, total ? diff_time / total : 0.0);
     }
 
   /* the thread is locked by vh_grabber_run() */

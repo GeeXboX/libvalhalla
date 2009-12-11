@@ -147,7 +147,7 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   if (!n)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
-                  "Unable to find the item \"%s\"", escaped_keywords);
+            "Unable to find the item \"%s\"", escaped_keywords);
   }
   else
   {

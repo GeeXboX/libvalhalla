@@ -180,8 +180,7 @@ vh_metadata_add (metadata_t **meta,
   it->group = group;
 
   vh_log (VALHALLA_MSG_VERBOSE,
-                "Adding new metadata '%s' with value '%s'.",
-                it->name, it->value);
+          "Adding new metadata '%s' with value '%s'.", it->name, it->value);
 }
 
 void

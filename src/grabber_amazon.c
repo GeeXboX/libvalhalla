@@ -200,7 +200,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   if (!asin)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
-                  "Unable to find the item \"%s\"", escaped_keywords);
+            "Unable to find the item \"%s\"", escaped_keywords);
     return -1;
   }
 
@@ -257,7 +257,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   if (!cover_url)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
-                  "Unable to find the cover for %s", escaped_keywords);
+            "Unable to find the cover for %s", escaped_keywords);
     xmlFreeDoc (doc);
     return -1;
   }

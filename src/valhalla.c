@@ -190,8 +190,8 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
     if (va_arg (ap, int) != ~0) /* check for safeguard */
     {
       vh_log (VALHALLA_MSG_CRITICAL,
-                    "unrecoverable error with valhalla_config_set(), conf=%u, "
-                    "it is probably a bad use of this function", conf);
+              "unrecoverable error with valhalla_config_set(), conf = %u, "
+              "it is probably a bad use of this function", conf);
       res = -2;
     }
 
@@ -231,7 +231,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 
   default:
     vh_log (VALHALLA_MSG_WARNING,
-                  "%s: unsupported option %u", __FUNCTION__, conf);
+            "%s: unsupported option %u", __FUNCTION__, conf);
     res = -1;
     break;
   }
@@ -392,7 +392,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
   return vh_grabber_list_get (handle->grabber, id);
 #else
   vh_log (VALHALLA_MSG_WARNING,
-                "This function is usable only with grabbing support!");
+          "This function is usable only with grabbing support!");
   return NULL;
 #endif /* USE_GRABBER */
 }
