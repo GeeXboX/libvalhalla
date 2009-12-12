@@ -11,7 +11,7 @@ VHTEST_SRCS = libvalhalla-test.c
 VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
 
 override CFLAGS += -Isrc
-override LDFLAGS += -Lsrc -lvalhalla -lsqlite3 -lpthread
+override LDFLAGS += -Lsrc -lvalhalla
 
 ifeq ($(BUILD_STATIC),yes)
   override LDFLAGS += $(EXTRALIBS)
