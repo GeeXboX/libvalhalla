@@ -74,7 +74,7 @@ vh_log_test (valhalla_verb_t level)
 
 void
 vh_log_orig (valhalla_verb_t level,
-      const char *file, int line, const char *format, ...)
+             const char *file, int line, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
   static const char *const c[] = {
