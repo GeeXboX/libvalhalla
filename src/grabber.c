@@ -277,9 +277,9 @@ grabber_thread (void *arg)
 
       pdata->grabber_cnt = cnt + 1;
       pdata->grabber_name = it->name;
-      clock_gettime (CLOCK_REALTIME, &ts);
+      vh_clock_gettime (CLOCK_REALTIME, &ts);
       res = it->grab (it->priv, pdata);
-      clock_gettime (CLOCK_REALTIME, &te);
+      vh_clock_gettime (CLOCK_REALTIME, &te);
       if (res)
       {
         it->stat_failure++;

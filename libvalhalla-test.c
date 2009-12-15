@@ -28,7 +28,7 @@
 #include <time.h>
 
 #include "valhalla.h"
-#include "utils.h"    /* for macro VH_TIMERSUB */
+#include "utils.h"    /* for VH_TIMERSUB and vh_clock_gettime */
 
 #define APPNAME "libvalhalla-test"
 
@@ -279,7 +279,7 @@ main (int argc, char **argv)
   }
 #endif /* USE_GRABBER */
 
-  clock_gettime (CLOCK_REALTIME, &tss);
+  vh_clock_gettime (CLOCK_REALTIME, &tss);
 
   rc = valhalla_run (handle, loop_nb, loop_wait, priority);
   if (rc)
@@ -294,7 +294,7 @@ main (int argc, char **argv)
   else
     usleep (time_limit * 1000);
 
-  clock_gettime (CLOCK_REALTIME, &tse);
+  vh_clock_gettime (CLOCK_REALTIME, &tse);
 
   valhalla_uninit (handle);
 

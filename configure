@@ -851,7 +851,20 @@ check_cflags -D_REENTRANT
 
 # default extralibs
 add_extralibs -lpthread
-add_extralibs -lrt
+
+#################################################
+#   check for functions availability
+#################################################
+check_lib time.h clock_gettime
+if [ "$?" != 0 ]; then
+  check_lib time.h clock_gettime -lrt
+  if [ "$?" != 0 ]; then
+    check_lib mach/clock.h clock_get_time
+    [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
+    add_cflags -DUSE_CLOCK_GETTIME_DARWIN
+  fi
+fi
+
 
 #################################################
 #   check for debug symbols

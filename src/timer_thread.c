@@ -23,6 +23,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include "utils.h"
 #include "timer_thread.h"
 
 struct timer_thread_s {
@@ -40,7 +41,7 @@ vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
   pthread_mutex_lock (&timer->mutex);
   if (timer->run)
   {
-    clock_gettime (CLOCK_REALTIME, &ts);
+    vh_clock_gettime (CLOCK_REALTIME, &ts);
     ts.tv_sec += timeout;
 
     pthread_cond_timedwait (&timer->cond, &timer->mutex, &ts);
