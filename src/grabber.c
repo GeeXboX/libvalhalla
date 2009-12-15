@@ -255,6 +255,9 @@ grabber_thread (void *arg)
      */
     if (pdata->wait)
     {
+      vh_log (VALHALLA_MSG_VERBOSE,
+              "[%s] waiting grabbing: %s", __FUNCTION__, pdata->file);
+
       /* sem_grabber provides a way to wake up the thread for "force_stop" */
       grabber->sem_grabber = &pdata->sem_grabber;
       pthread_mutex_unlock (&grabber->mutex_grabber);
@@ -301,6 +304,9 @@ grabber_thread (void *arg)
     }
     else /* next step, no grabber */
       vh_file_data_step_increase (pdata, &e);
+
+    vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s grabbing: %s",
+            __FUNCTION__, grab ? "continue" : "finished", pdata->file);
 
     vh_dispatcher_action_send (grabber->valhalla->dispatcher,
                                pdata->priority, e, pdata);
