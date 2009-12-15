@@ -72,7 +72,7 @@ main (int argc, char **argv)
 {
   int rc, i;
   int loop_nb = 1, loop_wait = 0, time_limit = 0;
-  int priority = 19, commit = 128, decrap = 0;
+  int priority = 0, commit = 128, decrap = 0;
   valhalla_t *handle;
   valhalla_init_param_t param;
   valhalla_verb_t verbosity = VALHALLA_MSG_WARNING;
