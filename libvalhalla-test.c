@@ -52,6 +52,7 @@
   " -k --keyword            keyword for the decrapifier\n" \
   " -s --suffix             file suffix (extension)\n" \
   " -g --grabber            grabber to be used\n" \
+  " -i --no-grabber         disable all grabbers\n" \
   "\n" \
   "Example:\n" \
   " $ " APPNAME " -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
@@ -85,10 +86,11 @@ main (int argc, char **argv)
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
   const char *grabbers[GRABBER_MAX];
+  int nograbber = 0;
   struct timespec tss, tse, tsd;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:i";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -104,6 +106,7 @@ main (int argc, char **argv)
     { "keyword",    required_argument, 0, 'k'  },
     { "suffix",     required_argument, 0, 's'  },
     { "grabber",    required_argument, 0, 'g'  },
+    { "no-grabber", no_argument,       0, 'i'  },
     { NULL,         0,                 0, '\0' },
   };
 
@@ -178,6 +181,10 @@ main (int argc, char **argv)
     case 'g':
       if (gid < GRABBER_MAX)
         grabbers[gid++] = optarg;
+      break;
+
+    case 'i':
+      nograbber = 1;
       break;
 
     default:
@@ -261,7 +268,9 @@ main (int argc, char **argv)
   printf ("Grabbers available:\n");
   while ((grabber = valhalla_grabber_list_get (handle, grabber)))
   {
-    if (gid == 0) /* no grabber has been specified */
+    if (nograbber)
+      valhalla_config_set (handle, GRABBER_STATE, grabber, 0);
+    else if (gid == 0) /* no grabber has been specified */
       printf ("  %s\n", grabber);
     else
     {
