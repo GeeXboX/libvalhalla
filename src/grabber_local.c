@@ -34,8 +34,6 @@
   GRABBER_CAP_AUDIO | \
   GRABBER_CAP_VIDEO
 
-#define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
-
 
 static char *
 grabber_local_get (const char *filename)

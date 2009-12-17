@@ -69,8 +69,6 @@ struct valhalla_s {
 #define STOP_FLAG_REQUEST (1 << 0)
 #define STOP_FLAG_WAIT    (1 << 1)
 
-#define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
-
 #ifndef vh_unused
 #if defined(__GNUC__)
 #  define vh_unused __attribute__((unused))
