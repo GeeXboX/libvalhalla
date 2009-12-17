@@ -39,7 +39,7 @@ extern "C" {
 #define VH_VERSION_DOT(a, b, c) a ##.## b ##.## c
 #define VH_VERSION(a, b, c) VH_VERSION_DOT(a, b, c)
 
-#define LIBVALHALLA_VERSION_MAJOR  1
+#define LIBVALHALLA_VERSION_MAJOR  2
 #define LIBVALHALLA_VERSION_MINOR  0
 #define LIBVALHALLA_VERSION_MICRO  0
 
