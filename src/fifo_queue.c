@@ -33,6 +33,7 @@ typedef struct fifo_queue_item_s {
 
 struct fifo_queue_s {
   fifo_queue_item_t *item;
+  fifo_queue_item_t *item_last;
   pthread_mutex_t mutex;
   sem_t sem;
 };
@@ -93,10 +94,10 @@ vh_fifo_queue_push (fifo_queue_t *queue,
     {
     default:
     case FIFO_QUEUE_PRIORITY_NORMAL:
-      while (item->next)
-        item = item->next;
-      item->next = calloc (1, sizeof (fifo_queue_item_t));
-      item = item->next;
+      queue->item_last->next = calloc (1, sizeof (fifo_queue_item_t));
+      item = queue->item_last->next;
+      if (item)
+        queue->item_last = item;
       break;
 
     case FIFO_QUEUE_PRIORITY_HIGH:
@@ -112,6 +113,7 @@ vh_fifo_queue_push (fifo_queue_t *queue,
   {
     item = calloc (1, sizeof (fifo_queue_item_t));
     queue->item = item;
+    queue->item_last = item;
   }
 
   if (!item)
