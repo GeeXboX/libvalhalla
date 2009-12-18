@@ -900,7 +900,6 @@ fi
 
 echolog "Checking for libavformat ..."
 check_lib libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can't find libavformat !"
-add_pkgconfig_requires libavformat
 
 
 #################################################
@@ -916,7 +915,6 @@ fi
 
 echolog "Checking for sqlite3 ..."
 check_lib sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 !"
-add_pkgconfig_requires sqlite3
 
 
 #################################################
@@ -1030,7 +1028,6 @@ if enabled xml; then
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_extracflags -DUSE_XML
-    add_pkgconfig_requires libxml-2.0
   else
     echolog "(no)"
     grabber_forced $xml_dep_grabber
@@ -1062,7 +1059,6 @@ if enabled avutil; then
   check_lib libavutil/md5.h av_md5_sum -lavutil
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_pkgconfig_requires libavutil
   else
     echolog "(no)"
     grabber_forced $avutil_dep_grabber
@@ -1116,7 +1112,6 @@ if enabled exif; then
   check_lib libexif/exif-data.h exif_entry_get_value -lexif
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_pkgconfig_requires libexif
   else
     echolog "(no)"
     grabber_forced $exif_dep_grabber
@@ -1149,7 +1144,6 @@ if enabled avcodec; then
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_extracflags -DUSE_LAVC
-    add_pkgconfig_requires libavcodec
   else
     echolog "(no)"
     grabber_forced $avcodec_dep_grabber
@@ -1177,7 +1171,6 @@ if enabled nfo; then
     check_lib nfo.h nfo_init -lnfo
     [ "$?" != 0 ] && die "Error, libnfo available but the compilation failed !"
     echolog "(yes)"
-    add_pkgconfig_requires libnfo
   else
     echolog "(no)"
     grabber_forced $nfo_dep_grabber
@@ -1206,7 +1199,6 @@ if enabled grabber; then
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_extracflags -DUSE_GRABBER
-    add_pkgconfig_requires libcurl
   else
     echolog "(no)"
     if enabled grabber_all; then
