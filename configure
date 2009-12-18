@@ -1104,7 +1104,6 @@ if enabled gcrypt; then
   check_lib gcrypt.h gcry_md_open -lgcrypt
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_pkgconfig_requires libavutil
   else
     echolog "(no)"
     grabber_forced $gcrypt_dep_grabber
