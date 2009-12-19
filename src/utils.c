@@ -99,9 +99,9 @@ vh_clock_gettime (clockid_t clk_id, struct timespec *tp)
   default:
     return -1;
   }
-#else
+#else /* POSIX */
   return clock_gettime (clk_id, tp);
-#endif
+#endif /* USE_CLOCK_GETTIME_DARWIN */
 }
 
 int
