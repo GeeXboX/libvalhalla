@@ -34,7 +34,7 @@ enum event_handler_errno {
 
 typedef struct event_handler_data_s {
   char            *file;
-  valhalla_event_t e;
+  valhalla_event_od_t e;
   const char      *id;
 } event_handler_data_t;
 
@@ -45,7 +45,7 @@ void vh_event_handler_stop (event_handler_t *event_handler, int f);
 void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         void (*od_cb) (const char *file,
-                                                       valhalla_event_t e,
+                                                       valhalla_event_od_t e,
                                                        const char *id,
                                                        void *data),
                                         void *od_data,
@@ -53,8 +53,8 @@ event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                                        void *data),
                                         void *gl_data);
 
-void vh_event_handler_send (event_handler_t *event_handler, const char *file,
-                            valhalla_event_t e, const char *id);
+void vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
+                               valhalla_event_od_t e, const char *id);
 void vh_event_handler_gl_send (event_handler_t *event_handler,
                                valhalla_event_gl_t e);
 

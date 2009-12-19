@@ -37,7 +37,7 @@ struct event_handler_s {
   int           priority;
 
   void (*od_cb) (const char *file,
-                 valhalla_event_t e, const char *id, void *data);
+                 valhalla_event_od_t e, const char *id, void *data);
   void  *od_data;
 
   void (*gl_cb) (valhalla_event_gl_t e, void *data);
@@ -92,7 +92,7 @@ event_handler_thread (void *arg)
     default:
       break;
 
-    case ACTION_EH_EVENT:
+    case ACTION_EH_EVENTOD:
     {
       event_handler_data_t *edata = data;
 
@@ -203,7 +203,7 @@ vh_event_handler_uninit (event_handler_t *event_handler)
 
 event_handler_t *
 vh_event_handler_init (valhalla_t *handle,
-                       void (*od_cb) (const char *file, valhalla_event_t e,
+                       void (*od_cb) (const char *file, valhalla_event_od_t e,
                                       const char *id, void *data),
                        void *od_data,
                        void (*gl_cb) (valhalla_event_gl_t e, void *data),
@@ -240,8 +240,8 @@ vh_event_handler_init (valhalla_t *handle,
 }
 
 void
-vh_event_handler_send (event_handler_t *event_handler,
-                       const char *file, valhalla_event_t e, const char *id)
+vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
+                          valhalla_event_od_t e, const char *id)
 {
   event_handler_data_t *edata;
 
@@ -259,7 +259,7 @@ vh_event_handler_send (event_handler_t *event_handler,
   edata->id   = id;
 
   vh_fifo_queue_push (event_handler->fifo,
-                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENT, edata);
+                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENTOD, edata);
 }
 
 void

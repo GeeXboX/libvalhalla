@@ -197,16 +197,17 @@ dbmanager_queue (dbmanager_t *dbmanager)
     case ACTION_DB_END:
       vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_send (dbmanager->valhalla->event_handler,
-                               pdata->file, VALHALLA_EVENT_ENDED, NULL);
+        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                  pdata->file, VALHALLA_EVENTOD_ENDED, NULL);
       break;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
-                               VALHALLA_EVENT_GRABBED, pdata->grabber_name);
+        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                  pdata->file, VALHALLA_EVENTOD_GRABBED,
+                                  pdata->grabber_name);
       METADATA_GRABBER_POST
       grab++;
       continue;
@@ -217,16 +218,17 @@ dbmanager_queue (dbmanager_t *dbmanager)
     case ACTION_DB_INSERT_P:
       vh_database_file_data_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_send (dbmanager->valhalla->event_handler,
-                               pdata->file, VALHALLA_EVENT_PARSED, NULL);
+        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                  pdata->file, VALHALLA_EVENTOD_PARSED, NULL);
       continue;
 
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_UPDATE_G:
       vh_database_file_grab_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
-                               VALHALLA_EVENT_GRABBED, pdata->grabber_name);
+        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                  pdata->file, VALHALLA_EVENTOD_GRABBED,
+                                  pdata->grabber_name);
       METADATA_GRABBER_POST
       grab++;
       continue;
@@ -295,8 +297,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
       }
 
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_send (dbmanager->valhalla->event_handler,
-                               pdata->file, VALHALLA_EVENT_ENDED, NULL);
+        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                  pdata->file, VALHALLA_EVENTOD_ENDED, NULL);
       VH_STATS_COUNTER_INC (dbmanager->st_nochange);
     }
     }
@@ -611,8 +613,8 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
     if (mt != mtime)
       res = 1; /* must be updated */
     else
-      vh_event_handler_send (dbmanager->valhalla->event_handler,
-                             file, VALHALLA_EVENT_ENDED, NULL);
+      vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+                                file, VALHALLA_EVENTOD_ENDED, NULL);
   }
 
   return !res;

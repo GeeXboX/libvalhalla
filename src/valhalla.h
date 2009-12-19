@@ -96,11 +96,11 @@ typedef enum valhalla_dl {
 } valhalla_dl_t;
 
 /** \brief Events for valhalla_ondemand() callback. */
-typedef enum valhalla_event {
-  VALHALLA_EVENT_PARSED = 0,  /**< Parsed data available in DB.         */
-  VALHALLA_EVENT_GRABBED,     /**< Grabbed data available in DB.        */
-  VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
-} valhalla_event_t;
+typedef enum valhalla_event_od {
+  VALHALLA_EVENTOD_PARSED = 0, /**< Parsed data available in DB.            */
+  VALHALLA_EVENTOD_GRABBED,    /**< Grabbed data available in DB.           */
+  VALHALLA_EVENTOD_ENDED,      /**< Nothing more (downloading included).    */
+} valhalla_event_od_t;
 
 /** \brief Events for general actions in Valhalla. */
 typedef enum valhalla_event_gl {
@@ -267,7 +267,7 @@ typedef struct valhalla_init_param_s {
    * (fully) inserted in the DB, only VALHALLA_EVENT_ENDED is sent to the
    * callback.
    */
-  void (*od_cb) (const char *file, valhalla_event_t e,
+  void (*od_cb) (const char *file, valhalla_event_od_t e,
                  const char *id, void *data);
   /** User data for ondemand callback. */
   void *od_data;

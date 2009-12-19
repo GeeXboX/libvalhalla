@@ -367,7 +367,7 @@ vh_queue_cleanup (fifo_queue_t *queue)
         free (data);
       break;
 
-    case ACTION_EH_EVENT:
+    case ACTION_EH_EVENTOD:
     {
       event_handler_data_t *edata = data;
       if (!edata)

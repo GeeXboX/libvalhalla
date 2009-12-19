@@ -38,7 +38,7 @@ typedef enum action_list {
   ACTION_DB_EXT_DELETE,     /* external metadata to delete */
   ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
   ACTION_OD_ENGAGE,         /* engage ondemand procedure */
-  ACTION_EH_EVENT,          /* event for the user */
+  ACTION_EH_EVENTOD,        /* ondemand event for the user */
   ACTION_EH_EVENTGL,        /* global event for the user */
   ACTION_CLEANUP_END,       /* special case for garbage collector */
 } action_list_t;
