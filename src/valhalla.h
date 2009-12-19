@@ -259,13 +259,13 @@ typedef struct valhalla_init_param_s {
   /**
    * When \p od_cb is defined, an event is sent for each step with an on demand
    * query. If an event arrives, the data are really inserted in the DB. The
-   * order for the events is not determinative, VALHALLA_EVENT_GRABBED can be
-   * sent before VALHALLA_EVENT_PARSED. VALHALLA_EVENT_GRABBED is sent for each
-   * grabber and \p id is its textual identifier (for example: "amazon", "exif",
-   * etc, ...). Only VALHALLA_EVENT_ENDED is always sent at the end, but this
-   * one has not a high priority unlike other events. If the file is already
-   * (fully) inserted in the DB, only VALHALLA_EVENT_ENDED is sent to the
-   * callback.
+   * order for the events is not determinative, VALHALLA_EVENTOD_GRABBED can be
+   * sent before VALHALLA_EVENTOD_PARSED. VALHALLA_EVENTOD_GRABBED is sent for
+   * each grabber and \p id is its textual identifier (for example: "amazon",
+   * "exif", etc, ...). Only VALHALLA_EVENTOD_ENDED is always sent at the end,
+   * but this one has not a high priority unlike other events. If the file is
+   * already (fully) inserted in the DB, only VALHALLA_EVENTOD_ENDED is sent to
+   * the callback.
    */
   void (*od_cb) (const char *file, valhalla_event_od_t e,
                  const char *id, void *data);
