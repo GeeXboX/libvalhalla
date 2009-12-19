@@ -8,6 +8,7 @@ EXTRADIST = \
 	Doxyfile \
 	ffmpeg.png \
 	sqlite3.png \
+	valhalla.svg \
 	valhalla-db.dia \
 	valhalla-db.png \
 	valhalla-internals.dia \
