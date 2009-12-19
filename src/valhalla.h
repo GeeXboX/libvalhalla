@@ -350,7 +350,7 @@ void valhalla_verbosity (valhalla_verb_t level);
  * \param[in] id          Grabber ID or NULL to retrieve the first.
  * \return the next ID or NULL if \p id is the last (or on error).
  */
-const char *valhalla_grabber_list_get (valhalla_t *handle, const char *id);
+const char *valhalla_grabber_next (valhalla_t *handle, const char *id);
 
 /**
  * \brief Retrieve the ID of all groups in the statistics.

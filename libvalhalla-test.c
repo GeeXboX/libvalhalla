@@ -273,7 +273,7 @@ main (int argc, char **argv)
 
 #ifdef USE_GRABBER
   printf ("Grabbers available:\n");
-  while ((grabber = valhalla_grabber_list_get (handle, grabber)))
+  while ((grabber = valhalla_grabber_next (handle, grabber)))
   {
     if (nograbber)
       valhalla_config_set (handle, GRABBER_STATE, grabber, 0);

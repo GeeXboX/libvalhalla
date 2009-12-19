@@ -388,7 +388,7 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 }
 
 const char *
-valhalla_grabber_list_get (valhalla_t *handle, const char *id)
+valhalla_grabber_next (valhalla_t *handle, const char *id)
 {
   vh_log (VALHALLA_MSG_VERBOSE, "%s : %s", __FUNCTION__, id ? id : "");
 
@@ -396,7 +396,7 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
     return NULL;
 
 #ifdef USE_GRABBER
-  return vh_grabber_list_get (handle->grabber, id);
+  return vh_grabber_next (handle->grabber, id);
 #else
   vh_log (VALHALLA_MSG_WARNING,
           "This function is usable only with grabbing support!");

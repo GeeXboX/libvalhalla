@@ -381,7 +381,7 @@ vh_grabber_state_set (grabber_t *grabber, const char *id, int enable)
 }
 
 const char *
-vh_grabber_list_get (grabber_t *grabber, const char *id)
+vh_grabber_next (grabber_t *grabber, const char *id)
 {
   grabber_list_t *it;
 
