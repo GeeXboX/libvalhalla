@@ -28,6 +28,7 @@
 #include "valhalla.h"
 #include "valhalla_internals.h"
 #include "utils.h"
+#include "stats.h"
 #include "fifo_queue.h"
 #include "logs.h"
 #include "thread_utils.h"
@@ -95,6 +96,11 @@ struct grabber_s {
   sem_t          *sem_grabber;
   pthread_mutex_t mutex_grabber;
 };
+
+#define STATS_GROUP   "grabber"
+#define STATS_SUCCESS "success"
+#define STATS_FAILURE "failure"
+
 
 /*
  * The first grabber has the highest priority.
@@ -276,24 +282,20 @@ grabber_thread (void *arg)
     if (grab) /* next child available */
     {
       int res;
-      struct timespec ts, te, td;
 
       pdata->grabber_cnt = cnt + 1;
       pdata->grabber_name = it->name;
-      vh_clock_gettime (CLOCK_REALTIME, &ts);
+      VH_STATS_TIMER_START (it->tmr);
       res = it->grab (it->priv, pdata);
-      vh_clock_gettime (CLOCK_REALTIME, &te);
+      VH_STATS_TIMER_STOP (it->tmr);
       if (res)
       {
-        it->stat_failure++;
+        VH_STATS_COUNTER_INC (it->cnt_failure);
         vh_log (VALHALLA_MSG_VERBOSE,
                 "[%s] grabbing failed (%i): %s", it->name, res, pdata->file);
       }
       else
-        it->stat_success++;
-
-      VH_TIMERSUB (&te, &ts, &td);
-      VH_TIMERADD (&it->stat_difftime, &td, &it->stat_difftime);
+        VH_STATS_COUNTER_INC (it->cnt_success);
 
       /* at least still one grabber for this file ? */
       GRABBER_IS_AVAILABLE
@@ -312,22 +314,6 @@ grabber_thread (void *arg)
                                pdata->priority, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
-
-  /* Statistics */
-  if (vh_log_test (VALHALLA_MSG_INFO))
-    for (it = grabber->list; it; it = it->next)
-    {
-      unsigned int total = it->stat_success + it->stat_failure;
-      float diff_time =
-        it->stat_difftime.tv_sec + it->stat_difftime.tv_nsec / 1000000000.0;
-
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Stats %-10s : %6i/%-6i (%6.2f%%) "
-              "(%7.2f sec, %7.2f sec/file)",
-              __FUNCTION__, it->name, it->stat_success, total,
-              total ? 100.0 * it->stat_success / total : 100.0,
-              diff_time, total ? diff_time / total : 0.0);
-    }
 
   /* the thread is locked by vh_grabber_run() */
   pthread_mutex_unlock (&grabber->mutex_grabber);
@@ -526,6 +512,52 @@ grabber_register_childs (void)
   return list;
 }
 
+#define STATS_DUMP(name, success, total, time)                      \
+  vh_log (VALHALLA_MSG_INFO,                                        \
+          "%-10s | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file", \
+          name, success, total,                                     \
+          (total) ? 100.0 * (success) / (total) : 100.0,            \
+          time, (total) ? (time) / (total) : 0.0)
+
+static void
+grabber_stats_dump (vh_stats_t *stats, void *data)
+{
+  grabber_t *grabber = data;
+  grabber_list_t *it;
+  float time_all = 0.0;
+  unsigned long int total_all = 0, success_all = 0;
+
+  if (!stats || !grabber)
+    return;
+
+  vh_log (VALHALLA_MSG_INFO,
+          "==================================================================");
+  vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
+  vh_log (VALHALLA_MSG_INFO,
+          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+  for (it = grabber->list; it; it = it->next)
+  {
+    float time;
+    unsigned long int success, failure, total;
+
+    time    = vh_stats_timer_read (it->tmr) / 1000000000.0;
+    success = vh_stats_counter_read (it->cnt_success);
+    failure = vh_stats_counter_read (it->cnt_failure);
+    total   = success + failure;
+
+    time_all    += time;
+    success_all += success;
+    total_all   += total;
+
+    STATS_DUMP (it->name, success, total, time);
+  }
+
+  vh_log (VALHALLA_MSG_INFO,
+          "~~~~~~~~~~ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  STATS_DUMP ("GLOBAL", success_all, total_all, time_all);
+}
+
 grabber_t *
 vh_grabber_init (valhalla_t *handle)
 {
@@ -555,12 +587,24 @@ vh_grabber_init (valhalla_t *handle)
   if (!grabber->list)
     goto err;
 
+  vh_stats_grp_add (handle->stats, STATS_GROUP, grabber_stats_dump, grabber);
+
   /* init all childs */
   for (it = grabber->list; it; it = it->next)
   {
+    const char *name = it->name;
     int res = it->init (it->priv);
     if (res)
       goto err;
+
+    /* init statistics */
+    it->tmr = vh_stats_grp_timer_add (handle->stats, STATS_GROUP, name, NULL);
+    it->cnt_success =
+      vh_stats_grp_counter_add (handle->stats,
+                                STATS_GROUP, name, STATS_SUCCESS);
+    it->cnt_failure =
+      vh_stats_grp_counter_add (handle->stats,
+                                STATS_GROUP, name, STATS_FAILURE);
   }
 
   return grabber;

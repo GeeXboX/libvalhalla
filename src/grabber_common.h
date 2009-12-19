@@ -59,8 +59,7 @@
  * \see grabber_list_t for details on the functions.
  */
 
-#include <time.h>
-
+#include "stats.h"
 #include "utils.h"
 
 /** \name Flags for the capabilities of the grabbers.
@@ -153,12 +152,14 @@ typedef struct grabber_list_s {
 
   /** \brief Different of 0 if the grabber is enabled. */
   int enable;
-  /** \brief Total of successes for the session. */
-  unsigned int stat_success;
-  /** \brief Total of failures for the session. */
-  unsigned int stat_failure;
-  /** \brief Total time used by the grabber. */
-  struct timespec stat_difftime;
+
+  /** \private Timer for statistics. */
+  vh_stats_tmr_t *tmr;
+  /** \private Counter for statistics (::grab() returns 0). */
+  vh_stats_cnt_t *cnt_success;
+  /** \private Counter for statistics (::grab() returns != 0). */
+  vh_stats_cnt_t *cnt_failure;
+
 } grabber_list_t;
 
 
