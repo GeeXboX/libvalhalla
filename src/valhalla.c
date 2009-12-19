@@ -492,10 +492,11 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
   if (!handle->stats)
     goto err;
 
-  if (pp->od_cb)
+  if (pp->od_cb || pp->gl_cb)
   {
     handle->event_handler =
-      vh_event_handler_init (handle, pp->od_cb, pp->od_data);
+      vh_event_handler_init (handle,
+                             pp->od_cb, pp->od_data, pp->gl_cb, pp->gl_data);
     if (!handle->event_handler)
       goto err;
   }

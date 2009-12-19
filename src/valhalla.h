@@ -102,6 +102,15 @@ typedef enum valhalla_event {
   VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
 } valhalla_event_t;
 
+/** \brief Events for general actions in Valhalla. */
+typedef enum valhalla_event_gl {
+  VALHALLA_EVENTGL_SCANNER_BEGIN = 0, /**< Begin the scanning of paths. */
+  VALHALLA_EVENTGL_SCANNER_END,       /**< All paths scanned.           */
+  VALHALLA_EVENTGL_SCANNER_SLEEP,     /**< Scanner is sleeping.         */
+  VALHALLA_EVENTGL_SCANNER_ACKS,      /**< All files fully handled.     */
+  VALHALLA_EVENTGL_SCANNER_EXIT,      /**< Exit, end of all loops.      */
+} valhalla_event_gl_t;
+
 /** \brief Type of statistic. */
 typedef enum valhalla_stats_type {
   VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.              */
@@ -262,6 +271,15 @@ typedef struct valhalla_init_param_s {
                  const char *id, void *data);
   /** User data for ondemand callback. */
   void *od_data;
+
+  /**
+   * When \p gl_cb is defined, events can be sent by Valhalla according to some
+   * global actions. See ::valhalla_event_gl_t for details on the events.
+   */
+  void (*gl_cb) (valhalla_event_gl_t e, void *data);
+  /** User data for global event callback. */
+  void *gl_data;
+
 } valhalla_init_param_t;
 
 /**

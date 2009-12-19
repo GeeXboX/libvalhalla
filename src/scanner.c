@@ -36,6 +36,7 @@
 #include "thread_utils.h"
 #include "timer_thread.h"
 #include "dbmanager.h"
+#include "event_handler.h"
 #include "scanner.h"
 
 #ifndef PATH_RECURSIVENESS_MAX
@@ -267,6 +268,9 @@ scanner_thread (void *arg)
 
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
   {
+    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+                              VALHALLA_EVENTGL_SCANNER_BEGIN);
+
     for (path = scanner->paths; path; path = path->next)
     {
       vh_log (VALHALLA_MSG_INFO,
@@ -279,6 +283,9 @@ scanner_thread (void *arg)
       vh_log (VALHALLA_MSG_INFO,
               "[%s] End scanning   : %i files", __FUNCTION__, path->nb_files);
     }
+
+    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+                              VALHALLA_EVENTGL_SCANNER_END);
 
     /*
      * Wait until that all files are parsed and inserted in the database
@@ -299,18 +306,26 @@ scanner_thread (void *arg)
       }
     }
 
+    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+                              VALHALLA_EVENTGL_SCANNER_ACKS);
+
     /* It is not the last loop ?  */
     if (i != 1)
     {
       vh_dbmanager_action_send (scanner->valhalla->dbmanager,
                                 FIFO_QUEUE_PRIORITY_NORMAL,
                                 ACTION_DB_NEXT_LOOP, NULL);
+      vh_event_handler_gl_send (scanner->valhalla->event_handler,
+                                VALHALLA_EVENTGL_SCANNER_SLEEP);
       vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 
     if (scanner_is_stopped (scanner))
       goto kill;
   }
+
+  vh_event_handler_gl_send (scanner->valhalla->event_handler,
+                            VALHALLA_EVENTGL_SCANNER_EXIT);
 
   pthread_exit (NULL);
 

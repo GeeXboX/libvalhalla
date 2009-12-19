@@ -36,8 +36,12 @@ struct event_handler_s {
   fifo_queue_t *fifo;
   int           priority;
 
-  void (*cb) (const char *file, valhalla_event_t e, const char *id, void *data);
-  void  *data;
+  void (*od_cb) (const char *file,
+                 valhalla_event_t e, const char *id, void *data);
+  void  *od_data;
+
+  void (*gl_cb) (valhalla_event_gl_t e, void *data);
+  void  *gl_data;
 
   int             wait;
   int             run;
@@ -61,7 +65,6 @@ event_handler_thread (void *arg)
   int res;
   int e;
   void *data = NULL;
-  event_handler_data_t *edata;
   event_handler_t *event_handler = arg;
 
   if (!event_handler)
@@ -81,16 +84,37 @@ event_handler_thread (void *arg)
     if (e == ACTION_KILL_THREAD)
       break;
 
-    if (e != ACTION_EH_EVENT || !data)
+    if (!data)
       continue;
 
-    edata = data;
+    switch (e)
+    {
+    default:
+      break;
 
-    /* Send to the front-end. */
-    event_handler->cb (edata->file, edata->e, edata->id, event_handler->data);
+    case ACTION_EH_EVENT:
+    {
+      event_handler_data_t *edata = data;
+
+      /* Send to the front-end callback for ondemand events. */
+      event_handler->od_cb (edata->file,
+                            edata->e, edata->id, event_handler->od_data);
 
     free (edata->file);
-    free (edata);
+      break;
+    }
+
+    case ACTION_EH_EVENTGL:
+    {
+      valhalla_event_gl_t *edata = data;
+
+      /* Send to the front-end callback for global events. */
+      event_handler->gl_cb (*edata, event_handler->gl_data);
+      break;
+    }
+    }
+
+    free (data);
   }
   while (!event_handler_is_stopped (event_handler));
 
@@ -179,15 +203,17 @@ vh_event_handler_uninit (event_handler_t *event_handler)
 
 event_handler_t *
 vh_event_handler_init (valhalla_t *handle,
-                       void (*cb) (const char *file, valhalla_event_t e,
+                       void (*od_cb) (const char *file, valhalla_event_t e,
                                    const char *id, void *data),
-                       void *data)
+                       void *od_data,
+                       void (*gl_cb) (valhalla_event_gl_t e, void *data),
+                       void *gl_data)
 {
   event_handler_t *event_handler;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!handle || !cb)
+  if (!handle || (!od_cb && !gl_cb))
     return NULL;
 
   event_handler = calloc (1, sizeof (event_handler_t));
@@ -199,8 +225,10 @@ vh_event_handler_init (valhalla_t *handle,
     goto err;
 
   event_handler->valhalla = handle;
-  event_handler->cb       = cb;
-  event_handler->data     = data;
+  event_handler->od_cb    = od_cb;
+  event_handler->od_data  = od_data;
+  event_handler->gl_cb    = gl_cb;
+  event_handler->gl_data  = gl_data;
 
   pthread_mutex_init (&event_handler->mutex_run, NULL);
 
@@ -232,4 +260,24 @@ vh_event_handler_send (event_handler_t *event_handler,
 
   vh_fifo_queue_push (event_handler->fifo,
                       FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENT, edata);
+}
+
+void
+vh_event_handler_gl_send (event_handler_t *event_handler, valhalla_event_gl_t e)
+{
+  valhalla_event_gl_t *data;
+
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler)
+    return;
+
+  data = malloc (sizeof (valhalla_event_gl_t));
+  if (!data)
+    return;
+
+  *data = e;
+
+  vh_fifo_queue_push (event_handler->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENTGL, data);
 }
