@@ -69,6 +69,13 @@
 #define KEYWORD_MAX 16
 #define GRABBER_MAX 16
 
+static void
+eventgl_cb (valhalla_event_gl_t e, void *data)
+{
+  (void) data;
+  printf ("Global event: %u\n", e);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -206,6 +213,7 @@ main (int argc, char **argv)
   param.parser_nb   = parser_nb;
   param.commit_int  = commit;
   param.decrapifier = decrap;
+  param.gl_cb       = eventgl_cb;
 
   handle = valhalla_init (database, &param);
   if (!handle)
