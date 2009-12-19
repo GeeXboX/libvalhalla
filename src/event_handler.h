@@ -45,8 +45,9 @@ void vh_event_handler_stop (event_handler_t *event_handler, int f);
 void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         void (*od_cb) (const char *file,
-                                                    valhalla_event_t e,
-                                                    const char *id, void *data),
+                                                       valhalla_event_t e,
+                                                       const char *id,
+                                                       void *data),
                                         void *od_data,
                                         void (*gl_cb) (valhalla_event_gl_t e,
                                                        void *data),

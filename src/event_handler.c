@@ -100,7 +100,7 @@ event_handler_thread (void *arg)
       event_handler->od_cb (edata->file,
                             edata->e, edata->id, event_handler->od_data);
 
-    free (edata->file);
+      free (edata->file);
       break;
     }
 
@@ -204,7 +204,7 @@ vh_event_handler_uninit (event_handler_t *event_handler)
 event_handler_t *
 vh_event_handler_init (valhalla_t *handle,
                        void (*od_cb) (const char *file, valhalla_event_t e,
-                                   const char *id, void *data),
+                                      const char *id, void *data),
                        void *od_data,
                        void (*gl_cb) (valhalla_event_gl_t e, void *data),
                        void *gl_data)
