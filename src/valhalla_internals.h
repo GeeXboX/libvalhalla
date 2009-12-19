@@ -63,6 +63,8 @@ struct valhalla_s {
   struct dbmanager_s     *dbmanager;
   struct event_handler_s *event_handler;
 
+  struct vh_stats_s *stats;
+
   int run; /* prevent a bug if valhalla_run() is called two times */
 };
 

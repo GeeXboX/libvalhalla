@@ -36,6 +36,7 @@ SRCS =  database.c \
 	ondemand.c \
 	parser.c \
 	scanner.c \
+	stats.c \
 	thread_utils.c \
 	timer_thread.c \
 	utils.c \
@@ -75,6 +76,7 @@ EXTRADIST = \
 	parser.h \
 	scanner.h \
 	sql_statements.h \
+	stats.h \
 	thread_utils.h \
 	timer_thread.h \
 	url_utils.h \

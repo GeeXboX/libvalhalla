@@ -37,6 +37,7 @@
 #include "ondemand.h"
 #include "event_handler.h"
 #include "utils.h"
+#include "stats.h"
 #include "logs.h"
 
 #ifdef USE_GRABBER
@@ -305,6 +306,10 @@ valhalla_uninit (valhalla_t *handle)
 
   valhalla_force_stop (handle);
 
+  /* dump all statistics */
+  vh_stats_dump (handle->stats, NULL);
+  vh_stats_debug_dump (handle->stats);
+
   vh_ondemand_uninit (handle->ondemand);
   vh_scanner_uninit (handle->scanner);
   vh_dbmanager_uninit (handle->dbmanager);
@@ -319,6 +324,8 @@ valhalla_uninit (valhalla_t *handle)
 #if USE_GRABBER
   vh_url_global_uninit ();
 #endif /* USE_GRABBER */
+
+  vh_stats_free (handle->stats);
 
   vh_log (VALHALLA_MSG_VERBOSE, "%s: end", __FUNCTION__);
 
@@ -457,6 +464,10 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
 #ifdef USE_GRABBER
   vh_url_global_init ();
 #endif /* USE_GRABBER */
+
+  handle->stats = vh_stats_new ();
+  if (!handle->stats)
+    goto err;
 
   if (pp->od_cb)
   {

@@ -102,6 +102,12 @@ typedef enum valhalla_event {
   VALHALLA_EVENT_ENDED,       /**< Nothing more (downloading included). */
 } valhalla_event_t;
 
+/** \brief Type of statistic. */
+typedef enum valhalla_stats {
+  VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.              */
+  VALHALLA_STATS_COUNTER,     /**< Read value for a counter.            */
+} valhalla_stats_type_t;
+
 #define VH_CFG_RANGE  8 /**< 256 possibilities for every combinations of type */
 
 #define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                 */
