@@ -103,7 +103,7 @@ typedef enum valhalla_event {
 } valhalla_event_t;
 
 /** \brief Type of statistic. */
-typedef enum valhalla_stats {
+typedef enum valhalla_stats_type {
   VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.              */
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.            */
 } valhalla_stats_type_t;
