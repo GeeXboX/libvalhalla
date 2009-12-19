@@ -29,6 +29,7 @@
 #include "valhalla_internals.h"
 #include "fifo_queue.h"
 #include "logs.h"
+#include "stats.h"
 #include "thread_utils.h"
 #include "event_handler.h"
 #include "database.h"
@@ -50,12 +51,20 @@ struct dbmanager_s {
 
   database_t   *database;
   unsigned int  commit_int;
+
+  vh_stats_cnt_t *st_insert;
+  vh_stats_cnt_t *st_update;
+  vh_stats_cnt_t *st_delete;
+  vh_stats_cnt_t *st_nochange;
+  vh_stats_cnt_t *st_cleanup;
 };
 
-typedef struct dbmanager_stats_s {
-  int file_insert, file_update, file_nochange;
-  int grab_insert, grab_update;
-} dbmanager_stats_t;
+#define STATS_GROUP     "dbmanager"
+#define STATS_INSERT    "insert"
+#define STATS_UPDATE    "update"
+#define STATS_DELETE    "delete"
+#define STATS_NOCHANGE  "nochange"
+#define STATS_CLEANUP   "cleanup"
 
 
 static inline int
@@ -92,15 +101,17 @@ vh_dbmanager_extmd_free (dbmanager_extmd_t *extmd)
     sem_post (&pdata->sem_grabber);
 
 static int
-dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
+dbmanager_queue (dbmanager_t *dbmanager)
 {
   int res;
   int e;
+  int grab = 0;
   void *data = NULL;
   file_data_t *pdata;
 
   do
   {
+    int interval;
     e = ACTION_NO_OPERATION;
     data = NULL;
 
@@ -165,9 +176,11 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
     }
 
     /* Manage BEGIN / COMMIT transactions */
-    vh_database_step_transaction (dbmanager->database, dbmanager->commit_int,
-                                  stats->file_insert + stats->file_update +
-                                  stats->grab_insert + stats->grab_update);
+    interval  = (int) vh_stats_counter_read (dbmanager->st_insert);
+    interval += (int) vh_stats_counter_read (dbmanager->st_update);
+    interval += grab;
+    vh_database_step_transaction (dbmanager->database,
+                                  dbmanager->commit_int, interval);
 
     pdata = data;
 
@@ -195,12 +208,12 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
                                VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
-      stats->grab_insert++;
+      grab++;
       continue;
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_UPDATE_P:
-      stats->file_update++;
+      VH_STATS_COUNTER_INC (dbmanager->st_update);
     case ACTION_DB_INSERT_P:
       vh_database_file_data_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
@@ -215,7 +228,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
         vh_event_handler_send (dbmanager->valhalla->event_handler, pdata->file,
                                VALHALLA_EVENT_GRABBED, pdata->grabber_name);
       METADATA_GRABBER_POST
-      stats->grab_update++;
+      grab++;
       continue;
 
     /* received from the scanner */
@@ -268,7 +281,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       else
       {
         vh_database_file_insert (dbmanager->database, pdata);
-        stats->file_insert++;
+        VH_STATS_COUNTER_INC (dbmanager->st_insert);
       }
 
       if (mtime < 0 || (int64_t) pdata->mtime != mtime || interrup == 1)
@@ -284,7 +297,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_send (dbmanager->valhalla->event_handler,
                                pdata->file, VALHALLA_EVENT_ENDED, NULL);
-      stats->file_nochange++;
+      VH_STATS_COUNTER_INC (dbmanager->st_nochange);
     }
     }
 
@@ -326,11 +339,8 @@ dbmanager_thread (void *arg)
 
   do
   {
-    dbmanager_stats_t stats = {
-      0, 0, 0, 0, 0
-    };
     int stats_delete   = 0;
-    int stats_cleanup  = 0;
+    unsigned long int stats_update = 0;
     int rst = 0;
 
     vh_log (VALHALLA_MSG_INFO, "[%s] Begin loop %i", __FUNCTION__, loop);
@@ -339,7 +349,7 @@ dbmanager_thread (void *arg)
     vh_database_file_checked_clear (dbmanager->database);
 
     vh_database_begin_transaction (dbmanager->database);
-    rc = dbmanager_queue (dbmanager, &stats);
+    rc = dbmanager_queue (dbmanager);
     vh_database_end_transaction (dbmanager->database);
 
     /*
@@ -366,26 +376,19 @@ dbmanager_thread (void *arg)
         rst = 1;
     }
 
+    VH_STATS_COUNTER_ACC (dbmanager->st_delete, (unsigned) stats_delete);
+
     /* Clean all relations */
-    if (stats.file_update || stats.grab_update || stats_delete)
-      stats_cleanup = vh_database_cleanup (dbmanager->database);
+    stats_update = vh_stats_counter_read (dbmanager->st_update);
+    if (stats_update || stats_delete)
+    {
+      int val = vh_database_cleanup (dbmanager->database);
+      if (val > 0)
+        VH_STATS_COUNTER_ACC (dbmanager->st_cleanup, (unsigned) val);
+    }
 
     vh_database_end_transaction (dbmanager->database);
 
-    /* Statistics */
-    if (vh_log_test (VALHALLA_MSG_INFO))
-    {
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Files inserted    : %i", __FUNCTION__, stats.file_insert);
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Files updated     : %i", __FUNCTION__, stats.file_update);
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Files deleted     : %i", __FUNCTION__, stats_delete);
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Files unchanged   : %i", __FUNCTION__, stats.file_nochange);
-      vh_log (VALHALLA_MSG_INFO,
-              "[%s] Relations cleanup : %i", __FUNCTION__, stats_cleanup);
-    }
     vh_log (VALHALLA_MSG_INFO, "[%s] End loop %i", __FUNCTION__, loop++);
   }
   while (rc == ACTION_DB_NEXT_LOOP && !dbmanager_is_stopped (dbmanager));
@@ -502,6 +505,30 @@ vh_dbmanager_uninit (dbmanager_t *dbmanager)
   free (dbmanager);
 }
 
+static void
+dbmanager_stats_dump (vh_stats_t *stats, void *data)
+{
+  dbmanager_t *dbmanager = data;
+
+  if (!stats || !dbmanager)
+    return;
+
+  vh_log (VALHALLA_MSG_INFO, "==============================");
+  vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
+  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+  vh_log (VALHALLA_MSG_INFO, "Files inserted    | %lu",
+          vh_stats_counter_read (dbmanager->st_insert));
+  vh_log (VALHALLA_MSG_INFO, "Files updated     | %lu",
+          vh_stats_counter_read (dbmanager->st_update));
+  vh_log (VALHALLA_MSG_INFO, "Files deleted     | %lu",
+          vh_stats_counter_read (dbmanager->st_delete));
+  vh_log (VALHALLA_MSG_INFO, "Files unchanged   | %lu",
+          vh_stats_counter_read (dbmanager->st_nochange));
+  vh_log (VALHALLA_MSG_INFO, "Relations cleaned | %lu",
+          vh_stats_counter_read (dbmanager->st_cleanup));
+}
+
 dbmanager_t *
 vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
 {
@@ -532,6 +559,20 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
 
   pthread_mutex_init (&dbmanager->mutex_run, NULL);
   VH_THREAD_PAUSE_INIT (dbmanager)
+
+  /* init statistics */
+  vh_stats_grp_add (handle->stats,
+                    STATS_GROUP, dbmanager_stats_dump, dbmanager);
+  dbmanager->st_insert =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_INSERT,   NULL);
+  dbmanager->st_update =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_UPDATE,   NULL);
+  dbmanager->st_delete =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_DELETE,   NULL);
+  dbmanager->st_nochange =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_NOCHANGE, NULL);
+  dbmanager->st_cleanup =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_CLEANUP,  NULL);
 
   return dbmanager;
 
