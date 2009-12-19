@@ -78,21 +78,21 @@ enum valhalla_errno {
 
 /** \brief Verbosity level. */
 typedef enum valhalla_verb {
-  VALHALLA_MSG_NONE,     /**< No error messages.                        */
-  VALHALLA_MSG_VERBOSE,  /**< Super-verbose mode: mostly for debugging. */
-  VALHALLA_MSG_INFO,     /**< Working operations.                       */
-  VALHALLA_MSG_WARNING,  /**< Harmless failures.                        */
-  VALHALLA_MSG_ERROR,    /**< May result in hazardous behavior.         */
-  VALHALLA_MSG_CRITICAL, /**< Prevents lib from working.                */
+  VALHALLA_MSG_NONE,     /**< No error messages.                            */
+  VALHALLA_MSG_VERBOSE,  /**< Super-verbose mode: mostly for debugging.     */
+  VALHALLA_MSG_INFO,     /**< Working operations.                           */
+  VALHALLA_MSG_WARNING,  /**< Harmless failures.                            */
+  VALHALLA_MSG_ERROR,    /**< May result in hazardous behavior.             */
+  VALHALLA_MSG_CRITICAL, /**< Prevents lib from working.                    */
 } valhalla_verb_t;
 
 /** \brief Destinations for downloading. */
 typedef enum valhalla_dl {
-  VALHALLA_DL_DEFAULT = 0,    /**< Destination by default.              */
-  VALHALLA_DL_COVER,          /**< Destination for covers.              */
-  VALHALLA_DL_THUMBNAIL,      /**< Destination for thumbnails.          */
-  VALHALLA_DL_FAN_ART,        /**< Destination for fan-arts.            */
-  VALHALLA_DL_LAST            /**< \internal Don't use it!              */
+  VALHALLA_DL_DEFAULT = 0,    /**< Destination by default.                  */
+  VALHALLA_DL_COVER,          /**< Destination for covers.                  */
+  VALHALLA_DL_THUMBNAIL,      /**< Destination for thumbnails.              */
+  VALHALLA_DL_FAN_ART,        /**< Destination for fan-arts.                */
+  VALHALLA_DL_LAST            /**< \internal Don't use it!                  */
 } valhalla_dl_t;
 
 /** \brief Events for valhalla_ondemand() callback. */
@@ -104,25 +104,25 @@ typedef enum valhalla_event_od {
 
 /** \brief Events for general actions in Valhalla. */
 typedef enum valhalla_event_gl {
-  VALHALLA_EVENTGL_SCANNER_BEGIN = 0, /**< Begin the scanning of paths. */
-  VALHALLA_EVENTGL_SCANNER_END,       /**< All paths scanned.           */
-  VALHALLA_EVENTGL_SCANNER_SLEEP,     /**< Scanner is sleeping.         */
-  VALHALLA_EVENTGL_SCANNER_ACKS,      /**< All files fully handled.     */
-  VALHALLA_EVENTGL_SCANNER_EXIT,      /**< Exit, end of all loops.      */
+  VALHALLA_EVENTGL_SCANNER_BEGIN = 0, /**< Begin the scanning of paths.     */
+  VALHALLA_EVENTGL_SCANNER_END,       /**< All paths scanned.               */
+  VALHALLA_EVENTGL_SCANNER_SLEEP,     /**< Scanner is sleeping.             */
+  VALHALLA_EVENTGL_SCANNER_ACKS,      /**< All files fully handled.         */
+  VALHALLA_EVENTGL_SCANNER_EXIT,      /**< Exit, end of all loops.          */
 } valhalla_event_gl_t;
 
 /** \brief Type of statistic. */
 typedef enum valhalla_stats_type {
-  VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.              */
-  VALHALLA_STATS_COUNTER,     /**< Read value for a counter.            */
+  VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.                  */
+  VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
 
 #define VH_CFG_RANGE  8 /**< 256 possibilities for every combinations of type */
 
-#define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                 */
-#define VH_CHARP_T    (1 << VH_CFG_RANGE)  /**< char *               */
-#define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                  */
-#define VH_VHDL_T     (4 << VH_CFG_RANGE)  /**< ::valhalla_dl_t      */
+#define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                        */
+#define VH_CHARP_T    (1 << VH_CFG_RANGE)  /**< char *                      */
+#define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                         */
+#define VH_VHDL_T     (4 << VH_CFG_RANGE)  /**< ::valhalla_dl_t             */
 
 /** \brief Macro to init items in ::valhalla_cfg_t. */
 #define VH_CFG_INIT(name, type, num) VALHALLA_CFG_##name = ((type) + (num))
