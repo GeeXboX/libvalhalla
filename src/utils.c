@@ -363,6 +363,7 @@ vh_queue_cleanup (fifo_queue_t *queue)
       break;
 
     case ACTION_OD_ENGAGE:
+    case ACTION_EH_EVENTGL:
       if (data)
         free (data);
       break;

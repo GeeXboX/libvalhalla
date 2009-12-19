@@ -138,6 +138,7 @@ valhalla_mrproper (valhalla_t *handle)
       case ACTION_DB_EXT_UPDATE:
       case ACTION_DB_EXT_DELETE:
       case ACTION_EH_EVENTOD:
+      case ACTION_EH_EVENTGL:
         vh_fifo_queue_push (fifo_o, FIFO_QUEUE_PRIORITY_NORMAL, e, data);
         break;
 
