@@ -309,7 +309,7 @@ dbmanager_queue (dbmanager_t *dbmanager, dbmanager_stats_t *stats)
 static void *
 dbmanager_thread (void *arg)
 {
-  int rc;
+  int rc, loop = 0;
   const char *file;
   dbmanager_t *dbmanager = arg;
 
@@ -332,6 +332,8 @@ dbmanager_thread (void *arg)
     int stats_delete   = 0;
     int stats_cleanup  = 0;
     int rst = 0;
+
+    vh_log (VALHALLA_MSG_INFO, "[%s] Begin loop %i", __FUNCTION__, loop);
 
     /* Clear all checked__ files */
     vh_database_file_checked_clear (dbmanager->database);
@@ -384,6 +386,7 @@ dbmanager_thread (void *arg)
       vh_log (VALHALLA_MSG_INFO,
               "[%s] Relations cleanup : %i", __FUNCTION__, stats_cleanup);
     }
+    vh_log (VALHALLA_MSG_INFO, "[%s] End loop %i", __FUNCTION__, loop++);
   }
   while (rc == ACTION_DB_NEXT_LOOP && !dbmanager_is_stopped (dbmanager));
 
