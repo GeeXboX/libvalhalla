@@ -404,6 +404,29 @@ valhalla_grabber_list_get (valhalla_t *handle, const char *id)
 #endif /* USE_GRABBER */
 }
 
+const char *
+valhalla_stats_group_next (valhalla_t *handle, const char *id)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return NULL;
+
+  return vh_stats_group_next (handle->stats, id);
+}
+
+unsigned long
+valhalla_stats_read_next (valhalla_t *handle, const char *id,
+                          valhalla_stats_type_t type, const char **item)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return 0;
+
+  return vh_stats_read_next (handle->stats, id, type, item);
+}
+
 void
 valhalla_verbosity (valhalla_verb_t level)
 {

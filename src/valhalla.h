@@ -353,6 +353,37 @@ void valhalla_verbosity (valhalla_verb_t level);
 const char *valhalla_grabber_list_get (valhalla_t *handle, const char *id);
 
 /**
+ * \brief Retrieve the ID of all groups in the statistics.
+ *
+ * The function returns the ID after \p id, or the first group ID if \p id
+ * is NULL.
+ *
+ * \warning This function can be called in anytime.
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] id          Group ID or NULL to retrieve the first.
+ * \return the next ID or NULL if \p id is the last (or on error).
+ */
+const char *valhalla_stats_group_next (valhalla_t *handle, const char *id);
+
+/**
+ * \brief Retrieve the value of a timer or a counter in the statistics.
+ *
+ * \p item ID is set according to the next timer or the next counter.
+ * If the \p item ID is not changed on the return, then an error was
+ * encountered.
+ *
+ * \warning This function can be called in anytime.
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] id          Group ID.
+ * \param[in] type        Timer or counter.
+ * \param[in,out] item    Item ID or NULL for the first.
+ * \return the value (nanoseconds for the timers).
+ */
+unsigned long valhalla_stats_read_next (valhalla_t *handle, const char *id,
+                                        valhalla_stats_type_t type,
+                                        const char **item);
+
+/**
  * \brief Run the scanner, the database manager and all parsers.
  *
  * The \p priority can be set to all thread especially to run the system
