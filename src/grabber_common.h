@@ -150,7 +150,7 @@ typedef struct grabber_list_s {
    */
   void *priv;
 
-  /** \brief Different of 0 if the grabber is enabled. */
+  /** \private Different of 0 if the grabber is enabled. */
   int enable;
 
   /** \private Timer for statistics. */
