@@ -53,6 +53,7 @@
   " -s --suffix             file suffix (extension)\n" \
   " -g --grabber            grabber to be used\n" \
   " -i --no-grabber         disable all grabbers\n" \
+  " -j --stats              dump all the statistics\n" \
   "\n" \
   "Example:\n" \
   " $ " APPNAME " -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
@@ -86,11 +87,12 @@ main (int argc, char **argv)
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
   const char *grabbers[GRABBER_MAX];
-  int nograbber = 0;
+  int nograbber = 0, stats = 0;
   struct timespec tss, tse, tsd;
+  const char *group = NULL;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:i";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:ij";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -107,6 +109,7 @@ main (int argc, char **argv)
     { "suffix",     required_argument, 0, 's'  },
     { "grabber",    required_argument, 0, 'g'  },
     { "no-grabber", no_argument,       0, 'i'  },
+    { "stats",      no_argument,       0, 'j'  },
     { NULL,         0,                 0, '\0' },
   };
 
@@ -185,6 +188,10 @@ main (int argc, char **argv)
 
     case 'i':
       nograbber = 1;
+      break;
+
+    case 'j':
+      stats = 1;
       break;
 
     default:
@@ -304,6 +311,36 @@ main (int argc, char **argv)
     usleep (time_limit * 1000);
 
   vh_clock_gettime (CLOCK_REALTIME, &tse);
+
+  /* statistics */
+  printf ("Statistics dump: %s\n", !stats ? "(ignored)" : "");
+  while (stats && (group = valhalla_stats_group_next (handle, group)))
+  {
+    unsigned long val;
+    const char *item = NULL;
+
+    printf (" %s\n", group);
+    printf (" - counters\n");
+    do
+    {
+      val =
+        valhalla_stats_read_next (handle, group, VALHALLA_STATS_COUNTER, &item);
+      if (item)
+        printf ("   - %-20s %lu\n", item, val);
+    }
+    while (item);
+
+    item = NULL;
+    printf (" - timers\n");
+    do
+    {
+      val =
+        valhalla_stats_read_next (handle, group, VALHALLA_STATS_TIMER, &item);
+      if (item)
+        printf ("   - %-20s %lu\n", item, val);
+    }
+    while (item);
+  }
 
   valhalla_uninit (handle);
 
