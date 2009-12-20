@@ -24,71 +24,109 @@
 
 #include "list.h"
 
-struct list_s {
-  struct list_s *next;
+typedef struct list_item_s {
+  struct list_item_s *next;
   void *data;
+} list_item_t;
+
+struct list_s {
+  list_item_t *item;
+  list_item_t *item_last;
+  void (*free_fct) (void *data);
 };
 
 
 void
-vh_list_append (list_t **list, const void *data, size_t len)
+vh_list_append (list_t *list, const void *data, size_t len)
 {
-  list_t *it;
+  list_item_t *item;
 
   if (!list || !data)
     return;
 
-  if (!*list)
+  if (!list->item)
   {
-    *list = calloc (1, sizeof (list_t));
-    it = *list;
+    list->item = calloc (1, sizeof (list_item_t));
+    item = list->item;
   }
   else
   {
-    for (it = *list; it->next; it = it->next)
-      ;
-    it->next = calloc (1, sizeof (list_t));
-    it = it->next;
+    list->item_last->next = calloc (1, sizeof (list_item_t));
+    item = list->item_last->next;
   }
 
-  if (!it)
+  if (!item)
     return;
 
-  it->data = calloc (1, len);
-  if (it->data)
-    memcpy (it->data, data, len);
+  list->item_last = item;
+
+  item->data = calloc (1, len);
+  if (item->data)
+    memcpy (item->data, data, len);
+}
+
+list_t *
+vh_list_new (void (*free_fct) (void *data))
+{
+  list_t *list;
+
+  list = calloc (1, sizeof (list_t));
+  if (!list)
+    return NULL;
+
+  list->free_fct = free_fct;
+  return list;
 }
 
 void
-vh_list_free (list_t *list, void (*free_fct) (void *data))
+vh_list_empty (list_t *list)
 {
-  list_t *list_n;
+  list_item_t *item, *item_n;
 
-  while (list)
+  if (!list)
+    return;
+
+  item = list->item;
+  while (item)
   {
-    list_n = list->next;
-    if (list->data)
+    item_n = item->next;
+    if (item->data)
     {
-      if (free_fct)
-        free_fct (list->data);
+      if (list->free_fct)
+        list->free_fct (item->data);
       else
-        free (list->data);
+        free (item->data);
     }
-    free (list);
-    list = list_n;
+    free (item);
+    item = item_n;
   }
+
+  list->item      = NULL;
+  list->item_last = NULL;
+}
+
+void
+vh_list_free (list_t *list)
+{
+  if (!list)
+    return;
+
+  vh_list_empty (list);
+  free (list);
 }
 
 void *
 vh_list_search (list_t *list, const void *tocmp,
                 int (*cmp_fct) (const void *tocmp, const void *data))
 {
-  if (!tocmp || !cmp_fct)
+  list_item_t *item;
+
+  if (!list || !tocmp || !cmp_fct)
     return NULL;
 
-  for (; list; list = list->next)
-    if (!cmp_fct (tocmp, list->data))
-      return list->data;
+  for (item = list->item; item; item = item->next)
+    if (!cmp_fct (tocmp, item->data))
+      return item->data;
 
   return NULL;
 }
