@@ -286,9 +286,9 @@ grabber_amazon_check (grabber_amazon_t *amazon, const char *cover)
   if (!amazon->list)
     return -1;
 
-    data = vh_list_search (amazon->list, cover, grabber_amazon_cmp_fct);
-    if (data)
-      return 0;
+  data = vh_list_search (amazon->list, cover, grabber_amazon_cmp_fct);
+  if (data)
+    return 0;
 
   vh_list_append (amazon->list, cover, strlen (cover) + 1);
   return -1;

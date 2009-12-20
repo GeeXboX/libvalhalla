@@ -107,9 +107,9 @@ grabber_lastfm_check (grabber_lastfm_t *lastfm, const char *cover)
   if (!lastfm->list)
     return -1;
 
-    data = vh_list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
-    if (data)
-      return 0;
+  data = vh_list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
+  if (data)
+    return 0;
 
   vh_list_append (lastfm->list, cover, strlen (cover) + 1);
   return -1;

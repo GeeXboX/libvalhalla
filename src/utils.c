@@ -247,12 +247,12 @@ vh_file_data_new (const char *file, time_t mtime, int outofpath,
   if (!fdata)
     return NULL;
 
-  fdata->file      = strdup (file);
-  fdata->mtime     = mtime;
-  fdata->outofpath = outofpath;
-  fdata->od        = od;
-  fdata->priority  = prio;
-  fdata->step      = step;
+  fdata->file         = strdup (file);
+  fdata->mtime        = mtime;
+  fdata->outofpath    = outofpath;
+  fdata->od           = od;
+  fdata->priority     = prio;
+  fdata->step         = step;
   fdata->grabber_list = vh_list_new (NULL);
 
   sem_init (&fdata->sem_grabber, 0, 0);
