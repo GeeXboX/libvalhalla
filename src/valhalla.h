@@ -58,6 +58,182 @@ extern "C" {
 #include <stdarg.h>
 
 
+typedef enum valhalla_file_type {
+  VALHALLA_FILE_TYPE_NULL = 0,
+  VALHALLA_FILE_TYPE_AUDIO,
+  VALHALLA_FILE_TYPE_IMAGE,
+  VALHALLA_FILE_TYPE_PLAYLIST,
+  VALHALLA_FILE_TYPE_VIDEO,
+} valhalla_file_type_t;
+
+/** \brief Groups for metadata. */
+typedef enum valhalla_meta_grp {
+  /**
+   * NULL value for a group attribution.
+   */
+  VALHALLA_META_GRP_NIL = 0,
+
+  /**
+   * genre, mood, subject, synopsis, summary, description, keywords,
+   * mediatype, period, ...
+   */
+  VALHALLA_META_GRP_CLASSIFICATION,
+
+  /**
+   * commercial, payment, purchase info, purchase price, purchase item,
+   * purchase owner, purchase currency, file owner, ...
+   */
+  VALHALLA_META_GRP_COMMERCIAL,
+
+  /**
+   * url, email, address, phone, fax, ...
+   */
+  VALHALLA_META_GRP_CONTACT,
+
+  /**
+   * artist, url, performer, accompaniment, band, ensemble, composer,
+   * arranger, lyricist, conductor, actor, character, author, director,
+   * producer, coproducer, executive producer, costume designer, label,
+   * choregrapher, sound engineer, production studio, publisher, ...
+   */
+  VALHALLA_META_GRP_ENTITIES,
+
+  /**
+   * isrc, mcdi, isbn, barcode, lccn, cdid, ufid, ...
+   */
+  VALHALLA_META_GRP_IDENTIFIER,
+
+  /**
+   * copyright, terms of use, url, ownership, license, rights, ...
+   */
+  VALHALLA_META_GRP_LEGAL,
+
+  /**
+   * user text, orig filename, picture, lyrics, ...
+   */
+  VALHALLA_META_GRP_MISCELLANEOUS,
+
+  /**
+   * bmp, measure, tunning, initial key, ...
+   */
+  VALHALLA_META_GRP_MUSICAL,
+
+  /**
+   * track, disk, part number, track number, disc number, total tracks,
+   * total parts, ...
+   */
+  VALHALLA_META_GRP_ORGANIZATIONAL,
+
+  /**
+   * comment, rating, play count, ...
+   */
+  VALHALLA_META_GRP_PERSONAL,
+
+  /**
+   * composition location, recording location, composer nationality, ...
+   */
+  VALHALLA_META_GRP_SPACIAL,
+
+  /**
+   * encoder, playlist delay, buffer size, ...
+   */
+  VALHALLA_META_GRP_TECHNICAL,
+
+  /**
+   * date written, date recorded, date released, date digitized, date encoded,
+   * date tagged, date purchased, year, ...
+   */
+  VALHALLA_META_GRP_TEMPORAL,
+
+  /**
+   * title, album, subtitle, title sort order, album sort order, part ...
+   */
+  VALHALLA_META_GRP_TITLES,
+
+} valhalla_meta_grp_t;
+
+/**
+ * \name List of common metadata.
+ * @{
+ */
+
+/* Classification */
+#define VALHALLA_METADATA_CATEGORY                   "category"
+#define VALHALLA_METADATA_EPISODE                    "episode"
+#define VALHALLA_METADATA_GENRE                      "genre"
+#define VALHALLA_METADATA_MPAA                       "mpaa"
+#define VALHALLA_METADATA_RUNTIME                    "runtime"
+#define VALHALLA_METADATA_SEASON                     "season"
+#define VALHALLA_METADATA_SYNOPSIS                   "synopsis"
+#define VALHALLA_METADATA_SYNOPSIS_SHOW              "synopsis_show"
+
+/* Commercial */
+#define VALHALLA_METADATA_BUDGET                     "budget"
+#define VALHALLA_METADATA_COUNTRY                    "country"
+#define VALHALLA_METADATA_REVENUE                    "revenue"
+#define VALHALLA_METADATA_STUDIO                     "studio"
+
+/* Entities */
+#define VALHALLA_METADATA_ACTOR                      "actor"
+#define VALHALLA_METADATA_ARTIST                     "artist"
+#define VALHALLA_METADATA_AUTHOR                     "author"
+#define VALHALLA_METADATA_CASTING                    "casting"
+#define VALHALLA_METADATA_COMPOSER                   "composer"
+#define VALHALLA_METADATA_CREDITS                    "credits"
+#define VALHALLA_METADATA_DIRECTOR                   "director"
+#define VALHALLA_METADATA_DIRECTOR_PHOTO             "director_photo"
+#define VALHALLA_METADATA_EDITOR                     "editor"
+#define VALHALLA_METADATA_PRODUCER                   "producer"
+
+/* Miscellaneous */
+#define VALHALLA_METADATA_COVER                      "cover"
+#define VALHALLA_METADATA_COVER_SEASON               "cover_season"
+#define VALHALLA_METADATA_COVER_SHOW                 "cover_show"
+#define VALHALLA_METADATA_COVER_SHOW_HEADER          "cover_show_header"
+#define VALHALLA_METADATA_FAN_ART                    "fanart"
+#define VALHALLA_METADATA_LYRICS                     "lyrics"
+#define VALHALLA_METADATA_THUMBNAIL                  "thumbnail"
+
+/* Organizational */
+#define VALHALLA_METADATA_TRACK                      "track"
+
+/* Personal */
+#define VALHALLA_METADATA_PLAY_COUNT                 "playcount"
+#define VALHALLA_METADATA_RATING                     "rating"
+#define VALHALLA_METADATA_WATCHED                    "watched"
+
+/* Technical */
+#define VALHALLA_METADATA_AUDIO_BITRATE              "audio_bitrate"
+#define VALHALLA_METADATA_AUDIO_CHANNELS             "audio_channels"
+#define VALHALLA_METADATA_AUDIO_CODEC                "audio_codec"
+#define VALHALLA_METADATA_AUDIO_LANG                 "audio_lang"
+#define VALHALLA_METADATA_AUDIO_STREAMS              "audio_streams"
+#define VALHALLA_METADATA_DURATION                   "duration"
+#define VALHALLA_METADATA_HEIGHT                     "height"
+#define VALHALLA_METADATA_PICTURE_ORIENTATION        "picture_orientation"
+#define VALHALLA_METADATA_SUB_LANG                   "sub_lang"
+#define VALHALLA_METADATA_SUB_STREAMS                "sub_streams"
+#define VALHALLA_METADATA_VIDEO_ASPECT               "video_aspect"
+#define VALHALLA_METADATA_VIDEO_BITRATE              "video_bitrate"
+#define VALHALLA_METADATA_VIDEO_CODEC                "video_codec"
+#define VALHALLA_METADATA_VIDEO_STREAMS              "video_streams"
+#define VALHALLA_METADATA_WIDTH                      "width"
+
+/* Temporal */
+#define VALHALLA_METADATA_DATE                       "date"
+#define VALHALLA_METADATA_PREMIERED                  "premiered"
+#define VALHALLA_METADATA_YEAR                       "year"
+
+/* Titles */
+#define VALHALLA_METADATA_ALBUM                      "album"
+#define VALHALLA_METADATA_TITLE                      "title"
+#define VALHALLA_METADATA_TITLE_ALTERNATIVE          "title_alternative"
+#define VALHALLA_METADATA_TITLE_SHOW                 "title_show"
+
+/**
+ * @}
+ */
+
 /******************************************************************************/
 /*                                                                            */
 /* Valhalla Handling                                                          */
@@ -468,182 +644,6 @@ void valhalla_ondemand (valhalla_t *handle, const char *file);
 /* Database Selections                                                        */
 /*                                                                            */
 /******************************************************************************/
-
-typedef enum valhalla_file_type {
-  VALHALLA_FILE_TYPE_NULL = 0,
-  VALHALLA_FILE_TYPE_AUDIO,
-  VALHALLA_FILE_TYPE_IMAGE,
-  VALHALLA_FILE_TYPE_PLAYLIST,
-  VALHALLA_FILE_TYPE_VIDEO,
-} valhalla_file_type_t;
-
-/** \brief Groups for metadata. */
-typedef enum valhalla_meta_grp {
-  /**
-   * NULL value for a group attribution.
-   */
-  VALHALLA_META_GRP_NIL = 0,
-
-  /**
-   * genre, mood, subject, synopsis, summary, description, keywords,
-   * mediatype, period, ...
-   */
-  VALHALLA_META_GRP_CLASSIFICATION,
-
-  /**
-   * commercial, payment, purchase info, purchase price, purchase item,
-   * purchase owner, purchase currency, file owner, ...
-   */
-  VALHALLA_META_GRP_COMMERCIAL,
-
-  /**
-   * url, email, address, phone, fax, ...
-   */
-  VALHALLA_META_GRP_CONTACT,
-
-  /**
-   * artist, url, performer, accompaniment, band, ensemble, composer,
-   * arranger, lyricist, conductor, actor, character, author, director,
-   * producer, coproducer, executive producer, costume designer, label,
-   * choregrapher, sound engineer, production studio, publisher, ...
-   */
-  VALHALLA_META_GRP_ENTITIES,
-
-  /**
-   * isrc, mcdi, isbn, barcode, lccn, cdid, ufid, ...
-   */
-  VALHALLA_META_GRP_IDENTIFIER,
-
-  /**
-   * copyright, terms of use, url, ownership, license, rights, ...
-   */
-  VALHALLA_META_GRP_LEGAL,
-
-  /**
-   * user text, orig filename, picture, lyrics, ...
-   */
-  VALHALLA_META_GRP_MISCELLANEOUS,
-
-  /**
-   * bmp, measure, tunning, initial key, ...
-   */
-  VALHALLA_META_GRP_MUSICAL,
-
-  /**
-   * track, disk, part number, track number, disc number, total tracks,
-   * total parts, ...
-   */
-  VALHALLA_META_GRP_ORGANIZATIONAL,
-
-  /**
-   * comment, rating, play count, ...
-   */
-  VALHALLA_META_GRP_PERSONAL,
-
-  /**
-   * composition location, recording location, composer nationality, ...
-   */
-  VALHALLA_META_GRP_SPACIAL,
-
-  /**
-   * encoder, playlist delay, buffer size, ...
-   */
-  VALHALLA_META_GRP_TECHNICAL,
-
-  /**
-   * date written, date recorded, date released, date digitized, date encoded,
-   * date tagged, date purchased, year, ...
-   */
-  VALHALLA_META_GRP_TEMPORAL,
-
-  /**
-   * title, album, subtitle, title sort order, album sort order, part ...
-   */
-  VALHALLA_META_GRP_TITLES,
-
-} valhalla_meta_grp_t;
-
-/**
- * \name List of common metadata.
- * @{
- */
-
-/* Classification */
-#define VALHALLA_METADATA_CATEGORY                   "category"
-#define VALHALLA_METADATA_EPISODE                    "episode"
-#define VALHALLA_METADATA_GENRE                      "genre"
-#define VALHALLA_METADATA_MPAA                       "mpaa"
-#define VALHALLA_METADATA_RUNTIME                    "runtime"
-#define VALHALLA_METADATA_SEASON                     "season"
-#define VALHALLA_METADATA_SYNOPSIS                   "synopsis"
-#define VALHALLA_METADATA_SYNOPSIS_SHOW              "synopsis_show"
-
-/* Commercial */
-#define VALHALLA_METADATA_BUDGET                     "budget"
-#define VALHALLA_METADATA_COUNTRY                    "country"
-#define VALHALLA_METADATA_REVENUE                    "revenue"
-#define VALHALLA_METADATA_STUDIO                     "studio"
-
-/* Entities */
-#define VALHALLA_METADATA_ACTOR                      "actor"
-#define VALHALLA_METADATA_ARTIST                     "artist"
-#define VALHALLA_METADATA_AUTHOR                     "author"
-#define VALHALLA_METADATA_CASTING                    "casting"
-#define VALHALLA_METADATA_COMPOSER                   "composer"
-#define VALHALLA_METADATA_CREDITS                    "credits"
-#define VALHALLA_METADATA_DIRECTOR                   "director"
-#define VALHALLA_METADATA_DIRECTOR_PHOTO             "director_photo"
-#define VALHALLA_METADATA_EDITOR                     "editor"
-#define VALHALLA_METADATA_PRODUCER                   "producer"
-
-/* Miscellaneous */
-#define VALHALLA_METADATA_COVER                      "cover"
-#define VALHALLA_METADATA_COVER_SEASON               "cover_season"
-#define VALHALLA_METADATA_COVER_SHOW                 "cover_show"
-#define VALHALLA_METADATA_COVER_SHOW_HEADER          "cover_show_header"
-#define VALHALLA_METADATA_FAN_ART                    "fanart"
-#define VALHALLA_METADATA_LYRICS                     "lyrics"
-#define VALHALLA_METADATA_THUMBNAIL                  "thumbnail"
-
-/* Organizational */
-#define VALHALLA_METADATA_TRACK                      "track"
-
-/* Personal */
-#define VALHALLA_METADATA_PLAY_COUNT                 "playcount"
-#define VALHALLA_METADATA_RATING                     "rating"
-#define VALHALLA_METADATA_WATCHED                    "watched"
-
-/* Technical */
-#define VALHALLA_METADATA_AUDIO_BITRATE              "audio_bitrate"
-#define VALHALLA_METADATA_AUDIO_CHANNELS             "audio_channels"
-#define VALHALLA_METADATA_AUDIO_CODEC                "audio_codec"
-#define VALHALLA_METADATA_AUDIO_LANG                 "audio_lang"
-#define VALHALLA_METADATA_AUDIO_STREAMS              "audio_streams"
-#define VALHALLA_METADATA_DURATION                   "duration"
-#define VALHALLA_METADATA_HEIGHT                     "height"
-#define VALHALLA_METADATA_PICTURE_ORIENTATION        "picture_orientation"
-#define VALHALLA_METADATA_SUB_LANG                   "sub_lang"
-#define VALHALLA_METADATA_SUB_STREAMS                "sub_streams"
-#define VALHALLA_METADATA_VIDEO_ASPECT               "video_aspect"
-#define VALHALLA_METADATA_VIDEO_BITRATE              "video_bitrate"
-#define VALHALLA_METADATA_VIDEO_CODEC                "video_codec"
-#define VALHALLA_METADATA_VIDEO_STREAMS              "video_streams"
-#define VALHALLA_METADATA_WIDTH                      "width"
-
-/* Temporal */
-#define VALHALLA_METADATA_DATE                       "date"
-#define VALHALLA_METADATA_PREMIERED                  "premiered"
-#define VALHALLA_METADATA_YEAR                       "year"
-
-/* Titles */
-#define VALHALLA_METADATA_ALBUM                      "album"
-#define VALHALLA_METADATA_TITLE                      "title"
-#define VALHALLA_METADATA_TITLE_ALTERNATIVE          "title_alternative"
-#define VALHALLA_METADATA_TITLE_SHOW                 "title_show"
-
-/**
- * @}
- */
 
 typedef enum valhalla_db_type {
   VALHALLA_DB_TYPE_ID,
