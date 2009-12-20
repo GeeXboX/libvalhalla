@@ -230,7 +230,7 @@ vh_file_data_free (file_data_t *data)
   if (data->list_downloader)
     file_dl_free (data->list_downloader);
   if (data->grabber_list)
-    vh_list_free (data->grabber_list, NULL);
+    vh_list_free (data->grabber_list);
 
   sem_destroy (&data->sem_grabber);
 
@@ -253,6 +253,7 @@ vh_file_data_new (const char *file, time_t mtime, int outofpath,
   fdata->od        = od;
   fdata->priority  = prio;
   fdata->step      = step;
+  fdata->grabber_list = vh_list_new (NULL);
 
   sem_init (&fdata->sem_grabber, 0, 0);
 

@@ -104,14 +104,14 @@ grabber_lastfm_check (grabber_lastfm_t *lastfm, const char *cover)
 {
   char *data = NULL;
 
-  if (lastfm->list)
-  {
+  if (!lastfm->list)
+    return -1;
+
     data = vh_list_search (lastfm->list, cover, grabber_lastfm_cmp_fct);
     if (data)
       return 0;
-  }
 
-  vh_list_append (&lastfm->list, cover, strlen (cover) + 1);
+  vh_list_append (lastfm->list, cover, strlen (cover) + 1);
   return -1;
 }
 
@@ -137,6 +137,10 @@ grabber_lastfm_init (void *priv)
   if (!lastfm)
     return -1;
 
+  lastfm->list = vh_list_new (NULL);
+  if (!lastfm->list)
+    return -1;
+
   lastfm->handler = vh_url_new ();
   return lastfm->handler ? 0 : -1;
 }
@@ -152,7 +156,7 @@ grabber_lastfm_uninit (void *priv)
     return;
 
   vh_url_free (lastfm->handler);
-  vh_list_free (lastfm->list, NULL);
+  vh_list_free (lastfm->list);
   free (lastfm);
 }
 
@@ -228,7 +232,7 @@ grabber_lastfm_loop (void *priv)
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
-  VH_LIST_FREE (lastfm->list, NULL);
+  vh_list_empty (lastfm->list);
 }
 
 /****************************************************************************/

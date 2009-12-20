@@ -266,7 +266,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
         if (interrup == 1 && (int64_t) pdata->mtime == mtime)
         {
           vh_database_file_get_grabber (dbmanager->database,
-                                        pdata->file, &pdata->grabber_list);
+                                        pdata->file, pdata->grabber_list);
           vh_database_file_get_dlcontext (dbmanager->database,
                                           pdata->file, &pdata->list_downloader);
         }

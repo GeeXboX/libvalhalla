@@ -283,14 +283,14 @@ grabber_amazon_check (grabber_amazon_t *amazon, const char *cover)
 {
   char *data = NULL;
 
-  if (amazon->list)
-  {
+  if (!amazon->list)
+    return -1;
+
     data = vh_list_search (amazon->list, cover, grabber_amazon_cmp_fct);
     if (data)
       return 0;
-  }
 
-  vh_list_append (&amazon->list, cover, strlen (cover) + 1);
+  vh_list_append (amazon->list, cover, strlen (cover) + 1);
   return -1;
 }
 
@@ -320,6 +320,10 @@ grabber_amazon_init (void *priv)
   if (!amazon->hd)
     return -1;
 
+  amazon->list = vh_list_new (NULL);
+  if (!amazon->list)
+    return -1;
+
   amazon->handler = vh_url_new ();
   return amazon->handler ? 0 : -1;
 }
@@ -338,7 +342,7 @@ grabber_amazon_uninit (void *priv)
   if (amazon->handler)
     vh_url_free (amazon->handler);
   if (amazon->list)
-    vh_list_free (amazon->list, NULL);
+    vh_list_free (amazon->list);
 
   free (amazon);
 }
@@ -425,7 +429,7 @@ grabber_amazon_loop (void *priv)
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   /* Hash cover list cleanup */
-  VH_LIST_FREE (amazon->list, NULL);
+  vh_list_empty (amazon->list);
 }
 
 /****************************************************************************/

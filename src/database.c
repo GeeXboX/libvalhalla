@@ -799,7 +799,7 @@ vh_database_file_get_mtime (database_t *database, const char *file)
 
 void
 vh_database_file_get_grabber (database_t *database,
-                              const char *file, list_t **l)
+                              const char *file, list_t *l)
 {
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_FILE_GRABBER_NAME);
