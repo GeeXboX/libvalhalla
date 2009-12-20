@@ -134,6 +134,43 @@ vh_metadata_get (metadata_t *meta,
 }
 
 void
+vh_metadata_dup (metadata_t **dst, const metadata_t *src)
+{
+  metadata_t *st = NULL, *tmp = NULL;
+
+  if (!dst || !src)
+    return;
+
+  for (; src; src = src->next)
+  {
+    if (tmp)
+    {
+      tmp->next = calloc (1, sizeof (metadata_t));
+      tmp = tmp->next;
+    }
+    else
+      tmp = calloc (1, sizeof (metadata_t));
+
+    if (!tmp)
+      goto err;
+
+    tmp->name  = strdup (src->name);
+    tmp->value = strdup (src->value);
+    tmp->group = src->group;
+
+    if (!st)
+      st = tmp;
+  }
+
+  *dst = st;
+  return;
+
+ err:
+  vh_metadata_free (st);
+  *dst = NULL;
+}
+
+void
 vh_metadata_free (metadata_t *meta)
 {
   metadata_t *tmp;

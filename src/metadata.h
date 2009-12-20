@@ -40,5 +40,6 @@ void vh_metadata_add (metadata_t **meta, const char *name,
                       const char *value, valhalla_meta_grp_t group);
 void vh_metadata_add_auto (metadata_t **meta,
                            const char *name, const char *value);
+void vh_metadata_dup (metadata_t **dst, const metadata_t *src);
 
 #endif /* VALHALLA_METADATA */
