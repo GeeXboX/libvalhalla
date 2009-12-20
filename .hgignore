@@ -6,7 +6,7 @@ syntax: regexp
 ~$
 config.log
 config.mak
-test-valhalla$
+libvalhalla-test$
 ^libvalhalla.pc
 ^DOCS/doxygen
 ^TAGS
