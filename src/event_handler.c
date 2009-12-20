@@ -247,7 +247,7 @@ vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!event_handler)
+  if (!event_handler || !event_handler->od_cb)
     return;
 
   edata = calloc (1, sizeof (event_handler_data_t));
@@ -269,7 +269,7 @@ vh_event_handler_gl_send (event_handler_t *event_handler, valhalla_event_gl_t e)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!event_handler)
+  if (!event_handler || !event_handler->gl_cb)
     return;
 
   data = malloc (sizeof (valhalla_event_gl_t));
