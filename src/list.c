@@ -33,8 +33,27 @@ struct list_s {
   list_item_t *item;
   list_item_t *item_last;
   void (*free_fct) (void *data);
+  unsigned int depth; /* 0: infinite */
+  unsigned int cnt;
 };
 
+
+static inline void
+list_item_free (list_t *list, list_item_t *item)
+{
+  if (!list || !item)
+    return;
+
+  if (item->data)
+  {
+    if (list->free_fct)
+      list->free_fct (item->data);
+    else
+      free (item->data);
+  }
+
+  free (item);
+}
 
 void
 vh_list_append (list_t *list, const void *data, size_t len)
@@ -58,6 +77,19 @@ vh_list_append (list_t *list, const void *data, size_t len)
   if (!item)
     return;
 
+  /* Remove the older item to preserve the depth. */
+  if (list->depth)
+  {
+    if (list->cnt >= list->depth)
+    {
+      list_item_t *item_n = list->item->next;
+      list_item_free (list, list->item);
+      list->item = item_n;
+    }
+    else
+      list->cnt++;
+  }
+
   list->item_last = item;
 
   item->data = calloc (1, len);
@@ -66,7 +98,7 @@ vh_list_append (list_t *list, const void *data, size_t len)
 }
 
 list_t *
-vh_list_new (void (*free_fct) (void *data))
+vh_list_new (unsigned int depth, void (*free_fct) (void *data))
 {
   list_t *list;
 
@@ -75,6 +107,7 @@ vh_list_new (void (*free_fct) (void *data))
     return NULL;
 
   list->free_fct = free_fct;
+  list->depth    = depth;
   return list;
 }
 
@@ -90,19 +123,13 @@ vh_list_empty (list_t *list)
   while (item)
   {
     item_n = item->next;
-    if (item->data)
-    {
-      if (list->free_fct)
-        list->free_fct (item->data);
-      else
-        free (item->data);
-    }
-    free (item);
+    list_item_free (list, item);
     item = item_n;
   }
 
   list->item      = NULL;
   list->item_last = NULL;
+  list->cnt       = 0;
 }
 
 void
