@@ -38,6 +38,8 @@
 
 #define MAX_URL_SIZE        1024
 
+#define MAX_LIST_DEPTH      100
+
 #define LASTFM_HOSTNAME     "ws.audioscrobbler.com"
 #define LASTFM_LICENSE_KEY  "402d3ca8e9bc9d3cf9b85e1202944ca5"
 #define LASTFM_QUERY_SEARCH "http://%s/2.0/?method=album.getinfo&api_key=%s&artist=%s&album=%s"
@@ -137,7 +139,7 @@ grabber_lastfm_init (void *priv)
   if (!lastfm)
     return -1;
 
-  lastfm->list = vh_list_new (NULL);
+  lastfm->list = vh_list_new (MAX_LIST_DEPTH, NULL);
   if (!lastfm->list)
     return -1;
 

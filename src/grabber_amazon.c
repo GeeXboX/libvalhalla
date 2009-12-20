@@ -45,6 +45,8 @@
 #define MAX_KEYWORD_SIZE    1024
 #define MAX_BUF_LEN         65535
 
+#define MAX_LIST_DEPTH      100
+
 #define AMAZON_HOSTNAME     "webservices.amazon.com"
 #define AMAZON_ACCESS_KEY   "AKIAJ27VCT7XRCSVPROQ"
 #define AMAZON_KEYSIGN      "onViRIliSg2hOg5XzxkEkFieFgB0WA0G0k19NiUT"
@@ -320,7 +322,7 @@ grabber_amazon_init (void *priv)
   if (!amazon->hd)
     return -1;
 
-  amazon->list = vh_list_new (NULL);
+  amazon->list = vh_list_new (MAX_LIST_DEPTH, NULL);
   if (!amazon->list)
     return -1;
 

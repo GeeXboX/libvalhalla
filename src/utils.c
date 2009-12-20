@@ -253,7 +253,7 @@ vh_file_data_new (const char *file, time_t mtime, int outofpath,
   fdata->od           = od;
   fdata->priority     = prio;
   fdata->step         = step;
-  fdata->grabber_list = vh_list_new (NULL);
+  fdata->grabber_list = vh_list_new (0, NULL);
 
   sem_init (&fdata->sem_grabber, 0, 0);
 
