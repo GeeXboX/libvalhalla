@@ -143,7 +143,7 @@ vh_list_free (list_t *list)
 }
 
 void *
-vh_list_search (list_t *list, const void *tocmp,
+vh_list_search (const list_t *list, const void *tocmp,
                 int (*cmp_fct) (const void *tocmp, const void *data))
 {
   list_item_t *item;
