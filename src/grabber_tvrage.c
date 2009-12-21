@@ -211,7 +211,7 @@ static int
 grabber_tvrage_grab (void *priv, file_data_t *data)
 {
   grabber_tvrage_t *tvrage = priv;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
   char *keywords;
   int err;
 

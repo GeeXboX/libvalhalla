@@ -358,7 +358,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   const char *keywords;
   const char *search_type = NULL;
   char *cover, *url = NULL;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 

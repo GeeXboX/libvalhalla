@@ -204,7 +204,7 @@ static int
 grabber_allocine_grab (void *priv, file_data_t *data)
 {
   grabber_allocine_t *allocine = priv;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
   char *keywords;
   int err;
 

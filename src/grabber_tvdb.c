@@ -335,7 +335,7 @@ static int
 grabber_tvdb_grab (void *priv, file_data_t *data)
 {
   grabber_tvdb_t *tvdb = priv;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
   char *keywords;
   int err;
 

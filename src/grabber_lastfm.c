@@ -166,7 +166,7 @@ static int
 grabber_lastfm_grab (void *priv, file_data_t *data)
 {
   grabber_lastfm_t *lastfm = priv;
-  metadata_t *album = NULL, *author = NULL;
+  const metadata_t *album = NULL, *author = NULL;
   char *artist, *alb;
   char *cover, *url = NULL;
   char name[1024] = { 0 };

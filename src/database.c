@@ -628,7 +628,7 @@ database_file_metadata (database_t *database,
                         int64_t file_id, metadata_t *meta, int ext)
 {
   int64_t meta_id = 0, data_id = 0, group_id = 0;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
 
   if (!file_id || !meta)
     return;

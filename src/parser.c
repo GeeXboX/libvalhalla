@@ -335,7 +335,7 @@ static metadata_t *
 parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 {
   metadata_t *meta = NULL;
-  metadata_t *title_tag = NULL;
+  const metadata_t *title_tag = NULL;
   AVMetadataTag *tag = NULL;
 
   if (!ctx)

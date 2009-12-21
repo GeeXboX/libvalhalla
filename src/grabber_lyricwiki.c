@@ -194,7 +194,7 @@ static int
 grabber_lyricwiki_grab (void *priv, file_data_t *data)
 {
   grabber_lyricwiki_t *lyricwiki = priv;
-  metadata_t *title = NULL, *author = NULL;
+  const metadata_t *title = NULL, *author = NULL;
   char *artist, *song;
   int res, err;
 

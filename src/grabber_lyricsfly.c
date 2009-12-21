@@ -148,7 +148,7 @@ static int
 grabber_lyricsfly_grab (void *priv, file_data_t *data)
 {
   grabber_lyricsfly_t *lyricsfly = priv;
-  metadata_t *title = NULL, *author = NULL;
+  const metadata_t *title = NULL, *author = NULL;
   char *artist, *song;
   int res, err;
 

@@ -201,7 +201,7 @@ static int
 grabber_imdb_grab (void *priv, file_data_t *data)
 {
   grabber_imdb_t *imdb = priv;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
   char *keywords;
   int err;
 

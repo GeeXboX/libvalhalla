@@ -281,7 +281,7 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
   grabber_tmdb_t *tmdb = priv;
   char *escaped_keywords;
   const char *keywords;
-  metadata_t *tag = NULL;
+  const metadata_t *tag = NULL;
   int res;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);

@@ -111,8 +111,8 @@ static const struct {
 };
 
 int
-vh_metadata_get (metadata_t *meta,
-                 const char *name, int flags, metadata_t **tag)
+vh_metadata_get (const metadata_t *meta,
+                 const char *name, int flags, const metadata_t **tag)
 {
   if (!meta || !tag || !name)
     return -1;
