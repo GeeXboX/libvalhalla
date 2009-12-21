@@ -67,7 +67,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
    * The duration is in microsecond. We save in millisecond in order to
    * have the same unit as libplayer.
    */
-  if (data->type != VALHALLA_FILE_TYPE_IMAGE && ctx->duration)
+  if (data->file.type != VALHALLA_FILE_TYPE_IMAGE && ctx->duration)
     vh_grabber_parse_int64 (data, ROUNDED_DIV (ctx->duration, 1000),
                             VALHALLA_METADATA_DURATION);
 
@@ -104,7 +104,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
       vh_grabber_parse_int (data, codec->height, VALHALLA_METADATA_HEIGHT);
 
       /* Only for video */
-      if (data->type == VALHALLA_FILE_TYPE_IMAGE)
+      if (data->file.type == VALHALLA_FILE_TYPE_IMAGE)
         break;
 
       if (codec->bit_rate)
@@ -177,7 +177,7 @@ grabber_ffmpeg_grab (vh_unused void *priv, file_data_t *data)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  ctx = vh_lavf_utils_open_input_file (data->file);
+  ctx = vh_lavf_utils_open_input_file (data->file.path);
   if (!ctx)
     return -1;
 

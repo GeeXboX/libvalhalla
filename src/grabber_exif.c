@@ -94,7 +94,7 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  d = exif_data_new_from_file (data->file);
+  d = exif_data_new_from_file (data->file.path);
   if (!d)
     return -1;
 

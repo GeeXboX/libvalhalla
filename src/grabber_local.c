@@ -134,7 +134,7 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  cover = grabber_local_get (data->file);
+  cover = grabber_local_get (data->file.path);
   if (cover)
   {
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);

@@ -80,7 +80,7 @@ ondemand_cmp_fct (const void *tocmp, int id, const void *data)
   case ACTION_DB_UPDATE_G:
   case ACTION_DB_END:
   case ACTION_DB_NEWFILE:
-    return strcmp (file, fdata->file);
+    return strcmp (file, fdata->file.path);
 
   default:
     return -1;

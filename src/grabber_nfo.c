@@ -332,7 +332,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  nfo = nfo_init (data->file);
+  nfo = nfo_init (data->file.path);
   if (!nfo)
     return -1;
 

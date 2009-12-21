@@ -195,10 +195,12 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
     /* received from the dispatcher */
     case ACTION_DB_END:
-      vh_database_file_interrupted_clear (dbmanager->database, pdata->file);
+      vh_database_file_interrupted_clear (dbmanager->database,
+                                          pdata->file.path);
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file, VALHALLA_EVENTOD_ENDED, NULL);
+                                  pdata->file.path,
+                                  VALHALLA_EVENTOD_ENDED, NULL);
       break;
 
     /* received from the dispatcher (grabbed data) */
@@ -206,7 +208,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_database_file_grab_insert (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file, VALHALLA_EVENTOD_GRABBED,
+                                  pdata->file.path, VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
       METADATA_GRABBER_POST
       grab++;
@@ -219,7 +221,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_database_file_data_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file, VALHALLA_EVENTOD_PARSED, NULL);
+                                  pdata->file.path,
+                                  VALHALLA_EVENTOD_PARSED, NULL);
       continue;
 
     /* received from the dispatcher (grabbed data) */
@@ -227,7 +230,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_database_file_grab_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file, VALHALLA_EVENTOD_GRABBED,
+                                  pdata->file.path, VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
       METADATA_GRABBER_POST
       grab++;
@@ -238,7 +241,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
     {
       int interrup = 0;
       int64_t mtime =
-        vh_database_file_get_mtime (dbmanager->database, pdata->file);
+        vh_database_file_get_mtime (dbmanager->database, pdata->file.path);
       /*
        * File is parsed only if mtime has changed, if the grabbing/downloading
        * was interrupted or if it is unexistant in the database.
@@ -257,27 +260,28 @@ dbmanager_queue (dbmanager_t *dbmanager)
       if (mtime >= 0)
       {
         interrup =
-          vh_database_file_get_interrupted (dbmanager->database, pdata->file);
+          vh_database_file_get_interrupted (dbmanager->database,
+                                            pdata->file.path);
         /*
          * Retrieve the list of all grabbers already handled for this file
          * and search if there are files to download since the interruption.
          * But if mtime has changed, the file must be _fully_ updated.
          */
-        if (interrup == 1 && (int64_t) pdata->mtime == mtime)
+        if (interrup == 1 && pdata->file.mtime == mtime)
         {
           vh_database_file_get_grabber (dbmanager->database,
-                                        pdata->file, pdata->grabber_list);
-          vh_database_file_get_dlcontext (dbmanager->database,
-                                          pdata->file, &pdata->list_downloader);
+                                        pdata->file.path, pdata->grabber_list);
+          vh_database_file_get_dlcontext (dbmanager->database, pdata->file.path,
+                                          &pdata->list_downloader);
         }
         /*
          * Delete all previous associations on the file because the main
          * metadata have changed.
          */
-        else if ((int64_t) pdata->mtime != mtime)
+        else if (pdata->file.mtime != mtime)
         {
-          vh_database_file_data_delete (dbmanager->database, pdata->file);
-          vh_database_file_grab_delete (dbmanager->database, pdata->file);
+          vh_database_file_data_delete (dbmanager->database, pdata->file.path);
+          vh_database_file_grab_delete (dbmanager->database, pdata->file.path);
         }
       }
       else
@@ -286,7 +290,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
         VH_STATS_COUNTER_INC (dbmanager->st_insert);
       }
 
-      if (mtime < 0 || (int64_t) pdata->mtime != mtime || interrup == 1)
+      if (mtime < 0 || pdata->file.mtime != mtime || interrup == 1)
       {
         vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
                                    pdata->priority,
@@ -298,7 +302,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file, VALHALLA_EVENTOD_ENDED, NULL);
+                                  pdata->file.path,
+                                  VALHALLA_EVENTOD_ENDED, NULL);
       VH_STATS_COUNTER_INC (dbmanager->st_nochange);
     }
     }

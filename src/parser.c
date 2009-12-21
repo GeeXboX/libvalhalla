@@ -405,12 +405,12 @@ parser_metadata (parser_t *parser, file_data_t *data)
 {
   AVFormatContext *ctx;
 
-  ctx = vh_lavf_utils_open_input_file (data->file);
+  ctx = vh_lavf_utils_open_input_file (data->file.path);
   if (!ctx)
     return;
 
-  data->type = parser_stream_info (ctx);
-  data->meta_parser = parser_metadata_get (parser, ctx, data->file);
+  data->file.type = parser_stream_info (ctx);
+  data->meta_parser = parser_metadata_get (parser, ctx, data->file.path);
 
   av_close_input_file (ctx);
 }

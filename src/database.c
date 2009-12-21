@@ -581,8 +581,8 @@ database_file_insert (database_t *database, file_data_t *data)
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_FILE);
 
-  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data->file,      out_reset);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, data->mtime,     out_clear);
+  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data->file.path,  out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, data->file.mtime, out_clear);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 3, data->outofpath, out_clear);
 
   res = sqlite3_step (stmt);
@@ -603,13 +603,13 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_FILE);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, data->mtime,     out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, data->file.mtime, out_reset);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 2, data->outofpath, out_clear);
 
   if (type_id)
     VH_DB_BIND_INT64_OR_GOTO (stmt, 3, type_id, out_clear);
 
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 4, data->file, out_clear);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 4, data->file.path, out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -653,10 +653,10 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     database_file_insert (database, data);
   else
   {
-    type_id = database_file_typeid_get (database, data->type);
+    type_id = database_file_typeid_get (database, data->file.type);
     database_file_update (database, data, type_id);
     file_id = database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID),
-                                     data->file);
+                                     data->file.path);
     database_file_metadata (database, file_id, data->meta_parser, 0);
   }
 }
@@ -667,7 +667,8 @@ database_file_grab (database_t *database, file_data_t *data)
   int64_t file_id, grabber_id;
 
   file_id = database_table_get_id (database,
-                                   STMT_GET (STMT_SELECT_FILE_ID), data->file);
+                                   STMT_GET (STMT_SELECT_FILE_ID),
+                                   data->file.path);
   database_file_metadata (database, file_id, data->meta_grabber, 0);
 
   if (!data->grabber_name)
@@ -963,7 +964,8 @@ vh_database_file_insert_dlcontext (database_t *database, file_data_t *data)
   int64_t file_id;
 
   file_id = database_table_get_id (database,
-                                   STMT_GET (STMT_SELECT_FILE_ID), data->file);
+                                   STMT_GET (STMT_SELECT_FILE_ID),
+                                   data->file.path);
   if (!file_id)
     return;
 

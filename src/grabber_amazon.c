@@ -389,7 +389,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
     return 0;
   }
 
-  switch (data->type)
+  switch (data->file.type)
   {
   default:
   case VALHALLA_FILE_TYPE_AUDIO:

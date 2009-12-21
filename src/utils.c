@@ -221,8 +221,8 @@ vh_file_data_free (file_data_t *data)
   if (!data)
     return;
 
-  if (data->file)
-    free (data->file);
+  if (data->file.path)
+    free (data->file.path);
   if (data->meta_parser)
     vh_metadata_free (data->meta_parser);
   if (data->meta_grabber)
@@ -247,8 +247,8 @@ vh_file_data_new (const char *file, time_t mtime, int outofpath,
   if (!fdata)
     return NULL;
 
-  fdata->file         = strdup (file);
-  fdata->mtime        = mtime;
+  fdata->file.path    = strdup (file);
+  fdata->file.mtime   = (int64_t) mtime;
   fdata->outofpath    = outofpath;
   fdata->od           = od;
   fdata->priority     = prio;

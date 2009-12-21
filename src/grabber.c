@@ -203,7 +203,7 @@ grabber_cmp_fct (const void *tocmp, const void *data)
   grab = 0;                                                                  \
   for (it = grabber->list, cnt = 0; it; it = it->next, cnt++)                \
     if (it->enable && cnt >= pdata->grabber_cnt                              \
-        && file_type_supported (it->caps_flag, pdata->type)                  \
+        && file_type_supported (it->caps_flag, pdata->file.type)             \
         && !vh_list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
     {                                                                        \
       grab = 1;                                                              \

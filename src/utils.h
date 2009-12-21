@@ -55,9 +55,7 @@ typedef struct file_dl_s {
 } file_dl_t;
 
 typedef struct file_data_s {
-  char                *file;
-  time_t               mtime;
-  valhalla_file_type_t type;
+  valhalla_file_t      file;
   int                  outofpath;
   od_type_t            od;
   fifo_queue_prio_t    priority;
