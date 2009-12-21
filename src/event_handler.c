@@ -111,8 +111,7 @@ event_handler_thread (void *arg)
       /* Send to the front-end callback for ondemand events. */
       event_handler->cb.od_cb (edata->file,
                                edata->e, edata->id, event_handler->cb.od_data);
-
-      free (edata->file);
+      vh_event_handler_od_free (edata);
       break;
     }
 
@@ -122,11 +121,10 @@ event_handler_thread (void *arg)
 
       /* Send to the front-end callback for global events. */
       event_handler->cb.gl_cb (*edata, event_handler->cb.gl_data);
+      free (edata);
       break;
     }
     }
-
-    free (data);
   }
   while (!event_handler_is_stopped (event_handler));
 
