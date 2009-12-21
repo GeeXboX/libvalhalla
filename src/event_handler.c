@@ -30,7 +30,7 @@
 #include "thread_utils.h"
 #include "event_handler.h"
 
-struct event_handler_data_s {
+struct event_handler_od_s {
   char               *file;
   valhalla_event_od_t e;
   const char         *id;
@@ -61,7 +61,7 @@ event_handler_is_stopped (event_handler_t *event_handler)
 }
 
 void
-vh_event_handler_od_free (event_handler_data_t *data)
+vh_event_handler_od_free (event_handler_od_t *data)
 {
   if (!data)
     return;
@@ -106,7 +106,7 @@ event_handler_thread (void *arg)
 
     case ACTION_EH_EVENTOD:
     {
-      event_handler_data_t *edata = data;
+      event_handler_od_t *edata = data;
 
       /* Send to the front-end callback for ondemand events. */
       event_handler->cb.od_cb (edata->file,
@@ -245,14 +245,14 @@ void
 vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
                           valhalla_event_od_t e, const char *id)
 {
-  event_handler_data_t *edata;
+  event_handler_od_t *edata;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!event_handler || !event_handler->cb.od_cb)
     return;
 
-  edata = calloc (1, sizeof (event_handler_data_t));
+  edata = calloc (1, sizeof (event_handler_od_t));
   if (!edata)
     return;
 

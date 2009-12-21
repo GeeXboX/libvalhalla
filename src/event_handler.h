@@ -25,7 +25,7 @@
 #include "fifo_queue.h"
 
 typedef struct event_handler_s event_handler_t;
-typedef struct event_handler_data_s event_handler_data_t;
+typedef struct event_handler_od_s event_handler_od_t;
 
 enum event_handler_errno {
   EVENT_HANDLER_ERROR_HANDLER = -2,
@@ -48,7 +48,7 @@ void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         event_handler_cb_t *cb);
 
-void vh_event_handler_od_free (event_handler_data_t *data);
+void vh_event_handler_od_free (event_handler_od_t *data);
 
 void vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
                                valhalla_event_od_t e, const char *id);
