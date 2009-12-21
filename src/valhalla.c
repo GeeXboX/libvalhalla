@@ -242,6 +242,10 @@ valhalla_uninit (valhalla_t *handle)
   vh_url_global_uninit ();
 #endif /* USE_GRABBER */
 
+#ifdef USE_LAVC
+  av_lockmgr_register (NULL);
+#endif /* USE_LAVC */
+
   valhalla_log (VALHALLA_MSG_VERBOSE, "%s: end", __FUNCTION__);
 
   free (handle);
