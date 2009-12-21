@@ -222,7 +222,7 @@ vh_file_data_free (file_data_t *data)
     return;
 
   if (data->file.path)
-    free (data->file.path);
+    free ((void *) data->file.path);
   if (data->meta_parser)
     vh_metadata_free (data->meta_parser);
   if (data->meta_grabber)

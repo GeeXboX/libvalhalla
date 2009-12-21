@@ -86,7 +86,7 @@ vh_event_handler_md_free (event_handler_md_t *data)
     return;
 
   if (data->file.path)
-    free (data->file.path);
+    free ((void *) data->file.path);
 
   vh_metadata_free (data->meta);
   free (data);

@@ -308,7 +308,7 @@ typedef struct valhalla_metadata_s {
 
 /** \brief File structure for general purpose. */
 typedef struct valhalla_file_s {
-  char                *path;
+  const char          *path;
   int64_t              mtime;
   valhalla_file_type_t type;
 } valhalla_file_t;
