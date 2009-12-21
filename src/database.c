@@ -50,7 +50,7 @@ struct database_s {
   char         *path;
   stmt_list_t  *stmts;
   item_list_t  *file_type;
-  item_list_t  *meta_group;
+  int64_t      *meta_group;
 };
 
 typedef struct database_cb_s {
@@ -66,24 +66,6 @@ static const item_list_t g_file_type[] = {
   [VALHALLA_FILE_TYPE_IMAGE]    = { 0, "image"    },
   [VALHALLA_FILE_TYPE_PLAYLIST] = { 0, "playlist" },
   [VALHALLA_FILE_TYPE_VIDEO]    = { 0, "video"    },
-};
-
-static const item_list_t g_meta_group[] = {
-  [VALHALLA_META_GRP_NIL]             = { 0, "null"           },
-  [VALHALLA_META_GRP_MISCELLANEOUS]   = { 0, "miscellaneous"  },
-  [VALHALLA_META_GRP_CLASSIFICATION]  = { 0, "classification" },
-  [VALHALLA_META_GRP_COMMERCIAL]      = { 0, "commercial"     },
-  [VALHALLA_META_GRP_CONTACT]         = { 0, "contact"        },
-  [VALHALLA_META_GRP_ENTITIES]        = { 0, "entities"       },
-  [VALHALLA_META_GRP_IDENTIFIER]      = { 0, "identifier"     },
-  [VALHALLA_META_GRP_LEGAL]           = { 0, "legal"          },
-  [VALHALLA_META_GRP_MUSICAL]         = { 0, "musical"        },
-  [VALHALLA_META_GRP_ORGANIZATIONAL]  = { 0, "organizational" },
-  [VALHALLA_META_GRP_PERSONAL]        = { 0, "personal"       },
-  [VALHALLA_META_GRP_SPACIAL]         = { 0, "spacial"        },
-  [VALHALLA_META_GRP_TECHNICAL]       = { 0, "technical"      },
-  [VALHALLA_META_GRP_TEMPORAL]        = { 0, "temporal"       },
-  [VALHALLA_META_GRP_TITLES]          = { 0, "titles"         },
 };
 
 typedef enum database_stmt {
@@ -223,8 +205,8 @@ database_group_get (database_t *database, int64_t id)
   if (!database)
     return VALHALLA_META_GRP_NIL;
 
-  for (i = 0; i < ARRAY_NB_ELEMENTS (g_meta_group); i++)
-    if (database->meta_group[i].id == id)
+  for (i = 0; i < vh_metadata_group_size; i++)
+    if (database->meta_group[i] == id)
       return i;
 
   return VALHALLA_META_GRP_NIL;
@@ -236,8 +218,8 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
   if (!database)
     return 0;
 
-  if (grp < ARRAY_NB_ELEMENTS (g_meta_group))
-    return database->meta_group[grp].id;
+  if (grp < vh_metadata_group_size)
+    return database->meta_group[grp];
 
   return 0;
 }
@@ -1304,19 +1286,22 @@ vh_database_init (const char *path)
     goto err;
 
   database->file_type = malloc (sizeof (g_file_type));
-  database->meta_group = malloc (sizeof (g_meta_group));
+  database->meta_group = calloc (vh_metadata_group_size, sizeof (int64_t));
+
   if (!database->file_type || !database->meta_group)
     goto err;
 
   memcpy (database->file_type, g_file_type, sizeof (g_file_type));
-  memcpy (database->meta_group, g_meta_group, sizeof (g_meta_group));
 
   for (i = 0; i < ARRAY_NB_ELEMENTS (g_file_type); i++)
     database->file_type[i].id =
       database_type_insert (database, database->file_type[i].name);
-  for (i = 0; i < ARRAY_NB_ELEMENTS (g_meta_group); i++)
-    database->meta_group[i].id =
-      database_group_insert (database, database->meta_group[i].name);
+
+  for (i = 0; i < vh_metadata_group_size; i++)
+  {
+    const char *group = vh_metadata_group_str (i);
+    database->meta_group[i] = database_group_insert (database, group);
+  }
 
   return database;
 
