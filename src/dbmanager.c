@@ -201,6 +201,9 @@ dbmanager_queue (dbmanager_t *dbmanager)
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
     case ACTION_DB_UPDATE_G:
+    {
+      int res;
+
       if (e == ACTION_DB_UPDATE_G)
         vh_database_file_grab_update (dbmanager->database, pdata);
 
@@ -208,6 +211,11 @@ dbmanager_queue (dbmanager_t *dbmanager)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
                                   pdata->file.path, VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
+      res = vh_event_handler_md_send (dbmanager->valhalla->event_handler,
+                                      VALHALLA_EVENTMD_GRABBER,
+                                      pdata->grabber_name, &pdata->file,
+                                      pdata->meta_grabber);
+      if (res)
       vh_metadata_free (pdata->meta_grabber);
       pdata->meta_grabber = NULL;
 
@@ -216,6 +224,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
       grab++;
       continue;
+    }
 
     /* received from the dispatcher (parsed data) */
     case ACTION_DB_UPDATE_P:
@@ -226,6 +235,9 @@ dbmanager_queue (dbmanager_t *dbmanager)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_PARSED, NULL);
+      vh_event_handler_md_send (dbmanager->valhalla->event_handler,
+                                VALHALLA_EVENTMD_PARSER,
+                                NULL, &pdata->file, pdata->meta_parser);
       continue;
 
     /* received from the scanner */

@@ -28,12 +28,20 @@
 #include "fifo_queue.h"
 #include "logs.h"
 #include "thread_utils.h"
+#include "metadata.h"
 #include "event_handler.h"
 
 struct event_handler_od_s {
   char               *file;
   valhalla_event_od_t e;
   const char         *id;
+};
+
+struct event_handler_md_s {
+  valhalla_file_t     file;
+  const char         *id;
+  metadata_t         *meta;
+  valhalla_event_md_t e;
 };
 
 struct event_handler_s {
@@ -68,6 +76,19 @@ vh_event_handler_od_free (event_handler_od_t *data)
 
   if (data->file)
     free (data->file);
+  free (data);
+}
+
+void
+vh_event_handler_md_free (event_handler_md_t *data)
+{
+  if (!data)
+    return;
+
+  if (data->file.path)
+    free (data->file.path);
+
+  vh_metadata_free (data->meta);
   free (data);
 }
 
@@ -122,6 +143,28 @@ event_handler_thread (void *arg)
       /* Send to the front-end callback for global events. */
       event_handler->cb.gl_cb (*edata, event_handler->cb.gl_data);
       free (edata);
+      break;
+    }
+
+    case ACTION_EH_EVENTMD:
+    {
+      const metadata_t *tag = NULL;
+      event_handler_md_t *edata = data;
+
+      while (!vh_metadata_get (edata->meta, "", METADATA_IGNORE_SUFFIX, &tag))
+      {
+        valhalla_metadata_t md;
+
+        md.name  = tag->name;
+        md.value = tag->value;
+        md.group = tag->group;
+
+        /* Send to the front-end callback for metadata events. */
+        event_handler->cb.md_cb (edata->e, edata->id,
+                                 &edata->file, &md, event_handler->cb.md_data);
+      }
+
+      vh_event_handler_md_free (edata);
       break;
     }
     }
@@ -282,4 +325,43 @@ vh_event_handler_gl_send (event_handler_t *event_handler, valhalla_event_gl_t e)
 
   vh_fifo_queue_push (event_handler->fifo,
                       FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENTGL, data);
+}
+
+int
+vh_event_handler_md_send (event_handler_t *event_handler,
+                          valhalla_event_md_t e, const char *id,
+                          valhalla_file_t *file, metadata_t *meta)
+{
+  event_handler_md_t *data;
+
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!event_handler || !event_handler->cb.md_cb || !meta)
+    return -1;
+
+  data = calloc (1, sizeof (event_handler_md_t));
+  if (!data)
+    return -1;
+
+  if (e == VALHALLA_EVENTMD_PARSER)
+  {
+    vh_metadata_dup (&data->meta, meta);
+    if (!data->meta)
+    {
+      free (data);
+      return -1;
+    }
+  }
+  else
+    data->meta = meta;
+
+  data->file.path  = strdup (file->path);
+  data->file.mtime = file->mtime;
+  data->file.type  = file->type;
+  data->e          = e;
+  data->id         = id;
+
+  vh_fifo_queue_push (event_handler->fifo,
+                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENTMD, data);
+  return 0;
 }

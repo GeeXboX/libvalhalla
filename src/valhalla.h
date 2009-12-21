@@ -287,11 +287,24 @@ typedef enum valhalla_event_gl {
   VALHALLA_EVENTGL_SCANNER_EXIT,      /**< Exit, end of all loops.          */
 } valhalla_event_gl_t;
 
+/** \brief Events for metadata callback. */
+typedef enum valhalla_event_md {
+  VALHALLA_EVENTMD_PARSER = 0,
+  VALHALLA_EVENTMD_GRABBER,
+} valhalla_event_md_t;
+
 /** \brief Type of statistic. */
 typedef enum valhalla_stats_type {
   VALHALLA_STATS_TIMER = 0,   /**< Read value for a timer.                  */
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
+
+/** \brief Metadata structure for general purpose. */
+typedef struct valhalla_metadata_s {
+  const char         *name;
+  const char         *value;
+  valhalla_meta_grp_t group;
+} valhalla_metadata_t;
 
 /** \brief File structure for general purpose. */
 typedef struct valhalla_file_s {
@@ -462,6 +475,22 @@ typedef struct valhalla_init_param_s {
   void (*gl_cb) (valhalla_event_gl_t e, void *data);
   /** User data for global event callback. */
   void *gl_data;
+
+  /**
+   * When \p md_cb is defined, events can be sent by Valhalla each time that a
+   * file metadata set is completed. Where \p id is the textual identifier (for
+   * example: "amazon", "exif", etc, ...) of the grabber when the event \p e
+   * is VALHALLA_EVENTMD_GRABBER. This callback is called for each metadata.
+   * If there are 10 metadata in one set, then this callback is called 10 times.
+   * The use of this callback is not recommanded. It may increase significantly
+   * the use of memory because all metadata are kept (and duplicated when it
+   * comes from the parser) until a set is fully read.
+   */
+  void (*md_cb) (valhalla_event_md_t e, const char *id,
+                 const valhalla_file_t *file,
+                 const valhalla_metadata_t *md, void *data);
+  /** User data for metadata event callback. */
+  void *md_data;
 
 } valhalla_init_param_t;
 

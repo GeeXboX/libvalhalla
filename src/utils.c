@@ -372,7 +372,11 @@ vh_queue_cleanup (fifo_queue_t *queue)
     case ACTION_EH_EVENTOD:
       if (data)
         vh_event_handler_od_free (data);
+      break;
 
+    case ACTION_EH_EVENTMD:
+      if (data)
+        vh_event_handler_md_free (data);
       break;
     }
   }

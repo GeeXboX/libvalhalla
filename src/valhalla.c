@@ -138,6 +138,7 @@ valhalla_mrproper (valhalla_t *handle)
       case ACTION_DB_EXT_UPDATE:
       case ACTION_DB_EXT_DELETE:
       case ACTION_EH_EVENTOD:
+      case ACTION_EH_EVENTMD:
       case ACTION_EH_EVENTGL:
         vh_fifo_queue_push (fifo_o, FIFO_QUEUE_PRIORITY_NORMAL, e, data);
         break;
@@ -493,14 +494,16 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
   if (!handle->stats)
     goto err;
 
-  if (pp->od_cb || pp->gl_cb)
+  if (pp->od_cb || pp->gl_cb || pp->md_cb)
   {
     event_handler_cb_t cb;
 
     cb.od_cb = pp->od_cb;
     cb.gl_cb = pp->gl_cb;
+    cb.md_cb = pp->md_cb;
     cb.od_data = pp->od_data;
     cb.gl_data = pp->gl_data;
+    cb.md_data = pp->md_data;
 
     handle->event_handler = vh_event_handler_init (handle, &cb);
     if (!handle->event_handler)

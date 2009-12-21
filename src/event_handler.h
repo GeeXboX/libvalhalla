@@ -23,9 +23,11 @@
 #define VALHALLA_EVENT_HANDLER_H
 
 #include "fifo_queue.h"
+#include "metadata.h"
 
 typedef struct event_handler_s event_handler_t;
 typedef struct event_handler_od_s event_handler_od_t;
+typedef struct event_handler_md_s event_handler_md_t;
 
 enum event_handler_errno {
   EVENT_HANDLER_ERROR_HANDLER = -2,
@@ -37,8 +39,12 @@ typedef struct event_handler_cb_s {
   void (*od_cb) (const char *file,
                  valhalla_event_od_t e, const char *id, void *data);
   void (*gl_cb) (valhalla_event_gl_t e, void *data);
+  void (*md_cb) (valhalla_event_md_t e, const char *id,
+                 const valhalla_file_t *file,
+                 const valhalla_metadata_t *md, void *data);
   void *od_data;
   void *gl_data;
+  void *md_data;
 } event_handler_cb_t;
 
 int vh_event_handler_run (event_handler_t *event_handler, int priority);
@@ -49,10 +55,14 @@ event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         event_handler_cb_t *cb);
 
 void vh_event_handler_od_free (event_handler_od_t *data);
+void vh_event_handler_md_free (event_handler_md_t *data);
 
 void vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
                                valhalla_event_od_t e, const char *id);
 void vh_event_handler_gl_send (event_handler_t *event_handler,
                                valhalla_event_gl_t e);
+int vh_event_handler_md_send (event_handler_t *event_handler,
+                              valhalla_event_md_t e, const char *id,
+                              valhalla_file_t *file, metadata_t *meta);
 
 #endif /* VALHALLA_EVENT_HANDLER_H */
