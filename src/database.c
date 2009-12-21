@@ -583,7 +583,7 @@ database_file_insert (database_t *database, file_data_t *data)
 
   VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data->file.path,  out_reset);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, data->file.mtime, out_clear);
-  VH_DB_BIND_INT_OR_GOTO   (stmt, 3, data->outofpath, out_clear);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 3, data->outofpath,  out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -604,7 +604,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_FILE);
 
   VH_DB_BIND_INT64_OR_GOTO (stmt, 1, data->file.mtime, out_reset);
-  VH_DB_BIND_INT_OR_GOTO   (stmt, 2, data->outofpath, out_clear);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 2, data->outofpath,  out_clear);
 
   if (type_id)
     VH_DB_BIND_INT64_OR_GOTO (stmt, 3, type_id, out_clear);
