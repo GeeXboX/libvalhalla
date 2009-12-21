@@ -54,6 +54,7 @@
   " -g --grabber            grabber to be used\n" \
   " -i --no-grabber         disable all grabbers\n" \
   " -j --stats              dump all the statistics\n" \
+  " -q --metadata-cb        enable the metadata callback\n" \
   "\n" \
   "Example:\n" \
   " $ " APPNAME " -l 2 -t 5 -d ./mydb.db -p 1 -a 15 -s ogg -s mp3 /home/foobar/music\n" \
@@ -76,6 +77,27 @@ eventgl_cb (valhalla_event_gl_t e, void *data)
   printf ("Global event: %u\n", e);
 }
 
+static void
+eventmd_cb (valhalla_event_md_t e, const char *id,
+            const valhalla_file_t *file,
+            const valhalla_metadata_t *md, void *data)
+{
+  (void) data;
+  printf ("Metadata event\n");
+  printf ("  File     : %s (%lu) (%u)\n", file->path, file->mtime, file->type);
+  switch (e)
+  {
+  case VALHALLA_EVENTMD_PARSER:
+    printf ("  Parser\n");
+    break;
+  case VALHALLA_EVENTMD_GRABBER:
+    printf ("  Grabber  : %s\n", id);
+    break;
+  }
+  printf ("  Name     : %s\n  Value    : %s\n  Group    : %u\n",
+          md->name, md->value, md->group);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -94,12 +116,12 @@ main (int argc, char **argv)
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
   const char *grabbers[GRABBER_MAX];
-  int nograbber = 0, stats = 0;
+  int nograbber = 0, stats = 0, metadata_cb = 0;
   struct timespec tss, tse, tsd;
   const char *group = NULL;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:ij";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:ijq";
   const struct option long_options[] = {
     { "help",       no_argument,       0, 'h'  },
     { "verbose",    no_argument,       0, 'v'  },
@@ -117,6 +139,7 @@ main (int argc, char **argv)
     { "grabber",    required_argument, 0, 'g'  },
     { "no-grabber", no_argument,       0, 'i'  },
     { "stats",      no_argument,       0, 'j'  },
+    { "metadata-cb", no_argument,       0, 'q'  },
     { NULL,         0,                 0, '\0' },
   };
 
@@ -201,6 +224,10 @@ main (int argc, char **argv)
       stats = 1;
       break;
 
+    case 'q':
+      metadata_cb = 1;
+      break;
+
     default:
       printf (TESTVALHALLA_HELP);
       return -1;
@@ -214,6 +241,7 @@ main (int argc, char **argv)
   param.commit_int  = commit;
   param.decrapifier = decrap;
   param.gl_cb       = eventgl_cb;
+  param.md_cb       = metadata_cb ? eventmd_cb : NULL;
 
   handle = valhalla_init (database, &param);
   if (!handle)
