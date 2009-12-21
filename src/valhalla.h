@@ -569,6 +569,17 @@ void valhalla_uninit (valhalla_t *handle);
 void valhalla_verbosity (valhalla_verb_t level);
 
 /**
+ * \brief Retrieve an human readable string according to a group number.
+ *
+ * The strings returned are the same that the strings saved in the database.
+ *
+ * \warning This function can be called in anytime.
+ * \param[in] group       Group number.
+ * \return the string.
+ */
+const char *valhalla_metadata_group_str (valhalla_meta_grp_t group);
+
+/**
  * \brief Retrieve the ID of all grabbers compiled in Valhalla.
  *
  * The function returns the ID after \p id, or the first grabber ID if \p id

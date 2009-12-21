@@ -110,6 +110,34 @@ static const struct {
   { NULL,                                  VALHALLA_META_GRP_NIL            },
 };
 
+static const char *const metadata_group_str[] = {
+  [VALHALLA_META_GRP_NIL]             = "null",
+  [VALHALLA_META_GRP_CLASSIFICATION]  = "classification",
+  [VALHALLA_META_GRP_COMMERCIAL]      = "commercial",
+  [VALHALLA_META_GRP_CONTACT]         = "contact",
+  [VALHALLA_META_GRP_ENTITIES]        = "entities",
+  [VALHALLA_META_GRP_IDENTIFIER]      = "identifier",
+  [VALHALLA_META_GRP_LEGAL]           = "legal",
+  [VALHALLA_META_GRP_MISCELLANEOUS]   = "miscellaneous",
+  [VALHALLA_META_GRP_MUSICAL]         = "musical",
+  [VALHALLA_META_GRP_ORGANIZATIONAL]  = "organizational",
+  [VALHALLA_META_GRP_PERSONAL]        = "personal",
+  [VALHALLA_META_GRP_SPACIAL]         = "spacial",
+  [VALHALLA_META_GRP_TECHNICAL]       = "technical",
+  [VALHALLA_META_GRP_TEMPORAL]        = "temporal",
+  [VALHALLA_META_GRP_TITLES]          = "titles",
+};
+
+
+const char *
+vh_metadata_group_str (valhalla_meta_grp_t group)
+{
+  if (group >= ARRAY_NB_ELEMENTS (metadata_group_str))
+    return NULL;
+
+  return metadata_group_str[group];
+}
+
 int
 vh_metadata_get (const metadata_t *meta,
                  const char *name, int flags, const metadata_t **tag)

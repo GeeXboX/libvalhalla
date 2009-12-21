@@ -38,6 +38,7 @@
 #include "event_handler.h"
 #include "utils.h"
 #include "stats.h"
+#include "metadata.h"
 #include "logs.h"
 
 #ifdef USE_GRABBER
@@ -387,6 +388,12 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
     return VALHALLA_ERROR_THREAD;
 
   return VALHALLA_SUCCESS;
+}
+
+const char *
+valhalla_metadata_group_str (valhalla_meta_grp_t group)
+{
+  return vh_metadata_group_str (group);
 }
 
 const char *
