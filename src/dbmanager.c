@@ -216,7 +216,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
                                       pdata->grabber_name, &pdata->file,
                                       pdata->meta_grabber);
       if (res)
-      vh_metadata_free (pdata->meta_grabber);
+        vh_metadata_free (pdata->meta_grabber);
       pdata->meta_grabber = NULL;
 
       if (pdata->wait)
