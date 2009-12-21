@@ -33,9 +33,9 @@ enum event_handler_errno {
 };
 
 typedef struct event_handler_data_s {
-  char            *file;
+  char               *file;
   valhalla_event_od_t e;
-  const char      *id;
+  const char         *id;
 } event_handler_data_t;
 
 
