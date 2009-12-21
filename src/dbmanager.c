@@ -94,12 +94,6 @@ vh_dbmanager_extmd_free (dbmanager_extmd_t *extmd)
   free (extmd);
 }
 
-#define METADATA_GRABBER_POST             \
-  vh_metadata_free (pdata->meta_grabber); \
-  pdata->meta_grabber = NULL;             \
-  if (pdata->wait)                        \
-    sem_post (&pdata->sem_grabber);
-
 static int
 dbmanager_queue (dbmanager_t *dbmanager)
 {
@@ -206,11 +200,20 @@ dbmanager_queue (dbmanager_t *dbmanager)
     /* received from the dispatcher (grabbed data) */
     case ACTION_DB_INSERT_G:
       vh_database_file_grab_insert (dbmanager->database, pdata);
+    case ACTION_DB_UPDATE_G:
+      if (e == ACTION_DB_UPDATE_G)
+        vh_database_file_grab_update (dbmanager->database, pdata);
+
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
                                   pdata->file.path, VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
-      METADATA_GRABBER_POST
+      vh_metadata_free (pdata->meta_grabber);
+      pdata->meta_grabber = NULL;
+
+      if (pdata->wait)
+        sem_post (&pdata->sem_grabber);
+
       grab++;
       continue;
 
@@ -223,17 +226,6 @@ dbmanager_queue (dbmanager_t *dbmanager)
         vh_event_handler_od_send (dbmanager->valhalla->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_PARSED, NULL);
-      continue;
-
-    /* received from the dispatcher (grabbed data) */
-    case ACTION_DB_UPDATE_G:
-      vh_database_file_grab_update (dbmanager->database, pdata);
-      if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
-                                  pdata->file.path, VALHALLA_EVENTOD_GRABBED,
-                                  pdata->grabber_name);
-      METADATA_GRABBER_POST
-      grab++;
       continue;
 
     /* received from the scanner */
