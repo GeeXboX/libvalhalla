@@ -82,6 +82,8 @@ eventmd_cb (valhalla_event_md_t e, const char *id,
             const valhalla_file_t *file,
             const valhalla_metadata_t *md, void *data)
 {
+  const char *group;
+
   (void) data;
   printf ("Metadata event\n");
   printf ("  File     : %s (%lu) (%u)\n", file->path, file->mtime, file->type);
@@ -94,8 +96,9 @@ eventmd_cb (valhalla_event_md_t e, const char *id,
     printf ("  Grabber  : %s\n", id);
     break;
   }
-  printf ("  Name     : %s\n  Value    : %s\n  Group    : %u\n",
-          md->name, md->value, md->group);
+  group = valhalla_metadata_group_str (md->group);
+  printf ("  Name     : %s\n  Value    : %s\n  Group    : %u \"%s\"\n",
+          md->name, md->value, md->group, group);
 }
 
 int
