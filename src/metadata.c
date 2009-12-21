@@ -128,11 +128,14 @@ static const char *const metadata_group_str[] = {
   [VALHALLA_META_GRP_TITLES]          = "titles",
 };
 
+const size_t vh_metadata_group_size =
+  ARRAY_NB_ELEMENTS (metadata_group_str);
+
 
 const char *
 vh_metadata_group_str (valhalla_meta_grp_t group)
 {
-  if (group >= ARRAY_NB_ELEMENTS (metadata_group_str))
+  if (group >= vh_metadata_group_size)
     return NULL;
 
   return metadata_group_str[group];
