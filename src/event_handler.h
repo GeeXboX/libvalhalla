@@ -38,7 +38,7 @@ typedef struct event_handler_data_s {
   const char         *id;
 } event_handler_data_t;
 
-typedef struct event_handler_param_s {
+typedef struct event_handler_cb_s {
   void (*od_cb) (const char *file,
                  valhalla_event_od_t e, const char *id, void *data);
   void (*gl_cb) (valhalla_event_gl_t e, void *data);
