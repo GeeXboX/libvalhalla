@@ -50,7 +50,7 @@ struct database_s {
   char         *path;
   stmt_list_t  *stmts;
   item_list_t  *file_type;
-  int64_t      *meta_group;
+  int64_t      *groups_id;
 };
 
 typedef struct database_cb_s {
@@ -206,7 +206,7 @@ database_group_get (database_t *database, int64_t id)
     return VALHALLA_META_GRP_NIL;
 
   for (i = 0; i < vh_metadata_group_size; i++)
-    if (database->meta_group[i] == id)
+    if (database->groups_id[i] == id)
       return i;
 
   return VALHALLA_META_GRP_NIL;
@@ -219,7 +219,7 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
     return 0;
 
   if (grp < vh_metadata_group_size)
-    return database->meta_group[grp];
+    return database->groups_id[grp];
 
   return 0;
 }
@@ -1232,8 +1232,8 @@ vh_database_uninit (database_t *database)
 
   if (database->file_type)
     free (database->file_type);
-  if (database->meta_group)
-    free (database->meta_group);
+  if (database->groups_id)
+    free (database->groups_id);
 
   if (database->db)
     sqlite3_close (database->db);
@@ -1286,9 +1286,9 @@ vh_database_init (const char *path)
     goto err;
 
   database->file_type = malloc (sizeof (g_file_type));
-  database->meta_group = calloc (vh_metadata_group_size, sizeof (int64_t));
+  database->groups_id = calloc (vh_metadata_group_size, sizeof (int64_t));
 
-  if (!database->file_type || !database->meta_group)
+  if (!database->file_type || !database->groups_id)
     goto err;
 
   memcpy (database->file_type, g_file_type, sizeof (g_file_type));
@@ -1300,7 +1300,7 @@ vh_database_init (const char *path)
   for (i = 0; i < vh_metadata_group_size; i++)
   {
     const char *group = vh_metadata_group_str (i);
-    database->meta_group[i] = database_group_insert (database, group);
+    database->groups_id[i] = database_group_insert (database, group);
   }
 
   return database;
