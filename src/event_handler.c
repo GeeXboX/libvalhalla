@@ -30,6 +30,12 @@
 #include "thread_utils.h"
 #include "event_handler.h"
 
+struct event_handler_data_s {
+  char               *file;
+  valhalla_event_od_t e;
+  const char         *id;
+};
+
 struct event_handler_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -52,6 +58,17 @@ event_handler_is_stopped (event_handler_t *event_handler)
   run = event_handler->run;
   pthread_mutex_unlock (&event_handler->mutex_run);
   return !run;
+}
+
+void
+vh_event_handler_od_free (event_handler_data_t *data)
+{
+  if (!data)
+    return;
+
+  if (data->file)
+    free (data->file);
+  free (data);
 }
 
 static void *

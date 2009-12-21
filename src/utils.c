@@ -370,16 +370,10 @@ vh_queue_cleanup (fifo_queue_t *queue)
       break;
 
     case ACTION_EH_EVENTOD:
-    {
-      event_handler_data_t *edata = data;
-      if (!edata)
-        break;
+      if (data)
+        vh_event_handler_od_free (data);
 
-      if (edata->file)
-        free (edata->file);
-      free (edata);
       break;
-    }
     }
   }
   while (e != ACTION_CLEANUP_END);

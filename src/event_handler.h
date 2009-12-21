@@ -25,18 +25,13 @@
 #include "fifo_queue.h"
 
 typedef struct event_handler_s event_handler_t;
+typedef struct event_handler_data_s event_handler_data_t;
 
 enum event_handler_errno {
   EVENT_HANDLER_ERROR_HANDLER = -2,
   EVENT_HANDLER_ERROR_THREAD  = -1,
   EVENT_HANDLER_SUCCESS       =  0,
 };
-
-typedef struct event_handler_data_s {
-  char               *file;
-  valhalla_event_od_t e;
-  const char         *id;
-} event_handler_data_t;
 
 typedef struct event_handler_cb_s {
   void (*od_cb) (const char *file,
@@ -52,6 +47,8 @@ void vh_event_handler_stop (event_handler_t *event_handler, int f);
 void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
                                         event_handler_cb_t *cb);
+
+void vh_event_handler_od_free (event_handler_data_t *data);
 
 void vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
                                valhalla_event_od_t e, const char *id);
