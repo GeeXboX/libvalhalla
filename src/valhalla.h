@@ -293,6 +293,13 @@ typedef enum valhalla_stats_type {
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
 
+/** \brief File structure for general purpose. */
+typedef struct valhalla_file_s {
+  char                *path;
+  int64_t              mtime;
+  valhalla_file_type_t type;
+} valhalla_file_t;
+
 #define VH_CFG_RANGE  8 /**< 256 possibilities for every combinations of type */
 
 #define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                        */
