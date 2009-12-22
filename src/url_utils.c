@@ -150,6 +150,7 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   }
 
   n = write (fd, data.buffer, data.size);
+  close (fd);
   free (data.buffer);
 
   return 0;
