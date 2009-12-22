@@ -262,7 +262,7 @@ grabber_thread (void *arg)
     if (pdata->wait)
     {
       vh_log (VALHALLA_MSG_VERBOSE,
-              "[%s] waiting grabbing: %s", __FUNCTION__, pdata->file);
+              "[%s] waiting grabbing: %s", __FUNCTION__, pdata->file.path);
 
       /* sem_grabber provides a way to wake up the thread for "force_stop" */
       grabber->sem_grabber = &pdata->sem_grabber;
@@ -292,7 +292,7 @@ grabber_thread (void *arg)
       {
         VH_STATS_COUNTER_INC (it->cnt_failure);
         vh_log (VALHALLA_MSG_VERBOSE,
-                "[%s] grabbing failed (%i): %s", it->name, res, pdata->file);
+                "[%s] grabbing failed (%i): %s", it->name, res, pdata->file.path);
       }
       else
         VH_STATS_COUNTER_INC (it->cnt_success);
@@ -308,7 +308,7 @@ grabber_thread (void *arg)
       vh_file_data_step_increase (pdata, &e);
 
     vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s grabbing: %s",
-            __FUNCTION__, grab ? "continue" : "finished", pdata->file);
+            __FUNCTION__, grab ? "continue" : "finished", pdata->file.path);
 
     vh_dispatcher_action_send (grabber->valhalla->dispatcher,
                                pdata->priority, e, pdata);

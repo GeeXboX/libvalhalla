@@ -133,7 +133,8 @@ dispatcher_thread (void *arg)
       processing_step_t step = pdata->step;
 
       vh_log (VALHALLA_MSG_VERBOSE,
-              "[%s] step: %i, file: \"%s\"", __FUNCTION__, step, pdata->file);
+              "[%s] step: %i, file: \"%s\"",
+              __FUNCTION__, step, pdata->file.path);
 
 #ifdef USE_GRABBER
       /*

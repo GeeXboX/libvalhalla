@@ -59,7 +59,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
   if (res < 0)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
-            "FFmpeg can't find stream info: %s", data->file);
+            "FFmpeg can't find stream info: %s", data->file.path);
     return -1;
   }
 
