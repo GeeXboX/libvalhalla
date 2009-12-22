@@ -292,7 +292,8 @@ grabber_thread (void *arg)
       {
         VH_STATS_COUNTER_INC (it->cnt_failure);
         vh_log (VALHALLA_MSG_VERBOSE,
-                "[%s] grabbing failed (%i): %s", it->name, res, pdata->file.path);
+                "[%s] grabbing failed (%i): %s",
+                it->name, res, pdata->file.path);
       }
       else
         VH_STATS_COUNTER_INC (it->cnt_success);
