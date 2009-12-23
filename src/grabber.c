@@ -393,12 +393,12 @@ grabber_thread (void *arg)
       vh_list_append (pdata->grabber_list, it->name, strlen (it->name) + 1);
     }
 
-      /* at least still one grabber for this file ? */
+    /* at least still one grabber for this file ? */
     GRABBER_IS_AVAILABLE (it, grabber->list, pdata)
-      if (!grab) /* no?, then next step */
-        vh_file_data_step_increase (pdata, &e);
-      else
-        vh_file_data_step_continue (pdata, &e);
+    if (!grab) /* no?, then next step */
+      vh_file_data_step_increase (pdata, &e);
+    else
+      vh_file_data_step_continue (pdata, &e);
 
     vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s grabbing: %s",
             __FUNCTION__, grab ? "continue" : "finished", pdata->file.path);
@@ -437,12 +437,12 @@ vh_grabber_run (grabber_t *grabber, int priority)
   {
     pthread_mutex_lock (&grabber->mutex_grabber[i]);
     res = pthread_create (&grabber->thread[i], &attr, grabber_thread, grabber);
-  if (res)
-  {
-    res = GRABBER_ERROR_THREAD;
-    grabber->run = 0;
+    if (res)
+    {
+      res = GRABBER_ERROR_THREAD;
+      grabber->run = 0;
       break;
-  }
+    }
   }
 
   if (res)
@@ -534,14 +534,14 @@ vh_grabber_stop (grabber_t *grabber, int f)
     pthread_mutex_unlock (&grabber->mutex_run);
 
     for (i = 0; i < grabber->nb; i++)
-    vh_fifo_queue_push (grabber->fifo,
-                        FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+      vh_fifo_queue_push (grabber->fifo,
+                          FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
 
     grabber->wait = 1;
 
     for (i = 0; i < grabber->nb; i++)
     {
-    /* wake up the thread if this is asleep by dbmanager */
+      /* wake up the thread if this is asleep by dbmanager */
       pthread_mutex_lock (&grabber->mutex_grabber[i]);
       if (grabber->sem_grabber[i])
         sem_post (grabber->sem_grabber[i]);
