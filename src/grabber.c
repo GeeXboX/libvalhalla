@@ -339,6 +339,8 @@ grabber_thread (void *arg)
         it->loop (it->priv);
         pthread_mutex_unlock (&it->mutex);
       }
+
+      vh_stats_dump (grabber->valhalla->stats, STATS_GROUP);
       continue;
     }
 
