@@ -213,7 +213,7 @@ grabber_cmp_fct (const void *tocmp, const void *data)
 static void *
 grabber_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   int cnt, grab;
   void *data = NULL;
@@ -224,7 +224,10 @@ grabber_thread (void *arg)
   if (!grabber)
     pthread_exit (NULL);
 
-  vh_setpriority (grabber->priority);
+  tid = vh_setpriority (grabber->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, grabber->priority);
 
   do
   {

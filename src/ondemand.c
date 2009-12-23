@@ -90,7 +90,7 @@ ondemand_cmp_fct (const void *tocmp, int id, const void *data)
 static void *
 ondemand_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   unsigned int i = 0;
   void *data = NULL;
@@ -120,7 +120,10 @@ ondemand_thread (void *arg)
   if (!ondemand)
     pthread_exit (NULL);
 
-  vh_setpriority (ondemand->priority);
+  tid = vh_setpriority (ondemand->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, ondemand->priority);
 
 #ifdef USE_GRABBER
   pause[i++].handler = ondemand->valhalla->grabber;

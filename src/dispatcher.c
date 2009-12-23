@@ -66,7 +66,7 @@ dispatcher_is_stopped (dispatcher_t *dispatcher)
 static void *
 dispatcher_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   void *data = NULL;
   file_data_t *pdata;
@@ -88,7 +88,10 @@ dispatcher_thread (void *arg)
   if (!dispatcher)
     pthread_exit (NULL);
 
-  vh_setpriority (dispatcher->priority);
+  tid = vh_setpriority (dispatcher->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, dispatcher->priority);
 
   send[STEP_PARSING].handler     = dispatcher->valhalla->parser;
 #ifdef USE_GRABBER

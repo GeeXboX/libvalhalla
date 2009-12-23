@@ -95,7 +95,7 @@ vh_event_handler_md_free (event_handler_md_t *data)
 static void *
 event_handler_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   void *data = NULL;
   event_handler_t *event_handler = arg;
@@ -103,7 +103,11 @@ event_handler_thread (void *arg)
   if (!event_handler)
     pthread_exit (NULL);
 
-  vh_setpriority (event_handler->priority);
+  tid = vh_setpriority (event_handler->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i",
+          __FUNCTION__, tid, event_handler->priority);
 
   do
   {

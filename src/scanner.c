@@ -253,14 +253,17 @@ scanner_readdir (scanner_t *scanner,
 static void *
 scanner_thread (void *arg)
 {
-  int i;
+  int i, tid;
   scanner_t *scanner = arg;
   struct path_s *path;
 
   if (!scanner)
     pthread_exit (NULL);
 
-  vh_setpriority (scanner->priority);
+  tid = vh_setpriority (scanner->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, scanner->priority);
 
   vh_log (VALHALLA_MSG_INFO,
           "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",

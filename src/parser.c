@@ -418,7 +418,7 @@ parser_metadata (parser_t *parser, file_data_t *data)
 static void *
 parser_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   void *data = NULL;
   file_data_t *pdata;
@@ -427,7 +427,10 @@ parser_thread (void *arg)
   if (!parser)
     pthread_exit (NULL);
 
-  vh_setpriority (parser->priority);
+  tid = vh_setpriority (parser->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, parser->priority);
 
   do
   {

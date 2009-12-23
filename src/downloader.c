@@ -64,7 +64,7 @@ downloader_is_stopped (downloader_t *downloader)
 static void *
 downloader_thread (void *arg)
 {
-  int res;
+  int res, tid;
   int e;
   void *data = NULL;
   file_data_t *pdata;
@@ -73,7 +73,10 @@ downloader_thread (void *arg)
   if (!downloader)
     pthread_exit (NULL);
 
-  vh_setpriority (downloader->priority);
+  tid = vh_setpriority (downloader->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, downloader->priority);
 
   do
   {

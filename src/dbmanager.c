@@ -333,14 +333,17 @@ dbmanager_queue (dbmanager_t *dbmanager)
 static void *
 dbmanager_thread (void *arg)
 {
-  int rc, loop = 0;
+  int rc, tid, loop = 0;
   const char *file;
   dbmanager_t *dbmanager = arg;
 
   if (!dbmanager)
     pthread_exit (NULL);
 
-  vh_setpriority (dbmanager->priority);
+  tid = vh_setpriority (dbmanager->priority);
+
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "[%s] tid: %i priority: %i", __FUNCTION__, tid, dbmanager->priority);
 
   /*
    * Change files where interrupted__ is -1 to 1, in the case where Valhalla
