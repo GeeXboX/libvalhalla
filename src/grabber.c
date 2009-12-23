@@ -109,7 +109,11 @@ struct grabber_s {
 
 
 /*
- * The first grabber has the highest priority.
+ * The first grabber has the highest priority. But in the case where concurrent
+ * grabbers are used, the following order is prefered but not fully respected.
+ *
+ * Configure one grabber (valhalla_init_param_t::grabber_nb) in order to
+ * preserve the priorities.
  */
 static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY

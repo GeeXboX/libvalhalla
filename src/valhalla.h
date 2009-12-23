@@ -442,6 +442,8 @@ typedef struct valhalla_init_param_s {
    * as long as their ID is different). The default number of grabbers is 2.
    * To use many grabbers will not increase a lot the use of memory, but
    * it can increase significantly the use of the bandwidth for Internet.
+   * To preserve the priorities of the grabbers, this option must be set
+   * to 1.
    */
   unsigned int grabber_nb;
   /**
