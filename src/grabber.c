@@ -330,7 +330,7 @@ grabber_thread (void *arg)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      for (it = grabber->list; it;)
+      for (it = grabber->list; it; it = it->next)
       {
         if (!it->loop)
           continue;
