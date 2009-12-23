@@ -50,7 +50,6 @@ show_help(){
   echo "  --enable-grabber-imdb       build ImDB grabber [default=yes]"
   echo "  --enable-grabber-lastfm     build Last.fm grabber [default=yes]"
   echo "  --enable-grabber-local      build localfiles grabber [default=yes]"
-  echo "  --enable-grabber-lyricsfly  build LyricsFly.com grabber [default=no]"
   echo "  --enable-grabber-lyricwiki  build LyricWiki.org grabber [default=yes]"
   echo "  --enable-grabber-nfo        build NFO grabber [default=yes]"
   echo "  --enable-grabber-tvdb       build TheTVDB.com grabber [default=yes]"
@@ -463,7 +462,6 @@ grabber_ffmpeg="auto"
 grabber_imdb="auto"
 grabber_lastfm="auto"
 grabber_local="auto"
-grabber_lyricsfly="no"
 grabber_lyricwiki="auto"
 grabber_nfo="auto"
 grabber_tmdb="auto"
@@ -581,10 +579,6 @@ for opt do
   --enable-grabber-local) grabber_local="yes";
   ;;
   --disable-grabber-local) grabber_local="no";
-  ;;
-  --enable-grabber-lyricsfly) grabber_lyricsfly="yes";
-  ;;
-  --disable-grabber-lyricsfly) grabber_lyricsfly="no";
   ;;
   --enable-grabber-lyricwiki) grabber_lyricwiki="yes";
   ;;
@@ -1000,7 +994,7 @@ grabber_enable_dep(){
 }
 
 grabber="no"
-grabbers="allocine amazon exif ffmpeg imdb lastfm local lyricsfly lyricwiki nfo tmdb tvdb tvrage"
+grabbers="allocine amazon exif ffmpeg imdb lastfm local lyricwiki nfo tmdb tvdb tvrage"
 
 if [ "$grabber_all" != "auto" ]; then
   eval grabber_set_$grabber_all \$grabbers
@@ -1021,7 +1015,7 @@ grabber_enable_dep gcrypt_dep_grabber
 nfo_dep_grabber="nfo"
 grabber_enable_dep nfo_dep_grabber
 
-xml_dep_grabber="allocine amazon imdb lastfm lyricsfly lyricwiki tmdb tvdb tvrage"
+xml_dep_grabber="allocine amazon imdb lastfm lyricwiki tmdb tvdb tvrage"
 grabber_enable_dep xml_dep_grabber
 
 if enabled xml; then
@@ -1270,7 +1264,6 @@ echolog "    FFmpeg           $grabber_ffmpeg"
 echolog "    ImDB             $grabber_imdb"
 echolog "    Last.fm          $grabber_lastfm"
 echolog "    Local Files      $grabber_local"
-echolog "    LyricsFly        $grabber_lyricsfly"
 echolog "    LyricWiki        $grabber_lyricwiki"
 echolog "    NFO              $grabber_nfo"
 echolog "    TheMovieDB       $grabber_tmdb"
@@ -1339,7 +1332,6 @@ append_config "GRABBER_FFMPEG=$grabber_ffmpeg"
 append_config "GRABBER_IMDB=$grabber_imdb"
 append_config "GRABBER_LASTFM=$grabber_lastfm"
 append_config "GRABBER_LOCAL=$grabber_local"
-append_config "GRABBER_LYRICSFLY=$grabber_lyricsfly"
 append_config "GRABBER_LYRICWIKI=$grabber_lyricwiki"
 append_config "GRABBER_NFO=$grabber_nfo"
 append_config "GRABBER_TMDB=$grabber_tmdb"

@@ -61,9 +61,6 @@
 #ifdef HAVE_GRABBER_LOCAL
 #include "grabber_local.h"
 #endif /* HAVE_GRABBER_LOCAL */
-#ifdef HAVE_GRABBER_LYRICSFLY
-#include "grabber_lyricsfly.h"
-#endif /* HAVE_GRABBER_LYRICSFLY */
 #ifdef HAVE_GRABBER_LYRICWIKI
 #include "grabber_lyricwiki.h"
 #endif /* HAVE_GRABBER_LYRICWIKI */
@@ -140,9 +137,6 @@ static grabber_list_t *(*g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_EXIF
   vh_grabber_exif_register,
 #endif /* HAVE_GRABBER_EXIF */
-#ifdef HAVE_GRABBER_LYRICSFLY
-  vh_grabber_lyricsfly_register,
-#endif /* HAVE_GRABBER_LYRICSFLY */
 #ifdef HAVE_GRABBER_LYRICWIKI
   vh_grabber_lyricwiki_register,
 #endif /* HAVE_GRABBER_LYRICWIKI */

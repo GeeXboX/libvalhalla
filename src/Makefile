@@ -59,7 +59,6 @@ EXTRADIST = \
 	grabber_imdb.h \
 	grabber_lastfm.h \
 	grabber_local.h \
-	grabber_lyricsfly.h \
 	grabber_lyricwiki.h \
 	grabber_nfo.h \
 	grabber_tmdb.h \
@@ -101,7 +100,6 @@ SRCS_GRABBER-$(GRABBER_FFMPEG)		+= grabber_ffmpeg.c
 SRCS_GRABBER-$(GRABBER_IMDB)		+= grabber_imdb.c
 SRCS_GRABBER-$(GRABBER_LASTFM)		+= grabber_lastfm.c
 SRCS_GRABBER-$(GRABBER_LOCAL)		+= grabber_local.c
-SRCS_GRABBER-$(GRABBER_LYRICSFLY)	+= grabber_lyricsfly.c
 SRCS_GRABBER-$(GRABBER_LYRICWIKI)	+= grabber_lyricwiki.c
 SRCS_GRABBER-$(GRABBER_NFO)		+= grabber_nfo.c
 SRCS_GRABBER-$(GRABBER_TMDB)		+= grabber_tmdb.c
