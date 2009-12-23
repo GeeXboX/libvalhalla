@@ -26,7 +26,7 @@
 #include "thread_utils.h"
 
 
-inline void
+void
 vh_setpriority (int prio)
 {
   pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
