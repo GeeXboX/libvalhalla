@@ -674,7 +674,14 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
 
   vh_log (VALHALLA_MSG_INFO,
           "~~~~~~~~~~ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  STATS_DUMP ("GLOBAL", success_all, total_all, time_all);
+#if 0
+  STATS_DUMP ("GLOBAL", success_all, total_all, total_all);
+#else
+  vh_log (VALHALLA_MSG_INFO,
+          "%-10s | %6lu/%-6lu (%6.2f%%)",
+          "GLOBAL", success_all, total_all,
+          (total_all) ? 100.0 * (success_all) / (total_all) : 100);
+#endif /* 0 */
 }
 
 grabber_t *
