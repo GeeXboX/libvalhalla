@@ -27,7 +27,7 @@
 #include "thread_utils.h"
 
 
-inline void
+void
 vh_setpriority (int prio)
 {
   /*
