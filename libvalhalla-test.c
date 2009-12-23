@@ -52,6 +52,7 @@
   " -k --keyword            keyword for the decrapifier\n" \
   " -s --suffix             file suffix (extension)\n" \
   " -g --grabber            grabber to be used\n" \
+  " -r --grabber-nb         number of grabbers\n" \
   " -i --no-grabber         disable all grabbers\n" \
   " -j --stats              dump all the statistics\n" \
   " -q --metadata-cb        enable the metadata callback\n" \
@@ -115,7 +116,7 @@ main (int argc, char **argv)
 #ifdef USE_GRABBER
   const char *grabber = NULL;
 #endif /* USE_GRABBER */
-  int parser_nb = 2, sid = 0, kid = 0, gid = 0;
+  int parser_nb = 2, grabber_nb = 4, sid = 0, kid = 0, gid = 0;
   const char *suffix[SUFFIX_MAX];
   const char *keyword[KEYWORD_MAX];
   const char *grabbers[GRABBER_MAX];
@@ -124,7 +125,7 @@ main (int argc, char **argv)
   const char *group = NULL;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:ijq";
+  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:r:ijq";
   const struct option long_options[] = {
     { "help",        no_argument,       0, 'h'  },
     { "verbose",     no_argument,       0, 'v'  },
@@ -140,6 +141,7 @@ main (int argc, char **argv)
     { "keyword",     required_argument, 0, 'k'  },
     { "suffix",      required_argument, 0, 's'  },
     { "grabber",     required_argument, 0, 'g'  },
+    { "grabber-nb",  required_argument, 0, 'r'  },
     { "no-grabber",  no_argument,       0, 'i'  },
     { "stats",       no_argument,       0, 'j'  },
     { "metadata-cb", no_argument,       0, 'q'  },
@@ -219,6 +221,10 @@ main (int argc, char **argv)
         grabbers[gid++] = optarg;
       break;
 
+    case 'r':
+      grabber_nb = atoi (optarg);
+      break;
+
     case 'i':
       nograbber = 1;
       break;
@@ -241,6 +247,7 @@ main (int argc, char **argv)
 
   memset (&param, 0, sizeof (param));
   param.parser_nb   = parser_nb;
+  param.grabber_nb  = grabber_nb;
   param.commit_int  = commit;
   param.decrapifier = decrap;
   param.gl_cb       = eventgl_cb;
@@ -307,8 +314,9 @@ main (int argc, char **argv)
     printf ("Add path: %s\n", argv[optind++]);
   }
 
-  printf ("Run: parser=%i loop=%i wait=%i priority=%i commit-int=%i\n",
-          parser_nb, loop_nb, loop_wait, priority, commit);
+  printf ("Run: parser=%i grabber=%i loop=%i "
+          "wait=%i priority=%i commit-int=%i\n",
+          parser_nb, grabber_nb, loop_nb, loop_wait, priority, commit);
 
 #ifdef USE_GRABBER
   printf ("Grabbers available:\n");
