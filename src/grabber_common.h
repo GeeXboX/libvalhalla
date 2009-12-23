@@ -59,6 +59,8 @@
  * \see grabber_list_t for details on the functions.
  */
 
+#include <pthread.h>
+
 #include "stats.h"
 #include "utils.h"
 
@@ -153,6 +155,9 @@ typedef struct grabber_list_s {
   /** \private Different of 0 if the grabber is enabled. */
   int enable;
 
+  /** \private Prevent races with several grabbers. */
+  pthread_mutex_t mutex;
+
   /** \private Timer for statistics. */
   vh_stats_tmr_t *tmr;
   /** \private Counter for statistics (::grab() returns 0). */
@@ -199,6 +204,8 @@ typedef struct grabber_list_s {
     grabber->uninit    = fct_uninit;                                          \
     grabber->grab      = fct_grab;                                            \
     grabber->loop      = fct_loop;                                            \
+                                                                              \
+    pthread_mutex_init (&grabber->mutex, NULL);                               \
                                                                               \
     return grabber;                                                           \
   }

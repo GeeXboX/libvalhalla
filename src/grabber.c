@@ -80,21 +80,27 @@
 #include "grabber_tvrage.h"
 #endif /* HAVE_GRABBER_TVRAGE */
 
+#ifndef GRABBER_NB_MAX
+#define GRABBER_NB_MAX 16
+#endif /* GRABBER_NB_MAX */
+
 struct grabber_s {
   valhalla_t   *valhalla;
-  pthread_t     thread;
+  pthread_t     thread[GRABBER_NB_MAX];
   fifo_queue_t *fifo;
+  unsigned int  nb;
   int           priority;
 
   int             wait;
   int             run;
+  unsigned int    run_id;
   pthread_mutex_t mutex_run;
 
   VH_THREAD_PAUSE_ATTRS
 
   grabber_list_t *list;
-  sem_t          *sem_grabber;
-  pthread_mutex_t mutex_grabber;
+  sem_t          *sem_grabber[GRABBER_NB_MAX];
+  pthread_mutex_t mutex_grabber[GRABBER_NB_MAX];
 };
 
 #define STATS_GROUP   "grabber"
@@ -199,23 +205,96 @@ grabber_cmp_fct (const void *tocmp, const void *data)
   return strcmp (tocmp, data);
 }
 
-#define GRABBER_IS_AVAILABLE                                                 \
-  grab = 0;                                                                  \
-  for (it = grabber->list, cnt = 0; it; it = it->next, cnt++)                \
-    if (it->enable && cnt >= pdata->grabber_cnt                              \
-        && file_type_supported (it->caps_flag, pdata->file.type)             \
-        && !vh_list_search (pdata->grabber_list, it->name, grabber_cmp_fct)) \
-    {                                                                        \
-      grab = 1;                                                              \
-      break;                                                                 \
+#define GRABBER_IF_TEST(it, data)                                         \
+  if (it->enable                                                          \
+      && file_type_supported (it->caps_flag, data->file.type)             \
+      && !vh_list_search (data->grabber_list, it->name, grabber_cmp_fct))
+
+#define GRABBER_IS_AVAILABLE(it, list, data)  \
+  grab = 0;                                   \
+  for (it = list; it; it = it->next)          \
+    GRABBER_IF_TEST (it, data)                \
+    {                                         \
+      grab = 1;                               \
+      break;                                  \
     }
+
+#define GRABBER_LOCK_TIMEOUT_S  0
+#define GRABBER_LOCK_TIMEOUT_NS 100000000 /* 100 ms */
+
+#define grabber_unlock(g) pthread_mutex_unlock (&g->mutex)
+
+/*
+ * This function tries to catch the first grabber available and compatible
+ * with the 'type' of the file. The first pass uses the full speed. If the
+ * loop reaches the last grabber and this one is not available or compatible,
+ * the loop is restarted on the first interesting grabber. And to prevent
+ * a useless use of the CPU, this second pass uses a timeout of
+ * GRABBER_LOCK_TIMEOUT_* between every grabber.
+ * If after those loops it fails, then the function returns NULL, and the data
+ * are sent to the dispatcher for a new attempt in the future. This
+ * functionality allows to an other fdata to have a chance. It avoids that
+ * a slow grabber with many files, to monopolize all threads by locking.
+ */
+static inline grabber_list_t *
+grabber_lock (grabber_list_t *list, file_data_t *fdata)
+{
+  const struct timespec ta = {
+    .tv_sec  = GRABBER_LOCK_TIMEOUT_S,
+    .tv_nsec = GRABBER_LOCK_TIMEOUT_NS,
+  };
+  struct timespec ts;
+  int step = 0;
+  grabber_list_t *it, *fskip = NULL;
+
+  for (it = list; it;)
+  {
+    GRABBER_IF_TEST (it, fdata)
+    {
+      int rc;
+
+      switch (step)
+      {
+      case 0: /* first pass */
+        rc = pthread_mutex_trylock (&it->mutex);
+        break;
+
+      case 1: /* second pass */
+        vh_clock_gettime (CLOCK_REALTIME, &ts);
+        VH_TIMERADD (&ts, &ta, &ts);
+        rc = pthread_mutex_timedlock (&it->mutex, &ts);
+        break;
+
+      default: /* give the chance to an other */
+        return NULL;
+      }
+
+      if (!rc)
+        return it; /* locked */
+
+      if (!fskip)
+        fskip = it;
+    }
+
+    if (it->next)
+      it = it->next;
+    else
+    {
+      it = fskip;
+      step++;
+    }
+  }
+
+  return NULL;
+}
 
 static void *
 grabber_thread (void *arg)
 {
   int res, tid;
   int e;
-  int cnt, grab;
+  int grab;
+  unsigned int id;
   void *data = NULL;
   file_data_t *pdata;
   grabber_t *grabber = arg;
@@ -223,6 +302,10 @@ grabber_thread (void *arg)
 
   if (!grabber)
     pthread_exit (NULL);
+
+  pthread_mutex_lock (&grabber->mutex_run);
+  id = grabber->run_id++;
+  pthread_mutex_unlock (&grabber->mutex_run);
 
   tid = vh_setpriority (grabber->priority);
 
@@ -243,9 +326,15 @@ grabber_thread (void *arg)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      for (it = grabber->list; it; it = it->next)
-        if (it->loop)
-          it->loop (it->priv);
+      for (it = grabber->list; it;)
+      {
+        if (!it->loop)
+          continue;
+
+        pthread_mutex_lock (&it->mutex);
+        it->loop (it->priv);
+        pthread_mutex_unlock (&it->mutex);
+      }
       continue;
     }
 
@@ -268,29 +357,29 @@ grabber_thread (void *arg)
               "[%s] waiting grabbing: %s", __FUNCTION__, pdata->file.path);
 
       /* sem_grabber provides a way to wake up the thread for "force_stop" */
-      grabber->sem_grabber = &pdata->sem_grabber;
-      pthread_mutex_unlock (&grabber->mutex_grabber);
+      grabber->sem_grabber[id] = &pdata->sem_grabber;
+      pthread_mutex_unlock (&grabber->mutex_grabber[id]);
 
       sem_wait (&pdata->sem_grabber);
       pdata->wait = 0;
 
-      pthread_mutex_lock (&grabber->mutex_grabber);
-      grabber->sem_grabber = NULL;
+      pthread_mutex_lock (&grabber->mutex_grabber[id]);
+      grabber->sem_grabber[id] = NULL;
 
       if (grabber_is_stopped (grabber))
         break;
     }
 
-    GRABBER_IS_AVAILABLE
-    if (grab) /* next child available */
+    it = grabber_lock (grabber->list, pdata);
+    if (it) /* one grabber available */
     {
       int res;
 
-      pdata->grabber_cnt = cnt + 1;
       pdata->grabber_name = it->name;
       VH_STATS_TIMER_START (it->tmr);
       res = it->grab (it->priv, pdata);
       VH_STATS_TIMER_STOP (it->tmr);
+      grabber_unlock (it);
       if (res)
       {
         VH_STATS_COUNTER_INC (it->cnt_failure);
@@ -301,15 +390,15 @@ grabber_thread (void *arg)
       else
         VH_STATS_COUNTER_INC (it->cnt_success);
 
+      vh_list_append (pdata->grabber_list, it->name, strlen (it->name) + 1);
+    }
+
       /* at least still one grabber for this file ? */
-      GRABBER_IS_AVAILABLE
+    GRABBER_IS_AVAILABLE (it, grabber->list, pdata)
       if (!grab) /* no?, then next step */
         vh_file_data_step_increase (pdata, &e);
       else
         vh_file_data_step_continue (pdata, &e);
-    }
-    else /* next step, no grabber */
-      vh_file_data_step_increase (pdata, &e);
 
     vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s grabbing: %s",
             __FUNCTION__, grab ? "continue" : "finished", pdata->file.path);
@@ -320,7 +409,7 @@ grabber_thread (void *arg)
   while (!grabber_is_stopped (grabber));
 
   /* the thread is locked by vh_grabber_run() */
-  pthread_mutex_unlock (&grabber->mutex_grabber);
+  pthread_mutex_unlock (&grabber->mutex_grabber[id]);
 
   pthread_exit (NULL);
 }
@@ -329,6 +418,7 @@ int
 vh_grabber_run (grabber_t *grabber, int priority)
 {
   int res = GRABBER_SUCCESS;
+  unsigned int i;
   pthread_attr_t attr;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -338,18 +428,26 @@ vh_grabber_run (grabber_t *grabber, int priority)
 
   grabber->priority = priority;
   grabber->run      = 1;
+  grabber->run_id   = 0;
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  pthread_mutex_lock (&grabber->mutex_grabber);
-  res = pthread_create (&grabber->thread, &attr, grabber_thread, grabber);
+  for (i = 0; i < grabber->nb; i++)
+  {
+    pthread_mutex_lock (&grabber->mutex_grabber[i]);
+    res = pthread_create (&grabber->thread[i], &attr, grabber_thread, grabber);
   if (res)
   {
     res = GRABBER_ERROR_THREAD;
     grabber->run = 0;
-    pthread_mutex_unlock (&grabber->mutex_grabber);
+      break;
   }
+  }
+
+  if (res)
+    for (i++; i > 0; i--)
+      pthread_mutex_unlock (&grabber->mutex_grabber[i - 1]);
 
   pthread_attr_destroy (&attr);
   return res;
@@ -416,12 +514,14 @@ vh_grabber_pause (grabber_t *grabber)
   if (!grabber)
     return;
 
-  VH_THREAD_PAUSE_FCT (grabber, 1)
+  VH_THREAD_PAUSE_FCT (grabber, grabber->nb)
 }
 
 void
 vh_grabber_stop (grabber_t *grabber, int f)
 {
+  unsigned int i;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!grabber)
@@ -433,20 +533,26 @@ vh_grabber_stop (grabber_t *grabber, int f)
     grabber->run = 0;
     pthread_mutex_unlock (&grabber->mutex_run);
 
+    for (i = 0; i < grabber->nb; i++)
     vh_fifo_queue_push (grabber->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
+
     grabber->wait = 1;
 
+    for (i = 0; i < grabber->nb; i++)
+    {
     /* wake up the thread if this is asleep by dbmanager */
-    pthread_mutex_lock (&grabber->mutex_grabber);
-    if (grabber->sem_grabber)
-      sem_post (grabber->sem_grabber);
-    pthread_mutex_unlock (&grabber->mutex_grabber);
+      pthread_mutex_lock (&grabber->mutex_grabber[i]);
+      if (grabber->sem_grabber[i])
+        sem_post (grabber->sem_grabber[i]);
+      pthread_mutex_unlock (&grabber->mutex_grabber[i]);
+    }
   }
 
   if (f & STOP_FLAG_WAIT && grabber->wait)
   {
-    pthread_join (grabber->thread, NULL);
+    for (i = 0; i < grabber->nb; i++)
+      pthread_join (grabber->thread[i], NULL);
     grabber->wait = 0;
   }
 }
@@ -454,6 +560,7 @@ vh_grabber_stop (grabber_t *grabber, int f)
 void
 vh_grabber_uninit (grabber_t *grabber)
 {
+  unsigned int i;
   grabber_list_t *it;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -463,7 +570,8 @@ vh_grabber_uninit (grabber_t *grabber)
 
   vh_fifo_queue_free (grabber->fifo);
   pthread_mutex_destroy (&grabber->mutex_run);
-  pthread_mutex_destroy (&grabber->mutex_grabber);
+  for (i = 0; i < grabber->nb; i++)
+    pthread_mutex_destroy (&grabber->mutex_grabber[i]);
   VH_THREAD_PAUSE_UNINIT (grabber)
 
   /* uninit all childs */
@@ -473,6 +581,7 @@ vh_grabber_uninit (grabber_t *grabber)
   for (it = grabber->list; it;)
   {
     grabber_list_t *tmp = it->next;
+    pthread_mutex_destroy (&it->mutex);
     free (it);
     it = tmp;
   }
@@ -563,8 +672,9 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
 }
 
 grabber_t *
-vh_grabber_init (valhalla_t *handle)
+vh_grabber_init (valhalla_t *handle, unsigned int nb)
 {
+  unsigned int i;
   grabber_t *grabber;
   grabber_list_t *it;
 
@@ -577,8 +687,12 @@ vh_grabber_init (valhalla_t *handle)
   if (!grabber)
     return NULL;
 
+  if (nb > ARRAY_NB_ELEMENTS (grabber->thread))
+    goto err;
+
   pthread_mutex_init (&grabber->mutex_run, NULL);
-  pthread_mutex_init (&grabber->mutex_grabber, NULL);
+  for (i = 0; i < nb; i++)
+    pthread_mutex_init (&grabber->mutex_grabber[i], NULL);
   VH_THREAD_PAUSE_INIT (grabber)
 
   grabber->fifo = vh_fifo_queue_new ();
@@ -586,6 +700,7 @@ vh_grabber_init (valhalla_t *handle)
     goto err;
 
   grabber->valhalla = handle;
+  grabber->nb       = nb ? nb : GRABBER_NUMBER_DEF;
 
   grabber->list = grabber_register_childs ();
   if (!grabber->list)

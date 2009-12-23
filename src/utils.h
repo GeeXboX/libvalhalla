@@ -67,8 +67,7 @@ typedef struct file_data_s {
   metadata_t *meta_grabber;
   const char *grabber_name;
   sem_t       sem_grabber;
-  int         grabber_cnt;
-  list_t     *grabber_list; /* grabbers already handled before interruption */
+  list_t     *grabber_list; /* grabbers already handled */
 
   /* downloading attribute */
   file_dl_t  *list_downloader;

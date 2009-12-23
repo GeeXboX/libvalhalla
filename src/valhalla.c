@@ -530,7 +530,7 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
     goto err;
 
 #ifdef USE_GRABBER
-  handle->grabber = vh_grabber_init (handle);
+  handle->grabber = vh_grabber_init (handle, pp->grabber_nb);
   if (!handle->grabber)
     goto err;
 

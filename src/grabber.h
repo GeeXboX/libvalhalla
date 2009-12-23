@@ -33,6 +33,8 @@ enum grabber_errno {
   GRABBER_SUCCESS       =  0,
 };
 
+#define GRABBER_NUMBER_DEF 2
+
 
 int vh_grabber_run (grabber_t *grabber, int priority);
 void vh_grabber_pause (grabber_t *grabber);
@@ -41,7 +43,7 @@ void vh_grabber_state_set (grabber_t *grabber, const char *id, int enable);
 const char *vh_grabber_next (grabber_t *grabber, const char *id);
 void vh_grabber_stop (grabber_t *grabber, int f);
 void vh_grabber_uninit (grabber_t *grabber);
-grabber_t *vh_grabber_init (valhalla_t *handle);
+grabber_t *vh_grabber_init (valhalla_t *handle, unsigned int nb);
 
 void vh_grabber_action_send (grabber_t *grabber,
                              fifo_queue_prio_t prio, int action, void *data);
