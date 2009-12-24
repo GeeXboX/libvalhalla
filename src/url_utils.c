@@ -29,7 +29,6 @@
 #include <curl/easy.h>
 
 #include "valhalla.h"
-#include "utils.h"
 #include "url_utils.h"
 #include "logs.h"
 
