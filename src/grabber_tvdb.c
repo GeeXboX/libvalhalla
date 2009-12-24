@@ -265,7 +265,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch tv show poster */
   tmp = vh_get_prop_value_from_xml_tree (n, "poster");
-  if (tmp)
+  if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_COVER);
     xmlFree (tmp);
@@ -273,7 +273,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch tv show fan art */
   tmp = vh_get_prop_value_from_xml_tree (n, "fanart");
-  if (tmp)
+  if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_FAN_ART);
     xmlFree (tmp);
