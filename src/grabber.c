@@ -112,7 +112,7 @@ struct grabber_s {
  * Configure one grabber (valhalla_init_param_t::grabber_nb) in order to
  * preserve the priorities.
  */
-static grabber_list_t *(*g_grabber_register[]) (void) = {
+static grabber_list_t *(*const g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
   vh_grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
@@ -613,7 +613,7 @@ static grabber_list_t *
 grabber_register_childs (void)
 {
   grabber_list_t *list = NULL, *child;
-  grabber_list_t *(**reg) (void);
+  grabber_list_t *(*const *reg) (void);
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
