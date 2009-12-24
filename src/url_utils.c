@@ -125,10 +125,6 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   if (!curl || !src || !dst)
     return 1;
 
-  /* no need to download again an already existing file */
-  if (vh_file_exists (dst))
-    return 1;
-
   vh_log (VALHALLA_MSG_VERBOSE, "Saving %s to %s", src, dst);
 
   data = vh_url_get_data (curl, src);

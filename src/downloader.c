@@ -151,6 +151,13 @@ downloader_thread (void *arg)
                   ? "" : "/",
                   it->name);
 
+        /* no need to download again an already existing file */
+        if (vh_file_exists (dest))
+        {
+          free (dest);
+          continue;
+        }
+
         VH_STATS_TIMER_START (downloader->st_tmr);
         err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
         VH_STATS_TIMER_STOP (downloader->st_tmr);
