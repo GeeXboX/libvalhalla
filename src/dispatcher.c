@@ -147,8 +147,12 @@ dispatcher_thread (void *arg)
        * is available.
        * If step is DOWNLOADING, then the last grabbed data is
        * added/updated.
+       *
+       * When skip is != 0, then pdata has no meta_grabber available
+       * because all grabber threads are busy. In this case, nothing
+       * must be sent to the DBManager.
        */
-      if (step > STEP_PARSING && step < STEP_ENDING)
+      if (step > STEP_PARSING && step < STEP_ENDING && !pdata->skip)
       {
         /*
          * Only one meta_grabber exists for all grabbers. It is necessary

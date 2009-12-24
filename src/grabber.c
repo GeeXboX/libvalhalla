@@ -245,6 +245,7 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
   int step = 0;
   grabber_list_t *it, *fskip = NULL;
 
+  fdata->skip = 0;
   for (it = list; it;)
   {
     GRABBER_IF_TEST (it, fdata)
@@ -264,6 +265,7 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
         break;
 
       default: /* give the chance to an other */
+        fdata->skip = 1;
         return NULL;
       }
 
