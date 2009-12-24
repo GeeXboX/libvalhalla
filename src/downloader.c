@@ -30,6 +30,7 @@
 #include "url_utils.h"
 #include "fifo_queue.h"
 #include "logs.h"
+#include "stats.h"
 #include "thread_utils.h"
 #include "dispatcher.h"
 #include "downloader.h"
@@ -48,7 +49,15 @@ struct downloader_s {
 
   url_t *url_handler;
   char **dl_list;
+
+  vh_stats_cnt_t *st_cnt_success;
+  vh_stats_cnt_t *st_cnt_failure;
+  vh_stats_tmr_t *st_tmr;
 };
+
+#define STATS_GROUP   "downloader"
+#define STATS_SUCCESS "success"
+#define STATS_FAILURE "failure"
 
 
 static inline int
@@ -136,10 +145,17 @@ downloader_thread (void *arg)
                   ? "" : "/",
                   it->name);
 
+        VH_STATS_TIMER_START (downloader->st_tmr);
         err = vh_url_save_to_disk (downloader->url_handler, it->url, dest);
+        VH_STATS_TIMER_STOP (downloader->st_tmr);
         if (!err)
+        {
           vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s saved to %s",
                   __FUNCTION__, it->url, downloader->dl_list[dst]);
+          VH_STATS_COUNTER_INC (downloader->st_cnt_success);
+        }
+        else
+          VH_STATS_COUNTER_INC (downloader->st_cnt_failure);
         free (dest);
       }
     }
@@ -258,6 +274,32 @@ vh_downloader_uninit (downloader_t *downloader)
   free (downloader);
 }
 
+static void
+downloader_stats_dump (vh_stats_t *stats, void *data)
+{
+  downloader_t *downloader = data;
+  unsigned long success, failure, total;
+  float time;
+
+  if (!stats || !downloader)
+    return;
+
+  vh_log (VALHALLA_MSG_INFO,
+          "==================================================================");
+  vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
+  vh_log (VALHALLA_MSG_INFO,
+          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+  success = vh_stats_counter_read (downloader->st_cnt_success);
+  failure = vh_stats_counter_read (downloader->st_cnt_failure);
+  total   = success + failure;
+  time    = vh_stats_timer_read (downloader->st_tmr) / 1000000000.0;
+  vh_log (VALHALLA_MSG_INFO,
+          "Downloaded | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file",
+          success, total, total ? 100.0 * success / total : 100.0,
+          time, total ? time / total : 0.0);
+}
+
 downloader_t *
 vh_downloader_init (valhalla_t *handle)
 {
@@ -288,6 +330,16 @@ vh_downloader_init (valhalla_t *handle)
 
   pthread_mutex_init (&downloader->mutex_run, NULL);
   VH_THREAD_PAUSE_INIT (downloader)
+
+  /* init statistics */
+  vh_stats_grp_add (handle->stats,
+                    STATS_GROUP, downloader_stats_dump, downloader);
+  downloader->st_cnt_success =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_SUCCESS, NULL);
+  downloader->st_cnt_failure =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_FAILURE, NULL);
+  downloader->st_tmr =
+    vh_stats_grp_timer_add (handle->stats, STATS_GROUP, STATS_GROUP, NULL);
 
   return downloader;
 
