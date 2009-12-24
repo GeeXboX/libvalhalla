@@ -65,10 +65,10 @@ typedef struct file_data_s {
   /* grabbing attributes */
   unsigned int skip : 1; /* when all grabber threads are busy */
   unsigned int wait : 1;
-  metadata_t *meta_grabber;
-  const char *grabber_name;
-  sem_t       sem_grabber;
-  list_t     *grabber_list; /* grabbers already handled */
+  metadata_t  *meta_grabber;
+  const char  *grabber_name;
+  sem_t        sem_grabber;
+  list_t      *grabber_list; /* grabbers already handled */
 
   /* downloading attribute */
   file_dl_t  *list_downloader;
