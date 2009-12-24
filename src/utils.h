@@ -63,8 +63,8 @@ typedef struct file_data_s {
   processing_step_t    step;
 
   /* grabbing attributes */
-  int         skip; /* when all grabber threads are busy */
-  int         wait;
+  unsigned int skip : 1; /* when all grabber threads are busy */
+  unsigned int wait : 1;
   metadata_t *meta_grabber;
   const char *grabber_name;
   sem_t       sem_grabber;
