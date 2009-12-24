@@ -24,10 +24,9 @@
 
 void vh_log_verb (valhalla_verb_t level);
 int vh_log_test (valhalla_verb_t level);
-void vh_log_orig (valhalla_verb_t level,
-                  const char *file, int line, const char *format, ...);
+void vh_log_orig (valhalla_verb_t level, const char *format, ...);
 
 #define vh_log(level, format, arg...) \
-  vh_log_orig (level, __FILE__, __LINE__, format, ##arg)
+  vh_log_orig (level, format, __FILE__, __LINE__, ##arg)
 
 #endif /* VALHALLA_LOGS_H */

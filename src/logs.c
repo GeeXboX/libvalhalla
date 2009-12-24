@@ -73,8 +73,7 @@ vh_log_test (valhalla_verb_t level)
 }
 
 void
-vh_log_orig (valhalla_verb_t level,
-             const char *file, int line, const char *format, ...)
+vh_log_orig (valhalla_verb_t level, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
   static const char *const c[] = {
@@ -92,21 +91,22 @@ vh_log_orig (valhalla_verb_t level,
     [VALHALLA_MSG_ERROR]    = "Err",
     [VALHALLA_MSG_CRITICAL] = "Crit",
   };
+  char fmt[256];
   va_list va;
 
   if (!format || !vh_log_test (level))
     return;
 
-  va_start (va, format);
-
 #ifdef USE_LOGCOLOR
-  fprintf (stderr, "[" BOLD "libvalhalla" NORMAL "] [%s:%i] %s%s" NORMAL ": ",
-           file, line, c[level], l[level]);
+  snprintf (fmt, sizeof (fmt),
+            "[" BOLD "libvalhalla" NORMAL "] [%%s:%%i] %s%s" NORMAL ": %s\n",
+            c[level], l[level], format);
 #else
-  fprintf (stderr, "[libvalhalla] [%s:%i] %s: ", file, line, l[level]);
+  snprintf (fmt, sizeof (fmt),
+            "[libvalhalla] [%%s:%%i] %s: %s\n", l[level], format);
 #endif /* USE_LOGCOLOR */
 
-  vfprintf (stderr, format, va);
-  fprintf (stderr, "\n");
+  va_start (va, format);
+  vfprintf (stderr, fmt, va);
   va_end (va);
 }
