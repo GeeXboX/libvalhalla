@@ -43,6 +43,8 @@
 #define PATH_RECURSIVENESS_MAX 42
 #endif /* PATH_RECURSIVENESS_MAX */
 
+#define VH_HANDLE scanner->valhalla
+
 struct scanner_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -234,7 +236,7 @@ scanner_readdir (scanner_t *scanner,
                                FIFO_QUEUE_PRIORITY_NORMAL, STEP_PARSING);
       if (data)
       {
-        vh_dbmanager_action_send (scanner->valhalla->dbmanager,
+        vh_dbmanager_action_send (VH_HANDLE->dbmanager,
                                   data->priority, ACTION_DB_NEWFILE, data);
         (*files)++;
       }
@@ -271,7 +273,7 @@ scanner_thread (void *arg)
 
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
   {
-    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+    vh_event_handler_gl_send (VH_HANDLE->event_handler,
                               VALHALLA_EVENTGL_SCANNER_BEGIN);
 
     for (path = scanner->paths; path; path = path->next)
@@ -287,7 +289,7 @@ scanner_thread (void *arg)
               "[%s] End scanning   : %i files", __FUNCTION__, path->nb_files);
     }
 
-    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+    vh_event_handler_gl_send (VH_HANDLE->event_handler,
                               VALHALLA_EVENTGL_SCANNER_END);
 
     /*
@@ -309,16 +311,16 @@ scanner_thread (void *arg)
       }
     }
 
-    vh_event_handler_gl_send (scanner->valhalla->event_handler,
+    vh_event_handler_gl_send (VH_HANDLE->event_handler,
                               VALHALLA_EVENTGL_SCANNER_ACKS);
 
     /* It is not the last loop ?  */
     if (i != 1)
     {
-      vh_dbmanager_action_send (scanner->valhalla->dbmanager,
+      vh_dbmanager_action_send (VH_HANDLE->dbmanager,
                                 FIFO_QUEUE_PRIORITY_NORMAL,
                                 ACTION_DB_NEXT_LOOP, NULL);
-      vh_event_handler_gl_send (scanner->valhalla->event_handler,
+      vh_event_handler_gl_send (VH_HANDLE->event_handler,
                                 VALHALLA_EVENTGL_SCANNER_SLEEP);
       vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
@@ -327,7 +329,7 @@ scanner_thread (void *arg)
       goto kill;
   }
 
-  vh_event_handler_gl_send (scanner->valhalla->event_handler,
+  vh_event_handler_gl_send (VH_HANDLE->event_handler,
                             VALHALLA_EVENTGL_SCANNER_EXIT);
 
   pthread_exit (NULL);
@@ -565,7 +567,7 @@ vh_scanner_init (valhalla_t *handle)
   if (!scanner->timer)
     goto err;
 
-  scanner->valhalla = handle;
+  scanner->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&scanner->mutex_run, NULL);
 

@@ -35,6 +35,8 @@
 #include "dispatcher.h"
 #include "downloader.h"
 
+#define VH_HANDLE downloader->valhalla
+
 struct downloader_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -103,7 +105,7 @@ downloader_thread (void *arg)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      vh_stats_dump (downloader->valhalla->stats, STATS_GROUP);
+      vh_stats_dump (VH_HANDLE->stats, STATS_GROUP);
       continue;
     }
 
@@ -175,7 +177,7 @@ downloader_thread (void *arg)
 
     if (!interrup)
       vh_file_data_step_increase (pdata, &e);
-    vh_dispatcher_action_send (downloader->valhalla->dispatcher,
+    vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                pdata->priority, e, pdata);
   }
   while (!downloader_is_stopped (downloader));
@@ -339,7 +341,7 @@ vh_downloader_init (valhalla_t *handle)
   if (!downloader->dl_list)
     goto err;
 
-  downloader->valhalla = handle;
+  downloader->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&downloader->mutex_run, NULL);
   VH_THREAD_PAUSE_INIT (downloader)

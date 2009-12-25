@@ -41,6 +41,8 @@
 #include "downloader.h"
 #endif /* USE_GRABBER */
 
+#define VH_HANDLE ondemand->valhalla
+
 struct ondemand_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -126,12 +128,12 @@ ondemand_thread (void *arg)
           "[%s] tid: %i priority: %i", __FUNCTION__, tid, ondemand->priority);
 
 #ifdef USE_GRABBER
-  pause[i++].handler = ondemand->valhalla->grabber;
-  pause[i++].handler = ondemand->valhalla->downloader;
+  pause[i++].handler = VH_HANDLE->grabber;
+  pause[i++].handler = VH_HANDLE->downloader;
 #endif /* USE_GRABBER */
-  pause[i++].handler = ondemand->valhalla->parser;
-  pause[i++].handler = ondemand->valhalla->dispatcher;
-  pause[i++].handler = ondemand->valhalla->dbmanager;
+  pause[i++].handler = VH_HANDLE->parser;
+  pause[i++].handler = VH_HANDLE->dispatcher;
+  pause[i++].handler = VH_HANDLE->dbmanager;
 
   do
   {
@@ -165,7 +167,7 @@ ondemand_thread (void *arg)
      * Ignore the ondemand query if the file is already fully available.
      * The ENDED event is sent by this function if the return value is 1.
      */
-    if (vh_dbmanager_file_complete (ondemand->valhalla->dbmanager,
+    if (vh_dbmanager_file_complete (VH_HANDLE->dbmanager,
                                     file, (int64_t) st.st_mtime))
     {
       free (file);
@@ -207,15 +209,15 @@ ondemand_thread (void *arg)
     }
     /* Check if the file is available and consistent. */
     else if (S_ISREG (st.st_mode)
-             && !vh_scanner_suffix_cmp (ondemand->valhalla->scanner, file))
+             && !vh_scanner_suffix_cmp (VH_HANDLE->scanner, file))
     {
       int outofpath =
-        !!vh_scanner_path_cmp (ondemand->valhalla->scanner, file);
+        !!vh_scanner_path_cmp (VH_HANDLE->scanner, file);
 
       fdata = vh_file_data_new (file, st.st_mtime, outofpath, OD_TYPE_NEW,
                                 FIFO_QUEUE_PRIORITY_HIGH, STEP_PARSING);
       if (fdata)
-        vh_dbmanager_action_send (ondemand->valhalla->dbmanager,
+        vh_dbmanager_action_send (VH_HANDLE->dbmanager,
                                   fdata->priority, ACTION_DB_NEWFILE, fdata);
     }
     else
@@ -330,7 +332,7 @@ vh_ondemand_init (valhalla_t *handle)
   if (!ondemand->fifo)
     goto err;
 
-  ondemand->valhalla = handle;
+  ondemand->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&ondemand->mutex_run, NULL);
 

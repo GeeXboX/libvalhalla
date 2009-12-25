@@ -37,6 +37,8 @@
 #include "dbmanager.h"
 #include "dispatcher.h"
 
+#define VH_HANDLE dbmanager->valhalla
+
 struct dbmanager_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -118,10 +120,10 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
     if (e == ACTION_DB_NEXT_LOOP)
     {
-      vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
+      vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                  FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
 
-      vh_stats_dump (dbmanager->valhalla->stats, STATS_GROUP);
+      vh_stats_dump (VH_HANDLE->stats, STATS_GROUP);
       goto out;
     }
 
@@ -194,7 +196,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_database_file_interrupted_clear (dbmanager->database,
                                           pdata->file.path);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+        vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_ENDED, NULL);
       break;
@@ -210,10 +212,10 @@ dbmanager_queue (dbmanager_t *dbmanager)
         vh_database_file_grab_update (dbmanager->database, pdata);
 
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+        vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path, VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
-      res = vh_event_handler_md_send (dbmanager->valhalla->event_handler,
+      res = vh_event_handler_md_send (VH_HANDLE->event_handler,
                                       VALHALLA_EVENTMD_GRABBER,
                                       pdata->grabber_name, &pdata->file,
                                       pdata->meta_grabber);
@@ -234,10 +236,10 @@ dbmanager_queue (dbmanager_t *dbmanager)
     case ACTION_DB_INSERT_P:
       vh_database_file_data_update (dbmanager->database, pdata);
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+        vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_PARSED, NULL);
-      vh_event_handler_md_send (dbmanager->valhalla->event_handler,
+      vh_event_handler_md_send (VH_HANDLE->event_handler,
                                 VALHALLA_EVENTMD_PARSER,
                                 NULL, &pdata->file, pdata->meta_parser);
       continue;
@@ -298,7 +300,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
       if (mtime < 0 || pdata->file.mtime != mtime || interrup == 1)
       {
-        vh_dispatcher_action_send (dbmanager->valhalla->dispatcher,
+        vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                    pdata->priority,
                                    mtime < 0
                                    ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
@@ -307,7 +309,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       }
 
       if (pdata->od != OD_TYPE_DEF)
-        vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+        vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_ENDED, NULL);
       VH_STATS_COUNTER_INC (dbmanager->st_nochange);
@@ -316,7 +318,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
     /* Must not come from "On-demand" */
     if (pdata->od == OD_TYPE_DEF || pdata->od == OD_TYPE_UPD)
-      vh_scanner_action_send (dbmanager->valhalla->scanner,
+      vh_scanner_action_send (VH_HANDLE->scanner,
                               FIFO_QUEUE_PRIORITY_NORMAL,
                               ACTION_ACKNOWLEDGE, NULL);
     vh_file_data_free (pdata);
@@ -376,8 +378,8 @@ dbmanager_thread (void *arg)
     while ((file =
               vh_database_file_get_checked_clear (dbmanager->database, rst)))
     {
-      if (vh_scanner_path_cmp (dbmanager->valhalla->scanner, file)
-          || vh_scanner_suffix_cmp (dbmanager->valhalla->scanner, file)
+      if (vh_scanner_path_cmp (VH_HANDLE->scanner, file)
+          || vh_scanner_suffix_cmp (VH_HANDLE->scanner, file)
           || access (file, R_OK))
       {
         /* Manage BEGIN / COMMIT transactions */
@@ -571,7 +573,7 @@ vh_dbmanager_init (valhalla_t *handle, const char *db, unsigned int commit_int)
     commit_int = DBMANAGER_COMMIT_INTERVAL_DEF;
   dbmanager->commit_int = commit_int;
 
-  dbmanager->valhalla = handle;
+  dbmanager->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&dbmanager->mutex_run, NULL);
   VH_THREAD_PAUSE_INIT (dbmanager)
@@ -627,7 +629,7 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
     if (mt != mtime)
       res = 1; /* must be updated */
     else
-      vh_event_handler_od_send (dbmanager->valhalla->event_handler,
+      vh_event_handler_od_send (VH_HANDLE->event_handler,
                                 file, VALHALLA_EVENTOD_ENDED, NULL);
   }
 

@@ -31,6 +31,8 @@
 #include "metadata.h"
 #include "event_handler.h"
 
+#define VH_HANDLE event_handler->valhalla
+
 struct event_handler_od_s {
   char               *file;
   valhalla_event_od_t e;
@@ -276,7 +278,7 @@ vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb)
   if (!event_handler->fifo)
     goto err;
 
-  event_handler->valhalla = handle;
+  event_handler->valhalla = handle; /* VH_HANDLE */
   memcpy (&event_handler->cb, cb, sizeof (event_handler_cb_t));
 
   pthread_mutex_init (&event_handler->mutex_run, NULL);

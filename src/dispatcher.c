@@ -39,6 +39,8 @@
 #include "downloader.h"
 #endif /* USE_GRABBER */
 
+#define VH_HANDLE dispatcher->valhalla
+
 struct dispatcher_s {
   valhalla_t   *valhalla;
   pthread_t     thread;
@@ -93,12 +95,12 @@ dispatcher_thread (void *arg)
   vh_log (VALHALLA_MSG_VERBOSE,
           "[%s] tid: %i priority: %i", __FUNCTION__, tid, dispatcher->priority);
 
-  send[STEP_PARSING].handler     = dispatcher->valhalla->parser;
+  send[STEP_PARSING].handler     = VH_HANDLE->parser;
 #ifdef USE_GRABBER
-  send[STEP_GRABBING].handler    = dispatcher->valhalla->grabber;
-  send[STEP_DOWNLOADING].handler = dispatcher->valhalla->downloader;
+  send[STEP_GRABBING].handler    = VH_HANDLE->grabber;
+  send[STEP_DOWNLOADING].handler = VH_HANDLE->downloader;
 #endif /* USE_GRABBER */
-  send[STEP_ENDING].handler      = dispatcher->valhalla->dbmanager;
+  send[STEP_ENDING].handler      = VH_HANDLE->dbmanager;
 
   do
   {
@@ -122,9 +124,9 @@ dispatcher_thread (void *arg)
 
 #ifdef USE_GRABBER
     case ACTION_DB_NEXT_LOOP:
-      vh_grabber_action_send (dispatcher->valhalla->grabber,
+      vh_grabber_action_send (VH_HANDLE->grabber,
                               FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
-      vh_downloader_action_send (dispatcher->valhalla->downloader,
+      vh_downloader_action_send (VH_HANDLE->downloader,
                                  FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
       break;
 #endif /* USE_GRABBER */
@@ -170,7 +172,7 @@ dispatcher_thread (void *arg)
       if (step == STEP_ENDING)
       {
 #endif /* USE_GRABBER */
-        vh_dbmanager_action_send (dispatcher->valhalla->dbmanager,
+        vh_dbmanager_action_send (VH_HANDLE->dbmanager,
                                   pdata->priority, e, pdata);
       }
 
@@ -309,7 +311,7 @@ vh_dispatcher_init (valhalla_t *handle)
   if (!dispatcher->fifo)
     goto err;
 
-  dispatcher->valhalla = handle;
+  dispatcher->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&dispatcher->mutex_run, NULL);
   VH_THREAD_PAUSE_INIT (dispatcher)

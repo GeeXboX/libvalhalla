@@ -81,6 +81,8 @@
 #define GRABBER_NB_MAX 16
 #endif /* GRABBER_NB_MAX */
 
+#define VH_HANDLE grabber->valhalla
+
 struct grabber_s {
   valhalla_t   *valhalla;
   pthread_t     thread[GRABBER_NB_MAX];
@@ -336,7 +338,7 @@ grabber_thread (void *arg)
         pthread_mutex_unlock (&it->mutex);
       }
 
-      vh_stats_dump (grabber->valhalla->stats, STATS_GROUP);
+      vh_stats_dump (VH_HANDLE->stats, STATS_GROUP);
       continue;
     }
 
@@ -405,7 +407,7 @@ grabber_thread (void *arg)
     vh_log (VALHALLA_MSG_VERBOSE, "[%s] %s grabbing: %s",
             __FUNCTION__, grab ? "continue" : "finished", pdata->file.path);
 
-    vh_dispatcher_action_send (grabber->valhalla->dispatcher,
+    vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                pdata->priority, e, pdata);
   }
   while (!grabber_is_stopped (grabber));
@@ -708,7 +710,7 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   if (!grabber->fifo)
     goto err;
 
-  grabber->valhalla = handle;
+  grabber->valhalla = handle; /* VH_HANDLE */
   grabber->nb       = nb ? nb : GRABBER_NUMBER_DEF;
 
   grabber->list = grabber_register_childs ();

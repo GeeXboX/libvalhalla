@@ -42,6 +42,8 @@
 #define PARSER_NB_MAX 8
 #endif /* PARSER_NB_MAX */
 
+#define VH_HANDLE parser->valhalla
+
 #define IS_TO_DECRAPIFY(c)                \
  ((unsigned) (c) <= 0x7F                  \
   && (c) != '\''                          \
@@ -455,7 +457,7 @@ parser_thread (void *arg)
       parser_metadata (parser, pdata);
 
     vh_file_data_step_increase (pdata, &e);
-    vh_dispatcher_action_send (parser->valhalla->dispatcher,
+    vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                pdata->priority, e, pdata);
   }
   while (!parser_is_stopped (parser));
@@ -623,7 +625,7 @@ vh_parser_init (valhalla_t *handle, unsigned int nb, unsigned int decrapifier)
   if (!parser->fifo)
     goto err;
 
-  parser->valhalla    = handle;
+  parser->valhalla    = handle; /* VH_HANDLE */
   parser->nb          = nb ? nb : PARSER_NUMBER_DEF;
   parser->decrapifier = !!decrapifier;
 
