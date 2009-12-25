@@ -131,6 +131,10 @@
  "CREATE INDEX IF NOT EXISTS "    \
  "outofpath_idx ON file (outofpath__);"
 
+#define CREATE_INDEX_ASSOC        \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "assoc_idx ON assoc_file_metadata (meta_id, data_id);"
+
 /* Unique */
 
 #define CREATE_INDEX_FILE_PATH         \
@@ -156,10 +160,6 @@
 #define CREATE_INDEX_GRABBER_NAME      \
  "CREATE UNIQUE INDEX IF NOT EXISTS "  \
  "grabber_name_idx ON grabber (grabber_name);"
-
-#define CREATE_INDEX_ASSOC             \
- "CREATE INDEX IF NOT EXISTS "         \
- "assoc_idx ON assoc_file_metadata (meta_id, data_id);"
 
 /******************************************************************************/
 /*                                                                            */
