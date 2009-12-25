@@ -213,7 +213,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (VH_HANDLE->event_handler,
-                                  pdata->file.path, VALHALLA_EVENTOD_GRABBED,
+                                  pdata->file.path,
+                                  VALHALLA_EVENTOD_GRABBED,
                                   pdata->grabber_name);
       res = vh_event_handler_md_send (VH_HANDLE->event_handler,
                                       VALHALLA_EVENTMD_GRABBER,
@@ -240,8 +241,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_PARSED, NULL);
       vh_event_handler_md_send (VH_HANDLE->event_handler,
-                                VALHALLA_EVENTMD_PARSER,
-                                NULL, &pdata->file, pdata->meta_parser);
+                                VALHALLA_EVENTMD_PARSER, NULL,
+                                &pdata->file, pdata->meta_parser);
       continue;
 
     /* received from the scanner */
@@ -300,11 +301,9 @@ dbmanager_queue (dbmanager_t *dbmanager)
 
       if (mtime < 0 || pdata->file.mtime != mtime || interrup == 1)
       {
+        int act = mtime < 0 ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P;
         vh_dispatcher_action_send (VH_HANDLE->dispatcher,
-                                   pdata->priority,
-                                   mtime < 0
-                                   ? ACTION_DB_INSERT_P : ACTION_DB_UPDATE_P,
-                                   pdata);
+                                   pdata->priority, act, pdata);
         continue;
       }
 

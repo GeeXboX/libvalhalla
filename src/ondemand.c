@@ -211,8 +211,7 @@ ondemand_thread (void *arg)
     else if (S_ISREG (st.st_mode)
              && !vh_scanner_suffix_cmp (VH_HANDLE->scanner, file))
     {
-      int outofpath =
-        !!vh_scanner_path_cmp (VH_HANDLE->scanner, file);
+      int outofpath = !!vh_scanner_path_cmp (VH_HANDLE->scanner, file);
 
       fdata = vh_file_data_new (file, st.st_mtime, outofpath, OD_TYPE_NEW,
                                 FIFO_QUEUE_PRIORITY_HIGH, STEP_PARSING);
