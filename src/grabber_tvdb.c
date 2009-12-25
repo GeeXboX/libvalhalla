@@ -257,7 +257,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   if (tmp)
   {
     grabber_tvdb_parse_genre (fdata, tmp);
-    xmlFree(tmp);
+    xmlFree (tmp);
   }
 
   /* fetch tv show runtime (in minutes) */
