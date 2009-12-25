@@ -222,7 +222,7 @@ vh_metadata_add (metadata_t **meta,
 {
   metadata_t *it;
 
-  if (!meta || !name || !value)
+  if (!meta || !name || !value || !*value)
     return;
 
   if (!*meta)
@@ -258,7 +258,7 @@ vh_metadata_add_auto (metadata_t **meta,
   unsigned int i;
   valhalla_meta_grp_t grp;
 
-  if (!meta || !name || !value)
+  if (!meta || !name || !value || !*value)
     return;
 
   grp = VALHALLA_META_GRP_MISCELLANEOUS;
