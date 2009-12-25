@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "valhalla.h"
 #include "utils.h"    /* for VH_TIMERSUB and vh_clock_gettime */
@@ -291,6 +293,7 @@ main (int argc, char **argv)
   if (download)
   {
     printf ("Destination directory for downloaded files: %s\n", download);
+    mkdir (download, 0755);
     valhalla_config_set (handle,
                          DOWNLOADER_DEST, download, VALHALLA_DL_DEFAULT);
   }
