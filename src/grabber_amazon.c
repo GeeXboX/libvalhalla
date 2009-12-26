@@ -41,6 +41,11 @@
   GRABBER_CAP_VIDEO | \
   GRABBER_CAP_AUDIO
 
+/*
+ * The documentation is available on:
+ *  http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/index.html
+ */
+
 #define MAX_URL_SIZE        1024
 #define MAX_KEYWORD_SIZE    1024
 #define MAX_BUF_LEN         65535

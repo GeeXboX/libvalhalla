@@ -37,6 +37,12 @@
   GRABBER_CAP_VIDEO
 
 /*
+ * The documentation is available on:
+ *  http://thetvdb.com/wiki/index.php?title=Programmers_API
+ *  http://www.thetvdb.com/api/
+ */
+
+/*
  * When defined, an API unofficial (undocumented) is used in order to found
  * a name which can be used to return something interesting in the result,
  * else most of time nothing is found with the standard search engine.

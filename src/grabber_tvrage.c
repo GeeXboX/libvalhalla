@@ -35,11 +35,15 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
+/*
+ * The documentation is available on:
+ *  http://services.tvrage.com/index.php?page=public
+ */
+
 #define MAX_URL_SIZE      1024
 
 #define TVRAGE_HOSTNAME           "services.tvrage.com"
 
-/* See http://services.tvrage.com/index.php?page=public for the feeds */
 #define TVRAGE_QUERY_SEARCH       "http://%s/feeds/search.php?show=%s"
 #define TVRAGE_QUERY_INFO         "http://%s/feeds/full_show_info.php?sid=%s"
 

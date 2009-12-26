@@ -36,6 +36,11 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
+/*
+ * The documentation is available on:
+ *  http://api.themoviedb.org
+ */
+
 #define MAX_URL_SIZE      1024
 
 #define TMDB_HOSTNAME     "api.themoviedb.org"

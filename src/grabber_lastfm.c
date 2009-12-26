@@ -36,6 +36,11 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO
 
+/*
+ * The documentation is available on:
+ *  http://www.lastfm.fr/api
+ */
+
 #define MAX_URL_SIZE        1024
 
 #define MAX_LIST_DEPTH      100
