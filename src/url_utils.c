@@ -81,6 +81,7 @@ vh_url_global_uninit (void)
 url_data_t
 vh_url_get_data (url_t *handler, char *url)
 {
+  char useragent[256];
   url_data_t chunk;
   CURL *curl = (CURL *) handler;
 
@@ -91,12 +92,16 @@ vh_url_get_data (url_t *handler, char *url)
   if (!curl || !url)
     return chunk;
 
+  snprintf (useragent, sizeof (useragent),
+            "libvalhalla/%s %s", LIBVALHALLA_VERSION_STR, curl_version ());
+
   curl_easy_setopt (curl, CURLOPT_URL, url);
   curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
   curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, url_buffer_get);
   curl_easy_setopt (curl, CURLOPT_WRITEDATA, (void *) &chunk);
   curl_easy_setopt (curl, CURLOPT_NOSIGNAL, 1);
   curl_easy_setopt (curl, CURLOPT_CONNECTTIMEOUT, 5);
+  curl_easy_setopt (curl, CURLOPT_USERAGENT, useragent);
 
   chunk.status = curl_easy_perform (curl);
 
