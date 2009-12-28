@@ -363,6 +363,7 @@ vh_event_handler_md_send (event_handler_t *event_handler,
 
   data->file.path  = strdup (file->path);
   data->file.mtime = file->mtime;
+  data->file.size  = file->size;
   data->file.type  = file->type;
   data->e          = e;
   data->id         = id;
