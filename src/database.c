@@ -635,11 +635,20 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     database_file_insert (database, data);
   else
   {
+    char v[32];
+    metadata_t *meta = NULL;
+
     type_id = database_file_typeid_get (database, data->file.type);
     database_file_update (database, data, type_id);
     file_id = database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID),
                                      data->file.path);
     database_file_metadata (database, file_id, data->meta_parser, 0);
+
+    /* handle filesize like a metadata */
+    snprintf (v, sizeof (v), "%"PRIi64, data->file.size);
+    vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE, v);
+    database_file_metadata (database, file_id, meta, 0);
+    vh_metadata_free (meta);
   }
 }
 

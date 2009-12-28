@@ -22,6 +22,8 @@
 #ifndef VALHALLA_UTILS_H
 #define VALHALLA_UTILS_H
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <ctype.h>
 #include <time.h>
 #include <semaphore.h>
@@ -85,7 +87,7 @@ int vh_file_copy (const char *src, const char *dst);
 void vh_file_dl_add (file_dl_t **dl,
                      const char *url, const char *name, valhalla_dl_t dst);
 void vh_file_data_free (file_data_t *data);
-file_data_t *vh_file_data_new (const char *file, time_t mtime,
+file_data_t *vh_file_data_new (const char *file, struct stat *st,
                                int outofpath, od_type_t od,
                                fifo_queue_prio_t prio, processing_step_t step);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);

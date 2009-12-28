@@ -213,7 +213,7 @@ ondemand_thread (void *arg)
     {
       int outofpath = !!vh_scanner_path_cmp (VH_HANDLE->scanner, file);
 
-      fdata = vh_file_data_new (file, st.st_mtime, outofpath, OD_TYPE_NEW,
+      fdata = vh_file_data_new (file, &st, outofpath, OD_TYPE_NEW,
                                 FIFO_QUEUE_PRIORITY_HIGH, STEP_PARSING);
       if (fdata)
         vh_dbmanager_action_send (VH_HANDLE->dbmanager,

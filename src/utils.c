@@ -238,7 +238,7 @@ vh_file_data_free (file_data_t *data)
 }
 
 file_data_t *
-vh_file_data_new (const char *file, time_t mtime, int outofpath,
+vh_file_data_new (const char *file, struct stat *st, int outofpath,
                   od_type_t od, fifo_queue_prio_t prio, processing_step_t step)
 {
   file_data_t *fdata;
@@ -248,7 +248,8 @@ vh_file_data_new (const char *file, time_t mtime, int outofpath,
     return NULL;
 
   fdata->file.path    = strdup (file);
-  fdata->file.mtime   = (int64_t) mtime;
+  fdata->file.mtime   = (int64_t) st->st_mtime;
+  fdata->file.size    = (int64_t) st->st_size;
   fdata->outofpath    = outofpath;
   fdata->od           = od;
   fdata->priority     = prio;
