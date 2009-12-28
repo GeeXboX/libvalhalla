@@ -644,7 +644,12 @@ database_file_data (database_t *database, file_data_t *data, int insert)
                                      data->file.path);
     database_file_metadata (database, file_id, data->meta_parser, 0);
 
-    /* handle filesize like a metadata */
+    /*
+     * handle filesize like a metadata
+     *
+     * TODO: it should be made somewhere else. It is acceptable for now
+     *       because there is only one property which is added in this way.
+     */
     snprintf (v, sizeof (v), "%"PRIi64, data->file.size);
     vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE, v);
     database_file_metadata (database, file_id, meta, 0);
