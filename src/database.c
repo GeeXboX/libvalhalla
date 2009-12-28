@@ -1484,27 +1484,64 @@ vh_database_metalist_get (database_t *database,
 {
   database_cb_t data_cb;
   char *msg = NULL;
+  /*
+   * SELECT meta.meta_id, data.data_id,
+   *        meta.meta_name, data.data_value,
+   *        assoc._grp_id, assoc.external
+   * FROM (
+   *   data INNER JOIN assoc_file_metadata AS assoc
+   *   ON data.data_id = assoc.data_id
+   * ) INNER JOIN meta
+   * ON assoc.meta_id = meta.meta_id
+   */
   char sql[SQL_BUFFER] = SELECT_LIST_METADATA_FROM;
 
+  /* WHERE */
   if (restriction || search->id || search->text || search->group)
     SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
+  /*
+   * -- A sub query is created by every restriction.
+   * -- Every restriction is separated by AND.
+   * assoc.file_id <IN|NOT IN> (
+   *   SELECT assoc.file_id
+   *   FROM (
+   *     data INNER JOIN assoc_file_metadata AS assoc
+   *     ON data.data_id = assoc.data_id
+   *   ) INNER JOIN meta
+   *   ON assoc.meta_id = meta.meta_id
+   *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
+   *     AND data.<data_id|data_value> = <ID|"TEXT">
+   * )
+   * <AND>
+   */
   if (restriction)
   {
     database_list_get_restriction (restriction, sql);
+    /* AND */
     if (search->id || search->text)
       SQL_CONCAT (sql, SELECT_LIST_AND);
   }
 
+  /*
+   * -- Metadata and/or group to list in the results.
+   * meta.<meta_id|meta_name> = <ID|"TEXT">
+   */
   SQL_CONCAT_TYPE (sql, *search, META);
   if (search->group)
   {
+    /* AND */
     if (search->id || search->text)
       SQL_CONCAT (sql, SELECT_LIST_AND);
+    /* assoc._grp_id = <ID> */
     SQL_CONCAT (sql, SELECT_LIST_WHERE_GROUP_ID,
                 database_groupid_get (database, search->group));
   }
 
+  /*
+   * GROUP BY assoc.meta_id, assoc.data_id
+   * ORDER BY data.data_value;
+   */
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
   vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
@@ -1546,22 +1583,45 @@ vh_database_filelist_get (database_t *database,
 {
   database_cb_t data_cb;
   char *msg = NULL;
+  /*
+   * SELECT file_id, file_path, _type_id
+   * FROM file AS assoc
+   */
   char sql[SQL_BUFFER] = SELECT_LIST_FILE_FROM;
 
+  /* WHERE */
   if (restriction || filetype)
     SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
+  /*
+   * -- A sub query is created by every restriction.
+   * -- Every restriction is separated by AND.
+   * assoc.file_id <IN|NOT IN> (
+   *   SELECT assoc.file_id
+   *   FROM (
+   *     data INNER JOIN assoc_file_metadata AS assoc
+   *     ON data.data_id = assoc.data_id
+   *   ) INNER JOIN meta
+   *   ON assoc.meta_id = meta.meta_id
+   *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
+   *     AND data.<data_id|data_value> = <ID|"TEXT">
+   * )
+   * <AND>
+   */
   if (restriction)
     database_list_get_restriction (restriction, sql);
 
   if (filetype)
   {
+    /* AND */
     if (restriction)
       SQL_CONCAT (sql, SELECT_LIST_AND);
+    /* _type_id = <ID> */
     SQL_CONCAT (sql, SELECT_LIST_WHERE_TYPE_ID,
                 database_file_typeid_get (database, filetype));
   }
 
+  /* ORDER BY file_id; */
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
 
   vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
@@ -1622,16 +1682,42 @@ vh_database_file_get (database_t *database,
 {
   database_cb_t data_cb;
   char *msg = NULL;
+  /*
+   * SELECT file.file_id, assoc._grp_id,
+   *        meta.meta_id, data.data_id,
+   *        meta.meta_name, data.data_value, assoc.external
+   * FROM ((
+   *     file INNER JOIN assoc_file_metadata AS assoc
+   *     ON file.file_id = assoc.file_id
+   *   ) INNER JOIN data
+   *   ON data.data_id = assoc.data_id
+   * ) INNER JOIN meta
+   * ON assoc.meta_id = meta.meta_id
+   */
   char sql[SQL_BUFFER] = SELECT_FILE_FROM;
 
+  /* WHERE */
   SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
+  /*
+   * -- The restrictions must use only the type EQUAL.
+   * -- Every restriction is separated by OR.
+   * (
+   *   (
+   *     meta.<meta_id|meta_name> = <ID|"TEXT">
+   *       AND data.<data_id|data_value> = <ID|"TEXT">
+   *   )
+   *   <OR>
+   * )
+   */
   if (restriction)
   {
     database_list_get_restriction (restriction, sql);
+    /* AND */
     SQL_CONCAT (sql, SELECT_LIST_AND);
   }
 
+  /* file.<file_id|file_path> = <ID|"PATH"> */
   if (id)
     SQL_CONCAT (sql, SELECT_FILE_WHERE_FILE_ID, id);
   else if (path)
@@ -1639,6 +1725,7 @@ vh_database_file_get (database_t *database,
   else
     return -1;
 
+  /* ; */
   SQL_CONCAT (sql, SELECT_FILE_END);
 
   vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
