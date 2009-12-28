@@ -33,7 +33,7 @@
 #include "logs.h"
 
 
-#define SQL_BUFFER 4096
+#define SQL_BUFFER 8192
 
 typedef struct stmt_list_s {
   const char   *sql;
