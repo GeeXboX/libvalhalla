@@ -6,14 +6,12 @@
  * Database
      -> When files are downloaded and the reference on this file is no longer
         available in the DB, the file must be removed (covers, etc, ...).
+     -> Add a means to easily select an information provided in a specific
+        language.
+     -> Improve the selection functions to filter the results according to a
+        file type.
 
  * Scanner
      -> Add optional support for inotify.
      -> Implement a system to add filters (to ignore some directories)
         for a path.
-     -> Rewrite a bit the scanner in order to support several scanners
-        in parallel (for the same valhalla object). It will be useful
-        when some paths are not on the same device because it can
-        increase a lot the speed.
-        It is already possible to do that but it needs to create a
-        valhalla object for each path.
