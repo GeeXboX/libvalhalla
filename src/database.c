@@ -1367,6 +1367,7 @@ vh_database_init (const char *path)
     sqlite3_free (msg);                                  \
     return -1;                                           \
   }                                                      \
+  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);       \
   return 0;
 
 
@@ -1576,8 +1577,6 @@ vh_database_metalist_get (database_t *database,
    */
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
-  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
-
   data_cb.cb_mr    = select_cb;
   data_cb.data     = data;
   data_cb.database = database;
@@ -1655,8 +1654,6 @@ vh_database_filelist_get (database_t *database,
 
   /* ORDER BY file_id; */
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
-
-  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
 
   data_cb.cb_fr    = select_cb;
   data_cb.data     = data;
@@ -1759,8 +1756,6 @@ vh_database_file_get (database_t *database,
 
   /* ; */
   SQL_CONCAT (sql, SELECT_FILE_END);
-
-  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);
 
   *res = NULL;
   data_cb.data     = res;
