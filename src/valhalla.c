@@ -606,6 +606,7 @@ valhalla_ondemand (valhalla_t *handle, const char *file)
 
 int valhalla_db_metalist_get (valhalla_t *handle,
                               valhalla_db_item_t *search,
+                              valhalla_file_type_t filetype,
                               valhalla_db_restrict_t *restriction,
                               int (*result_cb) (void *data,
                                                 valhalla_db_metares_t *res),
@@ -616,8 +617,8 @@ int valhalla_db_metalist_get (valhalla_t *handle,
   if (!handle || !search || !result_cb)
     return -1;
 
-  return vh_dbmanager_db_metalist_get (handle->dbmanager,
-                                       search, restriction, result_cb, data);
+  return vh_dbmanager_db_metalist_get (handle->dbmanager, search,
+                                       filetype, restriction, result_cb, data);
 }
 
 int valhalla_db_filelist_get (valhalla_t *handle,

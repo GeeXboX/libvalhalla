@@ -829,6 +829,7 @@ typedef struct valhalla_db_filemeta_s {
  *
  * \param[in] handle      Handle on the scanner.
  * \param[in] search      Condition for the search.
+ * \param[in] filetype    File type.
  * \param[in] restriction Restrictions on the list.
  * \param[out] result_cb  Result callback.
  * \param[in,out] data    Data for the first callback argument.
@@ -836,6 +837,7 @@ typedef struct valhalla_db_filemeta_s {
  */
 int valhalla_db_metalist_get (valhalla_t *handle,
                               valhalla_db_item_t *search,
+                              valhalla_file_type_t filetype,
                               valhalla_db_restrict_t *restriction,
                               int (*result_cb) (void *data,
                                                 valhalla_db_metares_t *res),

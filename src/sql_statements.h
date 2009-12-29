@@ -213,6 +213,13 @@
  ") INNER JOIN meta "                                     \
  "ON assoc.meta_id = meta.meta_id "
 
+#define SELECT_LIST_METADATA_WHERE_TYPE_ID  \
+ "assoc.file_id IN ( "                      \
+   "SELECT file_id "                        \
+   "FROM file "                             \
+   "WHERE _type_id = %"PRIi64" "            \
+ ") "
+
 #define SELECT_LIST_METADATA_END          \
  "GROUP BY assoc.meta_id, assoc.data_id " \
  "ORDER BY data.data_value;"

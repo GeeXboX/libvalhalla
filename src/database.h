@@ -63,6 +63,7 @@ int vh_database_cleanup (database_t *database);
 
 int vh_database_metalist_get (database_t *database,
                               valhalla_db_item_t *search,
+                              valhalla_file_type_t filetype,
                               valhalla_db_restrict_t *restriction,
                               int (*select_cb) (void *data,
                                                 valhalla_db_metares_t *res),

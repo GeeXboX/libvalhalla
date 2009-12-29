@@ -1491,6 +1491,7 @@ database_select_metalist_cb (void *user_data,
 int
 vh_database_metalist_get (database_t *database,
                           valhalla_db_item_t *search,
+                          valhalla_file_type_t filetype,
                           valhalla_db_restrict_t *restriction,
                           int (*select_cb) (void *data,
                                             valhalla_db_metares_t *res),
@@ -1511,8 +1512,25 @@ vh_database_metalist_get (database_t *database,
   char sql[SQL_BUFFER] = SELECT_LIST_METADATA_FROM;
 
   /* WHERE */
-  if (restriction || search->id || search->text || search->group)
+  if (restriction || search->id || search->text || search->group || filetype)
     SQL_CONCAT (sql, SELECT_LIST_WHERE);
+
+  /*
+   * assoc.file_id IN (
+   *   SELECT file_id
+   *   FROM file
+   *   WHERE _type_id = <ID>
+   * )
+   * <AND>
+   */
+  if (filetype)
+  {
+    SQL_CONCAT (sql, SELECT_LIST_METADATA_WHERE_TYPE_ID,
+                database_file_typeid_get (database, filetype));
+    /* AND */
+    if (restriction || search->id || search->text)
+      SQL_CONCAT (sql, SELECT_LIST_AND);
+  }
 
   /*
    * -- A sub query is created by every restriction.

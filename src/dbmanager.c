@@ -682,6 +682,7 @@ vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager)
 int
 vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                               valhalla_db_item_t *search,
+                              valhalla_file_type_t filetype,
                               valhalla_db_restrict_t *restriction,
                               int (*select_cb) (void *data,
                                                 valhalla_db_metares_t *res),
@@ -692,8 +693,8 @@ vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
   if (!dbmanager)
     return -1;
 
-  return vh_database_metalist_get (dbmanager->database,
-                                   search, restriction, select_cb, data);
+  return vh_database_metalist_get (dbmanager->database, search,
+                                   filetype, restriction, select_cb, data);
 }
 
 int
