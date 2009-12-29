@@ -8,8 +8,6 @@
         available in the DB, the file must be removed (covers, etc, ...).
      -> Add a means to easily select an information provided in a specific
         language.
-     -> Improve the selection functions to filter the results according to a
-        file type.
 
  * Scanner
      -> Add optional support for inotify.
