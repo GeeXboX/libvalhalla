@@ -1330,14 +1330,14 @@ vh_database_init (const char *path)
 /*                                                                            */
 /******************************************************************************/
 
-#define SQL_CONCAT(sql, str, args...)             \
-  do                                              \
-  {                                               \
-    char buf[256];                                \
+#define SQL_CONCAT(sql, str, args...)                   \
+  do                                                    \
+  {                                                     \
+    char buf[256];                                      \
     sqlite3_snprintf (sizeof (buf), buf, str, ##args);  \
-    if (strlen (sql) + strlen (buf) < SQL_BUFFER) \
-      strcat (sql, buf);                          \
-  }                                               \
+    if (strlen (sql) + strlen (buf) < SQL_BUFFER)       \
+      strcat (sql, buf);                                \
+  }                                                     \
   while (0)
 
 #define SQL_CONCAT_TYPE(sql, item, def)                              \
