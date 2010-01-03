@@ -187,7 +187,7 @@
 #define SELECT_FILE_WHERE_FILE_ID \
  "file.file_id = %"PRIi64" "
 #define SELECT_FILE_WHERE_FILE_PATH \
- "file.file_path = \"%s\" "
+ "file.file_path = '%q' "
 
 /* File list selection */
 
@@ -241,11 +241,11 @@
 #define SELECT_LIST_OR \
  "OR "
 #define SELECT_LIST_WHERE_META_NAME \
- "meta.meta_name = \"%s\" "
+ "meta.meta_name = '%q' "
 #define SELECT_LIST_WHERE_META_ID \
  "meta.meta_id = %"PRIi64" "
 #define SELECT_LIST_WHERE_DATA_NAME \
- "data.data_value = \"%s\" "
+ "data.data_value = '%q' "
 #define SELECT_LIST_WHERE_DATA_ID \
  "data.data_id = %"PRIi64" "
 #define SELECT_LIST_WHERE_GROUP_ID \
