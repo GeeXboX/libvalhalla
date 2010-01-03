@@ -1334,7 +1334,7 @@ vh_database_init (const char *path)
   do                                              \
   {                                               \
     char buf[256];                                \
-    snprintf (buf, sizeof (buf), str, ##args);    \
+    sqlite3_snprintf (sizeof (buf), buf, str, ##args);  \
     if (strlen (sql) + strlen (buf) < SQL_BUFFER) \
       strcat (sql, buf);                          \
   }                                               \
