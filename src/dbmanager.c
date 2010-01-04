@@ -377,7 +377,9 @@ dbmanager_thread (void *arg)
     while ((file =
               vh_database_file_get_checked_clear (dbmanager->database, rst)))
     {
-      if (vh_scanner_path_cmp (VH_HANDLE->scanner, file)
+      if (dbmanager_is_stopped (dbmanager))
+        rst = 1;
+      else if (vh_scanner_path_cmp (VH_HANDLE->scanner, file)
           || vh_scanner_suffix_cmp (VH_HANDLE->scanner, file)
           || access (file, R_OK))
       {
@@ -388,9 +390,6 @@ dbmanager_thread (void *arg)
         vh_database_file_delete (dbmanager->database, file);
         stats_delete++;
       }
-
-      if (dbmanager_is_stopped (dbmanager))
-        rst = 1;
     }
 
     VH_STATS_COUNTER_ACC (dbmanager->st_delete, (unsigned) stats_delete);
