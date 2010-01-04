@@ -380,8 +380,8 @@ dbmanager_thread (void *arg)
       if (dbmanager_is_stopped (dbmanager))
         rst = 1;
       else if (vh_scanner_path_cmp (VH_HANDLE->scanner, file)
-          || vh_scanner_suffix_cmp (VH_HANDLE->scanner, file)
-          || access (file, R_OK))
+               || vh_scanner_suffix_cmp (VH_HANDLE->scanner, file)
+               || access (file, R_OK))
       {
         /* Manage BEGIN / COMMIT transactions */
         vh_database_step_transaction (dbmanager->database,
