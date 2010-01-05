@@ -1178,52 +1178,92 @@ vh_database_step_transaction (database_t *database,
   }
 }
 
+/*
+ * This function is a replacement of sqlite3_exec() which should not be used
+ * anymore. Only one SQL query must be passed in the argument. The goal is to
+ * have in a near future, a non-blocked version for the public selections.
+ */
+static void
+database_sql_exec (sqlite3 *db, const char *sql,
+                   int (*callback) (void *user_data, int argc,
+                                    const char **argv),
+                   void *data, char **errmsg)
+{
+  int res;
+  sqlite3_stmt *stmt = NULL;
+
+  res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
+  if (res != SQLITE_OK)
+    goto out;
+
+  while ((res = sqlite3_step (stmt)) == SQLITE_ROW)
+  {
+    int argc, i;
+    const char *argv[32];
+
+    if (!callback)
+      continue;
+
+    argc = sqlite3_column_count (stmt);
+    for (i = 0; i < argc; i++)
+      argv[i] = (const char *) sqlite3_column_text (stmt, i);
+
+    callback (data, argc, argv);
+  }
+
+ out:
+  if (res != SQLITE_DONE && res != SQLITE_OK)
+  {
+    const char *err = sqlite3_errmsg (db);
+    if (err)
+      *errmsg = strdup (err);
+  }
+
+  sqlite3_finalize (stmt);
+}
+
+#define DB_SQL_EXEC_OR_GOTO(d, s, m, g)       \
+  database_sql_exec (d, s, NULL, NULL, &m);   \
+  if (m)                                      \
+    goto g;
+
 static void
 database_create_table (database_t *database)
 {
-  char *msg = NULL;
+  char *m = NULL;
+
+  DB_SQL_EXEC_OR_GOTO (database->db, BEGIN_TRANSACTION,                m, err);
 
   /* Create tables */
-  sqlite3_exec (database->db,
-                BEGIN_TRANSACTION
-                CREATE_TABLE_INFO
-                CREATE_TABLE_FILE
-                CREATE_TABLE_TYPE
-                CREATE_TABLE_META
-                CREATE_TABLE_DATA
-                CREATE_TABLE_GROUP
-                CREATE_TABLE_GRABBER
-                CREATE_TABLE_DLCONTEXT
-                CREATE_TABLE_ASSOC_FILE_METADATA
-                CREATE_TABLE_ASSOC_FILE_GRABBER
-                END_TRANSACTION,
-                NULL, NULL, &msg);
-  if (msg)
-    goto err;
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_INFO,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_FILE,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_TYPE,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_META,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_DATA,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_GROUP,               m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_GRABBER,             m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_DLCONTEXT,           m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_ASSOC_FILE_METADATA, m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_ASSOC_FILE_GRABBER,  m, err);
 
   /* Create indexes */
-  sqlite3_exec (database->db,
-                BEGIN_TRANSACTION
-                CREATE_INDEX_FILE_PATH
-                CREATE_INDEX_CHECKED
-                CREATE_INDEX_INTERRUPTED
-                CREATE_INDEX_OUTOFPATH
-                CREATE_INDEX_TYPE_NAME
-                CREATE_INDEX_META_NAME
-                CREATE_INDEX_DATA_VALUE
-                CREATE_INDEX_GROUP_NAME
-                CREATE_INDEX_GRABBER_NAME
-                CREATE_INDEX_ASSOC
-                END_TRANSACTION,
-                NULL, NULL, &msg);
-  if (msg)
-    goto err;
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_FILE_PATH,           m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_CHECKED,             m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_INTERRUPTED,         m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_OUTOFPATH,           m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_TYPE_NAME,           m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_META_NAME,           m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_DATA_VALUE,          m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_GROUP_NAME,          m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_GRABBER_NAME,        m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_ASSOC,               m, err);
 
+  DB_SQL_EXEC_OR_GOTO (database->db, END_TRANSACTION,                  m, err);
   return;
 
  err:
-  vh_log (VALHALLA_MSG_ERROR, "%s", msg);
-  sqlite3_free (msg);
+  vh_log (VALHALLA_MSG_ERROR, "%s", m);
+  free (m);
 }
 
 void
@@ -1360,11 +1400,11 @@ vh_database_init (const char *path)
   while (0)
 
 #define DATABASE_RETURN_SQL_EXEC(db, sql, cb, data, msg) \
-  sqlite3_exec (db, sql, cb, &data, &msg);               \
+  database_sql_exec (db, sql, cb, &data, &msg);          \
   if (msg)                                               \
   {                                                      \
     vh_log (VALHALLA_MSG_ERROR, "%s", msg);              \
-    sqlite3_free (msg);                                  \
+    free (msg);                                          \
     return -1;                                           \
   }                                                      \
   vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);       \
@@ -1468,8 +1508,7 @@ database_list_get_restriction (valhalla_db_restrict_t *restriction, char *sql)
 }
 
 static int
-database_select_metalist_cb (void *user_data,
-                             int argc, char **argv, vh_unused char **column)
+database_select_metalist_cb (void *user_data, int argc, const char **argv)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_metares_t res;
@@ -1586,8 +1625,7 @@ vh_database_metalist_get (database_t *database,
 }
 
 static int
-database_select_filelist_cb (void *user_data,
-                             int argc, char **argv, vh_unused char **column)
+database_select_filelist_cb (void *user_data, int argc, const char **argv)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_fileres_t res;
@@ -1664,8 +1702,7 @@ vh_database_filelist_get (database_t *database,
 }
 
 static int
-database_select_file_cb (void *user_data,
-                         int argc, char **argv, vh_unused char **column)
+database_select_file_cb (void *user_data, int argc, const char **argv)
 {
   database_cb_t *data_cb = user_data;
   valhalla_db_filemeta_t **res, *new;
