@@ -25,3 +25,5 @@
      -> Add optional support for inotify.
      -> Implement a system to add filters (to ignore some directories)
         for a path.
+     -> Remove the check on the number of paths added to the scanner.
+        Valhalla is usable with ondemand, the scanner is not mandatory.
