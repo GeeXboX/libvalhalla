@@ -220,7 +220,7 @@ grabber_cmp_fct (const void *tocmp, const void *data)
     }
 
 #define GRABBER_LOCK_TIMEOUT_S  0
-#define GRABBER_LOCK_TIMEOUT_NS 100000000 /* 100 ms */
+#define GRABBER_LOCK_TIMEOUT_NS 200000000 /* 200 ms */
 
 #define grabber_unlock(g) pthread_mutex_unlock (&g->mutex)
 
