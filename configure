@@ -156,7 +156,7 @@ flags_saved(){
 save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
-    SAVE_extracflags="$extracflags"
+    SAVE_CPPFLAGS="$CPPFLAGS"
     SAVE_HOST_CFLAGS="$HOST_CFLAGS"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
@@ -164,12 +164,12 @@ save_flags(){
 
 restore_flags(){
     CFLAGS="$SAVE_CFLAGS"
-    extracflags="$SAVE_extracflags"
+    CPPFLAGS="$SAVE_CPPFLAGS"
     HOST_CFLAGS="$SAVE_HOST_CFLAGS"
     LDFLAGS="$SAVE_LDFLAGS"
     extralibs="$SAVE_extralibs"
     unset SAVE_CFLAGS
-    unset SAVE_extracflags
+    unset SAVE_CPPFLAGS
     unset SAVE_HOST_CFLAGS
     unset SAVE_LDFLAGS
     unset SAVE_extralibs
@@ -179,8 +179,8 @@ temp_cflags(){
     temp_append CFLAGS "$@"
 }
 
-temp_extracflags(){
-    temp_append extracflags "$@"
+temp_cppflags(){
+    temp_append CPPFLAGS "$@"
 }
 
 temp_host_cflags(){
@@ -226,8 +226,8 @@ add_cflags(){
     append CFLAGS "$@"
 }
 
-add_extracflags(){
-    append extracflags "$@"
+add_cppflags(){
+    append CPPFLAGS "$@"
 }
 
 add_ldflags(){
@@ -251,7 +251,7 @@ check_cc(){
     log check_cc "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -c -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
 check_host_cc(){
@@ -265,7 +265,7 @@ check_cpp(){
     log check_cpp "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -E -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -E -o $TMPO $TMPC
 }
 
 check_ld(){
@@ -282,6 +282,13 @@ check_host_ld(){
 
 check_exec(){
     check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
+}
+
+check_cppflags(){
+    log check_cppflags "$@"
+    check_cc "$@" <<EOF && append CPPFLAGS "$@"
+int x;
+EOF
 }
 
 check_cflags(){
@@ -446,7 +453,6 @@ cpu="generic"
 optimize="yes"
 debug="yes"
 dostrip="yes"
-extracflags=""
 extralibs=""
 installstrip="-s"
 cross_compile="no"
@@ -839,9 +845,9 @@ od -A n -t x1 $TMPO | grep -q '42 *49 *47 *45' && enable bigendian
 # add some useful compiler flags if supported
 check_cflags -W
 check_cflags -Wall
-check_cflags -D_LARGEFILE_SOURCE
-check_cflags -D_FILE_OFFSET_BITS=64
-check_cflags -D_REENTRANT
+check_cppflags -D_LARGEFILE_SOURCE
+check_cppflags -D_FILE_OFFSET_BITS=64
+check_cppflags -D_REENTRANT
 
 # default extralibs
 add_extralibs -lpthread
@@ -855,7 +861,7 @@ if [ "$?" != 0 ]; then
   if [ "$?" != 0 ]; then
     check_lib mach/clock.h clock_get_time
     [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
-    add_cflags -DUSE_CLOCK_GETTIME_DARWIN
+    add_cppflags -DUSE_CLOCK_GETTIME_DARWIN
   fi
 fi
 
@@ -865,7 +871,7 @@ fi
 #################################################
 if enabled debug; then
   add_cflags -g3 -O0
-  add_cflags -DHAVE_DEBUG
+  add_cppflags -DHAVE_DEBUG
   optimize="no"
 fi
 
@@ -892,11 +898,11 @@ fi
 #   check for FFmpeg libavformat
 #################################################
 if [ -n "$lavfdir" ]; then
-  check_cflags -I${lavfdir}/include
+  check_cppflags -I${lavfdir}/include
   check_ldflags -L${lavfdir}/lib
 fi
 if [ -n "$lavfincdir" ]; then
-  check_cflags -I${lavfincdir}
+  check_cppflags -I${lavfincdir}
 fi
 if [ -n "$lavflibdir" ]; then
   check_ldflags -L${lavflibdir}
@@ -913,7 +919,7 @@ check_lib libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can'
 #   check for SQLite sqlite3
 #################################################
 if [ -n "$sqlite3dir" ]; then
-  check_cflags -I$sqlite3dir
+  check_cppflags -I$sqlite3dir
   check_ldflags -L$sqlite3dir
 fi
 if [ -z "$sqlite3dir" ]; then
@@ -951,7 +957,7 @@ grabber_enabled(){
       grabup=`echo $grab | tr "[:lower:]" "[:upper:]"`
       eval value=\$grabber_$grab
       if test "$value" = "auto" -o "$value" = "yes"; then
-        add_extracflags -DHAVE_GRABBER_$grabup
+        add_cppflags -DHAVE_GRABBER_$grabup
         grabber="yes"
         eval grabber_$grab="yes"
       fi
@@ -1023,7 +1029,7 @@ if enabled xml; then
   #   check for libxml2
   ###############################################
   if [ -n "$xml2dir" ]; then
-    check_cflags -I$xml2dir
+    check_cppflags -I$xml2dir
     check_ldflags -L$xml2dir
   fi
   if [ -z  "$xmldir" ]; then
@@ -1034,7 +1040,7 @@ if enabled xml; then
   check_lib libxml/parser.h xmlReadMemory -lxml2
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_extracflags -DUSE_XML
+    add_cppflags -DUSE_XML
   else
     echolog "(no)"
     grabber_forced $xml_dep_grabber
@@ -1049,11 +1055,11 @@ if enabled avutil; then
   #   check for FFmpeg libavutil
   ###############################################
   if [ -n "$lavudir" ]; then
-    check_cflags -I${lavudir}/include
+    check_cppflags -I${lavudir}/include
     check_ldflags -L${lavudir}/lib
   fi
   if [ -n "$lavuincdir" ]; then
-    check_cflags -I${lavuincdir}
+    check_cppflags -I${lavuincdir}
   fi
   if [ -n "$lavulibdir" ]; then
     check_ldflags -L${lavulibdir}
@@ -1080,7 +1086,7 @@ if enabled gcrypt; then
   #   check for libgcrypt
   ###############################################
   if [ -n "$gcryptdir" ]; then
-    check_cflags -I$gcryptdir
+    check_cppflags -I$gcryptdir
     check_ldflags -L$gcryptdir
   fi
   if [ -z  "$gcryptdir" ]; then
@@ -1108,7 +1114,7 @@ if enabled exif; then
   #   check for libexif
   ###############################################
   if [ -n "$exifdir" ]; then
-    check_cflags -I$exifdir
+    check_cppflags -I$exifdir
     check_ldflags -L$exifdir
   fi
   if [ -z  "$exifdir" ]; then
@@ -1133,7 +1139,7 @@ if enabled avcodec; then
   #   check for FFmpeg libavcodec
   ###############################################
   if [ -n "$lavcdir" ]; then
-    check_cflags -I${lavcdir}/include
+    check_cppflags -I${lavcdir}/include
     check_ldflags -L${lavcdir}/lib
   fi
   if [ -n "$lavcincdir" ]; then
@@ -1150,7 +1156,7 @@ if enabled avcodec; then
   check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_extracflags -DUSE_LAVC
+    add_cppflags -DUSE_LAVC
   else
     echolog "(no)"
     grabber_forced $avcodec_dep_grabber
@@ -1165,7 +1171,7 @@ if enabled nfo; then
   #   check for libnfo
   ###############################################
   if [ -n "$nfodir" ]; then
-    check_cflags -I$nfodir
+    check_cppflags -I$nfodir
     check_ldflags -L$nfodir
   fi
   if [ -z  "$nfodir" ]; then
@@ -1194,7 +1200,7 @@ if enabled grabber; then
   #   check for libcurl
   ###############################################
   if [ -n "$curldir" ]; then
-    check_cflags -I$curldir
+    check_cppflags -I$curldir
     check_ldflags -L$curldir
   fi
   if [ -z  "$curldir" ]; then
@@ -1205,7 +1211,7 @@ if enabled grabber; then
   check_lib curl/curl.h curl_global_init -lcurl
   if [ "$?" = 0 ]; then
     echolog "(yes)"
-    add_extracflags -DUSE_GRABBER
+    add_cppflags -DUSE_GRABBER
   else
     echolog "(no)"
     if enabled grabber_all; then
@@ -1220,7 +1226,7 @@ fi
 #   Miscellaneous
 #################################################
 if enabled logcolor; then
-  add_cflags -DUSE_LOGCOLOR
+  add_cppflags -DUSE_LOGCOLOR
 fi
 
 # Doxygen
@@ -1251,7 +1257,7 @@ echolog "  optimize           $optimize"
 echolog "  static             ${static}"
 echolog "  shared             ${shared}"
 echolog ""
-echolog "  CFLAGS             $CFLAGS $extracflags"
+echolog "  CFLAGS             $CFLAGS $CPPFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
@@ -1309,7 +1315,7 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
-append_config "EXTRACFLAGS=$extracflags"
+append_config "CPPFLAGS=$CPPFLAGS"
 append_config "OPTFLAGS=$CFLAGS"
 append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"

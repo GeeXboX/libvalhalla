@@ -10,7 +10,7 @@ VHTEST = libvalhalla-test
 VHTEST_SRCS = libvalhalla-test.c
 VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
 
-override CFLAGS += -Isrc
+override CPPFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lvalhalla
 
 ifeq ($(BUILD_STATIC),yes)
@@ -37,7 +37,7 @@ SUBDIRS = \
 all: lib apps docs
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib:
 	$(MAKE) -C src
@@ -46,7 +46,7 @@ $(VHTEST): $(VHTEST_OBJS)
 	$(CC) $(VHTEST_OBJS) $(LDFLAGS) -o $(VHTEST)
 
 apps-dep:
-	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(VHTEST_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(VHTEST_SRCS) 1>.depend
 
 apps: apps-dep lib
 	$(MAKE) $(VHTEST)

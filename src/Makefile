@@ -115,7 +115,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(BUILD_RULES)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib_static: $(STATIC_LIBNAME)
 
@@ -152,7 +152,7 @@ uninstall:
 	rm -f $(includedir)/valhalla.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall
