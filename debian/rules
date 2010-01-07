@@ -21,7 +21,6 @@ confflags += --disable-grabber-ffmpeg
 confflags += --enable-grabber-imdb
 confflags += --enable-grabber-lastfm
 confflags += --enable-grabber-local
-confflags += --disable-grabber-lyricsfly
 confflags += --enable-grabber-lyricwiki
 confflags += --enable-grabber-nfo
 confflags += --enable-grabber-tvdb
