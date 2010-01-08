@@ -89,6 +89,7 @@ show_help(){
   echo "  --enable-small              optimize for size instead of speed"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
+  echo "  --enable-pic                build position-independent code"
   echo ""
   echo "Miscellaneous:"
   echo "  --disable-logcolor          disable colorful console output on terminals"
@@ -459,6 +460,7 @@ dostrip="yes"
 extralibs=""
 installstrip="-s"
 cross_compile="no"
+pic="no"
 INSTALL="install"
 VERSION=""
 pkgconfig_requires=""
@@ -613,6 +615,10 @@ for opt do
   ;;
   --disable-grabber-tvrage) grabber_tvrage="no";
   ;;
+  --enable-pic) pic="yes";
+  ;;
+  --disable-pic) pic="no";
+  ;;
   --enable-logcolor) logcolor="yes";
   ;;
   --disable-logcolor) logcolor="no";
@@ -676,6 +682,7 @@ case "$arch" in
         arch="x86_64"
       fi
     fi
+    spic=$shared
   ;;
 # armv4l is a subset of armv5tel
   arm|armv4l|armv5tel)
@@ -683,24 +690,29 @@ case "$arch" in
   ;;
   alpha)
     arch="alpha"
+    spic=$shared
   ;;
   "Power Macintosh"|ppc|ppc64|powerpc)
     arch="powerpc"
   ;;
   mips|mipsel|IP*)
     arch="mips"
+    spic=$shared
   ;;
   sun4u|sparc64)
     arch="sparc64"
+    spic=$shared
   ;;
   sparc)
     arch="sparc"
+    spic=$shared
   ;;
   sh4)
     arch="sh4"
   ;;
   parisc|parisc64)
     arch="parisc"
+    spic=$shared
   ;;
   s390|s390x)
     arch="s390"
@@ -710,6 +722,7 @@ case "$arch" in
   ;;
   ia64)
     arch="ia64"
+    spic=$shared
   ;;
   bfin)
     arch="bfin"
@@ -760,6 +773,15 @@ if test $cpu != "generic"; then
     ;;
   esac
 fi
+
+enable_pic(){
+    enable pic
+    add_cppflags -DPIC
+    add_cflags   -fPIC
+}
+
+enabled spic && enable pic
+enabled pic && enable_pic
 
 #################################################
 #   create logging file
@@ -887,15 +909,6 @@ elif enabled optimize; then
   else
     add_cflags "-O2"
   fi
-fi
-
-#################################################
-#   check for shared library build
-#################################################
-if enabled shared; then
-  case "$arch" in
-    x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
-  esac
 fi
 
 
