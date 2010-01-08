@@ -250,7 +250,7 @@ valhalla_wait (valhalla_t *handle)
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  if (!handle)
+  if (!handle || handle->noscan)
     return;
 
   vh_scanner_wait (handle->scanner);
@@ -285,6 +285,7 @@ valhalla_force_stop (valhalla_t *handle)
   {
     int f = !i ? STOP_FLAG_REQUEST : STOP_FLAG_WAIT;
 
+    if (!handle->noscan)
     vh_scanner_stop (handle->scanner, f);
     vh_dbmanager_stop (handle->dbmanager, f);
     vh_dispatcher_stop (handle->dispatcher, f);
@@ -363,7 +364,15 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
 
   res = vh_scanner_run (handle->scanner, loop, timeout, priority);
   if (res)
+  {
+    if (res == SCANNER_ERROR_PATH)
+    {
+      handle->noscan = 1;
+      vh_log (VALHALLA_MSG_INFO , "no path defined, scanner disabled");
+    }
+    else
     return VALHALLA_ERROR_THREAD;
+  }
 
   res = vh_dbmanager_run (handle->dbmanager, priority);
   if (res)

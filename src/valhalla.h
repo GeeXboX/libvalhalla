@@ -330,12 +330,6 @@ typedef struct valhalla_file_s {
  *
  * These parameters must be used with valhalla_config_set().
  *
- * <b>Parameter mandatory before using an handle:</b>
- *
- * - VALHALLA_CFG_SCANNER_PATH \n
- *   At least one path must be added to the scanner, else an error is returned
- *   by valhalla_run().
- *
  * <b>When adding a new entry in the enum:</b>
  *
  * When an entry must be added in this enum, keep this one by alphabetical
@@ -661,6 +655,9 @@ int valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority);
  * must not break this function with valhalla_uninit(), that is not safe!
  * If you prefer stop the scanner even if it is not finished. In this case
  * you must use _only_ valhalla_uninit().
+ *
+ * If no path is defined (then the scanner is not running), this function
+ * returns immediately.
  *
  * \warning This function can be used only after valhalla_run()!
  * \param[in] handle      Handle on the scanner.
