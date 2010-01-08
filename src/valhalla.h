@@ -649,7 +649,7 @@ unsigned long valhalla_stats_read_next (valhalla_t *handle, const char *id,
  * \param[in] loop        Number of loops (<=0 for infinite).
  * \param[in] timeout     Timeout between loops, 0 to disable [seconds].
  * \param[in] priority    Priority set to all threads.
- * \return 0 for success and <0 on error (\see enum valhalla_errno).
+ * \return 0 for success and <0 on error (see enum valhalla_errno).
  */
 int valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority);
 
