@@ -936,23 +936,6 @@ check_lib sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 
 
 
 #################################################
-#   version
-#################################################
-temp_host_cflags "-Isrc"
-check_host_ld <<EOF
-#include <stdio.h>
-#include <valhalla.h>
-int main(){
-  printf("LIBVALHALLA_VERSION:"LIBVALHALLA_VERSION_STR);
-  printf("\n");
-  return 0;
-}
-EOF
-VERSION=`strings $TMPE | sed -n -e 's,LIBVALHALLA_VERSION:,,p'`
-restore_flags
-
-
-#################################################
 #   Grabber
 #################################################
 
@@ -1226,6 +1209,22 @@ if enabled grabber; then
     grabber_set_no dummy $grabbers
   fi
 fi
+
+#################################################
+#   version
+#################################################
+temp_host_cflags "-Isrc"
+check_host_ld <<EOF
+#include <stdio.h>
+#include <valhalla.h>
+int main(){
+  printf("LIBVALHALLA_VERSION:"LIBVALHALLA_VERSION_STR);
+  printf("\n");
+  return 0;
+}
+EOF
+VERSION=`strings $TMPE | sed -n -e 's,LIBVALHALLA_VERSION:,,p'`
+restore_flags
 
 #################################################
 #   Miscellaneous
