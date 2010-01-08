@@ -67,7 +67,7 @@ struct valhalla_s {
 
   struct vh_stats_s *stats;
 
-  int run; /* prevent a bug if valhalla_run() is called two times */
+  unsigned int run    : 1;  /* check if valhalla_run() is called two times */
   unsigned int noscan : 1;  /* only ondemand, scanner disabled */
 };
 
