@@ -150,7 +150,7 @@ depend:
 .PHONY: uninstall
 
 dist-all:
-	cp $(EXTRADIST) $(SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(SRCS) $(SRCS_GRABBER-no) Makefile $(DIST)
 
 .PHONY: dist-all
 
