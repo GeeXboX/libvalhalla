@@ -116,10 +116,6 @@ typedef enum database_stmt {
   STMT_DELETE_ASSOC_FILE_GRABBER,
   STMT_DELETE_DLCONTEXT,
 
-  STMT_SELECT_INFO_VALUE,
-  STMT_INSERT_INFO,
-  STMT_UPDATE_INFO,
-
   STMT_CLEANUP_ASSOC_FILE_METADATA,
   STMT_CLEANUP_ASSOC_FILE_GRABBER,
   STMT_CLEANUP_META,
@@ -163,10 +159,6 @@ static const stmt_list_t g_stmts[] = {
   [STMT_DELETE_ASSOC_FILE_METADATA2] = { DELETE_ASSOC_FILE_METADATA2, NULL },
   [STMT_DELETE_ASSOC_FILE_GRABBER]   = { DELETE_ASSOC_FILE_GRABBER,   NULL },
   [STMT_DELETE_DLCONTEXT]            = { DELETE_DLCONTEXT,            NULL },
-
-  [STMT_SELECT_INFO_VALUE]           = { SELECT_INFO_VALUE,           NULL },
-  [STMT_INSERT_INFO]                 = { INSERT_INFO,                 NULL },
-  [STMT_UPDATE_INFO]                 = { UPDATE_INFO,                 NULL },
 
   [STMT_CLEANUP_ASSOC_FILE_METADATA] = { CLEANUP_ASSOC_FILE_METADATA, NULL },
   [STMT_CLEANUP_ASSOC_FILE_GRABBER]  = { CLEANUP_ASSOC_FILE_GRABBER,  NULL },
@@ -1025,9 +1017,13 @@ database_info_get (database_t *database, const char *name)
 {
   char *ret = NULL;
   int res, err = -1;
-  sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_INFO_VALUE);
+  sqlite3_stmt *stmt;
 
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name, out);
+  res = sqlite3_prepare_v2 (database->db, SELECT_INFO_VALUE, -1, &stmt, NULL);
+  if (res != SQLITE_OK)
+    goto out_err;
+
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name, out_free);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_ROW)
@@ -1040,8 +1036,9 @@ database_info_get (database_t *database, const char *name)
   sqlite3_clear_bindings (stmt);
   err = 0;
 
- out:
-  sqlite3_reset (stmt);
+ out_free:
+  sqlite3_finalize (stmt);
+ out_err:
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return ret;
@@ -1051,19 +1048,22 @@ static void
 database_info_insert (database_t *database, const char *name, const char *value)
 {
   int res, err = -1;
-  sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_INFO);
+  sqlite3_stmt *stmt;
 
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name,  out_reset);
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, value, out_clear);
+  res = sqlite3_prepare_v2 (database->db, INSERT_INFO, -1, &stmt, NULL);
+  if (res != SQLITE_OK)
+    goto out_err;
+
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name,  out_free);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, value, out_free);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
     err = 0;
 
- out_clear:
-  sqlite3_clear_bindings (stmt);
- out_reset:
-  sqlite3_reset (stmt);
+ out_free:
+  sqlite3_finalize (stmt);
+ out_err:
   if (err < 0)
     valhalla_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
