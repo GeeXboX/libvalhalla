@@ -164,7 +164,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_END_TRANSACTION]             = { END_TRANSACTION,             NULL },
 };
 
-#define STMT_GET(id) database->stmts[id].stmt
+#define STMT_GET(id) database->stmts?database->stmts[id].stmt:NULL
 
 #define VH_DB_BIND_TEXT_OR_GOTO(stmt, col, value, label)            \
   do                                                                \
