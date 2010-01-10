@@ -1299,7 +1299,7 @@ vh_database_uninit (database_t *database)
 database_t *
 vh_database_init (const char *path)
 {
-  int res;
+  int res, exists;
   unsigned int i;
   database_t *database;
 
@@ -1321,6 +1321,8 @@ vh_database_init (const char *path)
   if (res != SQLITE_OK)
     return NULL;
 
+  exists = vh_file_exists (path);
+
   res = sqlite3_open (path, &database->db);
   if (res)
   {
@@ -1330,14 +1332,17 @@ vh_database_init (const char *path)
   }
 
   database->path = strdup (path);
+
+  if (exists && database_info (database))
+    goto err;
+
   database_create_table (database);
 
   res = database_prepare_stmt (database);
   if (res)
     goto err;
 
-  res = database_info (database);
-  if (res)
+  if (!exists && database_info (database))
     goto err;
 
   database->file_type = malloc (sizeof (g_file_type));
