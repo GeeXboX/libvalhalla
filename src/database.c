@@ -1241,9 +1241,9 @@ vh_database_uninit (database_t *database)
     free (database->path);
 
   if (database->stmts)
-  for (i = 0; i < ARRAY_NB_ELEMENTS (g_stmts); i++)
-    if (STMT_GET (i))
-      sqlite3_finalize (STMT_GET (i));
+    for (i = 0; i < ARRAY_NB_ELEMENTS (g_stmts); i++)
+      if (STMT_GET (i))
+        sqlite3_finalize (STMT_GET (i));
 
   if (database->stmts)
     free (database->stmts);
