@@ -17,9 +17,6 @@
         grabbers can handle several languages and english is hardcoded or
         the language is ignored.
         \see Amazon, TVDB, TVRage and Allocine (french only)
-     -> With concurrent grabbers, the priorities are lost. Ugly covers
-        (for example) are at the first position. The priorities should be
-        handled independently of the position in the list.
 
  * Scanner
      -> Add optional support for inotify.
