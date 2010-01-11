@@ -7,6 +7,7 @@ EXTRADIST = \
 	curl.png \
 	Doxyfile \
 	ffmpeg.png \
+	priorities.txt \
 	sqlite3.png \
 	valhalla.svg \
 	valhalla-db.dia \
