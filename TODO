@@ -8,9 +8,6 @@
         available in the DB, the file must be removed (covers, etc, ...).
      -> Add a means to easily select an information provided in a specific
         language.
-     -> Add an attribute to the metadata in order to assign a priority.
-        When a public selection is executed. The results should be sorted
-        by priorities.
 
  * Grabber
      -> Add the possibility to configure every grabber at the init. Some
