@@ -138,7 +138,7 @@ grabber_add_person (file_data_t *fdata,
   {
     char str[128] = { 0 };
 
-    if (role && strcmp (role, ""))
+    if (role && *role)
       snprintf (str, sizeof (str), "%s (%s)", name, role);
     else
       snprintf (str, sizeof (str), "%s", name);
