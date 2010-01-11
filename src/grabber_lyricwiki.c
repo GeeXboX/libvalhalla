@@ -48,6 +48,10 @@ typedef struct grabber_lyricwiki_s {
   url_t *handler;
 } grabber_lyricwiki_t;
 
+static const metadata_plist_t lyricwiki_pl[] = {
+  { NULL, METADATA_PRIORITY_NORMAL }
+};
+
 
 static int
 grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
@@ -141,7 +145,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     }
 
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_LYRICS, lyrics);
+                          VALHALLA_METADATA_LYRICS, lyrics, lyricwiki_pl);
 
     free (txt);
     free (lyrics);

@@ -44,6 +44,10 @@ typedef struct grabber_allocine_s {
   url_t *handler;
 } grabber_allocine_t;
 
+static const metadata_plist_t allocine_pl[] = {
+  { NULL, METADATA_PRIORITY_NORMAL }
+};
+
 
 static int
 grabber_allocine_get (url_t *handler, file_data_t *fdata,
@@ -108,47 +112,49 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
      *  used by next grabbers to find cover and fan arts.
      */
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE, (char *) tmp);
+                          VALHALLA_METADATA_TITLE, (char *) tmp, allocine_pl);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        VALHALLA_METADATA_TITLE_ALTERNATIVE);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE, allocine_pl);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                        VALHALLA_METADATA_SYNOPSIS);
+                        VALHALLA_METADATA_SYNOPSIS, allocine_pl);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME);
+                        VALHALLA_METADATA_RUNTIME, allocine_pl);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, allocine_pl);
     res_int = 0;
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n);
+  vh_grabber_parse_categories (fdata, n, allocine_pl);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "popularity", &res_int);
   /* allocine ranks from 0 to 4, we do from 0 to 5 */
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int + 1, VALHALLA_METADATA_RATING);
+    vh_grabber_parse_int (fdata, res_int + 1,
+                          VALHALLA_METADATA_RATING, allocine_pl);
     res_int = 0;
   }
 
   /* fetch movie budget */
-  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET);
+  vh_grabber_parse_str (fdata, n, "budget",
+                        VALHALLA_METADATA_BUDGET, allocine_pl);
 
   /* fetch movie people */
-  vh_grabber_parse_casting (fdata, n);
+  vh_grabber_parse_casting (fdata, n, allocine_pl);
 
   xmlFreeDoc (doc);
   return 0;

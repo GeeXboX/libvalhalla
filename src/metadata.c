@@ -189,6 +189,7 @@ vh_metadata_dup (metadata_t **dst, const metadata_t *src)
     tmp->name  = strdup (src->name);
     tmp->value = strdup (src->value);
     tmp->group = src->group;
+    tmp->priority = src->priority;
 
     if (!st)
       st = tmp;
@@ -219,7 +220,8 @@ vh_metadata_free (metadata_t *meta)
 
 void
 vh_metadata_add (metadata_t **meta,
-                 const char *name, const char *value, valhalla_meta_grp_t group)
+                 const char *name, const char *value,
+                 valhalla_meta_grp_t group, int priority)
 {
   metadata_t *it;
 
@@ -247,17 +249,29 @@ vh_metadata_add (metadata_t **meta,
 
   it->value = strdup (value);
   it->group = group;
+  it->priority = priority;
 
   vh_log (VALHALLA_MSG_VERBOSE,
           "Adding new metadata '%s' with value '%s'.", it->name, it->value);
 }
 
+static inline int
+metadata_priority_get (const char *name, const metadata_plist_t *pl)
+{
+  for (; pl->metadata; pl++)
+    if (!strcasecmp (name, pl->metadata))
+      return pl->priority;
+  return pl->priority;
+}
+
 void
 vh_metadata_add_auto (metadata_t **meta,
-                      const char *name, const char *value)
+                      const char *name, const char *value,
+                      const metadata_plist_t *pl)
 {
   unsigned int i;
   valhalla_meta_grp_t grp;
+  int priority;
 
   if (!meta || !name || !value || !*value)
     return;
@@ -270,5 +284,7 @@ vh_metadata_add_auto (metadata_t **meta,
       break;
     }
 
-  vh_metadata_add (meta, name, value, grp);
+  priority = pl ? metadata_priority_get (name, pl) : METADATA_PRIORITY_NORMAL;
+
+  vh_metadata_add (meta, name, value, grp, priority);
 }

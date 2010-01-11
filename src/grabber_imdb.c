@@ -45,6 +45,10 @@ typedef struct grabber_imdb_s {
   url_t *handler;
 } grabber_imdb_t;
 
+static const metadata_plist_t imdb_pl[] = {
+  { NULL, METADATA_PRIORITY_NORMAL }
+};
+
 
 static int
 grabber_imdb_get (url_t *handler, file_data_t *fdata,
@@ -109,43 +113,45 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
      *  used by next grabbers to find cover and fan arts.
      */
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE, (char *) tmp);
+                          VALHALLA_METADATA_TITLE, (char *) tmp, imdb_pl);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        VALHALLA_METADATA_TITLE_ALTERNATIVE);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE, imdb_pl);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                        VALHALLA_METADATA_SYNOPSIS);
+                        VALHALLA_METADATA_SYNOPSIS, imdb_pl);
 
   /* fetch movie runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "runtime", VALHALLA_METADATA_RUNTIME);
+  vh_grabber_parse_str (fdata, n, "runtime",
+                        VALHALLA_METADATA_RUNTIME, imdb_pl);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, imdb_pl);
     res_int = 0;
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n);
+  vh_grabber_parse_categories (fdata, n, imdb_pl);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "rating", &res_int);
   /* ImDB ranks from 0 to 10, we do from 0 to 5 */
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int / 2, VALHALLA_METADATA_RATING);
+    vh_grabber_parse_int (fdata, res_int / 2,
+                          VALHALLA_METADATA_RATING, imdb_pl);
     res_int = 0;
   }
 
   /* fetch movie people */
-  vh_grabber_parse_casting (fdata, n);
+  vh_grabber_parse_casting (fdata, n, imdb_pl);
 
   xmlFreeDoc (doc);
   return 0;

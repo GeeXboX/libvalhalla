@@ -398,7 +398,8 @@ database_grabber_insert (database_t *database, const char *name)
 static void
 database_assoc_filemd_insert (database_t *database,
                               int64_t file_id, int64_t meta_id,
-                              int64_t data_id, int64_t group_id, int ext)
+                              int64_t data_id, int64_t group_id,
+                              int ext, int priority)
 {
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA);
@@ -408,6 +409,7 @@ database_assoc_filemd_insert (database_t *database,
   VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 5, ext,      out_clear);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 6, priority, out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -424,16 +426,18 @@ database_assoc_filemd_insert (database_t *database,
 static void
 database_assoc_filemd_update (database_t *database,
                               int64_t file_id, int64_t meta_id,
-                              int64_t data_id, int64_t group_id, int ext)
+                              int64_t data_id, int64_t group_id,
+                              int ext, int priority)
 {
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_METADATA);
 
   VH_DB_BIND_INT64_OR_GOTO (stmt, 1, group_id, out_reset);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 2, ext,      out_clear);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 3, file_id,  out_clear);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 4, meta_id,  out_clear);
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 5, data_id,  out_clear);
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 3, priority, out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 4, file_id,  out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 5, meta_id,  out_clear);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 6, data_id,  out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -614,7 +618,8 @@ database_file_metadata (database_t *database,
     group_id = database_groupid_get (database, tag->group);
 
     database_assoc_filemd_insert (database,
-                                  file_id, meta_id, data_id, group_id, ext);
+                                  file_id, meta_id, data_id,
+                                  group_id, ext, tag->priority);
   }
 }
 
@@ -629,6 +634,10 @@ database_file_data (database_t *database, file_data_t *data, int insert)
   {
     char v[32];
     metadata_t *meta = NULL;
+    const metadata_plist_t pl = {
+      .metadata = NULL,
+      .priority = METADATA_PRIORITY_HIGH
+    };
 
     type_id = database_file_typeid_get (database, data->file.type);
     database_file_update (database, data, type_id);
@@ -643,7 +652,7 @@ database_file_data (database_t *database, file_data_t *data, int insert)
      *       because there is only one property which is added in this way.
      */
     snprintf (v, sizeof (v), "%"PRIi64, data->file.size);
-    vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE, v);
+    vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE, v, &pl);
     database_file_metadata (database, file_id, meta, 0);
     vh_metadata_free (meta);
   }
@@ -1797,7 +1806,7 @@ vh_database_file_get (database_t *database,
   else
     return -1;
 
-  /* ; */
+  /* ORDER BY assoc.priority__; */
   SQL_CONCAT (sql, SELECT_FILE_END);
 
   *res = NULL;
@@ -1853,7 +1862,8 @@ vh_database_metadata_insert (database_t *database, const char *path,
 
   if (!res)
     database_assoc_filemd_update (database,
-                                  file_id, meta_id, data_id, group_id, 1);
+                                  file_id, meta_id, data_id,
+                                  group_id, 1, METADATA_PRIORITY_NORMAL);
   else
   {
     if (!meta_id)
@@ -1862,7 +1872,8 @@ vh_database_metadata_insert (database_t *database, const char *path,
       data_id = database_data_insert (database, data);
     group_id = database_groupid_get (database, group);
     database_assoc_filemd_insert (database,
-                                  file_id, meta_id, data_id, group_id, 1);
+                                  file_id, meta_id, data_id,
+                                  group_id, 1, METADATA_PRIORITY_NORMAL);
   }
 
   return 0;
@@ -1898,7 +1909,8 @@ vh_database_metadata_update (database_t *database, const char *path,
   database_assoc_filemd_delete (database, file_id, meta_id, data_id);
   data_id = database_data_insert (database, ndata);
   database_assoc_filemd_insert (database,
-                                file_id, meta_id, data_id, group_id, 1);
+                                file_id, meta_id, data_id,
+                                group_id, 1, METADATA_PRIORITY_NORMAL);
   return 0;
 }
 

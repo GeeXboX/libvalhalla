@@ -81,6 +81,11 @@ typedef struct grabber_amazon_s {
   hmac_sha256_t *hd;
 } grabber_amazon_t;
 
+static const metadata_plist_t amazon_pl[] = {
+  { VALHALLA_METADATA_COVER,          METADATA_PRIORITY_LOW / 4 },
+  { NULL,                             METADATA_PRIORITY_NORMAL  }
+};
+
 
 #define BASE64_OUTSIZE(size) ((((size) + 2) / 3) * 4 + 1)
 
@@ -389,7 +394,8 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   res = grabber_amazon_check (amazon, cover);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_COVER, cover, amazon_pl);
     free (cover);
     return 0;
   }
@@ -419,7 +425,8 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   free (escaped_keywords);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_COVER, cover, amazon_pl);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

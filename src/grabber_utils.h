@@ -26,15 +26,21 @@
 #include "xml_utils.h"
 #endif /* USE_XML */
 
-void vh_grabber_parse_int (file_data_t *fdata, int val, const char *name);
-void vh_grabber_parse_int64 (file_data_t *fdata, int64_t val, const char *name);
-void vh_grabber_parse_float (file_data_t *fdata, float val, const char *name);
+void vh_grabber_parse_int (file_data_t *fdata, int val,
+                           const char *name, const metadata_plist_t *pl);
+void vh_grabber_parse_int64 (file_data_t *fdata, int64_t val,
+                             const char *name, const metadata_plist_t *pl);
+void vh_grabber_parse_float (file_data_t *fdata, float val,
+                             const char *name, const metadata_plist_t *pl);
 
 #ifdef USE_XML
 void vh_grabber_parse_str (file_data_t *fdata,
-                           xmlNode *nd, const char *tag, const char *name);
-void vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node);
-void vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node);
+                           xmlNode *nd, const char *tag,
+                           const char *name, const metadata_plist_t *pl);
+void vh_grabber_parse_categories (file_data_t *fdata,
+                                  xmlNode *node, const metadata_plist_t *pl);
+void vh_grabber_parse_casting (file_data_t *fdata,
+                               xmlNode *node, const metadata_plist_t *pl);
 #endif /* USE_XML */
 
 #endif /* VALHALLA_GRABBER_UTILS_H */

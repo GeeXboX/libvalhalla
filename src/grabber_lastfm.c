@@ -54,6 +54,10 @@ typedef struct grabber_lastfm_s {
   list_t *list;
 } grabber_lastfm_t;
 
+static const metadata_plist_t lastfm_pl[] = {
+  { NULL, METADATA_PRIORITY_NORMAL }
+};
+
 
 static int
 grabber_lastfm_get (url_t *handler, char **dl_url,
@@ -211,14 +215,16 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   res = grabber_lastfm_check (lastfm, cover);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_COVER, cover, lastfm_pl);
     goto out;
   }
 
   res = grabber_lastfm_get (lastfm->handler, &url, artist, alb);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_COVER, cover, lastfm_pl);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

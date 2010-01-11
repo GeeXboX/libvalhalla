@@ -45,36 +45,39 @@ static const struct {
 
 
 void
-vh_grabber_parse_int (file_data_t *fdata, int val, const char *name)
+vh_grabber_parse_int (file_data_t *fdata, int val,
+                      const char *name, const metadata_plist_t *pl)
 {
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%d", val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
 }
 
 void
-vh_grabber_parse_int64 (file_data_t *fdata, int64_t val, const char *name)
+vh_grabber_parse_int64 (file_data_t *fdata, int64_t val,
+                        const char *name, const metadata_plist_t *pl)
 {
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%"PRIi64, val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
 }
 
 void
-vh_grabber_parse_float (file_data_t *fdata, float val, const char *name)
+vh_grabber_parse_float (file_data_t *fdata, float val,
+                        const char *name, const metadata_plist_t *pl)
 {
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%.5f", val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
 }
 
 #ifdef USE_XML
 void
 vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                      const char *name)
+                      const char *name, const metadata_plist_t *pl)
 {
   char *res = NULL;
 
@@ -84,14 +87,15 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
   vh_xml_search_str (nd, tag, &res);
   if (res)
   {
-    vh_metadata_add_auto (&fdata->meta_grabber, name, res);
+    vh_metadata_add_auto (&fdata->meta_grabber, name, res, pl);
     free (res);
     res = NULL;
   }
 }
 
 void
-vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
+vh_grabber_parse_categories (file_data_t *fdata,
+                             xmlNode *node, const metadata_plist_t *pl)
 {
   xmlNode *n;
   int i;
@@ -111,7 +115,7 @@ vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
-                            VALHALLA_METADATA_CATEGORY, (char *) tmp);
+                            VALHALLA_METADATA_CATEGORY, (char *) tmp, pl);
       xmlFree (tmp);
     }
     n = n->next;
@@ -120,7 +124,7 @@ vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node)
 
 static void
 grabber_add_person (file_data_t *fdata,
-                    xmlNode *node, const char *cat)
+                    xmlNode *node, const char *cat, const metadata_plist_t *pl)
 {
   char *name = NULL, *role = NULL;
 
@@ -139,7 +143,7 @@ grabber_add_person (file_data_t *fdata,
     else
       snprintf (str, sizeof (str), "%s", name);
     free (name);
-    vh_metadata_add_auto (&fdata->meta_grabber, cat, str);
+    vh_metadata_add_auto (&fdata->meta_grabber, cat, str, pl);
   }
 
   if (role)
@@ -147,7 +151,8 @@ grabber_add_person (file_data_t *fdata,
 }
 
 void
-vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
+vh_grabber_parse_casting (file_data_t *fdata,
+                          xmlNode *node, const metadata_plist_t *pl)
 {
   xmlNode *n;
 
@@ -168,7 +173,7 @@ vh_grabber_parse_casting (file_data_t *fdata, xmlNode *node)
     for (i = 0; grabber_casting_mapping[i].tag; i++)
       if (!strcmp ((char *) ch, grabber_casting_mapping[i].tag))
       {
-        grabber_add_person (fdata, n, grabber_casting_mapping[i].name);
+        grabber_add_person (fdata, n, grabber_casting_mapping[i].name, pl);
         break;
       }
 

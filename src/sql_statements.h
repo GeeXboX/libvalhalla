@@ -103,6 +103,7 @@
    "data_id          INTEGER NOT NULL, "                  \
    "_grp_id          INTEGER NOT NULL, "                  \
    "external         INTEGER NOT NULL, "                  \
+   "priority__       INTEGER NOT NULL, "                  \
    "PRIMARY KEY (file_id, meta_id, data_id) "             \
  ");"
 
@@ -182,7 +183,7 @@
  "ON assoc.meta_id = meta.meta_id "
 
 #define SELECT_FILE_END \
- ";"
+ "ORDER BY assoc.priority__;"
 
 #define SELECT_FILE_WHERE_FILE_ID \
  "file.file_id = %"PRIi64" "
@@ -393,8 +394,9 @@
 
 #define INSERT_ASSOC_FILE_METADATA                                          \
  "INSERT "                                                                  \
- "INTO assoc_file_metadata (file_id, meta_id, data_id, _grp_id, external) " \
- "VALUES (?, ?, ?, ?, ?);"
+ "INTO assoc_file_metadata (file_id, meta_id, data_id, "                    \
+                            "_grp_id, external, priority__) "               \
+ "VALUES (?, ?, ?, ?, ?, ?);"
 
 #define INSERT_ASSOC_FILE_GRABBER                                 \
  "INSERT "                                                        \
@@ -438,7 +440,8 @@
 #define UPDATE_ASSOC_FILE_METADATA \
  "UPDATE assoc_file_metadata "     \
  "SET _grp_id  = ?, "              \
- "    external = ?  "              \
+ "    external = ?, "              \
+ "    priority__ = ? "             \
  "WHERE file_id = ? AND meta_id = ? AND data_id = ?; "
 
 /******************************************************************************/

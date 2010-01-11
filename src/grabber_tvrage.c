@@ -51,6 +51,10 @@ typedef struct grabber_tvrage_s {
   url_t *handler;
 } grabber_tvrage_t;
 
+static const metadata_plist_t tvrage_pl[] = {
+  { NULL, METADATA_PRIORITY_NORMAL }
+};
+
 
 static int
 grabber_tvrage_get (url_t *handler, file_data_t *fdata,
@@ -131,18 +135,22 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   if (tmp)
   {
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE_ALTERNATIVE, (char *) tmp);
+                          VALHALLA_METADATA_TITLE_ALTERNATIVE,
+                          (char *) tmp, tvrage_pl);
     xmlFree (tmp);
   }
 
   /* fetch tv show country */
-  vh_grabber_parse_str (fdata, n, "origin_country", VALHALLA_METADATA_COUNTRY);
+  vh_grabber_parse_str (fdata, n, "origin_country",
+                        VALHALLA_METADATA_COUNTRY, tvrage_pl);
 
   /* fetch tv show studio */
-  vh_grabber_parse_str (fdata, n, "network", VALHALLA_METADATA_STUDIO);
+  vh_grabber_parse_str (fdata, n, "network",
+                        VALHALLA_METADATA_STUDIO, tvrage_pl);
 
   /* fetch tv show runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "runtime", VALHALLA_METADATA_RUNTIME);
+  vh_grabber_parse_str (fdata, n, "runtime",
+                        VALHALLA_METADATA_RUNTIME, tvrage_pl);
 
   /* fetch movie categories */
   node = vh_get_node_xml_tree (n, "genre");
@@ -155,7 +163,8 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
-                            VALHALLA_METADATA_CATEGORY, (char *) tmp);
+                            VALHALLA_METADATA_CATEGORY,
+                            (char *) tmp, tvrage_pl);
       xmlFree (tmp);
     }
     node = node->next;

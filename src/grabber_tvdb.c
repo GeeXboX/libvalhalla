@@ -68,6 +68,12 @@ typedef struct grabber_tvdb_s {
   url_t *handler;
 } grabber_tvdb_t;
 
+static const metadata_plist_t tvdb_pl[] = {
+  { VALHALLA_METADATA_COVER,          METADATA_PRIORITY_HIGH / 8 },
+  { VALHALLA_METADATA_FAN_ART,        METADATA_PRIORITY_HIGH / 8 },
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
+};
+
 
 static void
 grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
@@ -81,7 +87,7 @@ grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
   while (category)
   {
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_CATEGORY, category);
+                          VALHALLA_METADATA_CATEGORY, category, tvdb_pl);
     category = strtok_r (NULL, "|", &saveptr);
   }
 }
@@ -112,7 +118,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
   cover = vh_md5sum (name);
 
-  vh_metadata_add_auto (&fdata->meta_grabber, type, cover);
+  vh_metadata_add_auto (&fdata->meta_grabber, type, cover, tvdb_pl);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
   free (cover);
 }
@@ -248,13 +254,14 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch tv show overview description */
-  vh_grabber_parse_str (fdata, n, "Overview", VALHALLA_METADATA_SYNOPSIS);
+  vh_grabber_parse_str (fdata, n, "Overview",
+                        VALHALLA_METADATA_SYNOPSIS, tvdb_pl);
 
   /* fetch tv show first air date */
   vh_xml_search_year (n, "FirstAired", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, tvdb_pl);
     res_int = 0;
   }
 
@@ -267,7 +274,8 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   }
 
   /* fetch tv show runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "Runtime", VALHALLA_METADATA_RUNTIME);
+  vh_grabber_parse_str (fdata, n, "Runtime",
+                        VALHALLA_METADATA_RUNTIME, tvdb_pl);
 
   /* fetch tv show poster */
   tmp = vh_get_prop_value_from_xml_tree (n, "poster");

@@ -36,6 +36,10 @@
 
 #define BUF_SIZE 2048
 
+static const metadata_plist_t exif_pl[] = {
+  { NULL, METADATA_PRIORITY_HIGH }
+};
+
 
 static void
 exif_content_foreach_func (ExifEntry *entry, void *data)
@@ -51,7 +55,7 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
   vh_metadata_add (&fdata->meta_grabber,
                    exif_tag_get_name (entry->tag),
                    exif_entry_get_value (entry, buf, BUF_SIZE),
-                   VALHALLA_META_GRP_TECHNICAL);
+                   VALHALLA_META_GRP_TECHNICAL, METADATA_PRIORITY_HIGH);
 }
 
 static void
@@ -110,7 +114,7 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 
     snprintf (val, sizeof (val), "%d", orientation);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_PICTURE_ORIENTATION, val);
+                          VALHALLA_METADATA_PICTURE_ORIENTATION, val, exif_pl);
   }
 
   exif_data_foreach_content (d, exif_data_foreach_func, data);

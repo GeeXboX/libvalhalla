@@ -34,6 +34,10 @@
   GRABBER_CAP_AUDIO | \
   GRABBER_CAP_VIDEO
 
+static const metadata_plist_t local_pl[] = {
+  { NULL, METADATA_PRIORITY_HIGH / 4 }
+};
+
 
 static char *
 grabber_local_get (const char *filename)
@@ -137,7 +141,8 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
   cover = grabber_local_get (data->file.path);
   if (cover)
   {
-    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER, cover);
+    vh_metadata_add_auto (&data->meta_grabber,
+                          VALHALLA_METADATA_COVER, cover, local_pl);
     free (cover);
   }
 
