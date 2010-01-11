@@ -108,11 +108,9 @@ struct grabber_s {
 
 
 /*
- * The first grabber has the highest priority. But in the case where concurrent
- * grabbers are used, the following order is prefered but not fully respected.
- *
- * Configure one grabber (valhalla_init_param_t::grabber_nb) in order to
- * preserve the priorities.
+ * In the case where concurrent grabbers are used, the following order is
+ * prefered but not fully respected. Nevertheless, the priorities for the
+ * metadata are not affected by the order of this list.
  */
 static grabber_list_t *(*const g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_DUMMY
@@ -608,7 +606,7 @@ grabber_childs_add (grabber_list_t **list, grabber_list_t *child)
 }
 
 /*
- * NOTE: the first grabber in the linked list is considered as top priority.
+ * NOTE: the first grabber in the linked list is considered as the favorite.
  *       grabber_childs_add() adds the grabber always at the end of the list.
  */
 static grabber_list_t *
