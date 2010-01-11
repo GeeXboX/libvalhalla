@@ -46,16 +46,21 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
 {
   char buf[BUF_SIZE] = { 0 };
   file_data_t *fdata = data;
+  const metadata_plist_t *pl;
 
   if (!entry || !fdata)
     return;
 
   exif_entry_get_value (entry, buf, BUF_SIZE);
 
+  /* get default priority */
+  for (pl = exif_pl; pl->metadata; pl++)
+    ;
+
   vh_metadata_add (&fdata->meta_grabber,
                    exif_tag_get_name (entry->tag),
                    exif_entry_get_value (entry, buf, BUF_SIZE),
-                   VALHALLA_META_GRP_TECHNICAL, METADATA_PRIORITY_HIGH);
+                   VALHALLA_META_GRP_TECHNICAL, pl->priority);
 }
 
 static void
