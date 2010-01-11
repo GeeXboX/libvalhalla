@@ -186,9 +186,9 @@ vh_metadata_dup (metadata_t **dst, const metadata_t *src)
     if (!tmp)
       goto err;
 
-    tmp->name  = strdup (src->name);
-    tmp->value = strdup (src->value);
-    tmp->group = src->group;
+    tmp->name     = strdup (src->name);
+    tmp->value    = strdup (src->value);
+    tmp->group    = src->group;
     tmp->priority = src->priority;
 
     if (!st)
@@ -247,8 +247,8 @@ vh_metadata_add (metadata_t **meta,
   it->name  = strdup (name);
   vh_strtolower (it->name);
 
-  it->value = strdup (value);
-  it->group = group;
+  it->value    = strdup (value);
+  it->group    = group;
   it->priority = priority;
 
   vh_log (VALHALLA_MSG_VERBOSE,
