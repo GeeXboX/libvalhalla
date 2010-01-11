@@ -66,7 +66,8 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
                           xmlChar *url, valhalla_dl_t dl)
 {
   char name[1024] = { 0 };
-  char *type, *cover = NULL;
+  const char *type;
+  char *cover = NULL;
 
   if (!fdata || !url)
     return;
