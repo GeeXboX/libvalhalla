@@ -29,6 +29,7 @@
 #include "utils.h"
 #include "fifo_queue.h"
 #include "logs.h"
+#include "stats.h"
 #include "thread_utils.h"
 #include "dbmanager.h"
 #include "dispatcher.h"
@@ -52,7 +53,12 @@ struct ondemand_s {
   int             wait;
   int             run;
   pthread_mutex_t mutex_run;
+
+  vh_stats_cnt_t *st_cnt;
+  vh_stats_tmr_t *st_tmr;
 };
+
+#define STATS_GROUP "ondemand"
 
 
 static inline int
@@ -174,6 +180,9 @@ ondemand_thread (void *arg)
       continue;
     }
 
+    VH_STATS_COUNTER_INC (ondemand->st_cnt);
+    VH_STATS_TIMER_START (ondemand->st_tmr);
+
     /*
      * On-demand engaged, all threads must be in pause mode.
      * After this loop, we are sure that "all" threads are in waiting list.
@@ -228,6 +237,8 @@ ondemand_thread (void *arg)
     /* Wake up threads */
     for (i = 0; i < ARRAY_NB_ELEMENTS (pause); i++)
       pause[i].fct_pause (pause[i].handler);
+
+    VH_STATS_TIMER_STOP (ondemand->st_tmr);
   }
   while (!ondemand_is_stopped (ondemand));
 
@@ -313,6 +324,28 @@ vh_ondemand_uninit (ondemand_t *ondemand)
   free (ondemand);
 }
 
+static void
+ondemand_stats_dump (vh_stats_t *stats, void *data)
+{
+  ondemand_t *ondemand = data;
+  unsigned long total;
+  float time;
+
+  if (!stats || !ondemand)
+    return;
+
+  vh_log (VALHALLA_MSG_INFO,
+          "==================================================");
+  vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
+  vh_log (VALHALLA_MSG_INFO,
+          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+  total = vh_stats_counter_read (ondemand->st_cnt);
+  time  = vh_stats_timer_read (ondemand->st_tmr) / 1000000000.0;
+  vh_log (VALHALLA_MSG_INFO, "Queries    | %6lu  %7.2f sec  %7.2f sec/file",
+                             total, time, total ? time / total : 0.0);
+}
+
 ondemand_t *
 vh_ondemand_init (valhalla_t *handle)
 {
@@ -334,6 +367,13 @@ vh_ondemand_init (valhalla_t *handle)
   ondemand->valhalla = handle; /* VH_HANDLE */
 
   pthread_mutex_init (&ondemand->mutex_run, NULL);
+
+  /* init statistics */
+  vh_stats_grp_add (handle->stats, STATS_GROUP, ondemand_stats_dump, ondemand);
+  ondemand->st_cnt =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_GROUP, NULL);
+  ondemand->st_tmr =
+    vh_stats_grp_timer_add (handle->stats, STATS_GROUP, STATS_GROUP, NULL);
 
   return ondemand;
 
