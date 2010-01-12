@@ -235,7 +235,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 
   default:
     vh_log (VALHALLA_MSG_WARNING,
-            "%s: unsupported option %u", __FUNCTION__, conf);
+            "%s: unsupported option %#x", __FUNCTION__, conf);
     res = -1;
     break;
   }
