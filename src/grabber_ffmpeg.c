@@ -36,7 +36,7 @@
   GRABBER_CAP_VIDEO
 
 static const metadata_plist_t ffmpeg_pl[] = {
-  { NULL, METADATA_PRIORITY_HIGH }
+  { NULL,                             METADATA_PRIORITY_HIGH     }
 };
 
 

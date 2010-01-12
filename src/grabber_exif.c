@@ -37,7 +37,7 @@
 #define BUF_SIZE 2048
 
 static const metadata_plist_t exif_pl[] = {
-  { NULL, METADATA_PRIORITY_HIGH }
+  { NULL,                             METADATA_PRIORITY_HIGH     }
 };
 
 

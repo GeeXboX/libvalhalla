@@ -46,7 +46,7 @@ typedef struct grabber_imdb_s {
 } grabber_imdb_t;
 
 static const metadata_plist_t imdb_pl[] = {
-  { NULL, METADATA_PRIORITY_NORMAL }
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
 };
 
 

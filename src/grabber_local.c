@@ -35,7 +35,7 @@
   GRABBER_CAP_VIDEO
 
 static const metadata_plist_t local_pl[] = {
-  { NULL, METADATA_PRIORITY_HIGH / 4 }
+  { NULL,                             METADATA_PRIORITY_HIGH / 4 }
 };
 
 

@@ -34,7 +34,7 @@
   GRABBER_CAP_VIDEO
 
 static const metadata_plist_t nfo_pl[] = {
-  { NULL, METADATA_PRIORITY_HIGH / 2 }
+  { NULL,                             METADATA_PRIORITY_HIGH / 2 }
 };
 
 

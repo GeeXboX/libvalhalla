@@ -52,7 +52,7 @@ typedef struct grabber_tvrage_s {
 } grabber_tvrage_t;
 
 static const metadata_plist_t tvrage_pl[] = {
-  { NULL, METADATA_PRIORITY_NORMAL }
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
 };
 
 

@@ -55,7 +55,7 @@ typedef struct grabber_lastfm_s {
 } grabber_lastfm_t;
 
 static const metadata_plist_t lastfm_pl[] = {
-  { NULL, METADATA_PRIORITY_NORMAL }
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
 };
 
 

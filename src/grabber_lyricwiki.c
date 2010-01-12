@@ -49,7 +49,7 @@ typedef struct grabber_lyricwiki_s {
 } grabber_lyricwiki_t;
 
 static const metadata_plist_t lyricwiki_pl[] = {
-  { NULL, METADATA_PRIORITY_NORMAL }
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
 };
 
 
