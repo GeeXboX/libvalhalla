@@ -327,63 +327,6 @@ vh_file_data_step_continue (file_data_t *data, action_list_t *action)
 #endif /* USE_GRABBER */
 }
 
-void
-vh_queue_cleanup (fifo_queue_t *queue)
-{
-  int e;
-  void *data;
-
-  vh_fifo_queue_push (queue,
-                      FIFO_QUEUE_PRIORITY_NORMAL, ACTION_CLEANUP_END, NULL);
-
-  do
-  {
-    e = ACTION_NO_OPERATION;
-    data = NULL;
-    vh_fifo_queue_pop (queue, &e, &data);
-
-    switch (e)
-    {
-    default:
-      break;
-
-    case ACTION_DB_INSERT_P:
-    case ACTION_DB_INSERT_G:
-    case ACTION_DB_UPDATE_P:
-    case ACTION_DB_UPDATE_G:
-    case ACTION_DB_END:
-    case ACTION_DB_NEWFILE:
-      if (data)
-        vh_file_data_free (data);
-      break;
-
-    case ACTION_DB_EXT_INSERT:
-    case ACTION_DB_EXT_UPDATE:
-    case ACTION_DB_EXT_DELETE:
-      if (data)
-        vh_dbmanager_extmd_free (data);
-      break;
-
-    case ACTION_OD_ENGAGE:
-    case ACTION_EH_EVENTGL:
-      if (data)
-        free (data);
-      break;
-
-    case ACTION_EH_EVENTOD:
-      if (data)
-        vh_event_handler_od_free (data);
-      break;
-
-    case ACTION_EH_EVENTMD:
-      if (data)
-        vh_event_handler_md_free (data);
-      break;
-    }
-  }
-  while (e != ACTION_CLEANUP_END);
-}
-
 int
 vh_get_list_length (void *list)
 {

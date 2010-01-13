@@ -92,7 +92,6 @@ file_data_t *vh_file_data_new (const char *file, struct stat *st,
                                fifo_queue_prio_t prio, processing_step_t step);
 void vh_file_data_step_increase (file_data_t *data, action_list_t *action);
 void vh_file_data_step_continue (file_data_t *data, action_list_t *action);
-void vh_queue_cleanup (fifo_queue_t *queue);
 int vh_get_list_length (void *list);
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
