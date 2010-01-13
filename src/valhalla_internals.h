@@ -113,11 +113,10 @@ struct valhalla_s {
     else                                                            \
     {                                                               \
       for (i = 0; i < nb; i++)                                      \
-      {                                                             \
         vh_fifo_queue_push (handle->fifo, FIFO_QUEUE_PRIORITY_HIGH, \
                             ACTION_PAUSE_THREAD, NULL);             \
+      for (i = 0; i < nb; i++)                                      \
         sem_wait (&handle->sem_pausing);                            \
-      }                                                             \
       handle->paused = 1;                                           \
     }                                                               \
   }
