@@ -101,6 +101,16 @@ struct valhalla_s {
   sem_destroy (&handle->sem_pause);                                 \
   sem_destroy (&handle->sem_pausing);
 
+#define VH_THREAD_PAUSE_FORCESTOP(handle, nb)                       \
+  {                                                                 \
+    unsigned int i;                                                 \
+    for (i = 0; i < nb; i++)                                        \
+    {                                                               \
+      sem_post (&handle->sem_pause);                                \
+      sem_post (&handle->sem_pausing);                              \
+    }                                                               \
+  }
+
 #define VH_THREAD_PAUSE_FCT(handle, nb)                             \
   {                                                                 \
     unsigned int i;                                                 \

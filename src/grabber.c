@@ -541,6 +541,8 @@ vh_grabber_stop (grabber_t *grabber, int f)
 
     grabber->wait = 1;
 
+    VH_THREAD_PAUSE_FORCESTOP (grabber, grabber->nb)
+
     for (i = 0; i < grabber->nb; i++)
     {
       /* wake up the thread if this is asleep by dbmanager */

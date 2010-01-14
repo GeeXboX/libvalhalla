@@ -494,6 +494,8 @@ vh_dbmanager_stop (dbmanager_t *dbmanager, int f)
     vh_fifo_queue_push (dbmanager->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
     dbmanager->wait = 1;
+
+    VH_THREAD_PAUSE_FORCESTOP (dbmanager, 1)
   }
 
   if (f & STOP_FLAG_WAIT && dbmanager->wait)

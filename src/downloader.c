@@ -253,6 +253,8 @@ vh_downloader_stop (downloader_t *downloader, int f)
     vh_fifo_queue_push (downloader->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
     downloader->wait = 1;
+
+    VH_THREAD_PAUSE_FORCESTOP (downloader, 1)
   }
 
   if (f & STOP_FLAG_WAIT && downloader->wait)

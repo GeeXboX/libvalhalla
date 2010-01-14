@@ -269,6 +269,8 @@ vh_dispatcher_stop (dispatcher_t *dispatcher, int f)
     vh_fifo_queue_push (dispatcher->fifo,
                         FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
     dispatcher->wait = 1;
+
+    VH_THREAD_PAUSE_FORCESTOP (dispatcher, 1)
   }
 
   if (f & STOP_FLAG_WAIT && dispatcher->wait)

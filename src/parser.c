@@ -576,6 +576,8 @@ vh_parser_stop (parser_t *parser, int f)
       vh_fifo_queue_push (parser->fifo,
                           FIFO_QUEUE_PRIORITY_HIGH, ACTION_KILL_THREAD, NULL);
     parser->wait = 1;
+
+    VH_THREAD_PAUSE_FORCESTOP (parser, parser->nb)
   }
 
   if (f & STOP_FLAG_WAIT && parser->wait)
