@@ -404,7 +404,7 @@ database_assoc_filemd_insert (database_t *database,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_ASSOC_FILE_METADATA);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,  out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,  out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, group_id, out_clear);
@@ -418,7 +418,7 @@ database_assoc_filemd_insert (database_t *database,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -432,7 +432,7 @@ database_assoc_filemd_update (database_t *database,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_METADATA);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, group_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, group_id, out);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 2, ext,      out_clear);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 3, priority, out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, file_id,  out_clear);
@@ -446,7 +446,7 @@ database_assoc_filemd_update (database_t *database,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -459,7 +459,7 @@ database_assoc_filemd_delete (database_t *database,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_DELETE_ASSOC_FILE_METADATA2);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
 
@@ -470,7 +470,7 @@ database_assoc_filemd_delete (database_t *database,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -483,7 +483,7 @@ database_assoc_filemd_get (database_t *database,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_ASSOC_FILE_METADATA);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, meta_id, out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 3, data_id, out_clear);
 
@@ -498,7 +498,7 @@ database_assoc_filemd_get (database_t *database,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return err;
@@ -512,7 +512,7 @@ database_file_id_by_metadata (database_t *database, const char *path,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_FILE_ID_BY_METADATA);
 
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, path, out_reset);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, path, out);
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, meta, out_clear);
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 3, data, out_clear);
 
@@ -525,7 +525,7 @@ database_file_id_by_metadata (database_t *database, const char *path,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -538,7 +538,7 @@ database_assoc_filegrab_insert (database_t *database,
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_ASSOC_FILE_GRABBER);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,    out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id,    out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, grabber_id, out_clear);
 
   res = sqlite3_step (stmt);
@@ -548,7 +548,7 @@ database_assoc_filegrab_insert (database_t *database,
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -559,7 +559,7 @@ database_file_insert (database_t *database, file_data_t *data)
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_FILE);
 
-  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data->file.path,  out_reset);
+  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data->file.path,  out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, data->file.mtime, out_clear);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 3, data->outofpath,  out_clear);
 
@@ -570,7 +570,7 @@ database_file_insert (database_t *database, file_data_t *data)
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -581,7 +581,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_UPDATE_FILE);
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, data->file.mtime, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, data->file.mtime, out);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 2, data->outofpath,  out_clear);
 
   if (type_id)
@@ -596,7 +596,7 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -731,7 +731,7 @@ vh_database_file_data_delete (database_t *database, const char *file)
   if (!file_id)
     return;
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -739,7 +739,7 @@ vh_database_file_data_delete (database_t *database, const char *file)
 
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -756,7 +756,7 @@ vh_database_file_grab_delete (database_t *database, const char *file)
   if (!file_id)
     return;
 
-  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out_reset);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 1, file_id, out);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -764,7 +764,7 @@ vh_database_file_grab_delete (database_t *database, const char *file)
 
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -937,7 +937,7 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
   int res, err = -1;
   sqlite3_stmt *stmt = STMT_GET (STMT_INSERT_DLCONTEXT);
 
-  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, dl->url,  out_reset);
+  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, dl->url,  out);
   VH_DB_BIND_INT_OR_GOTO   (stmt, 2, dl->dst,  out_clear);
   VH_DB_BIND_TEXT_OR_GOTO  (stmt, 3, dl->name, out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, file_id,  out_clear);
@@ -949,7 +949,7 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
   sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
- out_reset:
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
