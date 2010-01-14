@@ -311,10 +311,10 @@ database_insert_name (database_t *database,
   if (res == SQLITE_DONE)
   {
     err = 0;
-  val = sqlite3_last_insert_rowid (database->db);
+    val = sqlite3_last_insert_rowid (database->db);
 
-  if (val == val_tmp)
-    val = 0;
+    if (val == val_tmp)
+      val = 0;
   }
 
   sqlite3_reset (stmt);
@@ -713,7 +713,6 @@ vh_database_file_delete (database_t *database, const char *file)
 
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
@@ -788,7 +787,6 @@ vh_database_file_get_mtime (database_t *database, const char *file)
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
@@ -817,7 +815,6 @@ vh_database_file_get_grabber (database_t *database,
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
@@ -881,7 +878,6 @@ vh_database_file_interrupted_clear (database_t *database, const char *file)
 
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
@@ -920,7 +916,6 @@ vh_database_file_get_interrupted (database_t *database, const char *file)
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
@@ -994,7 +989,6 @@ vh_database_file_get_dlcontext (database_t *database,
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
-
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
