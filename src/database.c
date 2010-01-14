@@ -284,10 +284,9 @@ database_table_get_id (database_t *database,
   if (res == SQLITE_ROW)
     val = sqlite3_column_int64 (stmt, 0);
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
-
-  sqlite3_reset (stmt);
  out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
