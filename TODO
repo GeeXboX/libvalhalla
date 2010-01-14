@@ -8,6 +8,8 @@
         available in the DB, the file must be removed (covers, etc, ...).
      -> Add a means to easily select an information provided in a specific
         language.
+     -> Add a public function in order to change the priority of a metadata
+        for a file.
 
  * Grabber
      -> Add the possibility to configure every grabber at the init. Some
