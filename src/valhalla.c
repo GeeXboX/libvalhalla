@@ -251,7 +251,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
     if (va_arg (ap, int) != ~0) /* check for safeguard */
     {
       vh_log (VALHALLA_MSG_CRITICAL,
-              "unrecoverable error with valhalla_config_set(), conf = %u, "
+              "unrecoverable error with valhalla_config_set(), conf = %#x, "
               "it is probably a bad use of this function", conf);
       res = -2;
     }
