@@ -66,6 +66,7 @@
 
 typedef struct grabber_tvdb_s {
   url_t *handler;
+  const metadata_plist_t *pl;
 } grabber_tvdb_t;
 
 static const metadata_plist_t tvdb_pl[] = {
@@ -76,7 +77,8 @@ static const metadata_plist_t tvdb_pl[] = {
 
 
 static void
-grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
+grabber_tvdb_parse_genre (file_data_t *fdata,
+                          xmlChar *genre, const metadata_plist_t *pl)
 {
   char *category, *saveptr = NULL;
 
@@ -87,14 +89,15 @@ grabber_tvdb_parse_genre (file_data_t *fdata, xmlChar *genre)
   while (category)
   {
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_CATEGORY, category, tvdb_pl);
+                          VALHALLA_METADATA_CATEGORY, category, pl);
     category = strtok_r (NULL, "|", &saveptr);
   }
 }
 
 static void
 grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
-                          xmlChar *url, valhalla_dl_t dl)
+                          xmlChar *url, valhalla_dl_t dl,
+                          const metadata_plist_t *pl)
 {
   char name[1024] = { 0 };
   char complete_url[MAX_URL_SIZE] = { 0 };
@@ -119,7 +122,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
   cover = vh_md5sum (name);
 
-  vh_metadata_add_auto (&fdata->meta_grabber, type, cover, tvdb_pl);
+  vh_metadata_add_auto (&fdata->meta_grabber, type, cover, pl);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
   free (cover);
 }
@@ -178,7 +181,7 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
 }
 
 static int
-grabber_tvdb_get (url_t *handler, file_data_t *fdata,
+grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
                   char *orig_keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
@@ -200,7 +203,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   (void) orig_keywords;
 
   /* search the exact name for a movie */
-  tmp2 = grabber_tvdb_search (handler, escaped_keywords,
+  tmp2 = grabber_tvdb_search (tvdb->handler, escaped_keywords,
                               TVDB_QUERY_SEARCH_NEW, "Series", "SeriesName");
   if (!tmp2)
     return -1;
@@ -211,7 +214,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
     free (tmp2);
     return -1;
   }
-  title = vh_url_escape_string (handler, tmp2);
+  title = vh_url_escape_string (tvdb->handler, tmp2);
   free (tmp2);
 #else
   if (!orig_keywords)
@@ -226,7 +229,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   if (!title)
     goto error;
 
-  seriesid = grabber_tvdb_search (handler, title,
+  seriesid = grabber_tvdb_search (tvdb->handler, title,
                                   TVDB_QUERY_SEARCH, "Series", "seriesid");
   free (title);
   if (!seriesid)
@@ -240,7 +243,7 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (tvdb->handler, url);
   if (udata.status != 0)
     goto error;
 
@@ -256,13 +259,13 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
 
   /* fetch tv show overview description */
   vh_grabber_parse_str (fdata, n, "Overview",
-                        VALHALLA_METADATA_SYNOPSIS, tvdb_pl);
+                        VALHALLA_METADATA_SYNOPSIS, tvdb->pl);
 
   /* fetch tv show first air date */
   vh_xml_search_year (n, "FirstAired", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, tvdb_pl);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, tvdb->pl);
     res_int = 0;
   }
 
@@ -270,19 +273,20 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   tmp = vh_get_prop_value_from_xml_tree (n, "Genre");
   if (tmp)
   {
-    grabber_tvdb_parse_genre (fdata, tmp);
+    grabber_tvdb_parse_genre (fdata, tmp, tvdb->pl);
     xmlFree (tmp);
   }
 
   /* fetch tv show runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "Runtime",
-                        VALHALLA_METADATA_RUNTIME, tvdb_pl);
+                        VALHALLA_METADATA_RUNTIME, tvdb->pl);
 
   /* fetch tv show poster */
   tmp = vh_get_prop_value_from_xml_tree (n, "poster");
   if (tmp && *tmp)
   {
-    grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_COVER);
+    grabber_tvdb_get_picture (fdata, keywords, tmp,
+                              VALHALLA_DL_COVER, tvdb->pl);
     xmlFree (tmp);
   }
 
@@ -290,7 +294,8 @@ grabber_tvdb_get (url_t *handler, file_data_t *fdata,
   tmp = vh_get_prop_value_from_xml_tree (n, "fanart");
   if (tmp && *tmp)
   {
-    grabber_tvdb_get_picture (fdata, keywords, tmp, VALHALLA_DL_FAN_ART);
+    grabber_tvdb_get_picture (fdata, keywords, tmp,
+                              VALHALLA_DL_FAN_ART, tvdb->pl);
     xmlFree (tmp);
   }
 
@@ -319,7 +324,7 @@ grabber_tvdb_priv (void)
 }
 
 static int
-grabber_tvdb_init (void *priv)
+grabber_tvdb_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_tvdb_t *tvdb = priv;
 
@@ -329,6 +334,7 @@ grabber_tvdb_init (void *priv)
     return -1;
 
   tvdb->handler = vh_url_new ();
+  tvdb->pl      = pl;
   return tvdb->handler ? 0 : -1;
 }
 
@@ -365,7 +371,7 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
   if (!keywords)
     return -2;
 
-  err = grabber_tvdb_get (tvdb->handler, data, tag->value, keywords);
+  err = grabber_tvdb_get (tvdb, data, tag->value, keywords);
   free (keywords);
 
   return err;

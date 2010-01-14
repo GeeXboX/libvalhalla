@@ -34,6 +34,10 @@
   GRABBER_CAP_AUDIO | \
   GRABBER_CAP_VIDEO
 
+typedef struct grabber_local_s {
+  const metadata_plist_t *pl;
+} grabber_local_t;
+
 static const metadata_plist_t local_pl[] = {
   { NULL,                             METADATA_PRIORITY_HIGH / 4 }
 };
@@ -114,26 +118,40 @@ grabber_local_priv (void)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return NULL;
+  return calloc (1, sizeof (grabber_local_t));
 }
 
 static int
-grabber_local_init (vh_unused void *priv)
+grabber_local_init (void *priv, const metadata_plist_t *pl)
 {
+  grabber_local_t *local = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
+  if (!local)
+    return -1;
+
+  local->pl = pl;
   return 0;
 }
 
 static void
-grabber_local_uninit (vh_unused void *priv)
+grabber_local_uninit (void *priv)
 {
+  grabber_local_t *local = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!local)
+    return;
+
+  free (local);
 }
 
 static int
-grabber_local_grab (vh_unused void *priv, file_data_t *data)
+grabber_local_grab (void *priv, file_data_t *data)
 {
+  grabber_local_t *local = priv;
   char *cover;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -142,7 +160,7 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
   if (cover)
   {
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, local_pl);
+                          VALHALLA_METADATA_COVER, cover, local->pl);
     free (cover);
   }
 

@@ -722,7 +722,7 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   for (it = grabber->list; it; it = it->next)
   {
     const char *name = it->name;
-    int res = it->init (it->priv);
+    int res = it->init (it->priv, it->pl);
     if (res)
       goto err;
 

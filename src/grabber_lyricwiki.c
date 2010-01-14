@@ -46,6 +46,7 @@
 
 typedef struct grabber_lyricwiki_s {
   url_t *handler;
+  const metadata_plist_t *pl;
 } grabber_lyricwiki_t;
 
 static const metadata_plist_t lyricwiki_pl[] = {
@@ -54,7 +55,7 @@ static const metadata_plist_t lyricwiki_pl[] = {
 
 
 static int
-grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
+grabber_lyricwiki_get (grabber_lyricwiki_t *lyricwiki, file_data_t *fdata,
                        const char *artist, const char *song)
 {
   char url[MAX_URL_SIZE];
@@ -70,7 +71,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (lyricwiki->handler, url);
   if (udata.status != 0)
     return -1;
 
@@ -93,7 +94,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     int len;
     unsigned int i, j;
 
-    udata = vh_url_get_data (handler, html);
+    udata = vh_url_get_data (lyricwiki->handler, html);
     free (html);
     if (udata.status != 0)
       return -1;
@@ -145,7 +146,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     }
 
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_LYRICS, lyrics, lyricwiki_pl);
+                          VALHALLA_METADATA_LYRICS, lyrics, lyricwiki->pl);
 
     free (txt);
     free (lyrics);
@@ -168,7 +169,7 @@ grabber_lyricwiki_priv (void)
 }
 
 static int
-grabber_lyricwiki_init (void *priv)
+grabber_lyricwiki_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_lyricwiki_t *lyricwiki = priv;
 
@@ -178,6 +179,7 @@ grabber_lyricwiki_init (void *priv)
     return -1;
 
   lyricwiki->handler = vh_url_new ();
+  lyricwiki->pl      = pl;
   return lyricwiki->handler ? 0 : -1;
 }
 

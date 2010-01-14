@@ -49,6 +49,7 @@
 
 typedef struct grabber_tvrage_s {
   url_t *handler;
+  const metadata_plist_t *pl;
 } grabber_tvrage_t;
 
 static const metadata_plist_t tvrage_pl[] = {
@@ -57,7 +58,7 @@ static const metadata_plist_t tvrage_pl[] = {
 
 
 static int
-grabber_tvrage_get (url_t *handler, file_data_t *fdata,
+grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
                     const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
@@ -78,7 +79,7 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (tvrage->handler, url);
   if (udata.status != 0)
     return -1;
 
@@ -116,7 +117,7 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (tvrage->handler, url);
   if (udata.status != 0)
     goto error;
 
@@ -136,21 +137,21 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
   {
     vh_metadata_add_auto (&fdata->meta_grabber,
                           VALHALLA_METADATA_TITLE_ALTERNATIVE,
-                          (char *) tmp, tvrage_pl);
+                          (char *) tmp, tvrage->pl);
     xmlFree (tmp);
   }
 
   /* fetch tv show country */
   vh_grabber_parse_str (fdata, n, "origin_country",
-                        VALHALLA_METADATA_COUNTRY, tvrage_pl);
+                        VALHALLA_METADATA_COUNTRY, tvrage->pl);
 
   /* fetch tv show studio */
   vh_grabber_parse_str (fdata, n, "network",
-                        VALHALLA_METADATA_STUDIO, tvrage_pl);
+                        VALHALLA_METADATA_STUDIO, tvrage->pl);
 
   /* fetch tv show runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME, tvrage_pl);
+                        VALHALLA_METADATA_RUNTIME, tvrage->pl);
 
   /* fetch movie categories */
   node = vh_get_node_xml_tree (n, "genre");
@@ -164,7 +165,7 @@ grabber_tvrage_get (url_t *handler, file_data_t *fdata,
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
                             VALHALLA_METADATA_CATEGORY,
-                            (char *) tmp, tvrage_pl);
+                            (char *) tmp, tvrage->pl);
       xmlFree (tmp);
     }
     node = node->next;
@@ -193,7 +194,7 @@ grabber_tvrage_priv (void)
 }
 
 static int
-grabber_tvrage_init (void *priv)
+grabber_tvrage_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_tvrage_t *tvrage = priv;
 
@@ -203,6 +204,7 @@ grabber_tvrage_init (void *priv)
     return -1;
 
   tvrage->handler = vh_url_new ();
+  tvrage->pl      = pl;
   return tvrage->handler ? 0 : -1;
 }
 
@@ -239,7 +241,7 @@ grabber_tvrage_grab (void *priv, file_data_t *data)
   if (!keywords)
     return -2;
 
-  err = grabber_tvrage_get (tvrage->handler, data, tag->value, keywords);
+  err = grabber_tvrage_get (tvrage, data, tag->value, keywords);
   free (keywords);
 
   return err;

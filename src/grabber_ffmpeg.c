@@ -35,6 +35,10 @@
   GRABBER_CAP_AUDIO | \
   GRABBER_CAP_VIDEO
 
+typedef struct grabber_ffmpeg_s {
+  const metadata_plist_t *pl;
+} grabber_ffmpeg_t;
+
 static const metadata_plist_t ffmpeg_pl[] = {
   { NULL,                             METADATA_PRIORITY_HIGH     }
 };
@@ -53,7 +57,8 @@ grabber_ffmpeg_codec_name (enum CodecID id)
 }
 
 static int
-grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
+grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
+                               AVFormatContext *ctx, file_data_t *data)
 {
   int res;
   unsigned int i;
@@ -73,7 +78,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
    */
   if (data->file.type != VALHALLA_FILE_TYPE_IMAGE && ctx->duration)
     vh_grabber_parse_int64 (data, ROUNDED_DIV (ctx->duration, 1000),
-                            VALHALLA_METADATA_DURATION, ffmpeg_pl);
+                            VALHALLA_METADATA_DURATION, ffmpeg->pl);
 
   for (i = 0; i < ctx->nb_streams; i++)
   {
@@ -89,12 +94,12 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
       name = grabber_ffmpeg_codec_name (codec->codec_id);
       if (name)
         vh_metadata_add_auto (&data->meta_grabber,
-                              VALHALLA_METADATA_AUDIO_CODEC, name, ffmpeg_pl);
+                              VALHALLA_METADATA_AUDIO_CODEC, name, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->channels,
-                            VALHALLA_METADATA_AUDIO_CHANNELS, ffmpeg_pl);
+                            VALHALLA_METADATA_AUDIO_CHANNELS, ffmpeg->pl);
       if (codec->bit_rate)
         vh_grabber_parse_int (data, codec->bit_rate,
-                              VALHALLA_METADATA_AUDIO_BITRATE, ffmpeg_pl);
+                              VALHALLA_METADATA_AUDIO_BITRATE, ffmpeg->pl);
       break;
 
     case CODEC_TYPE_VIDEO:
@@ -103,11 +108,11 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
       name = grabber_ffmpeg_codec_name (codec->codec_id);
       if (name)
         vh_metadata_add_auto (&data->meta_grabber,
-                              VALHALLA_METADATA_VIDEO_CODEC, name, ffmpeg_pl);
+                              VALHALLA_METADATA_VIDEO_CODEC, name, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->width,
-                            VALHALLA_METADATA_WIDTH, ffmpeg_pl);
+                            VALHALLA_METADATA_WIDTH, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->height,
-                            VALHALLA_METADATA_HEIGHT, ffmpeg_pl);
+                            VALHALLA_METADATA_HEIGHT, ffmpeg->pl);
 
       /* Only for video */
       if (data->file.type == VALHALLA_FILE_TYPE_IMAGE)
@@ -115,7 +120,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
 
       if (codec->bit_rate)
         vh_grabber_parse_int (data, codec->bit_rate,
-                              VALHALLA_METADATA_VIDEO_BITRATE, ffmpeg_pl);
+                              VALHALLA_METADATA_VIDEO_BITRATE, ffmpeg->pl);
 
       if (st->sample_aspect_ratio.num)
         value = codec->width * st->sample_aspect_ratio.num
@@ -128,7 +133,7 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
        * PLAYER_VIDEO_ASPECT_RATIO_MULT with libplayer (player.h).
        */
       vh_grabber_parse_int (data, (int) (value * 10000.0),
-                            VALHALLA_METADATA_VIDEO_ASPECT, ffmpeg_pl);
+                            VALHALLA_METADATA_VIDEO_ASPECT, ffmpeg->pl);
       break;
 
     case CODEC_TYPE_SUBTITLE:
@@ -142,13 +147,13 @@ grabber_ffmpeg_properties_get (AVFormatContext *ctx, file_data_t *data)
 
   if (audio_streams)
     vh_grabber_parse_int (data, audio_streams,
-                          VALHALLA_METADATA_AUDIO_STREAMS, ffmpeg_pl);
+                          VALHALLA_METADATA_AUDIO_STREAMS, ffmpeg->pl);
   if (video_streams)
     vh_grabber_parse_int (data, video_streams,
-                          VALHALLA_METADATA_VIDEO_STREAMS, ffmpeg_pl);
+                          VALHALLA_METADATA_VIDEO_STREAMS, ffmpeg->pl);
   if (sub_streams)
     vh_grabber_parse_int (data, sub_streams,
-                          VALHALLA_METADATA_SUB_STREAMS, ffmpeg_pl);
+                          VALHALLA_METADATA_SUB_STREAMS, ffmpeg->pl);
   return 0;
 }
 
@@ -161,26 +166,40 @@ grabber_ffmpeg_priv (void)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return NULL;
+  return calloc (1, sizeof (grabber_ffmpeg_t));
 }
 
 static int
-grabber_ffmpeg_init (vh_unused void *priv)
+grabber_ffmpeg_init (void *priv, const metadata_plist_t *pl)
 {
+  grabber_ffmpeg_t *ffmpeg = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
+  if (!ffmpeg)
+    return -1;
+
+  ffmpeg->pl = pl;
   return 0;
 }
 
 static void
-grabber_ffmpeg_uninit (vh_unused void *priv)
+grabber_ffmpeg_uninit (void *priv)
 {
+  grabber_ffmpeg_t *ffmpeg = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!ffmpeg)
+    return;
+
+  free (ffmpeg);
 }
 
 static int
-grabber_ffmpeg_grab (vh_unused void *priv, file_data_t *data)
+grabber_ffmpeg_grab (void *priv, file_data_t *data)
 {
+  grabber_ffmpeg_t *ffmpeg = priv;
   int res;
   AVFormatContext *ctx;
 
@@ -190,7 +209,7 @@ grabber_ffmpeg_grab (vh_unused void *priv, file_data_t *data)
   if (!ctx)
     return -1;
 
-  res = grabber_ffmpeg_properties_get (ctx, data);
+  res = grabber_ffmpeg_properties_get (ffmpeg, ctx, data);
   /* TODO: res = grabber_ffmpeg_snapshot (ctx, data, pos); */
 
   av_close_input_file (ctx);

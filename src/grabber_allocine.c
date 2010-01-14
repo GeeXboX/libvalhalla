@@ -42,6 +42,7 @@
 
 typedef struct grabber_allocine_s {
   url_t *handler;
+  const metadata_plist_t *pl;
 } grabber_allocine_t;
 
 static const metadata_plist_t allocine_pl[] = {
@@ -50,7 +51,7 @@ static const metadata_plist_t allocine_pl[] = {
 
 
 static int
-grabber_allocine_get (url_t *handler, file_data_t *fdata,
+grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
                       const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
@@ -71,7 +72,7 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (allocine->handler, url);
   if (udata.status != 0)
     return -1;
 
@@ -112,32 +113,32 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
      *  used by next grabbers to find cover and fan arts.
      */
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE, (char *) tmp, allocine_pl);
+                          VALHALLA_METADATA_TITLE, (char *) tmp, allocine->pl);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        VALHALLA_METADATA_TITLE_ALTERNATIVE, allocine_pl);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE, allocine->pl);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                        VALHALLA_METADATA_SYNOPSIS, allocine_pl);
+                        VALHALLA_METADATA_SYNOPSIS, allocine->pl);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME, allocine_pl);
+                        VALHALLA_METADATA_RUNTIME, allocine->pl);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, allocine_pl);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, allocine->pl);
     res_int = 0;
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n, allocine_pl);
+  vh_grabber_parse_categories (fdata, n, allocine->pl);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "popularity", &res_int);
@@ -145,16 +146,16 @@ grabber_allocine_get (url_t *handler, file_data_t *fdata,
   if (res_int)
   {
     vh_grabber_parse_int (fdata, res_int + 1,
-                          VALHALLA_METADATA_RATING, allocine_pl);
+                          VALHALLA_METADATA_RATING, allocine->pl);
     res_int = 0;
   }
 
   /* fetch movie budget */
   vh_grabber_parse_str (fdata, n, "budget",
-                        VALHALLA_METADATA_BUDGET, allocine_pl);
+                        VALHALLA_METADATA_BUDGET, allocine->pl);
 
   /* fetch movie people */
-  vh_grabber_parse_casting (fdata, n, allocine_pl);
+  vh_grabber_parse_casting (fdata, n, allocine->pl);
 
   xmlFreeDoc (doc);
   return 0;
@@ -179,7 +180,7 @@ grabber_allocine_priv (void)
 }
 
 static int
-grabber_allocine_init (void *priv)
+grabber_allocine_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_allocine_t *allocine = priv;
 
@@ -189,6 +190,7 @@ grabber_allocine_init (void *priv)
     return -1;
 
   allocine->handler = vh_url_new ();
+  allocine->pl      = pl;
   return allocine->handler ? 0 : -1;
 }
 
@@ -225,7 +227,7 @@ grabber_allocine_grab (void *priv, file_data_t *data)
   if (!keywords)
     return -2;
 
-  err = grabber_allocine_get (allocine->handler, data, tag->value, keywords);
+  err = grabber_allocine_get (allocine, data, tag->value, keywords);
   free (keywords);
 
   return err;

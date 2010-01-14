@@ -36,6 +36,11 @@
 
 #define BUF_SIZE 2048
 
+typedef struct grabber_exif_s {
+  const metadata_plist_t *pl;
+  file_data_t *fdata;   /* exif_content_foreach_func */
+} grabber_exif_t;
+
 static const metadata_plist_t exif_pl[] = {
   { NULL,                             METADATA_PRIORITY_HIGH     }
 };
@@ -44,17 +49,20 @@ static const metadata_plist_t exif_pl[] = {
 static void
 exif_content_foreach_func (ExifEntry *entry, void *data)
 {
+  grabber_exif_t *exif = data;
   char buf[BUF_SIZE] = { 0 };
-  file_data_t *fdata = data;
+  file_data_t *fdata;
   const metadata_plist_t *pl;
 
-  if (!entry || !fdata)
+  if (!entry || !data)
     return;
+
+  fdata = exif->fdata;
 
   exif_entry_get_value (entry, buf, BUF_SIZE);
 
   /* get default priority */
-  for (pl = exif_pl; pl->metadata; pl++)
+  for (pl = exif->pl; pl->metadata; pl++)
     ;
 
   vh_metadata_add (&fdata->meta_grabber,
@@ -78,26 +86,40 @@ grabber_exif_priv (void)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return NULL;
+  return calloc (1, sizeof (grabber_exif_t));
 }
 
 static int
-grabber_exif_init (vh_unused void *priv)
+grabber_exif_init (void *priv, const metadata_plist_t *pl)
 {
+  grabber_exif_t *exif = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
+  if (!exif)
+    return -1;
+
+  exif->pl = pl;
   return 0;
 }
 
 static void
-grabber_exif_uninit (vh_unused void *priv)
+grabber_exif_uninit (void *priv)
 {
+  grabber_exif_t *exif = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!exif)
+    return;
+
+  free (exif);
 }
 
 static int
-grabber_exif_grab (vh_unused void *priv, file_data_t *data)
+grabber_exif_grab (void *priv, file_data_t *data)
 {
+  grabber_exif_t *exif = priv;
   ExifData *d;
   ExifEntry *e;
 
@@ -119,10 +141,11 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 
     snprintf (val, sizeof (val), "%d", orientation);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_PICTURE_ORIENTATION, val, exif_pl);
+                          VALHALLA_METADATA_PICTURE_ORIENTATION, val, exif->pl);
   }
 
-  exif_data_foreach_content (d, exif_data_foreach_func, data);
+  exif->fdata = data;
+  exif_data_foreach_content (d, exif_data_foreach_func, exif);
   exif_data_unref (d);
 
   return 0;

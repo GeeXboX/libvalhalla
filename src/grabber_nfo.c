@@ -33,6 +33,10 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
+typedef struct grabber_nfo_s {
+  const metadata_plist_t *pl;
+} grabber_nfo_t;
+
 static const metadata_plist_t nfo_pl[] = {
   { NULL,                             METADATA_PRIORITY_HIGH / 2 }
 };
@@ -43,7 +47,8 @@ static const metadata_plist_t nfo_pl[] = {
 /****************************************************************************/
 
 static void
-grab_nfo_actor (nfo_actor_t *actor, file_data_t *data)
+grab_nfo_actor (nfo_actor_t *actor,
+                file_data_t *data, const metadata_plist_t *pl)
 {
   const char *name, *role;
 
@@ -62,18 +67,18 @@ grab_nfo_actor (nfo_actor_t *actor, file_data_t *data)
     else
       snprintf (str, sizeof (str), "%s", name);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_ACTOR, str, nfo_pl);
+                          VALHALLA_METADATA_ACTOR, str, pl);
   }
 }
 
 #define META_VIDEO_ADD(meta, field)                                         \
   if (nfo_video_stream_get (video, NFO_VIDEO_##field))                      \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_video_stream_get (video, NFO_VIDEO_##field),  \
-                          nfo_pl)
+                          nfo_video_stream_get (video, NFO_VIDEO_##field), pl)
 
 static void
-grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
+grab_nfo_video_stream (nfo_stream_video_t *video,
+                       file_data_t *data, const metadata_plist_t *pl)
 {
   if (!video || !data)
     return;
@@ -88,11 +93,11 @@ grab_nfo_video_stream (nfo_stream_video_t *video, file_data_t *data)
 #define META_AUDIO_ADD(meta, field)                                         \
   if (nfo_audio_stream_get (audio, NFO_AUDIO_##field))                      \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_audio_stream_get (audio, NFO_AUDIO_##field),  \
-                          nfo_pl)
+                          nfo_audio_stream_get (audio, NFO_AUDIO_##field), pl)
 
 static void
-grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
+grab_nfo_audio_stream (nfo_stream_audio_t *audio,
+                       file_data_t *data, const metadata_plist_t *pl)
 {
   if (!audio || !data)
     return;
@@ -106,11 +111,11 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio, file_data_t *data)
 #define META_SUB_ADD(meta, field)                                           \
   if (nfo_sub_stream_get (sub, NFO_SUB_##field))                            \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_sub_stream_get (sub, NFO_SUB_##field),        \
-                          nfo_pl)
+                          nfo_sub_stream_get (sub, NFO_SUB_##field), pl)
 
 static void
-grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
+grab_nfo_sub_stream (nfo_stream_sub_t *sub,
+                     file_data_t *data, const metadata_plist_t *pl)
 {
   if (!sub || !data)
     return;
@@ -125,11 +130,10 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub, file_data_t *data)
 #define META_MOVIE_ADD(meta, field)                                         \
   if (nfo_movie_get (movie, NFO_MOVIE_##field))                             \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_movie_get (movie, NFO_MOVIE_##field),         \
-                          nfo_pl)
+                          nfo_movie_get (movie, NFO_MOVIE_##field), pl)
 
 static void
-grab_nfo_movie (nfo_t *nfo, file_data_t *data)
+grab_nfo_movie (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
 {
   nfo_movie_t *movie;
   int i, c;
@@ -163,7 +167,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     rating = nfo_movie_get (movie, NFO_MOVIE_RATING);
     snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_RATING, str, nfo_pl);
+                          VALHALLA_METADATA_RATING, str, pl);
   }
 
   c = nfo_movie_get_actors_count (movie);
@@ -172,7 +176,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_actor_t *actor;
 
     actor = nfo_movie_get_actor (movie, i);
-    grab_nfo_actor (actor, data);
+    grab_nfo_actor (actor, data, pl);
   }
 
   c = nfo_movie_get_video_streams_count (movie);
@@ -181,7 +185,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_video_t *video;
 
     video = nfo_movie_get_video_stream (movie, i);
-    grab_nfo_video_stream (video, data);
+    grab_nfo_video_stream (video, data, pl);
   }
 
   c = nfo_movie_get_audio_streams_count (movie);
@@ -190,7 +194,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_audio_t *audio;
 
     audio = nfo_movie_get_audio_stream (movie, i);
-    grab_nfo_audio_stream (audio, data);
+    grab_nfo_audio_stream (audio, data, pl);
   }
 
   c = nfo_movie_get_sub_streams_count (movie);
@@ -199,7 +203,7 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
     nfo_stream_sub_t *sub;
 
     sub = nfo_movie_get_sub_stream (movie, i);
-    grab_nfo_sub_stream (sub, data);
+    grab_nfo_sub_stream (sub, data, pl);
   }
 }
 
@@ -210,11 +214,11 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data)
 #define META_SHOW_ADD(meta, field)                                          \
   if (nfo_tvshow_get (tvshow, NFO_TVSHOW_##field))                          \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_tvshow_get (tvshow, NFO_TVSHOW_##field),      \
-                          nfo_pl)
+                          nfo_tvshow_get (tvshow, NFO_TVSHOW_##field), pl)
 
 static void
-grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
+grab_nfo_show (nfo_tvshow_t *tvshow,
+               file_data_t *data, const metadata_plist_t *pl)
 {
   if (!tvshow || !data)
     return;
@@ -232,11 +236,10 @@ grab_nfo_show (nfo_tvshow_t *tvshow, file_data_t *data)
   if (nfo_tvshow_episode_get (episode, NFO_TVSHOW_EPISODE_##field))         \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
                           nfo_tvshow_episode_get                            \
-                            (episode, NFO_TVSHOW_EPISODE_##field),          \
-                          nfo_pl)
+                            (episode, NFO_TVSHOW_EPISODE_##field), pl)
 
 static void
-grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
+grab_nfo_tvshow (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
 {
   nfo_tvshow_episode_t *episode;
   nfo_tvshow_t *tvshow;
@@ -268,11 +271,11 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     rating = nfo_tvshow_episode_get (episode, NFO_MOVIE_RATING);
     snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_RATING, str, nfo_pl);
+                          VALHALLA_METADATA_RATING, str, pl);
   }
 
   tvshow = nfo_tvshow_episode_get_show (episode);
-  grab_nfo_show (tvshow, data);
+  grab_nfo_show (tvshow, data, pl);
 
   c = nfo_tvshow_episode_get_actors_count (episode);
   for (i = 0; i < c; i++)
@@ -280,7 +283,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_actor_t *actor;
 
     actor = nfo_tvshow_episode_get_actor (episode, i);
-    grab_nfo_actor (actor, data);
+    grab_nfo_actor (actor, data, pl);
   }
 
   c = nfo_tvshow_episode_get_video_streams_count (episode);
@@ -289,7 +292,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_video_t *video;
 
     video = nfo_tvshow_episode_get_video_stream (episode, i);
-    grab_nfo_video_stream (video, data);
+    grab_nfo_video_stream (video, data, pl);
   }
 
   c = nfo_tvshow_episode_get_audio_streams_count (episode);
@@ -298,7 +301,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_audio_t *audio;
 
     audio = nfo_tvshow_episode_get_audio_stream (episode, i);
-    grab_nfo_audio_stream (audio, data);
+    grab_nfo_audio_stream (audio, data, pl);
   }
 
   c = nfo_tvshow_episode_get_sub_streams_count (episode);
@@ -307,7 +310,7 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data)
     nfo_stream_sub_t *sub;
 
     sub = nfo_tvshow_episode_get_sub_stream (episode, i);
-    grab_nfo_sub_stream (sub, data);
+    grab_nfo_sub_stream (sub, data, pl);
   }
 }
 
@@ -320,50 +323,64 @@ grabber_nfo_priv (void)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  return NULL;
+  return calloc (1, sizeof (grabber_nfo_t));
 }
 
 static int
-grabber_nfo_init (vh_unused void *priv)
+grabber_nfo_init (void *priv, const metadata_plist_t *pl)
 {
+  grabber_nfo_t *nfo = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
+  if (!nfo)
+    return -1;
+
+  nfo->pl = pl;
   return 0;
 }
 
 static void
-grabber_nfo_uninit (vh_unused void *priv)
+grabber_nfo_uninit (void *priv)
 {
+  grabber_nfo_t *nfo = priv;
+
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!nfo)
+    return;
+
+  free (nfo);
 }
 
 static int
-grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
+grabber_nfo_grab (void *priv, file_data_t *data)
 {
+  grabber_nfo_t *nfo = priv;
   nfo_type_t type;
-  nfo_t *nfo;
+  nfo_t *nfo_handle;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
-  nfo = nfo_init (data->file.path);
-  if (!nfo)
+  nfo_handle = nfo_init (data->file.path);
+  if (!nfo_handle)
     return -1;
 
-  type = nfo_get_type (nfo);
+  type = nfo_get_type (nfo_handle);
   switch (type)
   {
   case NFO_MOVIE:
-    grab_nfo_movie (nfo, data);
+    grab_nfo_movie (nfo_handle, data, nfo->pl);
     break;
   case NFO_TVSHOW:
-    grab_nfo_tvshow (nfo, data);
+    grab_nfo_tvshow (nfo_handle, data, nfo->pl);
     break;
   default:
     vh_log (VALHALLA_MSG_VERBOSE, "No NFO file available or unsupported type.");
     break;
   }
 
-  nfo_free (nfo);
+  nfo_free (nfo_handle);
   return 0;
 }
 

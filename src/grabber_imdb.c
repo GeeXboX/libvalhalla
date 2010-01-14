@@ -43,6 +43,7 @@
 
 typedef struct grabber_imdb_s {
   url_t *handler;
+  const metadata_plist_t *pl;
 } grabber_imdb_t;
 
 static const metadata_plist_t imdb_pl[] = {
@@ -51,7 +52,7 @@ static const metadata_plist_t imdb_pl[] = {
 
 
 static int
-grabber_imdb_get (url_t *handler, file_data_t *fdata,
+grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
                   const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
@@ -72,7 +73,7 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
-  udata = vh_url_get_data (handler, url);
+  udata = vh_url_get_data (imdb->handler, url);
   if (udata.status != 0)
     return -1;
 
@@ -113,32 +114,32 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
      *  used by next grabbers to find cover and fan arts.
      */
     vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE, (char *) tmp, imdb_pl);
+                          VALHALLA_METADATA_TITLE, (char *) tmp, imdb->pl);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        VALHALLA_METADATA_TITLE_ALTERNATIVE, imdb_pl);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE, imdb->pl);
 
   /* fetch movie overview description */
   vh_grabber_parse_str (fdata, n, "short_overview",
-                        VALHALLA_METADATA_SYNOPSIS, imdb_pl);
+                        VALHALLA_METADATA_SYNOPSIS, imdb->pl);
 
   /* fetch movie runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME, imdb_pl);
+                        VALHALLA_METADATA_RUNTIME, imdb->pl);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
   if (res_int)
   {
-    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, imdb_pl);
+    vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, imdb->pl);
     res_int = 0;
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n, imdb_pl);
+  vh_grabber_parse_categories (fdata, n, imdb->pl);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "rating", &res_int);
@@ -146,12 +147,12 @@ grabber_imdb_get (url_t *handler, file_data_t *fdata,
   if (res_int)
   {
     vh_grabber_parse_int (fdata, res_int / 2,
-                          VALHALLA_METADATA_RATING, imdb_pl);
+                          VALHALLA_METADATA_RATING, imdb->pl);
     res_int = 0;
   }
 
   /* fetch movie people */
-  vh_grabber_parse_casting (fdata, n, imdb_pl);
+  vh_grabber_parse_casting (fdata, n, imdb->pl);
 
   xmlFreeDoc (doc);
   return 0;
@@ -176,7 +177,7 @@ grabber_imdb_priv (void)
 }
 
 static int
-grabber_imdb_init (void *priv)
+grabber_imdb_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_imdb_t *imdb = priv;
 
@@ -186,6 +187,7 @@ grabber_imdb_init (void *priv)
     return -1;
 
   imdb->handler = vh_url_new ();
+  imdb->pl      = pl;
   return imdb->handler ? 0 : -1;
 }
 
@@ -222,7 +224,7 @@ grabber_imdb_grab (void *priv, file_data_t *data)
   if (!keywords)
     return -2;
 
-  err = grabber_imdb_get (imdb->handler, data, tag->value, keywords);
+  err = grabber_imdb_get (imdb, data, tag->value, keywords);
   free (keywords);
 
   return err;

@@ -79,6 +79,7 @@ typedef struct grabber_amazon_s {
   url_t  *handler;
   list_t *list;
   hmac_sha256_t *hd;
+  const metadata_plist_t *pl;
 } grabber_amazon_t;
 
 static const metadata_plist_t amazon_pl[] = {
@@ -319,7 +320,7 @@ grabber_amazon_priv (void)
 }
 
 static int
-grabber_amazon_init (void *priv)
+grabber_amazon_init (void *priv, const metadata_plist_t *pl)
 {
   grabber_amazon_t *amazon = priv;
 
@@ -337,6 +338,7 @@ grabber_amazon_init (void *priv)
     return -1;
 
   amazon->handler = vh_url_new ();
+  amazon->pl      = pl;
   return amazon->handler ? 0 : -1;
 }
 
@@ -395,7 +397,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, amazon_pl);
+                          VALHALLA_METADATA_COVER, cover, amazon->pl);
     free (cover);
     return 0;
   }
@@ -426,7 +428,7 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   if (!res)
   {
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, amazon_pl);
+                          VALHALLA_METADATA_COVER, cover, amazon->pl);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

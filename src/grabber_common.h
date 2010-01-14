@@ -60,6 +60,7 @@
  */
 
 #include <pthread.h>
+#include <string.h>
 
 #include "stats.h"
 #include "utils.h"
@@ -92,9 +93,10 @@ typedef struct grabber_list_s {
    * The private structure (\p priv) must be created before this initialization.
    *
    * \param[in] priv      Private structure registered with the grabber.
+   * \param[in] pl        List of metadata priorities.
    * \return 0 for success, != 0 on error.
    */
-  int (*init) (void *priv);
+  int (*init) (void *priv, const metadata_plist_t *pl);
 
   /**
    * \brief Uninit function for the grabber.
