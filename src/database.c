@@ -287,8 +287,8 @@ database_table_get_id (database_t *database,
   sqlite3_clear_bindings (stmt);
   err = 0;
 
- out:
   sqlite3_reset (stmt);
+ out:
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -308,18 +308,18 @@ database_insert_name (database_t *database,
 
   val_tmp = sqlite3_last_insert_rowid (database->db);
   res = sqlite3_step (stmt);
-  if (res != SQLITE_DONE)
-    goto out;
+  if (res == SQLITE_DONE)
+  {
+    err = 0;
   val = sqlite3_last_insert_rowid (database->db);
 
   if (val == val_tmp)
     val = 0;
+  }
 
-  sqlite3_clear_bindings (stmt);
-  err = 0;
-
- out:
   sqlite3_reset (stmt);
+  sqlite3_clear_bindings (stmt);
+ out:
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -415,10 +415,10 @@ database_assoc_filemd_insert (database_t *database,
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -443,10 +443,10 @@ database_assoc_filemd_update (database_t *database,
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -467,10 +467,10 @@ database_assoc_filemd_delete (database_t *database,
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -495,10 +495,10 @@ database_assoc_filemd_get (database_t *database,
     err = 0;
   }
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return err;
@@ -522,10 +522,10 @@ database_file_id_by_metadata (database_t *database, const char *path,
 
   err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -545,10 +545,10 @@ database_assoc_filegrab_insert (database_t *database,
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -567,10 +567,10 @@ database_file_insert (database_t *database, file_data_t *data)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -593,10 +593,10 @@ database_file_update (database_t *database, file_data_t *data, int64_t type_id)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -711,10 +711,10 @@ vh_database_file_delete (database_t *database, const char *file)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -737,9 +737,9 @@ vh_database_file_data_delete (database_t *database, const char *file)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -762,9 +762,9 @@ vh_database_file_grab_delete (database_t *database, const char *file)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -785,11 +785,11 @@ vh_database_file_get_mtime (database_t *database, const char *file)
   if (res == SQLITE_ROW)
     val = sqlite3_column_int64 (stmt, 0);
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -814,11 +814,11 @@ vh_database_file_get_grabber (database_t *database,
       vh_list_append (l, grabber_name, strlen (grabber_name) + 1);
   }
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -879,10 +879,10 @@ vh_database_file_interrupted_clear (database_t *database, const char *file)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -917,11 +917,11 @@ vh_database_file_get_interrupted (database_t *database, const char *file)
   if (res == SQLITE_ROW)
     val = sqlite3_column_int (stmt, 0);
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
@@ -946,10 +946,10 @@ database_insert_dlcontext (database_t *database, file_dl_t *dl, int64_t file_id)
   if (res == SQLITE_DONE)
     err = 0;
 
+  sqlite3_reset (stmt);
  out_clear:
   sqlite3_clear_bindings (stmt);
  out_reset:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
@@ -991,11 +991,11 @@ vh_database_file_get_dlcontext (database_t *database,
       vh_file_dl_add (dl, url, name, dst);
   }
 
+  sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
   err = 0;
 
  out:
-  sqlite3_reset (stmt);
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
