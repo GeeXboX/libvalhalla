@@ -229,7 +229,7 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
   artist = vh_url_escape_string (lyricwiki->handler, author->value);
   song = vh_url_escape_string (lyricwiki->handler, title->value);
 
-  res = grabber_lyricwiki_get (lyricwiki->handler, data, artist, song);
+  res = grabber_lyricwiki_get (lyricwiki, data, artist, song);
 
   free (artist);
   free (song);
