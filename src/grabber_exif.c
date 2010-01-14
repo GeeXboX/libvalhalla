@@ -42,7 +42,7 @@ typedef struct grabber_exif_s {
 } grabber_exif_t;
 
 static const metadata_plist_t exif_pl[] = {
-  { NULL,                             METADATA_PRIORITY_HIGH     }
+  { NULL,                             VALHALLA_GRABBER_PL_HIGHEST  }
 };
 
 

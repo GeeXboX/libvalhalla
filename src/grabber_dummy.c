@@ -36,7 +36,7 @@ typedef struct grabber_dummy_s {
 } grabber_dummy_t;
 
 static const metadata_plist_t dummy_pl[] = {
-  { NULL,                             METADATA_PRIORITY_NORMAL   }
+  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
 };
 
 

@@ -39,7 +39,7 @@ typedef struct grabber_local_s {
 } grabber_local_t;
 
 static const metadata_plist_t local_pl[] = {
-  { NULL,                             METADATA_PRIORITY_HIGH / 4 }
+  { NULL,                             VALHALLA_GRABBER_PL_HIGH     }
 };
 
 

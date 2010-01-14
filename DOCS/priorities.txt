@@ -9,21 +9,21 @@
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  By default   allocine      |   NORMAL
               amazon        |   NORMAL
-              exif          |   HIGH
-              ffmpeg        |   HIGH
+              exif          |   HIGHEST
+              ffmpeg        |   HIGHEST
               imdb          |   NORMAL
               lastfm        |   NORMAL
-              local         |   HIGH / 4
+              local         |   HIGH
               lyricwiki     |   NORMAL
-              nfo           |   HIGH / 2
+              nfo           |   HIGHER
               tmdb          |   NORMAL
               tvdb          |   NORMAL
               tvrage        |   NORMAL
- "cover"      amazon        |   LOW / 4
-              tmdb          |   HIGH / 2
-              tvdb          |   HIGH / 8
- "fanart"     tmdb          |   HIGH / 2
-              tvdb          |   HIGH / 8
+ "cover"      amazon        |   BELOW
+              tmdb          |   HIGHER
+              tvdb          |   ABOVE
+ "fanart"     tmdb          |   HIGHER
+              tvdb          |   ABOVE
 
 
  Parser
@@ -35,6 +35,6 @@
 
               Decrapifier   |   Priority
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Metadata     NO            |   HIGH
+ Metadata     NO            |   HIGHEST
               YES           |   NORMAL
 

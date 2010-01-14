@@ -300,6 +300,19 @@ typedef enum valhalla_stats_type {
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
 
+/** \brief Priorities for the metadata. */
+typedef enum valhalla_grabber_pl {
+  VALHALLA_GRABBER_PL_HIGHEST = -128,
+  VALHALLA_GRABBER_PL_HIGHER  =  -96,
+  VALHALLA_GRABBER_PL_HIGH    =  -64,
+  VALHALLA_GRABBER_PL_ABOVE   =  -32,
+  VALHALLA_GRABBER_PL_NORMAL  =    0,
+  VALHALLA_GRABBER_PL_BELOW   =   32,
+  VALHALLA_GRABBER_PL_LOW     =   64,
+  VALHALLA_GRABBER_PL_LOWER   =   96,
+  VALHALLA_GRABBER_PL_LOWEST  =  128,
+} valhalla_grabber_pl_t;
+
 /** \brief Metadata structure for general purpose. */
 typedef struct valhalla_metadata_s {
   const char         *name;

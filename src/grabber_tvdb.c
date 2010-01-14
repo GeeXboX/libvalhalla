@@ -70,9 +70,9 @@ typedef struct grabber_tvdb_s {
 } grabber_tvdb_t;
 
 static const metadata_plist_t tvdb_pl[] = {
-  { VALHALLA_METADATA_COVER,          METADATA_PRIORITY_HIGH / 8 },
-  { VALHALLA_METADATA_FAN_ART,        METADATA_PRIORITY_HIGH / 8 },
-  { NULL,                             METADATA_PRIORITY_NORMAL   }
+  { VALHALLA_METADATA_COVER,          VALHALLA_GRABBER_PL_ABOVE    },
+  { VALHALLA_METADATA_FAN_ART,        VALHALLA_GRABBER_PL_ABOVE    },
+  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
 };
 
 

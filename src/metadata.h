@@ -34,14 +34,10 @@ typedef struct metadata_s {
 
 typedef struct metadata_plist_s {
   const char *metadata;
-  int         priority;
+  valhalla_grabber_pl_t priority;
 } metadata_plist_t;
 
 #define METADATA_IGNORE_SUFFIX (1 << 0)
-
-#define METADATA_PRIORITY_HIGH  -128
-#define METADATA_PRIORITY_NORMAL   0
-#define METADATA_PRIORITY_LOW    128
 
 extern const size_t vh_metadata_group_size;
 
@@ -51,7 +47,7 @@ int vh_metadata_get (const metadata_t *meta,
 void vh_metadata_free (metadata_t *meta);
 void vh_metadata_add (metadata_t **meta, const char *name,
                       const char *value, valhalla_meta_grp_t group,
-                      int priority);
+                      valhalla_grabber_pl_t priority);
 void vh_metadata_add_auto (metadata_t **meta, const char *name,
                            const char *value, const metadata_plist_t *pl);
 void vh_metadata_dup (metadata_t **dst, const metadata_t *src);
