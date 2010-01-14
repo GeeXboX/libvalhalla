@@ -35,6 +35,10 @@ typedef struct grabber_dummy_s {
   int dummy;
 } grabber_dummy_t;
 
+static const metadata_plist_t dummy_pl[] = {
+  { NULL,                             METADATA_PRIORITY_NORMAL   }
+};
+
 
 /****************************************************************************/
 /* Private Grabber API                                                      */
