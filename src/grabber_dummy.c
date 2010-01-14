@@ -109,6 +109,7 @@ grabber_dummy_loop (vh_unused void *priv)
 /* vh_grabber_dummy_register () */
 GRABBER_REGISTER (dummy,
                   GRABBER_CAP_FLAGS,
+                  dummy_pl,
                   grabber_dummy_priv,
                   grabber_dummy_init,
                   grabber_dummy_uninit,

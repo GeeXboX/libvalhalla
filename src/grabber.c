@@ -584,6 +584,7 @@ vh_grabber_uninit (grabber_t *grabber)
   {
     grabber_list_t *tmp = it->next;
     pthread_mutex_destroy (&it->mutex);
+    free (it->pl);
     free (it);
     it = tmp;
   }

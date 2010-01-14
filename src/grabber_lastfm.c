@@ -255,6 +255,7 @@ grabber_lastfm_loop (void *priv)
 /* vh_grabber_lastfm_register () */
 GRABBER_REGISTER (lastfm,
                   GRABBER_CAP_FLAGS,
+                  lastfm_pl,
                   grabber_lastfm_priv,
                   grabber_lastfm_init,
                   grabber_lastfm_uninit,

@@ -135,6 +135,7 @@ grabber_exif_grab (vh_unused void *priv, file_data_t *data)
 /* vh_grabber_exif_register () */
 GRABBER_REGISTER (exif,
                   GRABBER_CAP_FLAGS,
+                  exif_pl,
                   grabber_exif_priv,
                   grabber_exif_init,
                   grabber_exif_uninit,

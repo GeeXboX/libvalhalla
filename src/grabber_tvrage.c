@@ -252,6 +252,7 @@ grabber_tvrage_grab (void *priv, file_data_t *data)
 /* vh_grabber_tvrage_register () */
 GRABBER_REGISTER (tvrage,
                   GRABBER_CAP_FLAGS,
+                  tvrage_pl,
                   grabber_tvrage_priv,
                   grabber_tvrage_init,
                   grabber_tvrage_uninit,

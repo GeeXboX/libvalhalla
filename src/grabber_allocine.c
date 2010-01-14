@@ -238,6 +238,7 @@ grabber_allocine_grab (void *priv, file_data_t *data)
 /* vh_grabber_allocine_register () */
 GRABBER_REGISTER (allocine,
                   GRABBER_CAP_FLAGS,
+                  allocine_pl,
                   grabber_allocine_priv,
                   grabber_allocine_init,
                   grabber_allocine_uninit,

@@ -327,6 +327,7 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
 /* vh_grabber_tmdb_register () */
 GRABBER_REGISTER (tmdb,
                   GRABBER_CAP_FLAGS,
+                  tmdb_pl,
                   grabber_tmdb_priv,
                   grabber_tmdb_init,
                   grabber_tmdb_uninit,

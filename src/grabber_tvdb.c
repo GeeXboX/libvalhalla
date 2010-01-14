@@ -378,6 +378,7 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
 /* vh_grabber_tvdb_register () */
 GRABBER_REGISTER (tvdb,
                   GRABBER_CAP_FLAGS,
+                  tvdb_pl,
                   grabber_tvdb_priv,
                   grabber_tvdb_init,
                   grabber_tvdb_uninit,

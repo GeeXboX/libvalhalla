@@ -156,6 +156,7 @@ grabber_local_grab (vh_unused void *priv, file_data_t *data)
 /* vh_grabber_local_register () */
 GRABBER_REGISTER (local,
                   GRABBER_CAP_FLAGS,
+                  local_pl,
                   grabber_local_priv,
                   grabber_local_init,
                   grabber_local_uninit,

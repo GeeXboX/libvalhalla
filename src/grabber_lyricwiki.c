@@ -242,6 +242,7 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
 /* vh_grabber_lyricwiki_register () */
 GRABBER_REGISTER (lyricwiki,
                   GRABBER_CAP_FLAGS,
+                  lyricwiki_pl,
                   grabber_lyricwiki_priv,
                   grabber_lyricwiki_init,
                   grabber_lyricwiki_uninit,

@@ -453,6 +453,7 @@ grabber_amazon_loop (void *priv)
 /* vh_grabber_amazon_register () */
 GRABBER_REGISTER (amazon,
                   GRABBER_CAP_FLAGS,
+                  amazon_pl,
                   grabber_amazon_priv,
                   grabber_amazon_init,
                   grabber_amazon_uninit,

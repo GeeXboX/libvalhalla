@@ -204,6 +204,7 @@ grabber_ffmpeg_grab (vh_unused void *priv, file_data_t *data)
 /* vh_grabber_ffmpeg_register () */
 GRABBER_REGISTER (ffmpeg,
                   GRABBER_CAP_FLAGS,
+                  ffmpeg_pl,
                   grabber_ffmpeg_priv,
                   grabber_ffmpeg_init,
                   grabber_ffmpeg_uninit,

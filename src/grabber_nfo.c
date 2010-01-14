@@ -374,6 +374,7 @@ grabber_nfo_grab (vh_unused void *priv, file_data_t *data)
 /* vh_grabber_nfo_register () */
 GRABBER_REGISTER (nfo,
                   GRABBER_CAP_FLAGS,
+                  nfo_pl,
                   grabber_nfo_priv,
                   grabber_nfo_init,
                   grabber_nfo_uninit,

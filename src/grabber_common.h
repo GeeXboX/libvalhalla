@@ -152,6 +152,9 @@ typedef struct grabber_list_s {
    */
   void *priv;
 
+  /** \brief Priorities for the metadata. */
+  metadata_plist_t *pl;
+
   /** \private Different of 0 if the grabber is enabled. */
   int enable;
 
@@ -176,13 +179,14 @@ typedef struct grabber_list_s {
  *
  * \param[in] p_name      Grabber's name.
  * \param[in] p_caps      Capabilities flags.
+ * \param[in] p_pl        List of metadata priorities.
  * \param[in] fct_priv    Function to retrieve the private data pointer.
  * \param[in] fct_init    grabber_list_t::init().
  * \param[in] fct_uninit  grabber_list_t::uninit().
  * \param[in] fct_grab    grabber_list_t::grab().
  * \param[in] fct_loop    grabber_list_t::loop().
  */
-#define GRABBER_REGISTER(p_name, p_caps,                                      \
+#define GRABBER_REGISTER(p_name, p_caps, p_pl,                                \
                          fct_priv, fct_init, fct_uninit, fct_grab, fct_loop)  \
   grabber_list_t *                                                            \
   vh_grabber_##p_name##_register (void)                                       \
@@ -204,6 +208,14 @@ typedef struct grabber_list_s {
     grabber->uninit    = fct_uninit;                                          \
     grabber->grab      = fct_grab;                                            \
     grabber->loop      = fct_loop;                                            \
+                                                                              \
+    grabber->pl = malloc (sizeof (p_pl));                                     \
+    if (!grabber->pl)                                                         \
+    {                                                                         \
+      free (grabber);                                                         \
+      return NULL;                                                            \
+    }                                                                         \
+    memcpy (grabber->pl, p_pl, sizeof (p_pl));                                \
                                                                               \
     pthread_mutex_init (&grabber->mutex, NULL);                               \
                                                                               \

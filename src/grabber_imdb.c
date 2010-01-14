@@ -235,6 +235,7 @@ grabber_imdb_grab (void *priv, file_data_t *data)
 /* vh_grabber_imdb_register () */
 GRABBER_REGISTER (imdb,
                   GRABBER_CAP_FLAGS,
+                  imdb_pl,
                   grabber_imdb_priv,
                   grabber_imdb_init,
                   grabber_imdb_uninit,
