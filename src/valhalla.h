@@ -366,8 +366,8 @@ typedef enum valhalla_cfg {
    * \p arg1 must be a null-terminated string.
    *
    * \warning There is no effect if the grabber support is not compiled.
-   * \param[in] arg1 ::VH_VOIDP_T  Path for the destination.
-   * \param[in] arg2 ::VH_INT_T    Type of destination to set.
+   * \param[in] arg1 ::VH_VOIDP_T   Path for the destination.
+   * \param[in] arg2 ::VH_INT_T     Type of destination to set, ::valhalla_dl_t.
    */
   VH_CFG_INIT (DOWNLOADER_DEST, VH_VOIDP_T | VH_INT_T, 2),
 
@@ -385,9 +385,9 @@ typedef enum valhalla_cfg {
    * \p arg1 and \p arg3 must be null-terminated strings.
    *
    * \warning There is no effect if the grabber support is not compiled.
-   * \param[in] arg1 ::VH_VOIDP_T     Grabber ID.
-   * \param[in] arg2 ::VH_INT_T       The new priority.
-   * \param[in] arg3 ::VH_VOIDP_2_T   Metadata.
+   * \param[in] arg1 ::VH_VOIDP_T   Grabber ID.
+   * \param[in] arg2 ::VH_INT_T     The new priority, ::valhalla_grabber_pl_t.
+   * \param[in] arg3 ::VH_VOIDP_2_T Metadata.
    */
   VH_CFG_INIT (GRABBER_PRIORITY, VH_VOIDP_T | VH_INT_T | VH_VOIDP_2_T, 0),
 
@@ -397,8 +397,8 @@ typedef enum valhalla_cfg {
    * \p arg1 must be a null-terminated string.
    *
    * \warning There is no effect if the grabber support is not compiled.
-   * \param[in] arg1 ::VH_VOIDP_T  Grabber ID.
-   * \param[in] arg2 ::VH_INT_T    0 to disable, !=0 to enable.
+   * \param[in] arg1 ::VH_VOIDP_T   Grabber ID.
+   * \param[in] arg2 ::VH_INT_T     0 to disable, !=0 to enable.
    */
   VH_CFG_INIT (GRABBER_STATE, VH_VOIDP_T | VH_INT_T, 0),
 
@@ -439,7 +439,7 @@ typedef enum valhalla_cfg {
    *
    * \p arg1 must be a null-terminated string.
    *
-   * \param[in] arg1 ::VH_VOIDP_T  Keyword to blacklist.
+   * \param[in] arg1 ::VH_VOIDP_T   Keyword to blacklist.
    */
   VH_CFG_INIT (PARSER_KEYWORD, VH_VOIDP_T, 0),
 
@@ -449,8 +449,8 @@ typedef enum valhalla_cfg {
    *
    * \p arg1 must be a null-terminated string.
    *
-   * \param[in] arg1 ::VH_VOIDP_T  The path to be scanned.
-   * \param[in] arg2 ::VH_INT_T    1 to scan all dirs recursively, 0 otherwise.
+   * \param[in] arg1 ::VH_VOIDP_T   The path to be scanned.
+   * \param[in] arg2 ::VH_INT_T     1 to scan all dirs recursively, 0 otherwise.
    */
   VH_CFG_INIT (SCANNER_PATH, VH_VOIDP_T | VH_INT_T, 1),
 
@@ -463,7 +463,7 @@ typedef enum valhalla_cfg {
    *
    * \p arg1 must be a null-terminated string.
    *
-   * \param[in] arg1 ::VH_VOIDP_T  File suffix to add.
+   * \param[in] arg1 ::VH_VOIDP_T   File suffix to add.
    */
   VH_CFG_INIT (SCANNER_SUFFIX, VH_VOIDP_T, 1),
 
