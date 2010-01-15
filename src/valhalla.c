@@ -478,6 +478,25 @@ valhalla_grabber_next (valhalla_t *handle, const char *id)
 #endif /* USE_GRABBER */
 }
 
+valhalla_grabber_pl_t
+valhalla_grabber_priority_read (valhalla_t *handle,
+                                const char *id, const char **meta)
+{
+  vh_log (VALHALLA_MSG_VERBOSE,
+          "%s : %s/%s", __FUNCTION__, id ? id : "", meta && *meta ? *meta : "");
+
+  if (!handle)
+    return 0;
+
+#ifdef USE_GRABBER
+  return vh_grabber_priority_read (handle->grabber, id, meta);
+#else
+  vh_log (VALHALLA_MSG_WARNING,
+          "This function is usable only with grabbing support!");
+  return 0;
+#endif /* USE_GRABBER */
+}
+
 const char *
 valhalla_stats_group_next (valhalla_t *handle, const char *id)
 {

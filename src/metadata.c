@@ -303,6 +303,28 @@ vh_metadata_plist_dump (const metadata_plist_t *pl)
   vh_log (VALHALLA_MSG_VERBOSE, " |_________________|_______|");
 }
 
+valhalla_grabber_pl_t
+vh_metadata_plist_read (metadata_plist_t *pl, const char **metadata)
+{
+  metadata_plist_t *it;
+
+  if (!pl || !metadata)
+    return 0;
+
+  for (it = pl; it->metadata; it++)
+    if (*metadata && !strcmp (it->metadata, *metadata))
+    {
+      *metadata = (it + 1)->metadata;
+      return it->priority;
+    }
+
+  if (*metadata)
+    return 0;
+
+  *metadata = pl->metadata;
+  return it->priority;
+}
+
 void
 vh_metadata_plist_set (metadata_plist_t **pl,
                        const char *metadata, valhalla_grabber_pl_t p)

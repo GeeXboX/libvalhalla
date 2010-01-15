@@ -466,6 +466,24 @@ vh_grabber_fifo_get (grabber_t *grabber)
   return grabber->fifo;
 }
 
+valhalla_grabber_pl_t
+vh_grabber_priority_read (grabber_t *grabber,
+                          const char *id, const char **metadata)
+{
+  grabber_list_t *it;
+
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!id)
+    return 0;
+
+  for (it = grabber->list; it; it = it->next)
+    if (!strcmp (id, it->name))
+      return vh_metadata_plist_read (it->pl, metadata);
+
+  return 0;
+}
+
 void
 vh_grabber_priority_set (grabber_t *grabber, const char *id,
                          valhalla_grabber_pl_t p, const char *metadata)

@@ -640,6 +640,30 @@ const char *valhalla_metadata_group_str (valhalla_meta_grp_t group);
 const char *valhalla_grabber_next (valhalla_t *handle, const char *id);
 
 /**
+ * \brief Retrieve the priority for a metadata according to a grabber.
+ *
+ * If \p id is NULL, the result is 0. To retrieve the default priority,
+ * the argument \p *meta must be set to NULL. On the return, \p *meta is
+ * the next metadata in the list, or NULL if there is nothing more.
+ * If on call, \p *meta is not found, then the result is 0 and \p *meta
+ * is not changed. If \p meta is NULL, the result is 0.
+ *
+ * Please, note that 0 is a valid value for a priority and must not be
+ * used to detect errors. If this function is used correctly, no error is
+ * possible.
+ *
+ * Use valhalla_grabber_next() in order to retrieve the IDs.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] id          A valid grabber ID.
+ * \param[in,out] meta    A valid address; the next meta is returned.
+ * \return the priority.
+ */
+valhalla_grabber_pl_t valhalla_grabber_priority_read (valhalla_t *handle,
+                                                      const char *id,
+                                                      const char **meta);
+
+/**
  * \brief Retrieve the ID of all groups in the statistics.
  *
  * The function returns the ID after \p id, or the first group ID if \p id
