@@ -279,7 +279,7 @@ vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb)
     goto err;
 
   event_handler->valhalla = handle; /* VH_HANDLE */
-  memcpy (&event_handler->cb, cb, sizeof (event_handler_cb_t));
+  event_handler->cb       = *cb;
 
   pthread_mutex_init (&event_handler->mutex_run, NULL);
 
