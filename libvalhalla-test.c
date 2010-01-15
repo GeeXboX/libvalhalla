@@ -117,6 +117,7 @@ main (int argc, char **argv)
   const char *download = NULL;
 #ifdef USE_GRABBER
   const char *grabber = NULL;
+  const char *metadata = NULL;
 #endif /* USE_GRABBER */
   int parser_nb = 2, grabber_nb = 4, sid = 0, kid = 0, gid = 0;
   const char *suffix[SUFFIX_MAX];
@@ -329,6 +330,20 @@ main (int argc, char **argv)
         }
       }
     }
+
+    printf ("   priorities\n");
+    do
+    {
+      const char *p;
+      valhalla_grabber_pl_t priority;
+
+      p = metadata;
+      priority = valhalla_grabber_priority_read (handle, grabber, &metadata);
+      printf ("   %c-- %-15s : %5i\n",
+              metadata ? '|' : '\'', p ? p : "default", priority);
+    }
+    while (metadata);
+    printf ("\n");
   }
 #endif /* USE_GRABBER */
 
