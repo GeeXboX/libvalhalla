@@ -333,7 +333,6 @@ typedef struct valhalla_file_s {
 #define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                        */
 #define VH_VOIDP_T    (1 << VH_CFG_RANGE)  /**< void *                      */
 #define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                         */
-#define VH_VHDL_T     (4 << VH_CFG_RANGE)  /**< ::valhalla_dl_t             */
 
 /** \brief Macro to init items in ::valhalla_cfg_t. */
 #define VH_CFG_INIT(name, type, num) VALHALLA_CFG_##name = ((type) + (num))
@@ -352,8 +351,7 @@ typedef struct valhalla_file_s {
  * Next \p num for the current combinations :
  * <pre>
  * VH_VOIDP_T                 : 2
- * VH_VOIDP_T | VH_INT_T      : 2
- * VH_VOIDP_T | VH_VHDL_T     : 1
+ * VH_VOIDP_T | VH_INT_T      : 3
  * </pre>
  *
  * \see VH_CFG_INIT().
@@ -365,9 +363,9 @@ typedef enum valhalla_cfg {
    *
    * \warning There is no effect if the grabber support is not compiled.
    * \param[in] arg1 ::VH_VOIDP_T  Path for the destination.
-   * \param[in] arg2 ::VH_VHDL_T   Type of destination to set.
+   * \param[in] arg2 ::VH_INT_T    Type of destination to set.
    */
-  VH_CFG_INIT (DOWNLOADER_DEST, VH_VOIDP_T | VH_VHDL_T, 0),
+  VH_CFG_INIT (DOWNLOADER_DEST, VH_VOIDP_T | VH_INT_T, 2),
 
   /**
    * Set the state of a grabber. By default, all grabbers are enabled.
