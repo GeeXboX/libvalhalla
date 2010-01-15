@@ -3,7 +3,7 @@
  ========================================
 
  Only the grabbers where the metadata are >99% reliable (where the informations
- are read in the file), have the HIGH priority.
+ are read in the file), have the HIGHEST priority.
 
               Grabber       |   Priority
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
  Parser
  ========================================
 
- Metadata found in the file have always the HIGH priority. It is the same for
+ Metadata found in the file have always the HIGHEST priority. It is the same for
  properties like "filesize". But when a metadata is retrieved with the
  decrapifier, the priority is set to NORMAL ("title", "season" and "episode").
 
