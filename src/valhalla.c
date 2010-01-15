@@ -226,7 +226,7 @@ int
 valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 {
   int res = 0;
-  const void *ccp = NULL;
+  const void *ccp = NULL, *p2 = NULL;
   int i = 0;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -244,6 +244,8 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
       ccp = va_arg (ap, void *);
     if (conf & VH_INT_T)
       i   = va_arg (ap, int);
+    if (conf & VH_VOIDP_2_T)
+      p2 = va_arg (ap, void *);
 
     if (va_arg (ap, int) != ~0) /* check for safeguard */
     {
@@ -264,6 +266,11 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 #ifdef USE_GRABBER
   case VALHALLA_CFG_DOWNLOADER_DEST:
     vh_downloader_destination_set (handle->downloader, (valhalla_dl_t) i, ccp);
+    break;
+
+  case VALHALLA_CFG_GRABBER_PRIORITY:
+    vh_grabber_priority_set (handle->grabber,
+                             ccp, (valhalla_grabber_pl_t) i, p2);
     break;
 
   case VALHALLA_CFG_GRABBER_STATE:

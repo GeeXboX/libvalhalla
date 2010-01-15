@@ -288,3 +288,96 @@ vh_metadata_add_auto (metadata_t **meta,
 
   vh_metadata_add (meta, name, value, grp, priority);
 }
+
+static void
+metadata_plist_dump (const metadata_plist_t *pl)
+{
+  if (!vh_log_test (VALHALLA_MSG_VERBOSE))
+    return;
+
+  vh_log (VALHALLA_MSG_VERBOSE, "  _________________________");
+  for (; pl->metadata; pl++)
+    vh_log (VALHALLA_MSG_VERBOSE,
+            " | %-15s | %5i |", pl->metadata, pl->priority);
+  vh_log (VALHALLA_MSG_VERBOSE, " | *               | %5i |", pl->priority);
+  vh_log (VALHALLA_MSG_VERBOSE, " |_________________|_______|");
+}
+
+void
+vh_metadata_plist_set (metadata_plist_t **pl,
+                       const char *metadata, valhalla_grabber_pl_t p)
+{
+  size_t size;
+  metadata_plist_t *it, *n, *f = NULL, *d = NULL;
+
+  if (!pl || !*pl)
+    return;
+
+  /* search the entry (if exists) in the list */
+  for (it = *pl; it->metadata; it++)
+    if (!f && metadata && !strcmp (it->metadata, metadata))
+      f = it;
+  d = it; /* default entry */
+
+  /* is the default priority? */
+  if (d->priority == p)
+  {
+    if (f) /* f is equal to d and must be removed */
+    {
+      /*      _____________
+       *     |_____*pl_____|        | addresses
+       *     |______f______| <-.    v
+       * .-> |_____________| --'
+       * '-- |_____________| <-.
+       *     |_ _ _ d _ _ _| --'
+       */
+      for (it = f + 1; it <= d; it++)
+        *(it - 1) = *it;
+
+      /* trim d */
+      n = realloc (*pl, (d - *pl) * sizeof (metadata_plist_t));
+      if (n)
+        *pl = n;
+    }
+    metadata_plist_dump (*pl);
+    return;
+  }
+
+  /* new default priority */
+  if (!metadata)
+  {
+    d->priority = p;
+    metadata_plist_dump (*pl);
+    return;
+  }
+
+  /* f exists */
+  if (f)
+  {
+    f->priority = p;
+    metadata_plist_dump (*pl);
+    return;
+  }
+
+  /* new entry before the default priority */
+  size = d - *pl + 1;
+  n = realloc (*pl, (size + 1) * sizeof (metadata_plist_t));
+  if (!n)
+    return;
+
+  /*      _____________
+   *     |_____*pl_____|        | addresses
+   *     |_____________|        v
+   *     |_____________|
+   *     |_____________|
+   *  => |______d______| --.
+   *     |_ _ _ _ _ _ _| <-'
+   */
+  d = n + size - 1;
+  *(d + 1) = *d;
+  d->metadata = metadata;
+  d->priority = p;
+  *pl = n;
+
+  metadata_plist_dump (*pl);
+}

@@ -333,6 +333,7 @@ typedef struct valhalla_file_s {
 #define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                        */
 #define VH_VOIDP_T    (1 << VH_CFG_RANGE)  /**< void *                      */
 #define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                         */
+#define VH_VOIDP_2_T  (4 << VH_CFG_RANGE)  /**< void *                      */
 
 /** \brief Macro to init items in ::valhalla_cfg_t. */
 #define VH_CFG_INIT(name, type, num) VALHALLA_CFG_##name = ((type) + (num))
@@ -352,6 +353,7 @@ typedef struct valhalla_file_s {
  * <pre>
  * VH_VOIDP_T                 : 2
  * VH_VOIDP_T | VH_INT_T      : 3
+ * VH_VOIDP_T | VH_INT_T | VH_VOIDP_2_T : 1
  * </pre>
  *
  * \see VH_CFG_INIT().
@@ -366,6 +368,26 @@ typedef enum valhalla_cfg {
    * \param[in] arg2 ::VH_INT_T    Type of destination to set.
    */
   VH_CFG_INIT (DOWNLOADER_DEST, VH_VOIDP_T | VH_INT_T, 2),
+
+  /**
+   * Change the metadata priorities in the grabbers.
+   *
+   * The argument \p arg3 should be a name provided in the list of common
+   * metadata (above). If \p arg1 is NULL, it affects all grabbers.
+   * If \p arg3 is NULL, then it changes the default priority, but specific
+   * priorities are not modified.
+   *
+   * The string \p arg3 is not copied. The address must be valid until the
+   * call on valhalla_uninit().
+   *
+   * \p arg1 and \p arg3 must be null-terminated strings.
+   *
+   * \warning There is no effect if the grabber support is not compiled.
+   * \param[in] arg1 ::VH_VOIDP_T     Grabber ID.
+   * \param[in] arg2 ::VH_INT_T       The new priority.
+   * \param[in] arg3 ::VH_VOIDP_2_T   Metadata.
+   */
+  VH_CFG_INIT (GRABBER_PRIORITY, VH_VOIDP_T | VH_INT_T | VH_VOIDP_2_T, 0),
 
   /**
    * Set the state of a grabber. By default, all grabbers are enabled.
