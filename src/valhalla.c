@@ -226,7 +226,7 @@ int
 valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 {
   int res = 0;
-  const char *ccp = NULL;
+  const void *ccp = NULL;
   int i = 0;
   valhalla_dl_t vd = VALHALLA_DL_DEFAULT;
 
@@ -241,8 +241,8 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 
     va_start (ap, conf);
 
-    if (conf & VH_CHARP_T)
-      ccp = va_arg (ap, char *);
+    if (conf & VH_VOIDP_T)
+      ccp = va_arg (ap, void *);
     if (conf & VH_INT_T)
       i   = va_arg (ap, int);
     if (conf & VH_VHDL_T)

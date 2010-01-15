@@ -331,7 +331,7 @@ typedef struct valhalla_file_s {
 #define VH_CFG_RANGE  8 /**< 256 possibilities for every combinations of type */
 
 #define VH_VOID_T     (0 << VH_CFG_RANGE)  /**< void                        */
-#define VH_CHARP_T    (1 << VH_CFG_RANGE)  /**< char *                      */
+#define VH_VOIDP_T    (1 << VH_CFG_RANGE)  /**< void *                      */
 #define VH_INT_T      (2 << VH_CFG_RANGE)  /**< int                         */
 #define VH_VHDL_T     (4 << VH_CFG_RANGE)  /**< ::valhalla_dl_t             */
 
@@ -351,9 +351,9 @@ typedef struct valhalla_file_s {
  *
  * Next \p num for the current combinations :
  * <pre>
- * VH_CHARP_T                 : 2
- * VH_CHARP_T | VH_INT_T      : 2
- * VH_CHARP_T | VH_VHDL_T     : 1
+ * VH_VOIDP_T                 : 2
+ * VH_VOIDP_T | VH_INT_T      : 2
+ * VH_VOIDP_T | VH_VHDL_T     : 1
  * </pre>
  *
  * \see VH_CFG_INIT().
@@ -364,19 +364,19 @@ typedef enum valhalla_cfg {
    * a specific destination is NULL.
    *
    * \warning There is no effect if the grabber support is not compiled.
-   * \param[in] arg1 ::VH_CHARP_T  Path for the destination.
+   * \param[in] arg1 ::VH_VOIDP_T  Path for the destination.
    * \param[in] arg2 ::VH_VHDL_T   Type of destination to set.
    */
-  VH_CFG_INIT (DOWNLOADER_DEST, VH_CHARP_T | VH_VHDL_T, 0),
+  VH_CFG_INIT (DOWNLOADER_DEST, VH_VOIDP_T | VH_VHDL_T, 0),
 
   /**
    * Set the state of a grabber. By default, all grabbers are enabled.
    *
    * \warning There is no effect if the grabber support is not compiled.
-   * \param[in] arg1 ::VH_CHARP_T  Grabber ID.
+   * \param[in] arg1 ::VH_VOIDP_T  Grabber ID.
    * \param[in] arg2 ::VH_INT_T    0 to disable, !=0 to enable.
    */
-  VH_CFG_INIT (GRABBER_STATE, VH_CHARP_T | VH_INT_T, 0),
+  VH_CFG_INIT (GRABBER_STATE, VH_VOIDP_T | VH_INT_T, 0),
 
   /**
    * This parameter is useful only if the decrapifier is enabled with
@@ -413,18 +413,18 @@ typedef enum valhalla_cfg {
    * If the same keyword is added several times, only one is saved in the
    * decrapifier.
    *
-   * \param[in] arg1 ::VH_CHARP_T  Keyword to blacklist.
+   * \param[in] arg1 ::VH_VOIDP_T  Keyword to blacklist.
    */
-  VH_CFG_INIT (PARSER_KEYWORD, VH_CHARP_T, 0),
+  VH_CFG_INIT (PARSER_KEYWORD, VH_VOIDP_T, 0),
 
   /**
    * Add a path to the scanner. If the same path is added several times,
    * only one is saved in the scanner.
    *
-   * \param[in] arg1 ::VH_CHARP_T  The path to be scanned.
+   * \param[in] arg1 ::VH_VOIDP_T  The path to be scanned.
    * \param[in] arg2 ::VH_INT_T    1 to scan all dirs recursively, 0 otherwise.
    */
-  VH_CFG_INIT (SCANNER_PATH, VH_CHARP_T | VH_INT_T, 1),
+  VH_CFG_INIT (SCANNER_PATH, VH_VOIDP_T | VH_INT_T, 1),
 
   /**
    * If no suffix is added to the scanner, then all files will be parsed by
@@ -433,9 +433,9 @@ typedef enum valhalla_cfg {
    * added several times, only one is saved in the scanner. The suffixes are
    * case insensitive.
    *
-   * \param[in] arg1 ::VH_CHARP_T  File suffix to add.
+   * \param[in] arg1 ::VH_VOIDP_T  File suffix to add.
    */
-  VH_CFG_INIT (SCANNER_SUFFIX, VH_CHARP_T, 1),
+  VH_CFG_INIT (SCANNER_SUFFIX, VH_VOIDP_T, 1),
 
 } valhalla_cfg_t;
 
