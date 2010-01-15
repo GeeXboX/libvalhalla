@@ -289,8 +289,8 @@ vh_metadata_add_auto (metadata_t **meta,
   vh_metadata_add (meta, name, value, grp, priority);
 }
 
-static void
-metadata_plist_dump (const metadata_plist_t *pl)
+void
+vh_metadata_plist_dump (const metadata_plist_t *pl)
 {
   if (!vh_log_test (VALHALLA_MSG_VERBOSE))
     return;
@@ -339,7 +339,6 @@ vh_metadata_plist_set (metadata_plist_t **pl,
       if (n)
         *pl = n;
     }
-    metadata_plist_dump (*pl);
     return;
   }
 
@@ -347,7 +346,6 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   if (!metadata)
   {
     d->priority = p;
-    metadata_plist_dump (*pl);
     return;
   }
 
@@ -355,7 +353,6 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   if (f)
   {
     f->priority = p;
-    metadata_plist_dump (*pl);
     return;
   }
 
@@ -378,6 +375,4 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   d->metadata = metadata;
   d->priority = p;
   *pl = n;
-
-  metadata_plist_dump (*pl);
 }

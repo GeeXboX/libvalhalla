@@ -481,6 +481,9 @@ vh_grabber_priority_set (grabber_t *grabber, const char *id,
     if (!id || !strcmp (it->name, id))
     {
       vh_metadata_plist_set (&it->pl, metadata, p);
+      vh_log (VALHALLA_MSG_VERBOSE, "Metadata priorities (%s) :", it->name);
+      vh_metadata_plist_dump (it->pl);
+
       if (id)
         break;
     }
