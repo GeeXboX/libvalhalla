@@ -53,7 +53,7 @@ void vh_metadata_add_auto (metadata_t **meta, const char *name,
 void vh_metadata_dup (metadata_t **dst, const metadata_t *src);
 void vh_metadata_plist_dump (const metadata_plist_t *pl);
 valhalla_metadata_pl_t vh_metadata_plist_read (metadata_plist_t *pl,
-                                              const char **metadata);
+                                               const char **metadata);
 void vh_metadata_plist_set (metadata_plist_t **pl, const char *metadata,
                             valhalla_metadata_pl_t priority);
 

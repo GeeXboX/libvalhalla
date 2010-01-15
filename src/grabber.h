@@ -40,8 +40,8 @@ int vh_grabber_run (grabber_t *grabber, int priority);
 void vh_grabber_pause (grabber_t *grabber);
 fifo_queue_t *vh_grabber_fifo_get (grabber_t *grabber);
 valhalla_metadata_pl_t vh_grabber_priority_read (grabber_t *grabber,
-                                                const char *id,
-                                                const char **metadata);
+                                                 const char *id,
+                                                 const char **metadata);
 void vh_grabber_priority_set (grabber_t *grabber, const char *id,
                               valhalla_metadata_pl_t p, const char *metadata);
 void vh_grabber_state_set (grabber_t *grabber, const char *id, int enable);

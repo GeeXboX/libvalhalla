@@ -660,8 +660,8 @@ const char *valhalla_grabber_next (valhalla_t *handle, const char *id);
  * \return the priority.
  */
 valhalla_metadata_pl_t valhalla_grabber_priority_read (valhalla_t *handle,
-                                                      const char *id,
-                                                      const char **meta);
+                                                       const char *id,
+                                                       const char **meta);
 
 /**
  * \brief Retrieve the ID of all groups in the statistics.
