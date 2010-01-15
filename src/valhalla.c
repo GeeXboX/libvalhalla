@@ -226,7 +226,7 @@ int
 valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 {
   int res = 0;
-  const void *ccp = NULL, *p2 = NULL;
+  const void *p1 = NULL, *p2 = NULL;
   int i = 0;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
@@ -241,7 +241,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
     va_start (ap, conf);
 
     if (conf & VH_VOIDP_T)
-      ccp = va_arg (ap, void *);
+      p1 = va_arg (ap, void *);
     if (conf & VH_INT_T)
       i  = va_arg (ap, int);
     if (conf & VH_VOIDP_2_T)
@@ -265,33 +265,33 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
   {
 #ifdef USE_GRABBER
   case VALHALLA_CFG_DOWNLOADER_DEST:
-    vh_downloader_destination_set (handle->downloader, (valhalla_dl_t) i, ccp);
+    vh_downloader_destination_set (handle->downloader, (valhalla_dl_t) i, p1);
     break;
 
   case VALHALLA_CFG_GRABBER_PRIORITY:
     vh_grabber_priority_set (handle->grabber,
-                             ccp, (valhalla_grabber_pl_t) i, p2);
+                             p1, (valhalla_grabber_pl_t) i, p2);
     break;
 
   case VALHALLA_CFG_GRABBER_STATE:
-    if (ccp)
-      vh_grabber_state_set (handle->grabber, ccp, i);
+    if (p1)
+      vh_grabber_state_set (handle->grabber, p1, i);
     break;
 #endif /* USE_GRABBER */
 
   case VALHALLA_CFG_PARSER_KEYWORD:
-    if (ccp)
-      vh_parser_bl_keyword_add (handle->parser, ccp);
+    if (p1)
+      vh_parser_bl_keyword_add (handle->parser, p1);
     break;
 
   case VALHALLA_CFG_SCANNER_PATH:
-    if (ccp)
-      vh_scanner_path_add (handle->scanner, ccp, i);
+    if (p1)
+      vh_scanner_path_add (handle->scanner, p1, i);
     break;
 
   case VALHALLA_CFG_SCANNER_SUFFIX:
-    if (ccp)
-      vh_scanner_suffix_add (handle->scanner, ccp);
+    if (p1)
+      vh_scanner_suffix_add (handle->scanner, p1);
     break;
 
   default:
