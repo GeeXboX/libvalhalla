@@ -351,8 +351,8 @@ typedef struct valhalla_file_s {
  *
  * Next \p num for the current combinations :
  * <pre>
- * VH_VOIDP_T                 : 2
- * VH_VOIDP_T | VH_INT_T      : 3
+ * VH_VOIDP_T                           : 2
+ * VH_VOIDP_T | VH_INT_T                : 3
  * VH_VOIDP_T | VH_INT_T | VH_VOIDP_2_T : 1
  * </pre>
  *

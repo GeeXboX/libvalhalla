@@ -243,7 +243,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
     if (conf & VH_VOIDP_T)
       ccp = va_arg (ap, void *);
     if (conf & VH_INT_T)
-      i   = va_arg (ap, int);
+      i  = va_arg (ap, int);
     if (conf & VH_VOIDP_2_T)
       p2 = va_arg (ap, void *);
 
