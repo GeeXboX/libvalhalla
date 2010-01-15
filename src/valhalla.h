@@ -363,6 +363,8 @@ typedef enum valhalla_cfg {
    * Set a destination for the downloader. The default destination is used when
    * a specific destination is NULL.
    *
+   * \p arg1 must be a null-terminated string.
+   *
    * \warning There is no effect if the grabber support is not compiled.
    * \param[in] arg1 ::VH_VOIDP_T  Path for the destination.
    * \param[in] arg2 ::VH_INT_T    Type of destination to set.
@@ -391,6 +393,8 @@ typedef enum valhalla_cfg {
 
   /**
    * Set the state of a grabber. By default, all grabbers are enabled.
+   *
+   * \p arg1 must be a null-terminated string.
    *
    * \warning There is no effect if the grabber support is not compiled.
    * \param[in] arg1 ::VH_VOIDP_T  Grabber ID.
@@ -433,6 +437,8 @@ typedef enum valhalla_cfg {
    * If the same keyword is added several times, only one is saved in the
    * decrapifier.
    *
+   * \p arg1 must be a null-terminated string.
+   *
    * \param[in] arg1 ::VH_VOIDP_T  Keyword to blacklist.
    */
   VH_CFG_INIT (PARSER_KEYWORD, VH_VOIDP_T, 0),
@@ -440,6 +446,8 @@ typedef enum valhalla_cfg {
   /**
    * Add a path to the scanner. If the same path is added several times,
    * only one is saved in the scanner.
+   *
+   * \p arg1 must be a null-terminated string.
    *
    * \param[in] arg1 ::VH_VOIDP_T  The path to be scanned.
    * \param[in] arg2 ::VH_INT_T    1 to scan all dirs recursively, 0 otherwise.
@@ -452,6 +460,8 @@ typedef enum valhalla_cfg {
    * to always set at least one suffix (file extension)! If the same suffix is
    * added several times, only one is saved in the scanner. The suffixes are
    * case insensitive.
+   *
+   * \p arg1 must be a null-terminated string.
    *
    * \param[in] arg1 ::VH_VOIDP_T  File suffix to add.
    */
