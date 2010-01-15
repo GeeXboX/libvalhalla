@@ -335,6 +335,10 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   if (!pl || !*pl)
     return;
 
+  if (p % 32 || p < VALHALLA_GRABBER_PL_HIGHEST
+             || p > VALHALLA_GRABBER_PL_LOWEST)
+    return;
+
   /* search the entry (if exists) in the list */
   for (it = *pl; it->metadata; it++)
     if (!f && metadata && !strcmp (it->metadata, metadata))
