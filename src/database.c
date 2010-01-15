@@ -635,7 +635,7 @@ database_file_data (database_t *database, file_data_t *data, int insert)
     metadata_t *meta = NULL;
     const metadata_plist_t pl = {
       .metadata = NULL,
-      .priority = VALHALLA_GRABBER_PL_HIGHEST
+      .priority = VALHALLA_METADATA_PL_HIGHEST
     };
 
     type_id = database_file_typeid_get (database, data->file.type);
@@ -1856,7 +1856,7 @@ vh_database_metadata_insert (database_t *database, const char *path,
   if (!res)
     database_assoc_filemd_update (database,
                                   file_id, meta_id, data_id,
-                                  group_id, 1, VALHALLA_GRABBER_PL_NORMAL);
+                                  group_id, 1, VALHALLA_METADATA_PL_NORMAL);
   else
   {
     if (!meta_id)
@@ -1866,7 +1866,7 @@ vh_database_metadata_insert (database_t *database, const char *path,
     group_id = database_groupid_get (database, group);
     database_assoc_filemd_insert (database,
                                   file_id, meta_id, data_id,
-                                  group_id, 1, VALHALLA_GRABBER_PL_NORMAL);
+                                  group_id, 1, VALHALLA_METADATA_PL_NORMAL);
   }
 
   return 0;
@@ -1903,7 +1903,7 @@ vh_database_metadata_update (database_t *database, const char *path,
   data_id = database_data_insert (database, ndata);
   database_assoc_filemd_insert (database,
                                 file_id, meta_id, data_id,
-                                group_id, 1, VALHALLA_GRABBER_PL_NORMAL);
+                                group_id, 1, VALHALLA_METADATA_PL_NORMAL);
   return 0;
 }
 

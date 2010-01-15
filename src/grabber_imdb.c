@@ -47,7 +47,7 @@ typedef struct grabber_imdb_s {
 } grabber_imdb_t;
 
 static const metadata_plist_t imdb_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
+  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
 };
 
 

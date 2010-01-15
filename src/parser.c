@@ -341,7 +341,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   AVMetadataTag *tag = NULL;
   const metadata_plist_t pl = {
     .metadata = NULL,
-    .priority = VALHALLA_GRABBER_PL_HIGHEST
+    .priority = VALHALLA_METADATA_PL_HIGHEST
   };
 
   if (!ctx)
@@ -365,7 +365,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     if (title)
     {
       vh_metadata_add (&meta, VALHALLA_METADATA_TITLE, title,
-                       VALHALLA_META_GRP_TITLES, VALHALLA_GRABBER_PL_NORMAL);
+                       VALHALLA_META_GRP_TITLES, VALHALLA_METADATA_PL_NORMAL);
       free (title);
     }
   }

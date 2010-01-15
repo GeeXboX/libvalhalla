@@ -53,7 +53,7 @@ typedef struct grabber_tvrage_s {
 } grabber_tvrage_t;
 
 static const metadata_plist_t tvrage_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
+  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
 };
 
 

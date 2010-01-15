@@ -466,7 +466,7 @@ vh_grabber_fifo_get (grabber_t *grabber)
   return grabber->fifo;
 }
 
-valhalla_grabber_pl_t
+valhalla_metadata_pl_t
 vh_grabber_priority_read (grabber_t *grabber,
                           const char *id, const char **metadata)
 {
@@ -486,7 +486,7 @@ vh_grabber_priority_read (grabber_t *grabber,
 
 void
 vh_grabber_priority_set (grabber_t *grabber, const char *id,
-                         valhalla_grabber_pl_t p, const char *metadata)
+                         valhalla_metadata_pl_t p, const char *metadata)
 {
   grabber_list_t *it;
 

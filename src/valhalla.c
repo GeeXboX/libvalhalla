@@ -270,7 +270,7 @@ valhalla_config_set_orig (valhalla_t *handle, valhalla_cfg_t conf, ...)
 
   case VALHALLA_CFG_GRABBER_PRIORITY:
     vh_grabber_priority_set (handle->grabber,
-                             p1, (valhalla_grabber_pl_t) i, p2);
+                             p1, (valhalla_metadata_pl_t) i, p2);
     break;
 
   case VALHALLA_CFG_GRABBER_STATE:
@@ -478,7 +478,7 @@ valhalla_grabber_next (valhalla_t *handle, const char *id)
 #endif /* USE_GRABBER */
 }
 
-valhalla_grabber_pl_t
+valhalla_metadata_pl_t
 valhalla_grabber_priority_read (valhalla_t *handle,
                                 const char *id, const char **meta)
 {

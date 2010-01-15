@@ -335,7 +335,7 @@ main (int argc, char **argv)
     do
     {
       const char *p;
-      valhalla_grabber_pl_t priority;
+      valhalla_metadata_pl_t priority;
 
       p = metadata;
       priority = valhalla_grabber_priority_read (handle, grabber, &metadata);

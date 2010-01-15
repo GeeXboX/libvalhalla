@@ -38,7 +38,7 @@ typedef struct grabber_nfo_s {
 } grabber_nfo_t;
 
 static const metadata_plist_t nfo_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_HIGHER   }
+  { NULL,                             VALHALLA_METADATA_PL_HIGHER   }
 };
 
 

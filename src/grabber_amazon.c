@@ -83,8 +83,8 @@ typedef struct grabber_amazon_s {
 } grabber_amazon_t;
 
 static const metadata_plist_t amazon_pl[] = {
-  { VALHALLA_METADATA_COVER,          VALHALLA_GRABBER_PL_BELOW    },
-  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
+  { VALHALLA_METADATA_COVER,          VALHALLA_METADATA_PL_BELOW    },
+  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
 };
 
 

@@ -50,7 +50,7 @@ typedef struct grabber_lyricwiki_s {
 } grabber_lyricwiki_t;
 
 static const metadata_plist_t lyricwiki_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
+  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
 };
 
 

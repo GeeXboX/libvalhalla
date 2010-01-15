@@ -46,7 +46,7 @@ typedef struct grabber_allocine_s {
 } grabber_allocine_t;
 
 static const metadata_plist_t allocine_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_NORMAL   }
+  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
 };
 
 

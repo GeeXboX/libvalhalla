@@ -221,7 +221,7 @@ vh_metadata_free (metadata_t *meta)
 void
 vh_metadata_add (metadata_t **meta,
                  const char *name, const char *value,
-                 valhalla_meta_grp_t group, valhalla_grabber_pl_t priority)
+                 valhalla_meta_grp_t group, valhalla_metadata_pl_t priority)
 {
   metadata_t *it;
 
@@ -255,7 +255,7 @@ vh_metadata_add (metadata_t **meta,
           "Adding new metadata '%s' with value '%s'.", it->name, it->value);
 }
 
-static inline valhalla_grabber_pl_t
+static inline valhalla_metadata_pl_t
 metadata_priority_get (const char *name, const metadata_plist_t *pl)
 {
   for (; pl->metadata; pl++)
@@ -271,7 +271,7 @@ vh_metadata_add_auto (metadata_t **meta,
 {
   unsigned int i;
   valhalla_meta_grp_t grp;
-  valhalla_grabber_pl_t priority;
+  valhalla_metadata_pl_t priority;
 
   if (!meta || !name || !value || !*value)
     return;
@@ -284,7 +284,7 @@ vh_metadata_add_auto (metadata_t **meta,
       break;
     }
 
-  priority = pl ? metadata_priority_get (name, pl) : VALHALLA_GRABBER_PL_NORMAL;
+  priority = pl ? metadata_priority_get (name, pl) : VALHALLA_METADATA_PL_NORMAL;
 
   vh_metadata_add (meta, name, value, grp, priority);
 }
@@ -303,7 +303,7 @@ vh_metadata_plist_dump (const metadata_plist_t *pl)
   vh_log (VALHALLA_MSG_VERBOSE, " |_________________|_______|");
 }
 
-valhalla_grabber_pl_t
+valhalla_metadata_pl_t
 vh_metadata_plist_read (metadata_plist_t *pl, const char **metadata)
 {
   metadata_plist_t *it;
@@ -327,7 +327,7 @@ vh_metadata_plist_read (metadata_plist_t *pl, const char **metadata)
 
 void
 vh_metadata_plist_set (metadata_plist_t **pl,
-                       const char *metadata, valhalla_grabber_pl_t p)
+                       const char *metadata, valhalla_metadata_pl_t p)
 {
   size_t size;
   metadata_plist_t *it, *n, *f = NULL, *d = NULL;
@@ -335,8 +335,8 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   if (!pl || !*pl)
     return;
 
-  if (p % 32 || p < VALHALLA_GRABBER_PL_HIGHEST
-             || p > VALHALLA_GRABBER_PL_LOWEST)
+  if (p % 32 || p < VALHALLA_METADATA_PL_HIGHEST
+             || p > VALHALLA_METADATA_PL_LOWEST)
     return;
 
   /* search the entry (if exists) in the list */

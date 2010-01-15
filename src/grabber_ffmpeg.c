@@ -40,7 +40,7 @@ typedef struct grabber_ffmpeg_s {
 } grabber_ffmpeg_t;
 
 static const metadata_plist_t ffmpeg_pl[] = {
-  { NULL,                             VALHALLA_GRABBER_PL_HIGHEST  }
+  { NULL,                             VALHALLA_METADATA_PL_HIGHEST  }
 };
 
 

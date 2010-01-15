@@ -301,17 +301,17 @@ typedef enum valhalla_stats_type {
 } valhalla_stats_type_t;
 
 /** \brief Priorities for the metadata. */
-typedef enum valhalla_grabber_pl {
-  VALHALLA_GRABBER_PL_HIGHEST = -128,
-  VALHALLA_GRABBER_PL_HIGHER  =  -96,
-  VALHALLA_GRABBER_PL_HIGH    =  -64,
-  VALHALLA_GRABBER_PL_ABOVE   =  -32,
-  VALHALLA_GRABBER_PL_NORMAL  =    0,
-  VALHALLA_GRABBER_PL_BELOW   =   32,
-  VALHALLA_GRABBER_PL_LOW     =   64,
-  VALHALLA_GRABBER_PL_LOWER   =   96,
-  VALHALLA_GRABBER_PL_LOWEST  =  128,
-} valhalla_grabber_pl_t;
+typedef enum valhalla_metadata_pl {
+  VALHALLA_METADATA_PL_HIGHEST = -128,
+  VALHALLA_METADATA_PL_HIGHER  =  -96,
+  VALHALLA_METADATA_PL_HIGH    =  -64,
+  VALHALLA_METADATA_PL_ABOVE   =  -32,
+  VALHALLA_METADATA_PL_NORMAL  =    0,
+  VALHALLA_METADATA_PL_BELOW   =   32,
+  VALHALLA_METADATA_PL_LOW     =   64,
+  VALHALLA_METADATA_PL_LOWER   =   96,
+  VALHALLA_METADATA_PL_LOWEST  =  128,
+} valhalla_metadata_pl_t;
 
 /** \brief Metadata structure for general purpose. */
 typedef struct valhalla_metadata_s {
@@ -386,7 +386,7 @@ typedef enum valhalla_cfg {
    *
    * \warning There is no effect if the grabber support is not compiled.
    * \param[in] arg1 ::VH_VOIDP_T   Grabber ID.
-   * \param[in] arg2 ::VH_INT_T     The new priority, ::valhalla_grabber_pl_t.
+   * \param[in] arg2 ::VH_INT_T     The new priority, ::valhalla_metadata_pl_t.
    * \param[in] arg3 ::VH_VOIDP_2_T Metadata.
    */
   VH_CFG_INIT (GRABBER_PRIORITY, VH_VOIDP_T | VH_INT_T | VH_VOIDP_2_T, 0),
@@ -659,7 +659,7 @@ const char *valhalla_grabber_next (valhalla_t *handle, const char *id);
  * \param[in,out] meta    A valid address; the next meta is returned.
  * \return the priority.
  */
-valhalla_grabber_pl_t valhalla_grabber_priority_read (valhalla_t *handle,
+valhalla_metadata_pl_t valhalla_grabber_priority_read (valhalla_t *handle,
                                                       const char *id,
                                                       const char **meta);
 
