@@ -29,7 +29,7 @@ typedef struct metadata_s {
   char *name;
   char *value;
   valhalla_meta_grp_t group;
-  int   priority;
+  valhalla_grabber_pl_t priority;
 } metadata_t;
 
 typedef struct metadata_plist_s {
