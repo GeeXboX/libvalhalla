@@ -132,11 +132,11 @@ grabber_lyricwiki_get (grabber_lyricwiki_t *lyricwiki, file_data_t *fdata,
       return -1;
     }
 
-    len = strlen (offset) - strlen (end);
+    len = end - offset;
     txt = strndup (offset, len);
 
-    lyrics = calloc (1, strlen (txt));
-    for (i = 0, j = 0; i < strlen (txt); i++)
+    lyrics = calloc (1, len);
+    for (i = 0, j = 0; i < (unsigned int) len; i++)
     {
       int n = 0;
       unsigned int c;
