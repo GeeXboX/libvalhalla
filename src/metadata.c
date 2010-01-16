@@ -284,7 +284,8 @@ vh_metadata_add_auto (metadata_t **meta,
       break;
     }
 
-  priority = pl ? metadata_priority_get (name, pl) : VALHALLA_METADATA_PL_NORMAL;
+  priority =
+    pl ? metadata_priority_get (name, pl) : VALHALLA_METADATA_PL_NORMAL;
 
   vh_metadata_add (meta, name, value, grp, priority);
 }
