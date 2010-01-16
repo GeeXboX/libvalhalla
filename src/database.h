@@ -50,6 +50,7 @@ int vh_database_file_get_interrupted (database_t *database, const char *file);
 
 void vh_database_file_checked_clear (database_t *database);
 const char *vh_database_file_get_checked_clear (database_t *database, int rst);
+const char *vh_database_file_get_outofpath_set (database_t *database, int rst);
 
 void vh_database_begin_transaction (database_t *database);
 void vh_database_end_transaction (database_t *database);

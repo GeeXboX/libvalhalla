@@ -108,6 +108,7 @@ typedef enum database_stmt {
   STMT_SELECT_FILE_CHECKED_CLEAR,
   STMT_UPDATE_FILE_INTERRUP_CLEAR,
   STMT_UPDATE_FILE_INTERRUP_FIX,
+  STMT_SELECT_FILE_OUTOFPATH_SET,
   STMT_BEGIN_TRANSACTION,
   STMT_END_TRANSACTION,
 } database_stmt_t;
@@ -152,6 +153,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_FILE_CHECKED_CLEAR]   = { SELECT_FILE_CHECKED_CLEAR,   NULL },
   [STMT_UPDATE_FILE_INTERRUP_CLEAR]  = { UPDATE_FILE_INTERRUP_CLEAR,  NULL },
   [STMT_UPDATE_FILE_INTERRUP_FIX]    = { UPDATE_FILE_INTERRUP_FIX,    NULL },
+  [STMT_SELECT_FILE_OUTOFPATH_SET]   = { SELECT_FILE_OUTOFPATH_SET,   NULL },
   [STMT_BEGIN_TRANSACTION]           = { BEGIN_TRANSACTION,           NULL },
   [STMT_END_TRANSACTION]             = { END_TRANSACTION,             NULL },
 };
@@ -919,6 +921,30 @@ vh_database_file_get_interrupted (database_t *database, const char *file)
   if (err < 0)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
   return val;
+}
+
+/******************************************************************************/
+/*                         Outofpath file handling                            */
+/******************************************************************************/
+
+const char *
+vh_database_file_get_outofpath_set (database_t *database, int rst)
+{
+  int res = SQLITE_DONE;
+  sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_FILE_OUTOFPATH_SET);
+
+  if (!rst)
+  {
+    res = sqlite3_step (stmt);
+    if (res == SQLITE_ROW)
+      return (const char *) sqlite3_column_text (stmt, 0);
+  }
+
+  sqlite3_reset (stmt);
+  if (res != SQLITE_DONE && res != SQLITE_ROW)
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+
+  return NULL;
 }
 
 /******************************************************************************/

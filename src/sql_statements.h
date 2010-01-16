@@ -327,6 +327,11 @@
  "FROM file "                     \
  "WHERE checked__ = 0 AND outofpath__ = 0;"
 
+#define SELECT_FILE_OUTOFPATH_SET \
+ "SELECT file_path "              \
+ "FROM file "                     \
+ "WHERE outofpath__ = 1;"
+
 #define SELECT_FILE_GRABBER_NAME                      \
  "SELECT grabber.grabber_name "                       \
  "FROM ( "                                            \

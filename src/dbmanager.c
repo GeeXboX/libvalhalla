@@ -392,6 +392,28 @@ dbmanager_thread (void *arg)
       }
     }
 
+    /*
+     * Get all files where outofpath__ is set to 1 and check if the file is
+     * valid. The entry is deleted otherwise.
+     */
+    rst = 0;
+    while ((file =
+              vh_database_file_get_outofpath_set (dbmanager->database, rst)))
+    {
+      if (dbmanager_is_stopped (dbmanager))
+        rst = 1;
+      else if (vh_scanner_suffix_cmp (VH_HANDLE->scanner, file)
+               || access (file, R_OK))
+      {
+        /* Manage BEGIN / COMMIT transactions */
+        vh_database_step_transaction (dbmanager->database,
+                                      dbmanager->commit_int, stats_delete);
+
+        vh_database_file_delete (dbmanager->database, file);
+        stats_delete++;
+      }
+    }
+
     VH_STATS_COUNTER_ACC (dbmanager->st_delete, (unsigned) stats_delete);
 
     /* Clean all relations */
