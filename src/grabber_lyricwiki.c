@@ -130,7 +130,7 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
     len = end - offset;
     txt = strndup (offset, len);
 
-    lyrics = calloc (1, len);
+    lyrics = calloc (1, len + 1);
     for (i = 0, j = 0; i < (unsigned int) len; i++)
     {
       int n = 0;
