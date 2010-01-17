@@ -10,6 +10,8 @@
         language.
      -> Add a public function in order to change the priority of a metadata
         for a file.
+     -> Add a public function to retrieve the number of records in the tables
+        according to some conditions.
 
  * Grabber
      -> Add the possibility to configure every grabber at the init. Some
