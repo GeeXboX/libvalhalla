@@ -332,6 +332,9 @@ valhalla_force_stop (valhalla_t *handle)
 {
   unsigned int i;
 
+  vh_log (VALHALLA_MSG_WARNING,
+          "%s: This can take a time, please be patient", __FUNCTION__);
+
   for (i = 0; i < 2; i++)
   {
     int f = !i ? STOP_FLAG_REQUEST : STOP_FLAG_WAIT;

@@ -332,10 +332,7 @@ scanner_thread (void *arg)
   vh_event_handler_gl_send (VH_HANDLE->event_handler,
                             VALHALLA_EVENTGL_SCANNER_EXIT);
 
-  pthread_exit (NULL);
-
  kill:
-  vh_log (VALHALLA_MSG_WARNING, "[%s] Kill forced", __FUNCTION__);
   pthread_exit (NULL);
 }
 
