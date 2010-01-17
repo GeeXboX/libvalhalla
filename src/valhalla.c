@@ -368,7 +368,7 @@ valhalla_uninit (valhalla_t *handle)
     return;
 
   if (!handle->fstop)
-  valhalla_force_stop (handle);
+    valhalla_force_stop (handle);
 
   /* dump all statistics */
   vh_stats_dump (handle->stats, NULL);
