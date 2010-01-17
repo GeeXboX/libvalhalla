@@ -166,34 +166,6 @@ grabber_is_stopped (grabber_t *grabber)
   return !run;
 }
 
-static inline int
-file_type_supported (int caps_flag, valhalla_file_type_t type)
-{
-  switch (type)
-  {
-  case VALHALLA_FILE_TYPE_NULL:
-    return 1;
-
-  case VALHALLA_FILE_TYPE_AUDIO:
-    if (caps_flag & GRABBER_CAP_AUDIO)
-      return 1;
-    return 0;
-
-  case VALHALLA_FILE_TYPE_VIDEO:
-    if (caps_flag & GRABBER_CAP_VIDEO)
-      return 1;
-    return 0;
-
-  case VALHALLA_FILE_TYPE_IMAGE:
-    if (caps_flag & GRABBER_CAP_IMAGE)
-      return 1;
-    return 0;
-
-  default:
-    return 0;
-  }
-}
-
 static int
 grabber_cmp_fct (const void *tocmp, const void *data)
 {
@@ -203,9 +175,15 @@ grabber_cmp_fct (const void *tocmp, const void *data)
   return strcmp (tocmp, data);
 }
 
+#define FILETYPE_SUPPORTED(f, t)                                          \
+  (   ((t) == VALHALLA_FILE_TYPE_AUDIO && (f) & GRABBER_CAP_AUDIO)        \
+   || ((t) == VALHALLA_FILE_TYPE_VIDEO && (f) & GRABBER_CAP_VIDEO)        \
+   || ((t) == VALHALLA_FILE_TYPE_IMAGE && (f) & GRABBER_CAP_IMAGE)        \
+   || ((t) == VALHALLA_FILE_TYPE_NULL))
+
 #define GRABBER_IF_TEST(it, data)                                         \
   if (it->enable                                                          \
-      && file_type_supported (it->caps_flag, data->file.type)             \
+      && FILETYPE_SUPPORTED (it->caps_flag, data->file.type)              \
       && !vh_list_search (data->grabber_list, it->name, grabber_cmp_fct))
 
 #define GRABBER_IS_AVAILABLE(it, list, data)  \
