@@ -110,9 +110,9 @@ grabber_lyricwiki_get (url_t *handler, file_data_t *fdata,
 
     for (i = 0; i < ARRAY_NB_ELEMENTS (lyricwiki_offset) && !off; i++)
     {
-    cmp = strncmp (start + strlen (LYRICWIKI_BOX_START),
+      cmp = strncmp (start + strlen (LYRICWIKI_BOX_START),
                      lyricwiki_offset[i][0], strlen (lyricwiki_offset[i][0]));
-    if (!cmp)
+      if (!cmp)
         off = lyricwiki_offset[i][1];
     }
 
