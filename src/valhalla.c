@@ -325,6 +325,8 @@ valhalla_wait (valhalla_t *handle)
   vh_downloader_stop (handle->downloader, f);
 #endif /* USE_GRABBER */
   vh_event_handler_stop (handle->event_handler, f);
+
+  handle->fstop = 1;
 }
 
 static void
@@ -353,6 +355,8 @@ valhalla_force_stop (valhalla_t *handle)
   }
 
   valhalla_mrproper (handle);
+
+  handle->fstop = 1;
 }
 
 void
@@ -363,6 +367,7 @@ valhalla_uninit (valhalla_t *handle)
   if (!handle)
     return;
 
+  if (!handle->fstop)
   valhalla_force_stop (handle);
 
   /* dump all statistics */

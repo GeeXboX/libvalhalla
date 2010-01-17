@@ -69,6 +69,7 @@ struct valhalla_s {
 
   unsigned int run    : 1;  /* check if valhalla_run() is called two times */
   unsigned int noscan : 1;  /* only ondemand, scanner disabled */
+  unsigned int fstop  : 1;  /* check if stop was called */
 };
 
 #define STOP_FLAG_REQUEST (1 << 0)
