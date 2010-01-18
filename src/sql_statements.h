@@ -258,6 +258,8 @@
  "data.data_id = %"PRIi64" "
 #define SELECT_LIST_WHERE_GROUP_ID \
  "assoc._grp_id = %"PRIi64" "
+#define SELECT_LIST_WHERE_PRIORITY \
+ "assoc.priority__ <= %i " /* << highest,  >> lowest */
 
 /* Internal */
 

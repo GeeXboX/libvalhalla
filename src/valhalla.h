@@ -783,6 +783,7 @@ typedef struct valhalla_db_item_s {
   int64_t     id;
   const char *text;
   valhalla_meta_grp_t group;
+  valhalla_metadata_pl_t priority;
 } valhalla_db_item_t;
 
 /** \brief Results for valhalla_db_metalist_get(). */
@@ -819,15 +820,17 @@ typedef struct valhalla_db_filemeta_s {
   int      external;
 } valhalla_db_filemeta_t;
 
-#define VALHALLA_DB_SEARCH(_id, _text, _group, _type) \
+#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority) \
   {.type = VALHALLA_DB_TYPE_##_type,                  \
-   .id = _id, .text = _text, .group = VALHALLA_META_GRP_##_group}
+   .id = _id, .text = _text, .group = VALHALLA_META_GRP_##_group, \
+   .priority = VALHALLA_METADATA_PL_##_priority}
 
 #define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id,                  \
-                             _m_text, _d_text, _m_type, _d_type) \
+                             _m_text, _d_text, _m_type, _d_type, \
+                             _priority)                          \
   {.next = NULL, .op = VALHALLA_DB_OPERATOR_##_op,               \
-   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type),   \
-   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type)}
+   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority),\
+   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)}
 
 
 /**
@@ -836,27 +839,27 @@ typedef struct valhalla_db_filemeta_s {
  */
 
 /** \brief Set valhalla_db_item_t local variable for an id. */
-#define VALHALLA_DB_SEARCH_ID(meta_id, group) \
-  VALHALLA_DB_SEARCH (meta_id, NULL, group, ID)
+#define VALHALLA_DB_SEARCH_ID(meta_id, group, p) \
+  VALHALLA_DB_SEARCH (meta_id, NULL, group, ID, p)
 /** \brief Set valhalla_db_item_t local variable for a text. */
-#define VALHALLA_DB_SEARCH_TEXT(meta_name, group) \
-  VALHALLA_DB_SEARCH (0, meta_name, group, TEXT)
+#define VALHALLA_DB_SEARCH_TEXT(meta_name, group, p) \
+  VALHALLA_DB_SEARCH (0, meta_name, group, TEXT, p)
 /** \brief Set valhalla_db_item_t local variable for a group. */
-#define VALHALLA_DB_SEARCH_GRP(group) \
-  VALHALLA_DB_SEARCH (0, NULL, group, GROUP)
+#define VALHALLA_DB_SEARCH_GRP(group, p) \
+  VALHALLA_DB_SEARCH (0, NULL, group, GROUP, p)
 
 /** \brief Set valhalla_db_restrict_t local variable for meta.id, data.id. */
-#define VALHALLA_DB_RESTRICT_INT(op, meta, data) \
-  VALHALLA_DB_RESTRICT (op, meta, data, NULL, NULL, ID, ID)
+#define VALHALLA_DB_RESTRICT_INT(op, meta, data, p) \
+  VALHALLA_DB_RESTRICT (op, meta, data, NULL, NULL, ID, ID, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.text, data.text. */
-#define VALHALLA_DB_RESTRICT_STR(op, meta, data) \
-  VALHALLA_DB_RESTRICT (op, 0, 0, meta, data, TEXT, TEXT)
+#define VALHALLA_DB_RESTRICT_STR(op, meta, data, p) \
+  VALHALLA_DB_RESTRICT (op, 0, 0, meta, data, TEXT, TEXT, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.id, data.text. */
-#define VALHALLA_DB_RESTRICT_INTSTR(op, meta, data) \
-  VALHALLA_DB_RESTRICT (op, meta, 0, NULL, data, ID, TEXT)
+#define VALHALLA_DB_RESTRICT_INTSTR(op, meta, data, p) \
+  VALHALLA_DB_RESTRICT (op, meta, 0, NULL, data, ID, TEXT, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.text, data.id. */
-#define VALHALLA_DB_RESTRICT_STRINT(op, meta, data) \
-  VALHALLA_DB_RESTRICT (op, 0, data, meta, NULL, TEXT, ID)
+#define VALHALLA_DB_RESTRICT_STRINT(op, meta, data, p) \
+  VALHALLA_DB_RESTRICT (op, 0, data, meta, NULL, TEXT, ID, p)
 /** \brief Link two valhalla_db_restrict_t variables together. */
 #define VALHALLA_DB_RESTRICT_LINK(from, to) \
   do {(to).next = &(from);} while (0)
@@ -885,8 +888,8 @@ typedef struct valhalla_db_filemeta_s {
  *
  * Example (to list all albums of an author):
  *  \code
- *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES);
- *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe");
+ *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES, LOWEST);
+ *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", LOWEST);
  *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
@@ -913,8 +916,8 @@ int valhalla_db_metalist_get (valhalla_t *handle,
  *
  * Example (to list all files of an author, without album):
  *  \code
- *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe");
- *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL);
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", NORMAL);
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL, NORMAL);
  *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
  *  \endcode
  *
@@ -942,8 +945,8 @@ int valhalla_db_filelist_get (valhalla_t *handle,
  *
  * Example (to retrieve only the track and the title):
  *  \code
- *  restriction_1 = VALHALLA_DB_RESTRICT_STR (EQUAL, "track", NULL);
- *  restriction_2 = VALHALLA_DB_RESTRICT_STR (EQUAL, "title", NULL);
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (EQUAL, "track", NULL, LOWEST);
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (EQUAL, "title", NULL, LOWEST);
  *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
  *  \endcode
  *

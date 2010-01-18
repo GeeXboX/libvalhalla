@@ -1474,6 +1474,8 @@ database_list_get_restriction_sub (valhalla_db_restrict_t *restriction,
     SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT_TYPE (sql, restriction->data, DATA);
   }
+  SQL_CONCAT (sql, SELECT_LIST_AND);
+  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
 
   /* sub-end */
   SQL_CONCAT (sql, SELECT_LIST_WHERE_SUB_END);
@@ -1494,6 +1496,8 @@ database_list_get_restriction_equal (valhalla_db_restrict_t *restriction,
     SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT_TYPE (sql, restriction->data, DATA);
   }
+  SQL_CONCAT (sql, SELECT_LIST_AND);
+  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
 
   SQL_CONCAT (sql, ") ");
 }
@@ -1618,6 +1622,7 @@ vh_database_metalist_get (database_t *database,
    *   ON assoc.meta_id = meta.meta_id
    *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
    *     AND data.<data_id|data_value> = <ID|"TEXT">
+   *     AND assoc.priority__ <= <PRIORITY>
    * )
    * <AND>
    */
@@ -1643,6 +1648,11 @@ vh_database_metalist_get (database_t *database,
     SQL_CONCAT (sql, SELECT_LIST_WHERE_GROUP_ID,
                 database_groupid_get (database, search->group));
   }
+  /* AND */
+  if (search->group || search->id || search->text)
+    SQL_CONCAT (sql, SELECT_LIST_AND);
+  /* assoc.priority__ <= <PRIORITY> */
+  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, search->priority);
 
   /*
    * GROUP BY assoc.meta_id, assoc.data_id
@@ -1708,6 +1718,7 @@ vh_database_filelist_get (database_t *database,
    *   ON assoc.meta_id = meta.meta_id
    *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
    *     AND data.<data_id|data_value> = <ID|"TEXT">
+   *     AND assoc.priority__ <= <PRIORITY>
    * )
    * <AND>
    */
@@ -1806,6 +1817,7 @@ vh_database_file_get (database_t *database,
    *   (
    *     meta.<meta_id|meta_name> = <ID|"TEXT">
    *       AND data.<data_id|data_value> = <ID|"TEXT">
+   *       AND assoc.priorty__ <= <PRIORITY>
    *   )
    *   <OR>
    * )
