@@ -16,7 +16,7 @@
               local         |   HIGH
               lyricwiki     |   NORMAL
               nfo           |   HIGHER
-              tmdb          |   NORMAL
+              tmdb          |   HIGH
               tvdb          |   NORMAL
               tvrage        |   NORMAL
  "cover"      amazon        |   BELOW

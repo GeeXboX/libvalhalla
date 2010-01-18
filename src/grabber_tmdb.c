@@ -58,7 +58,7 @@ typedef struct grabber_tmdb_s {
 static const metadata_plist_t tmdb_pl[] = {
   { VALHALLA_METADATA_COVER,          VALHALLA_METADATA_PL_HIGHER   },
   { VALHALLA_METADATA_FAN_ART,        VALHALLA_METADATA_PL_HIGHER   },
-  { NULL,                             VALHALLA_METADATA_PL_NORMAL   }
+  { NULL,                             VALHALLA_METADATA_PL_HIGH     }
 };
 
 
