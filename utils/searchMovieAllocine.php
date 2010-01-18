@@ -338,7 +338,7 @@
     {
         $moviematchestag = $document->CreateElement ('moviematches');
         $matches = array ();
-        preg_match_all ("#<a href='/film/fichefilm_gen_cfilm=(\d+).html'><img#SUmis", $html_content, $matches);
+        preg_match_all ("#<a href='/film/fichefilm_gen_cfilm=(\d+).html'><img.+src='.+'.+alt='.+' />#SUmis", $html_content, $matches);
 
         foreach ($matches[1] as $resultat)
         {
