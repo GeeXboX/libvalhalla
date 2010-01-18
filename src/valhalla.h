@@ -820,17 +820,23 @@ typedef struct valhalla_db_filemeta_s {
   int      external;
 } valhalla_db_filemeta_t;
 
-#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority) \
-  {.type = VALHALLA_DB_TYPE_##_type,                  \
-   .id = _id, .text = _text, .group = VALHALLA_META_GRP_##_group, \
-   .priority = VALHALLA_METADATA_PL_##_priority}
+#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority)  \
+  {                                                               \
+    .type     = VALHALLA_DB_TYPE_##_type,                         \
+    .id       = _id,                                              \
+    .text     = _text,                                            \
+    .group    = VALHALLA_META_GRP_##_group,                       \
+    .priority = VALHALLA_METADATA_PL_##_priority                  \
+  }
 
-#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id,                  \
-                             _m_text, _d_text, _m_type, _d_type, \
-                             _priority)                          \
-  {.next = NULL, .op = VALHALLA_DB_OPERATOR_##_op,               \
-   .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority),\
-   .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)}
+#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,         \
+                             _m_type, _d_type, _priority)                 \
+  {                                                                       \
+    .next = NULL,                                                         \
+    .op   = VALHALLA_DB_OPERATOR_##_op,                                   \
+    .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority), \
+    .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)  \
+  }
 
 
 /**
@@ -865,14 +871,22 @@ typedef struct valhalla_db_filemeta_s {
   do {(to).next = &(from);} while (0)
 
 /** \brief Free a valhalla_db_filemeta_t pointer. */
-#define VALHALLA_DB_FILEMETA_FREE(meta)                  \
-  do {                                                   \
-    typeof (meta) tmp;                                   \
-    while (meta) {                                       \
-      if ((meta)->meta_name)  free ((meta)->meta_name);  \
-      if ((meta)->data_value) free ((meta)->data_value); \
-      tmp = (meta)->next; free (meta); meta = tmp;}      \
-  } while (0)
+#define VALHALLA_DB_FILEMETA_FREE(meta) \
+  do                                    \
+  {                                     \
+    typeof (meta) tmp;                  \
+    while (meta)                        \
+    {                                   \
+      if ((meta)->meta_name)            \
+        free ((meta)->meta_name);       \
+      if ((meta)->data_value)           \
+        free ((meta)->data_value);      \
+      tmp = (meta)->next;               \
+      free (meta);                      \
+      meta = tmp;                       \
+    }                                   \
+  }                                     \
+  while (0)
 
 /**
  * @}
