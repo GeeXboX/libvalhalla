@@ -826,7 +826,7 @@ typedef struct valhalla_db_filemeta_s {
     .id       = _id,                                              \
     .text     = _text,                                            \
     .group    = VALHALLA_META_GRP_##_group,                       \
-    .priority = VALHALLA_METADATA_PL_##_priority                  \
+    .priority = _priority                                         \
   }
 
 #define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,         \
@@ -902,8 +902,9 @@ typedef struct valhalla_db_filemeta_s {
  *
  * Example (to list all albums of an author):
  *  \code
- *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES, LOWEST);
- *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", LOWEST);
+ *  pmin        = VALHALLA_METADATA_PL_LOWEST;
+ *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES, pmin);
+ *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", pmin);
  *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
@@ -930,8 +931,9 @@ int valhalla_db_metalist_get (valhalla_t *handle,
  *
  * Example (to list all files of an author, without album):
  *  \code
- *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", NORMAL);
- *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL, NORMAL);
+ *  pmin          = VALHALLA_METADATA_PL_NORMAL;
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", pmin);
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL, pmin);
  *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
  *  \endcode
  *
@@ -959,8 +961,9 @@ int valhalla_db_filelist_get (valhalla_t *handle,
  *
  * Example (to retrieve only the track and the title):
  *  \code
- *  restriction_1 = VALHALLA_DB_RESTRICT_STR (EQUAL, "track", NULL, LOWEST);
- *  restriction_2 = VALHALLA_DB_RESTRICT_STR (EQUAL, "title", NULL, LOWEST);
+ *  pmin          = VALHALLA_METADATA_PL_LOWEST;
+ *  restriction_1 = VALHALLA_DB_RESTRICT_STR (EQUAL, "track", NULL, pmin);
+ *  restriction_2 = VALHALLA_DB_RESTRICT_STR (EQUAL, "title", NULL, pmin);
  *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
  *  \endcode
  *
