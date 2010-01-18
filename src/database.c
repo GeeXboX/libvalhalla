@@ -1817,7 +1817,7 @@ vh_database_file_get (database_t *database,
    *   (
    *     meta.<meta_id|meta_name> = <ID|"TEXT">
    *       AND data.<data_id|data_value> = <ID|"TEXT">
-   *       AND assoc.priorty__ <= <PRIORITY>
+   *       AND assoc.priority__ <= <PRIORITY>
    *   )
    *   <OR>
    * )
