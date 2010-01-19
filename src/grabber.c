@@ -657,7 +657,7 @@ grabber_register_childs (void)
 
 #define STATS_DUMP(name, success, total, time)                      \
   vh_log (VALHALLA_MSG_INFO,                                        \
-          "%-10s | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file", \
+          "%-12s | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file", \
           name, success, total,                                     \
           (total) ? 100.0 * (success) / (total) : 100.0,            \
           time, (total) ? (time) / (total) : 0.0)
@@ -673,11 +673,11 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
   if (!stats || !grabber)
     return;
 
-  vh_log (VALHALLA_MSG_INFO,
-          "==================================================================");
+  vh_log (VALHALLA_MSG_INFO, "=================================="
+                             "==================================");
   vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
-  vh_log (VALHALLA_MSG_INFO,
-          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   for (it = grabber->list; it; it = it->next)
   {
@@ -696,13 +696,13 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
     STATS_DUMP (it->name, success, total, time);
   }
 
-  vh_log (VALHALLA_MSG_INFO,
-          "~~~~~~~~~~ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~ | "
+          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 #if 0
   STATS_DUMP ("GLOBAL", success_all, total_all, total_all);
 #else
   vh_log (VALHALLA_MSG_INFO,
-          "%-10s | %6lu/%-6lu (%6.2f%%)",
+          "%-12s | %6lu/%-6lu (%6.2f%%)",
           "GLOBAL", success_all, total_all,
           (total_all) ? 100.0 * (success_all) / (total_all) : 100);
 #endif /* 0 */
