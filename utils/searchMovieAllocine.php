@@ -161,7 +161,7 @@
         $people = $document->CreateElement ('people', '');
 
         /* director of movie */
-        if (preg_match_all ('#Réalisé par <span class="bold"><a href=\'/personne/fichepersonne_gen_cpersonne=\d+\.html\' title=\'.+\'>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
+        if (preg_match_all ('#Réalisé par <span class="bold"><a href=\'/personne/fichepersonne_gen_cpersonne=\d+\.html\' title=\'.+\'>.+</span>#SUmis', $data, $infos, PREG_SET_ORDER) != 0)
         {
             if (preg_match_all ('#<a href=\'/personne/fichepersonne_gen_cpersonne=(\d+)\.html\' title=\'(.+)\'>#SUmis', $infos[0][0], $infos_supp, PREG_SET_ORDER) != 0)
             {
