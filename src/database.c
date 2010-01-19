@@ -1434,15 +1434,20 @@ vh_database_init (const char *path)
   while (0)
 
 #define DATABASE_RETURN_SQL_EXEC(db, sql, cb, data, msg) \
+  {                                                      \
+    int res = 0;                                         \
+    valhalla_verb_t verb = VALHALLA_MSG_VERBOSE;         \
   database_sql_exec (db, sql, cb, &data, &msg);          \
   if (msg)                                               \
   {                                                      \
     vh_log (VALHALLA_MSG_ERROR, "%s", msg);              \
     free (msg);                                          \
-    return -1;                                           \
+      res = -1;                                          \
+      verb = VALHALLA_MSG_ERROR;                         \
   }                                                      \
-  vh_log (VALHALLA_MSG_VERBOSE, "query: %s", sql);       \
-  return 0;
+    vh_log (verb, "query: %s", sql);                     \
+    return res;                                          \
+  }
 
 
 static void
