@@ -1437,14 +1437,14 @@ vh_database_init (const char *path)
   {                                                      \
     int res = 0;                                         \
     valhalla_verb_t verb = VALHALLA_MSG_VERBOSE;         \
-  database_sql_exec (db, sql, cb, &data, &msg);          \
-  if (msg)                                               \
-  {                                                      \
-    vh_log (VALHALLA_MSG_ERROR, "%s", msg);              \
-    free (msg);                                          \
+    database_sql_exec (db, sql, cb, &data, &msg);        \
+    if (msg)                                             \
+    {                                                    \
+      vh_log (VALHALLA_MSG_ERROR, "%s", msg);            \
+      free (msg);                                        \
       res = -1;                                          \
       verb = VALHALLA_MSG_ERROR;                         \
-  }                                                      \
+    }                                                    \
     vh_log (verb, "query: %s", sql);                     \
     return res;                                          \
   }
