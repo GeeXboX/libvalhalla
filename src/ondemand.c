@@ -214,6 +214,7 @@ ondemand_thread (void *arg)
           vh_fifo_queue_moveup (queue, file, ondemand_cmp_fct);
         }
       }
+      if (fdata == OD_TYPE_DEF)
       fdata->od = OD_TYPE_UPD;
     }
     /* Check if the file is available and consistent. */
