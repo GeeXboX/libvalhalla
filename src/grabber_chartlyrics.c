@@ -97,8 +97,11 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
 
   /* get ChartLyrics Lyric Checksum */
   tmp2 = vh_get_prop_value_from_xml_tree (n, "LyricChecksum");
-  if (!tmp)
+  if (!tmp2)
+  {
+    xmlFree (tmp);
     goto error;
+  }
 
   xmlFreeDoc (doc);
   doc = NULL;
