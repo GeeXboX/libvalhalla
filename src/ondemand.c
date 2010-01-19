@@ -201,7 +201,7 @@ ondemand_thread (void *arg)
         }
       }
       if (fdata == OD_TYPE_DEF)
-      fdata->od = OD_TYPE_UPD;
+        fdata->od = OD_TYPE_UPD;
     }
     /* Check if the file is available and consistent. */
     else if (S_ISREG (st.st_mode)
