@@ -46,6 +46,9 @@
 #ifdef HAVE_GRABBER_AMAZON
 #include "grabber_amazon.h"
 #endif /* HAVE_GRABBER_AMAZON */
+#ifdef HAVE_GRABBER_CHARTLYRICS
+#include "grabber_chartlyrics.h"
+#endif /* HAVE_GRABBER_CHARTLYRICS */
 #ifdef HAVE_GRABBER_EXIF
 #include "grabber_exif.h"
 #endif /* HAVE_GRABBER_EXIF */
@@ -137,6 +140,9 @@ static grabber_list_t *(*const g_grabber_register[]) (void) = {
 #ifdef HAVE_GRABBER_EXIF
   vh_grabber_exif_register,
 #endif /* HAVE_GRABBER_EXIF */
+#ifdef HAVE_GRABBER_CHARTLYRICS
+  vh_grabber_chartlyrics_register,
+#endif /* HAVE_GRABBER_CHARTLYRICS */
 #ifdef HAVE_GRABBER_LYRICWIKI
   vh_grabber_lyricwiki_register,
 #endif /* HAVE_GRABBER_LYRICWIKI */

@@ -9,6 +9,7 @@
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  By default   allocine      |   NORMAL
               amazon        |   NORMAL
+              chartlyrics   |   ABOVE
               exif          |   HIGHEST
               ffmpeg        |   HIGHEST
               imdb          |   NORMAL

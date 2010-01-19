@@ -45,6 +45,7 @@ show_help(){
   echo "  --enable-grabber-dummy      build dummy grabber (for debugging) [default=no]"
   echo "  --enable-grabber-allocine   build Allocine grabber [default=yes]"
   echo "  --enable-grabber-amazon     build Amazon grabber [default=yes]"
+  echo "  --enable-grabber-chartlyrics build ChartLyrics grabber [default=yes]"
   echo "  --enable-grabber-exif       build EXIF grabber [default=yes]"
   echo "  --enable-grabber-ffmpeg     build FFmpeg grabber [default=no]"
   echo "  --enable-grabber-imdb       build ImDB grabber [default=yes]"
@@ -468,6 +469,7 @@ grabber_all="auto"
 grabber_dummy="no"
 grabber_allocine="auto"
 grabber_amazon="auto"
+grabber_chartlyrics="auto"
 grabber_exif="auto"
 grabber_ffmpeg="auto"
 grabber_imdb="auto"
@@ -574,6 +576,10 @@ for opt do
   --enable-grabber-amazon) grabber_amazon="yes";
   ;;
   --disable-grabber-amazon) grabber_amazon="no";
+  ;;
+  --enable-grabber-chartlyrics) grabber_chartlyrics="yes";
+  ;;
+  --disable-grabber-chartlyrics) grabber_chartlyrics="no";
   ;;
   --enable-grabber-exif) grabber_exif="yes";
   ;;
@@ -1005,7 +1011,7 @@ grabber_enable_dep(){
 }
 
 grabber="no"
-grabbers="allocine amazon exif ffmpeg imdb lastfm local lyricwiki nfo tmdb tvdb tvrage"
+grabbers="allocine amazon chartlyrics exif ffmpeg imdb lastfm local lyricwiki nfo tmdb tvdb tvrage"
 
 if [ "$grabber_all" != "auto" ]; then
   eval grabber_set_$grabber_all \$grabbers
@@ -1026,7 +1032,7 @@ grabber_enable_dep gcrypt_dep_grabber
 nfo_dep_grabber="nfo"
 grabber_enable_dep nfo_dep_grabber
 
-xml_dep_grabber="allocine amazon imdb lastfm lyricwiki tmdb tvdb tvrage"
+xml_dep_grabber="allocine amazon chartlyrics imdb lastfm lyricwiki tmdb tvdb tvrage"
 grabber_enable_dep xml_dep_grabber
 
 if enabled xml; then
@@ -1286,6 +1292,7 @@ echolog "  Grabbers support:  $grabber"
 echolog "    Dummy            $grabber_dummy"
 echolog "    Allocine         $grabber_allocine"
 echolog "    Amazon           $grabber_amazon"
+echolog "    ChartLyrics      $grabber_chartlyrics"
 echolog "    EXIF             $grabber_exif"
 echolog "    FFmpeg           $grabber_ffmpeg"
 echolog "    ImDB             $grabber_imdb"
@@ -1354,6 +1361,7 @@ append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_ALLOCINE=$grabber_allocine"
 append_config "GRABBER_AMAZON=$grabber_amazon"
+append_config "GRABBER_CHARTLYRICS=$grabber_chartlyrics"
 append_config "GRABBER_EXIF=$grabber_exif"
 append_config "GRABBER_FFMPEG=$grabber_ffmpeg"
 append_config "GRABBER_IMDB=$grabber_imdb"

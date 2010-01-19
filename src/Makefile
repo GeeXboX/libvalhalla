@@ -52,6 +52,7 @@ EXTRADIST = \
 	grabber.h \
 	grabber_allocine.h \
 	grabber_amazon.h \
+	grabber_chartlyrics.h \
 	grabber_common.h \
 	grabber_dummy.h \
 	grabber_exif.h \
@@ -95,6 +96,7 @@ SRCS_GRABBER-$(HMAC_SHA256)		+= hmac_sha256.c
 SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c
 SRCS_GRABBER-$(GRABBER_ALLOCINE)	+= grabber_allocine.c
 SRCS_GRABBER-$(GRABBER_AMAZON)		+= grabber_amazon.c
+SRCS_GRABBER-$(GRABBER_CHARTLYRICS)	+= grabber_chartlyrics.c
 SRCS_GRABBER-$(GRABBER_EXIF)		+= grabber_exif.c
 SRCS_GRABBER-$(GRABBER_FFMPEG)		+= grabber_ffmpeg.c
 SRCS_GRABBER-$(GRABBER_IMDB)		+= grabber_imdb.c
