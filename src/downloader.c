@@ -54,12 +54,14 @@ struct downloader_s {
 
   vh_stats_cnt_t *st_cnt_success;
   vh_stats_cnt_t *st_cnt_failure;
+  vh_stats_cnt_t *st_cnt_skip;
   vh_stats_tmr_t *st_tmr;
 };
 
 #define STATS_GROUP   "downloader"
 #define STATS_SUCCESS "success"
 #define STATS_FAILURE "failure"
+#define STATS_SKIP    "skip"
 
 
 static inline int
@@ -156,6 +158,7 @@ downloader_thread (void *arg)
         /* no need to download again an already existing file */
         if (vh_file_exists (dest))
         {
+          VH_STATS_COUNTER_INC (downloader->st_cnt_skip);
           free (dest);
           continue;
         }
@@ -295,7 +298,7 @@ static void
 downloader_stats_dump (vh_stats_t *stats, void *data)
 {
   downloader_t *downloader = data;
-  unsigned long success, failure, total;
+  unsigned long success, failure, skip, total;
   float time;
 
   if (!stats || !downloader)
@@ -309,12 +312,14 @@ downloader_stats_dump (vh_stats_t *stats, void *data)
 
   success = vh_stats_counter_read (downloader->st_cnt_success);
   failure = vh_stats_counter_read (downloader->st_cnt_failure);
+  skip    = vh_stats_counter_read (downloader->st_cnt_skip);
   total   = success + failure;
   time    = vh_stats_timer_read (downloader->st_tmr) / 1000000000.0;
   vh_log (VALHALLA_MSG_INFO,
           "Downloads  | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file",
           success, total, total ? 100.0 * success / total : 100.0,
           time, total ? time / total : 0.0);
+  vh_log (VALHALLA_MSG_INFO, "Skipped    | %6lu", skip);
 }
 
 downloader_t *
@@ -355,6 +360,8 @@ vh_downloader_init (valhalla_t *handle)
     vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_SUCCESS, NULL);
   downloader->st_cnt_failure =
     vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_FAILURE, NULL);
+  downloader->st_cnt_skip =
+    vh_stats_grp_counter_add (handle->stats, STATS_GROUP, STATS_SKIP, NULL);
   downloader->st_tmr =
     vh_stats_grp_timer_add (handle->stats, STATS_GROUP, STATS_GROUP, NULL);
 
