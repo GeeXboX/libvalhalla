@@ -319,7 +319,7 @@ downloader_stats_dump (vh_stats_t *stats, void *data)
           "Downloads  | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file",
           success, total, total ? 100.0 * success / total : 100.0,
           time, total ? time / total : 0.0);
-  vh_log (VALHALLA_MSG_INFO, "Skipped    | %6lu", skip);
+  vh_log (VALHALLA_MSG_INFO, "Skipped    | %6lu/%-6lu", skip, total + skip);
 }
 
 downloader_t *
