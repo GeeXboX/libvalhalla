@@ -109,6 +109,11 @@ vh_url_get_data (url_t *handler, char *url)
   curl_easy_setopt (curl, CURLOPT_WRITEDATA, (void *) &chunk);
 
   chunk.status = curl_easy_perform (curl);
+  if (chunk.status)
+  {
+    const char *err = curl_easy_strerror (chunk.status);
+    vh_log (VALHALLA_MSG_VERBOSE, "%s: %s", __FUNCTION__, err);
+  }
 
   return chunk;
 }
