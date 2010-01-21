@@ -385,6 +385,7 @@ grabber_tvdb_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (tvdb,
                   GRABBER_CAP_FLAGS,
                   tvdb_pl,
+                  0,
                   grabber_tvdb_priv,
                   grabber_tvdb_init,
                   grabber_tvdb_uninit,

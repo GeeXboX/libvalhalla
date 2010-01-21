@@ -175,6 +175,7 @@ grabber_local_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (local,
                   GRABBER_CAP_FLAGS,
                   local_pl,
+                  0,
                   grabber_local_priv,
                   grabber_local_init,
                   grabber_local_uninit,

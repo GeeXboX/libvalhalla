@@ -265,6 +265,7 @@ grabber_lyricwiki_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (lyricwiki,
                   GRABBER_CAP_FLAGS,
                   lyricwiki_pl,
+                  0,
                   grabber_lyricwiki_priv,
                   grabber_lyricwiki_init,
                   grabber_lyricwiki_uninit,

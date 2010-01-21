@@ -224,6 +224,7 @@ grabber_ffmpeg_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (ffmpeg,
                   GRABBER_CAP_FLAGS,
                   ffmpeg_pl,
+                  0,
                   grabber_ffmpeg_priv,
                   grabber_ffmpeg_init,
                   grabber_ffmpeg_uninit,

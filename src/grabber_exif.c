@@ -159,6 +159,7 @@ grabber_exif_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (exif,
                   GRABBER_CAP_FLAGS,
                   exif_pl,
+                  0,
                   grabber_exif_priv,
                   grabber_exif_init,
                   grabber_exif_uninit,

@@ -392,6 +392,7 @@ grabber_nfo_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (nfo,
                   GRABBER_CAP_FLAGS,
                   nfo_pl,
+                  0,
                   grabber_nfo_priv,
                   grabber_nfo_init,
                   grabber_nfo_uninit,

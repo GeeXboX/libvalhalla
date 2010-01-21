@@ -333,6 +333,7 @@ grabber_tmdb_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (tmdb,
                   GRABBER_CAP_FLAGS,
                   tmdb_pl,
+                  0,
                   grabber_tmdb_priv,
                   grabber_tmdb_init,
                   grabber_tmdb_uninit,

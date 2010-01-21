@@ -232,6 +232,7 @@ grabber_chartlyrics_grab (void *priv, file_data_t *data)
 GRABBER_REGISTER (chartlyrics,
                   GRABBER_CAP_FLAGS,
                   chartlyrics_pl,
+                  1000, /* 1 sec */
                   grabber_chartlyrics_priv,
                   grabber_chartlyrics_init,
                   grabber_chartlyrics_uninit,
