@@ -253,16 +253,16 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
         return NULL;
       }
 
-      /* check for the minimum time between grab() */
       if (!rc)
       {
         unsigned long int time;
 
+        /* check for the minimum time between grab() */
         VH_TIMERNOW (&time);
         if (time > it->timegrab && time - it->timegrab < it->timewait)
           pthread_mutex_unlock (&it->mutex);
         else
-        return it; /* locked */
+          return it; /* locked */
       }
 
       if (!fskip)
