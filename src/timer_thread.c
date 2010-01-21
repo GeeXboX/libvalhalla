@@ -34,15 +34,23 @@ struct timer_thread_s {
 
 
 void
-vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout)
+vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout)
 {
-  struct timespec ts;
+  struct timespec ts, ti;
+
+  ti.tv_sec  = 0;
+  ti.tv_nsec = timeout;
+  while (ti.tv_nsec >= 1000000000)
+  {
+    ti.tv_sec++;
+    ti.tv_nsec -= 1000000000;
+  }
 
   pthread_mutex_lock (&timer->mutex);
   if (timer->run)
   {
     vh_clock_gettime (CLOCK_REALTIME, &ts);
-    ts.tv_sec += timeout;
+    VH_TIMERADD (&ts, &ti, &ts);
 
     pthread_cond_timedwait (&timer->cond, &timer->mutex, &ts);
   }

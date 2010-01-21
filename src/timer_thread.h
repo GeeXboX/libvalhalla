@@ -26,7 +26,7 @@
 
 typedef struct timer_thread_s timer_thread_t;
 
-void vh_timer_thread_sleep (timer_thread_t *timer, uint16_t timeout);
+void vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout);
 void vh_timer_thread_wakeup (timer_thread_t *timer);
 void vh_timer_thread_stop (timer_thread_t *timer);
 void vh_timer_thread_start (timer_thread_t *timer);

@@ -56,7 +56,7 @@ struct scanner_s {
   int             run;
   pthread_mutex_t mutex_run;
 
-  uint16_t        timeout;
+  unsigned long int timeout;
   timer_thread_t *timer;
 
   struct path_s {
@@ -268,7 +268,7 @@ scanner_thread (void *arg)
           "[%s] tid: %i priority: %i", __FUNCTION__, tid, scanner->priority);
 
   vh_log (VALHALLA_MSG_INFO,
-          "[%s] Scanner initialized : loop = %i, timeout = %u [sec]",
+          "[%s] Scanner initialized : loop = %i, timeout = %lu [nsec]",
           __FUNCTION__, scanner->loop, scanner->timeout);
 
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
@@ -364,7 +364,7 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   /* if timeout is 0, there is no sleep between loops */
   if (timeout)
   {
-    scanner->timeout = timeout;
+    scanner->timeout = timeout * 1000000000UL;
     vh_timer_thread_start (scanner->timer);
   }
 
