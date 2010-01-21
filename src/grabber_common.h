@@ -160,6 +160,11 @@ typedef struct grabber_list_s {
   /** \private Different of 0 if the grabber is enabled. */
   int enable;
 
+  /** \private Minimum time to wait before the next grab(). */
+  unsigned long int timewait;
+  /** \private Time when the grab has finished. */
+  unsigned long int timegrab;
+
   /** \private Prevent races with several grabbers. */
   pthread_mutex_t mutex;
 
@@ -182,13 +187,14 @@ typedef struct grabber_list_s {
  * \param[in] p_name      Grabber's name.
  * \param[in] p_caps      Capabilities flags.
  * \param[in] p_pl        List of metadata priorities.
+ * \param[in] p_tw        Min time to wait [ms] between grabber_list_t::grab().
  * \param[in] fct_priv    Function to retrieve the private data pointer.
  * \param[in] fct_init    grabber_list_t::init().
  * \param[in] fct_uninit  grabber_list_t::uninit().
  * \param[in] fct_grab    grabber_list_t::grab().
  * \param[in] fct_loop    grabber_list_t::loop().
  */
-#define GRABBER_REGISTER(p_name, p_caps, p_pl,                                \
+#define GRABBER_REGISTER(p_name, p_caps, p_pl, p_tw,                          \
                          fct_priv, fct_init, fct_uninit, fct_grab, fct_loop)  \
   grabber_list_t *                                                            \
   vh_grabber_##p_name##_register (void)                                       \
@@ -204,6 +210,7 @@ typedef struct grabber_list_s {
     grabber->name      = #p_name;                                             \
     grabber->caps_flag = p_caps;                                              \
     grabber->enable    = 1;                                                   \
+    grabber->timewait  = p_tw * 1000000UL;                                    \
     grabber->priv      = fct_priv ();                                         \
                                                                               \
     grabber->init      = fct_init;                                            \

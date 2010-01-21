@@ -101,6 +101,16 @@ int vh_get_list_length (void *list);
 #define VH_ISSPACE(c) isspace ((int) (unsigned char) (c))
 #define VH_TOLOWER(c) tolower ((int) (unsigned char) (c))
 
+#define VH_TIMERNOW(t)                                \
+  do                                                  \
+  {                                                   \
+    struct timespec tp;                               \
+    *(t) = 0;                                         \
+    if (!vh_clock_gettime (CLOCK_REALTIME, &tp))      \
+      *(t) = tp.tv_sec * 1000000000 + tp.tv_nsec;     \
+  }                                                   \
+  while (0)
+
 #define VH_TIMERSUB(a, b, result)                     \
   do                                                  \
   {                                                   \
