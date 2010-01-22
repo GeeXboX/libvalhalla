@@ -48,7 +48,7 @@
 #define TVDB_DEFAULT_LANGUAGE   "en"
 
 #define TVDB_HOSTNAME           "thetvdb.com"
-#define TVDB_IMAGES_HOSTNAME    "images.thetvdb.com"
+#define TVDB_IMAGES_HOSTNAME    "thetvdb.com"
 
 #define TVDB_API_KEY            "29739E1D50A2ACA9"
 
