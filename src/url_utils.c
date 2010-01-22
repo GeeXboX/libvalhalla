@@ -144,14 +144,14 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   data = vh_url_get_data (curl, src);
   if (data.status != CURLE_OK)
   {
-    vh_log (VALHALLA_MSG_WARNING, "Unable to download requested file");
+    vh_log (VALHALLA_MSG_WARNING, "Unable to download requested file %s", src);
     return -1;
   }
 
   fd = open (dst, O_WRONLY | O_CREAT, 0666);
   if (fd < 0)
   {
-    vh_log (VALHALLA_MSG_WARNING, "Unable to open stream to save file");
+    vh_log (VALHALLA_MSG_WARNING, "Unable to open stream to save file %s", dst);
     free (data.buffer);
     return -1;
   }
