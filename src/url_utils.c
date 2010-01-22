@@ -69,6 +69,7 @@ vh_url_new (void)
   curl_easy_setopt (curl, CURLOPT_TIMEOUT, 20);
   curl_easy_setopt (curl, CURLOPT_CONNECTTIMEOUT, 5);
   curl_easy_setopt (curl, CURLOPT_USERAGENT, useragent);
+  curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
 
   return (url_t *) curl;
 }
