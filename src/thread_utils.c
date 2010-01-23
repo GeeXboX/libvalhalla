@@ -36,7 +36,7 @@ vh_setpriority (int prio)
    * the reason why gettid() is necessary.
    * With BSD, gettid() is not a valid system call. The threads are created with
    * PTHREAD_SCOPE_PROCESS, then all threads have an unique PID which can be
-   * got with getpid().
+   * gotten with getpid().
    *
    * NOTE: the scope PTHREAD_SCOPE_PROCESS is not supported by the Linux kernel.
    */
