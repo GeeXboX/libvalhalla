@@ -408,7 +408,6 @@ vh_dbmanager_run (dbmanager_t *dbmanager, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
-  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res = pthread_create (&dbmanager->thread, &attr, dbmanager_thread, dbmanager);
   if (res)

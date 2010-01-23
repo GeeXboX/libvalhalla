@@ -71,12 +71,6 @@ struct valhalla_s {
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
-#ifdef __linux__
-#define VH_THREAD_SCOPE PTHREAD_SCOPE_SYSTEM
-#else
-#define VH_THREAD_SCOPE PTHREAD_SCOPE_PROCESS
-#endif /* __linux__ */
-
 #ifndef vh_unused
 #if defined(__GNUC__)
 #  define vh_unused __attribute__((unused))

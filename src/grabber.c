@@ -346,7 +346,6 @@ vh_grabber_run (grabber_t *grabber, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
-  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   pthread_mutex_lock (&grabber->mutex_grabber);
   res = pthread_create (&grabber->thread, &attr, grabber_thread, grabber);

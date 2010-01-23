@@ -477,7 +477,6 @@ vh_parser_run (parser_t *parser, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
-  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   for (i = 0; i < parser->nb; i++)
   {

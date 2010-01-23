@@ -206,7 +206,6 @@ vh_dispatcher_run (dispatcher_t *dispatcher, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
-  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res =
     pthread_create (&dispatcher->thread, &attr, dispatcher_thread, dispatcher);
