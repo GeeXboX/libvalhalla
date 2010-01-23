@@ -31,14 +31,19 @@ int
 vh_setpriority (int prio)
 {
   /*
-   * According to POSIX, getpid() returns the PID of the main process, then all
-   * threads return the same PID if the scope is PTHREAD_SCOPE_SYSTEM. It is
-   * the reason why gettid() is necessary.
-   * With BSD, gettid() is not a valid system call. The threads are created with
-   * PTHREAD_SCOPE_PROCESS, then all threads have an unique PID which can be
-   * gotten with getpid().
+   * Linux creates the threads with the clone system call. The function
+   * pthread_create() uses the flag CLONE_THREAD with clone(). All threads
+   * are placed in a group with a shared PID, so-called TGID for thread
+   * group. The function getpid() returns the TGID, and gettid() returns
+   * the TID of the thread. But gettid() is a Linux specific system call.
+   *  http://www.kernel.org/doc/man-pages/online/pages/man2/clone.2.html
+   *  (DESCRIPTION -> CLONE_THREAD)
    *
-   * NOTE: the scope PTHREAD_SCOPE_PROCESS is not supported by the Linux kernel.
+   * A FreeBSD kernel has no clone and gettid system calls. The threads
+   * are created by rfork() and every thread has its own PID which can be
+   * retrieved with getpid().
+   *  http://www.khmere.com/freebsd_book/html/ch03.html
+   *  (ch. 3.4 and ch. 3.5)
    */
 #ifdef __linux__
   pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
