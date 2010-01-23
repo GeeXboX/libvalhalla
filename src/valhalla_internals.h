@@ -75,12 +75,6 @@ struct valhalla_s {
 #define STOP_FLAG_REQUEST (1 << 0)
 #define STOP_FLAG_WAIT    (1 << 1)
 
-#ifdef __linux__
-#define VH_THREAD_SCOPE PTHREAD_SCOPE_SYSTEM
-#else
-#define VH_THREAD_SCOPE PTHREAD_SCOPE_PROCESS
-#endif /* __linux__ */
-
 #ifndef vh_unused
 #if defined(__GNUC__)
 #  define vh_unused __attribute__((unused))
