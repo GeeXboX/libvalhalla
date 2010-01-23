@@ -167,6 +167,7 @@ vh_downloader_run (downloader_t *downloader, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res =
     pthread_create (&downloader->thread, &attr, downloader_thread, downloader);
