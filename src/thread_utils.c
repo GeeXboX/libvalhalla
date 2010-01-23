@@ -44,7 +44,7 @@ vh_setpriority (int prio)
   pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
 #else
   pid_t pid = getpid ();
-#endif
+#endif /* __linux__ */
   setpriority (PRIO_PROCESS, pid, prio);
   return (int) pid;
 }
