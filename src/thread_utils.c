@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <sys/resource.h>
 #include <sys/syscall.h>
+#include <sys/types.h>
 
 #include "thread_utils.h"
 
@@ -29,7 +30,21 @@
 int
 vh_setpriority (int prio)
 {
+  /*
+   * According to POSIX, getpid() returns the PID of the main process, then all
+   * threads return the same PID if the scope is PTHREAD_SCOPE_SYSTEM. It is
+   * the reason why gettid() is necessary.
+   * With BSD, gettid() is not a valid system call. The threads are created with
+   * PTHREAD_SCOPE_PROCESS, then all threads have an unique PID which can be
+   * got with getpid().
+   *
+   * NOTE: the scope PTHREAD_SCOPE_PROCESS is not supported by the Linux kernel.
+   */
+#ifdef __linux__
   pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
+#else
+  pid_t pid = getpid ();
+#endif
   setpriority (PRIO_PROCESS, pid, prio);
   return (int) pid;
 }

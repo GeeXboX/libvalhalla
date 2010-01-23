@@ -196,6 +196,7 @@ vh_event_handler_run (event_handler_t *event_handler, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res = pthread_create (&event_handler->thread,
                         &attr, event_handler_thread, event_handler);

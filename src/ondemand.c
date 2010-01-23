@@ -262,6 +262,7 @@ vh_ondemand_run (ondemand_t *ondemand, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res = pthread_create (&ondemand->thread, &attr, ondemand_thread, ondemand);
   if (res)

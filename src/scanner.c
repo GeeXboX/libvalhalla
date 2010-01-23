@@ -376,6 +376,7 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+  pthread_attr_setscope (&attr, VH_THREAD_SCOPE);
 
   res = pthread_create (&scanner->thread, &attr, scanner_thread, scanner);
   if (res)
