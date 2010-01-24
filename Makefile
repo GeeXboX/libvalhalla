@@ -9,6 +9,9 @@ PKGCONFIG_FILE = libvalhalla.pc
 VHTEST = libvalhalla-test
 VHTEST_SRCS = libvalhalla-test.c
 VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
+VHTEST_MAN = $(VHTEST).1
+
+MANS = $(VHTEST_MAN)
 
 override CPPFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lvalhalla
@@ -26,6 +29,7 @@ EXTRADIST = \
 	COPYING \
 	README \
 	TODO \
+	$(MANS) \
 
 SUBDIRS = \
 	DOCS \
@@ -69,7 +73,7 @@ distclean: clean docs-clean
 	rm -f $(DISTFILE)
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-lib install-pkgconfig install-apps install-docs
+install: install-lib install-pkgconfig install-apps install-docs install-man
 
 install-lib: lib
 	$(MAKE) -C src install
@@ -85,7 +89,14 @@ install-apps: apps
 install-docs: docs
 	$(MAKE) -C DOCS install
 
-uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs
+install-man: $(MANS)
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  $(INSTALL) -d $(mandir)/man$$section; \
+	  $(INSTALL) -m 644 $$m $(mandir)/man$$section; \
+	done
+
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs uninstall-man
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
@@ -98,6 +109,12 @@ uninstall-apps:
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
+
+uninstall-man:
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  rm -f $(mandir)/man$$section/$$m; \
+	done
 
 .PHONY: *clean *install* docs apps*
 
