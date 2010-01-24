@@ -43,6 +43,11 @@ all: lib apps docs
 .c.o:
 	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
+config.mak: configure
+	@echo "############################################################"
+	@echo "####### Please run ./configure again - it's changed! #######"
+	@echo "############################################################"
+
 lib:
 	$(MAKE) -C src
 
