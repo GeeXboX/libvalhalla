@@ -70,70 +70,13 @@ file suffix (extension)
 grabber to be used
 .SS "Example:"
 .IP
-$ libvalhalla\-test \fB\-l\fR 2 \fB\-t\fR 5 \fB\-d\fR ./mydb.db \fB\-p\fR 1 \fB\-a\fR 15 \fB\-s\fR ogg \fB\-s\fR mp3 /home/foobar/music
+libvalhalla\-test \fB\-l\fR 2 \fB\-t\fR 5 \fB\-d\fR ./mydb.db \fB\-p\fR 1 \fB\-a\fR 15 \fB\-s\fR ogg \fB\-s\fR mp3 /home/foobar/music
 .PP
-Default values are loop=1, timewait=0, database=./valhalla.db,
+Default values are:
 .IP
-commit\-int=128, parser=2, priority=19,
-suffix=flac,m4a,mp3,ogg,wav,wma
+loop=1, timewait=0, database=./valhalla.db, commit\-int=128, parser=2, priority=19,
 .IP
-avi,mkv,mov,mpg,wmv
-bmp,gif,jpeg,jpg,png,tga,tif,tiff
-.PP
-Usage: libvalhalla\-test [options ...] paths ...
-.TP
-\fB\-h\fR \fB\-\-help\fR
-this help
-.TP
-\fB\-v\fR \fB\-\-verbose\fR
-increase verbosity
-.TP
-\fB\-l\fR \fB\-\-loop\fR
-number of loops
-.TP
-\fB\-t\fR \fB\-\-timewait\fR
-time to wait between loops [sec]
-.TP
-\fB\-m\fR \fB\-\-timelimit\fR
-time limit [ms] for the scanning
-.TP
-\fB\-a\fR \fB\-\-priority\fR
-priority for the threads
-.TP
-\fB\-d\fR \fB\-\-database\fR
-path for the database
-.TP
-\fB\-f\fR \fB\-\-download\fR
-path for the downloader destination
-.TP
-\fB\-c\fR \fB\-\-commit\-int\fR
-commits interval
-.TP
-\fB\-p\fR \fB\-\-parser\fR
-number of parsers
-.TP
-\fB\-n\fR \fB\-\-decrap\fR
-enable decrapifier (for title metadata)
-.TP
-\fB\-k\fR \fB\-\-keyword\fR
-keyword for the decrapifier
-.TP
-\fB\-s\fR \fB\-\-suffix\fR
-file suffix (extension)
-.TP
-\fB\-g\fR \fB\-\-grabber\fR
-grabber to be used
-.SS "Example:"
-.IP
-$ libvalhalla\-test \fB\-l\fR 2 \fB\-t\fR 5 \fB\-d\fR ./mydb.db \fB\-p\fR 1 \fB\-a\fR 15 \fB\-s\fR ogg \fB\-s\fR mp3 /home/foobar/music
-.PP
-Default values are loop=1, timewait=0, database=./valhalla.db,
-.IP
-commit\-int=128, parser=2, priority=19,
-suffix=flac,m4a,mp3,ogg,wav,wma
-.IP
-avi,mkv,mov,mpg,wmv
-bmp,gif,jpeg,jpg,png,tga,tif,tiff
+suffix=flac,m4a,mp3,ogg,wav,wma,avi,mkv,mov,mpg,wmv, bmp,gif,jpeg,jpg,png,tga,tif,tiff
 .SH AUTHOR
 libvalhalla was written by Mathieu Schroeter <mathieu.schroeter@gamesover.ch>,
 Benjamin Zores <ben@geexbox.org>, Fabien Brisset <fbrisset@gmail.com> and
