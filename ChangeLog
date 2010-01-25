@@ -1,3 +1,18 @@
+2010-01-25  Mathieu Schroeter  <mathieu.schroeter@gamesover.ch>
+
+	* Release (v1.0.1).
+	* Fixes and improvements in configure/Makefiles.
+	* Fix some SQL queries to escape filenames with ["].
+	* Fix potential segfaults when a new database is opened by an
+	  older version of libvalhalla.
+	* Fix Allocine PHP script to handle correctly the number of
+	  results. And now, the script returns all directors.
+	* Fix ondemand when more than one query is sent for the same file,
+	  while that the first ondemand is not finished.
+	* Fix the URL for the "images" server of TheTVDB.com grabber.
+	* Fix the compilation for *BSD/Hurd (at least with the glibc).
+	* Fixes in the LyricWiki grabber in order to prevent that HTML
+	  tags appear in the result instead of the lyrics.
 
 2009-12-06  Mathieu Schroeter  <mathieu.schroeter@gamesover.ch>
 
