@@ -1,3 +1,10 @@
+libvalhalla (1.0.1) karmic; urgency=low
+
+  * Release (v1.0.1).
+  * Bug fixes and minor enhancements.
+
+ -- Mathieu Schroeter <mathieu.schroeter@gamesover.ch>  Mon, 25 Jan 2010 12:37:00 +0100
+
 libvalhalla (1.0.0) karmic; urgency=low
 
   * Initial project release (v1.0.0).
