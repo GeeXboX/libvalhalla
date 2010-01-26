@@ -17,7 +17,9 @@ override CPPFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lvalhalla
 
 ifeq ($(BUILD_STATIC),yes)
+ifeq ($(BUILD_SHARED),no)
   override LDFLAGS += $(EXTRALIBS)
+endif
 endif
 
 DISTFILE = libvalhalla-$(VERSION).tar.bz2
