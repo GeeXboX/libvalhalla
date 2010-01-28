@@ -89,7 +89,8 @@ eventmd_cb (valhalla_event_md_t e, const char *id,
 
   (void) data;
   printf ("Metadata event\n");
-  printf ("  File     : %s (%"PRIi64") (%u)\n", file->path, file->mtime, file->type);
+  printf ("  File     : %s (%"PRIi64") (%u)\n",
+          file->path, file->mtime, file->type);
   switch (e)
   {
   case VALHALLA_EVENTMD_PARSER:
