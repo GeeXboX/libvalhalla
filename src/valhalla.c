@@ -48,6 +48,12 @@
 #endif /* USE_GRABBER */
 
 
+unsigned int
+libvalhalla_version (void)
+{
+  return LIBVALHALLA_VERSION_INT;
+}
+
 /******************************************************************************/
 /*                                                                            */
 /*                             Valhalla Handling                              */

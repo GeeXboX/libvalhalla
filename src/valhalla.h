@@ -57,6 +57,11 @@ extern "C" {
 #include <inttypes.h>
 #include <stdarg.h>
 
+/**
+ * \brief Return LIBVALHALLA_VERSION_INT constant.
+ */
+unsigned int libvalhalla_version (void);
+
 
 typedef enum valhalla_file_type {
   VALHALLA_FILE_TYPE_NULL = 0,
