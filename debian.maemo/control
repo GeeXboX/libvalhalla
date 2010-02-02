@@ -1,0 +1,37 @@
+Source: libvalhalla
+Section: user/multimedia
+Priority: optional
+Maintainer: Benjamin Zores <ben@geexbox.org>
+Standards-Version: 3.8.1
+Vcs-Hg: http://hg.geexbox.org/libvalhalla
+Vcs-Browser: http://hg.geexbox.org/libvalhalla/summary
+Homepage: http://libvalhalla.geexbox.org/
+Build-Depends-Indep: doxygen
+Build-Depends: debhelper (>= 5), cdbs, pkg-config, libavformat-dev, libavutil-dev, libsqlite3-dev, libcurl-dev, libxml2-dev, libexif-dev, libnfo-dev, libgcrypt-dev
+
+Package: libvalhalla
+Section: user/multimedia
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+XB-Maemo-Display-Name: valhalla media scanner library
+XB-Description: a tiny media scanner library
+ libvalhalla is a scanner and parser library for audio/video
+ files based on SQLite and FFmpeg/libavformat.
+ .
+ Media files are retrieved in paths defined by the user and metadata are saved
+ in a database. It provides a very simple API and it can use several parsers
+ concurrently to speed up on a multi-core/cpu system.
+ Its goal is to interact with GeeXboX / Enna Media Center.
+
+Package: libvalhalla-dev
+Section: libdevel
+Architecture: any
+Depends: libvalhalla (= ${binary:Version}), libavformat-dev, libavutil-dev, libsqlite3-dev, libcurl-dev, libxml2-dev, libexif-dev, libnfo-dev, libgcrypt-dev
+XB-Maemo-Display-Name: libvalhalla media scanner development package
+XB-Description: This package contains the header files and static libraries needed to compile applications or shared objects that use libvalhalla.
+
+Package: libvalhalla-bin
+Architecture: user/multimedia
+Depends: libvalhalla (= ${binary:Version}), ${shlibs:Depends}
+XB-Maemo-Display-Name: valhalla media scanner binaries
+XB-Description: This package contains libvalhalla-test

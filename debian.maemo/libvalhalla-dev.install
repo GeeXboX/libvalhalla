@@ -1,0 +1,3 @@
+opt/maemo/usr/include/*.h
+opt/maemo/usr/lib/pkgconfig/*.pc
+opt/maemo/usr/lib/libvalhalla.a

@@ -1,0 +1,3 @@
+/opt/maemo/usr/include/valhalla.h /usr/include/valhalla.h
+/opt/maemo/usr/lib/pkgconfig/libvalhalla.pc /usr/lib/pkgconfig/libvalhalla.pc
+/opt/maemo/usr/lib/libvalhalla.a /usr/lib/libvalhalla.a
