@@ -247,6 +247,10 @@ add_pkgconfig_requires(){
     append pkgconfig_requires "$@"
 }
 
+add_pkgconfig_libs(){
+    append pkgconfig_libs "$@"
+}
+
 check_cmd(){
     log "$@"
     "$@" >>$logfile 2>&1
@@ -372,6 +376,54 @@ check_libconfig(){
     return $err
 }
 
+check_pkgconfig(){
+    local pkg func ccflags clibs err
+    log check_pkgconfig "$@"
+    pkg="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      cflags=`pkg-config $pkg $ccflags`
+      [ -n "$cflags" ] && check_cflags "$cflags"
+      libs=`pkg-config $pkg $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func && add_extralibs "$libs"
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
+check_lib_pkgcfg(){
+    local pkg header func err
+    log check_lib_pkgcfg "$@"
+    pkg="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_pkgconfig $pkg $func && add_pkgconfig_requires $pkg && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
+check_lib_libcfg() {
+    local config header func err
+    log check_lib_pkgcfg "$@"
+    config="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_libconfig $config $func && add_pkgconfig_libs "$@" && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
 check_lib_version() {
     local min_ver toobig_ver
     min_ver="$2"
@@ -467,6 +519,7 @@ pic="no"
 INSTALL="install"
 VERSION=""
 pkgconfig_requires=""
+pkgconfig_libs=""
 grabber_all="auto"
 grabber_dummy="no"
 grabber_allocine="auto"
@@ -893,7 +946,7 @@ check_cppflags -D_FILE_OFFSET_BITS=64
 check_cppflags -D_REENTRANT
 
 # default extralibs
-add_extralibs -lpthread
+add_extralibs -lpthread && add_pkgconfig_libs -lpthread
 
 #################################################
 #   check for functions availability
@@ -905,6 +958,8 @@ if [ "$?" != 0 ]; then
     check_lib mach/clock.h clock_get_time
     [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
     add_cppflags -DUSE_CLOCK_GETTIME_DARWIN
+  else
+    add_pkgconfig_libs -lrt
   fi
 fi
 
@@ -939,12 +994,9 @@ fi
 if [ -n "$lavflibdir" ]; then
   check_ldflags -L${lavflibdir}
 fi
-if [ -z "$lavfdir" -a -z "$lavfincdir" -a -z "$lavflibdir" ]; then
-  add_pkgconfig_deps libavformat
-fi
 
 echolog "Checking for libavformat ..."
-check_lib libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can't find libavformat !"
+check_lib_pkgcfg libavformat libavformat/avformat.h av_metadata_conv -lavformat || die "Error, can't find libavformat !"
 
 
 #################################################
@@ -954,12 +1006,9 @@ if [ -n "$sqlite3dir" ]; then
   check_cppflags -I$sqlite3dir
   check_ldflags -L$sqlite3dir
 fi
-if [ -z "$sqlite3dir" ]; then
-  add_pkgconfig_deps sqlite3
-fi
 
 echolog "Checking for sqlite3 ..."
-check_lib sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 !"
+check_lib_pkgcfg sqlite3 sqlite3.h sqlite3_version -lsqlite3 || die "Error, can't find sqlite3 !"
 
 
 #################################################
@@ -1047,12 +1096,9 @@ if enabled xml; then
     check_cppflags -I$xml2dir
     check_ldflags -L$xml2dir
   fi
-  if [ -z  "$xmldir" ]; then
-    add_pkgconfig_deps libxml-2.0
-  fi
 
   echologn "Checking for libxml2 ... "
-  check_lib libxml/parser.h xmlReadMemory -lxml2
+  check_lib_pkgcfg libxml-2.0 libxml/parser.h xmlReadMemory -lxml2
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_cppflags -DUSE_XML
@@ -1079,12 +1125,9 @@ if enabled avutil; then
   if [ -n "$lavulibdir" ]; then
     check_ldflags -L${lavulibdir}
   fi
-  if [ -z "$lavudir" -a -z "$lavuincdir" -a -z "$lavulibdir" ]; then
-    add_pkgconfig_deps libavutil
-  fi
 
   echologn "Checking for libavutil ... "
-  check_lib libavutil/md5.h av_md5_sum -lavutil
+  check_lib_pkgcfg libavutil libavutil/md5.h av_md5_sum -lavutil
   if [ "$?" = 0 ]; then
     echolog "(yes)"
   else
@@ -1104,15 +1147,9 @@ if enabled gcrypt; then
     check_cppflags -I$gcryptdir
     check_ldflags -L$gcryptdir
   fi
-  if [ -z  "$gcryptdir" ]; then
-    if `which libgcrypt-config 1>/dev/null 2>&1`; then
-      add_cflags `libgcrypt-config --cflags`
-      add_extralibs `libgcrypt-config --libs`
-    fi
-  fi
 
   echologn "Checking for libgcrypt ... "
-  check_lib gcrypt.h gcry_md_open -lgcrypt
+  check_lib_libcfg libgcrypt-config gcrypt.h gcry_md_open -lgcrypt
   if [ "$?" = 0 ]; then
     echolog "(yes)"
   else
@@ -1132,12 +1169,9 @@ if enabled exif; then
     check_cppflags -I$exifdir
     check_ldflags -L$exifdir
   fi
-  if [ -z  "$exifdir" ]; then
-    add_pkgconfig_deps libexif
-  fi
 
   echologn "Checking for libexif ... "
-  check_lib libexif/exif-data.h exif_entry_get_value -lexif
+  check_lib_pkgcfg libexif libexif/exif-data.h exif_entry_get_value -lexif
   if [ "$?" = 0 ]; then
     echolog "(yes)"
   else
@@ -1163,12 +1197,9 @@ if enabled avcodec; then
   if [ -n "$lavclibdir" ]; then
     check_ldflags -L${lavclibdir}
   fi
-  if [ -z  "$lavcdir" -a -z "$lavcincdir" -a -z "$lavclibdir" ]; then
-    add_pkgconfig_deps libavcodec
-  fi
 
   echologn "Checking for libavcodec ... "
-  check_lib libavcodec/avcodec.h av_lockmgr_register -lavcodec
+  check_lib_pkgcfg libavcodec libavcodec/avcodec.h av_lockmgr_register -lavcodec
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_cppflags -DUSE_LAVC
@@ -1189,14 +1220,11 @@ if enabled nfo; then
     check_cppflags -I$nfodir
     check_ldflags -L$nfodir
   fi
-  if [ -z  "$nfodir" ]; then
-    add_pkgconfig_deps libnfo
-  fi
 
   echologn "Checking for libnfo ... "
   check_lib_version libnfo "1.0.0" "2.0.0"
   if [ "$?" = 0 ]; then
-    check_lib nfo.h nfo_init -lnfo
+    check_lib_pkgcfg libnfo nfo.h nfo_init -lnfo
     [ "$?" != 0 ] && die "Error, libnfo available but the compilation failed !"
     echolog "(yes)"
   else
@@ -1218,12 +1246,9 @@ if enabled grabber; then
     check_cppflags -I$curldir
     check_ldflags -L$curldir
   fi
-  if [ -z  "$curldir" ]; then
-    add_pkgconfig_deps libcurl
-  fi
 
   echologn "Checking for libcurl ... "
-  check_lib curl/curl.h curl_global_init -lcurl
+  check_lib_pkgcfg libcurl curl/curl.h curl_global_init -lcurl
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_cppflags -DUSE_GRABBER
@@ -1390,7 +1415,7 @@ pkgconfig_generate libvalhalla \
                    "A tiny media scanner library" \
                    "$VERSION" \
                    "-lvalhalla" \
-                   "$extralibs" \
+                   "$pkgconfig_libs" \
                    "" \
                    "" \
                    "$pkgconfig_requires"
