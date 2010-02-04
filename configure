@@ -1088,6 +1088,30 @@ grabber_enable_dep nfo_dep_grabber
 xml_dep_grabber="allocine amazon chartlyrics imdb lastfm lyricwiki tmdb tvdb tvrage"
 grabber_enable_dep xml_dep_grabber
 
+if enabled nfo; then
+  ###############################################
+  #   check for libnfo
+  ###############################################
+  if [ -n "$nfodir" ]; then
+    check_cppflags -I$nfodir
+    check_ldflags -L$nfodir
+  fi
+
+  echologn "Checking for libnfo ... "
+  check_lib_version libnfo "1.0.0" "2.0.0"
+  if [ "$?" = 0 ]; then
+    check_lib_pkgcfg libnfo nfo.h nfo_init -lnfo
+    [ "$?" != 0 ] && die "Error, libnfo available but the compilation failed !"
+    echolog "(yes)"
+  else
+    echolog "(no)"
+    grabber_forced $nfo_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libnfo or bad version !"
+    nfo="no"
+    grabber_set_no $nfo_dep_grabber
+  fi
+fi
+
 if enabled xml; then
   ###############################################
   #   check for libxml2
@@ -1209,30 +1233,6 @@ if enabled avcodec; then
     [ "$?" != 0 ] && die "Error, can't find libavcodec !"
     avcodec="no"
     grabber_set_no $avcodec_dep_grabber
-  fi
-fi
-
-if enabled nfo; then
-  ###############################################
-  #   check for libnfo
-  ###############################################
-  if [ -n "$nfodir" ]; then
-    check_cppflags -I$nfodir
-    check_ldflags -L$nfodir
-  fi
-
-  echologn "Checking for libnfo ... "
-  check_lib_version libnfo "1.0.0" "2.0.0"
-  if [ "$?" = 0 ]; then
-    check_lib_pkgcfg libnfo nfo.h nfo_init -lnfo
-    [ "$?" != 0 ] && die "Error, libnfo available but the compilation failed !"
-    echolog "(yes)"
-  else
-    echolog "(no)"
-    grabber_forced $nfo_dep_grabber
-    [ "$?" != 0 ] && die "Error, can't find libnfo or bad version !"
-    nfo="no"
-    grabber_set_no $nfo_dep_grabber
   fi
 fi
 
