@@ -411,7 +411,7 @@ check_lib_pkgcfg(){
     return $err
 }
 
-check_lib_libcfg() {
+check_lib_libcfg(){
     local config header func err
     log check_lib_pkgcfg "$@"
     config="$1"
@@ -424,7 +424,7 @@ check_lib_libcfg() {
     return $err
 }
 
-check_lib_version() {
+check_lib_version(){
     local min_ver toobig_ver
     min_ver="$2"
     toobig_ver="$3"
@@ -464,7 +464,7 @@ Cflags: -I\${includedir} $cflags
 EOF
 }
 
-add_pkgconfig_deps() {
+add_pkgconfig_deps(){
     if `which pkg-config 1>/dev/null 2>&1`; then
       add_cflags `pkg-config "$1" --cflags 2>>$logfile`
       add_extralibs `pkg-config "$1" --libs 2>>$logfile`
