@@ -82,7 +82,7 @@ grabber_lyricwiki_get (grabber_lyricwiki_t *lyricwiki, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)

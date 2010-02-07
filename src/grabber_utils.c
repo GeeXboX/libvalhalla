@@ -103,7 +103,7 @@ vh_grabber_parse_categories (file_data_t *fdata,
   if (!fdata || !node)
     return;
 
-  n = vh_get_node_xml_tree (node, "category");
+  n = vh_xml_get_node_tree (node, "category");
   for (i = 0; i < 5; i++)
   {
     xmlChar *tmp = NULL;
@@ -111,7 +111,7 @@ vh_grabber_parse_categories (file_data_t *fdata,
     if (!n)
       break;
 
-    tmp = vh_get_prop_value_from_xml_tree (n, "name");
+    tmp = vh_xml_get_prop_value_from_tree (n, "name");
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
@@ -159,14 +159,14 @@ vh_grabber_parse_casting (file_data_t *fdata,
   if (!fdata || !node)
     return;
 
-  n = vh_get_node_xml_tree (node, "person");
+  n = vh_xml_get_node_tree (node, "person");
   for (; n; n = n->next)
   {
     int i;
 
     xmlChar *ch;
 
-    ch = vh_get_attr_value_from_node (n, "job");
+    ch = vh_xml_get_attr_value_from_node (n, "job");
     if (!ch)
       continue;
 

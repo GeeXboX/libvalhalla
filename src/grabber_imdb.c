@@ -80,7 +80,7 @@ grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
@@ -89,7 +89,7 @@ grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* check for total number of results */
-  tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
+  tmp = vh_xml_get_prop_value_from_tree (n, "totalResults");
   if (!tmp)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
@@ -107,7 +107,7 @@ grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
   xmlFree (tmp);
 
   /* fetch movie title */
-  tmp = vh_get_prop_value_from_xml_tree (n, "title");
+  tmp = vh_xml_get_prop_value_from_tree (n, "title");
   if (tmp)
   {
     /* special trick to retrieve english title,

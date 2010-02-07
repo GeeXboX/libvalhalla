@@ -82,7 +82,7 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
@@ -91,12 +91,12 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* get ChartLyrics Lyric ID */
-  tmp = vh_get_prop_value_from_xml_tree (n, "LyricId");
+  tmp = vh_xml_get_prop_value_from_tree (n, "LyricId");
   if (!tmp)
     goto error;
 
   /* get ChartLyrics Lyric Checksum */
-  tmp2 = vh_get_prop_value_from_xml_tree (n, "LyricChecksum");
+  tmp2 = vh_xml_get_prop_value_from_tree (n, "LyricChecksum");
   if (!tmp2)
   {
     xmlFree (tmp);
@@ -121,7 +121,7 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Get Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     return -1;

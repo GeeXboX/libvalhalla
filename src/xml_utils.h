@@ -26,18 +26,18 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-xmlDocPtr vh_get_xml_doc_from_memory (char *buffer);
-xmlNode *vh_get_node_xml_tree (xmlNode *root, const char *prop);
-xmlChar *vh_get_prop_value_from_xml_tree (xmlNode *root, const char *prop);
-xmlChar *vh_get_prop_value_from_xml_tree_by_attr (xmlNode *root,
+xmlDocPtr vh_xml_get_doc_from_memory (char *buffer);
+xmlNode *vh_xml_get_node_tree (xmlNode *root, const char *prop);
+xmlChar *vh_xml_get_prop_value_from_tree (xmlNode *root, const char *prop);
+xmlChar *vh_xml_get_prop_value_from_tree_by_attr (xmlNode *root,
                                                   const char *prop,
                                                   const char *attr_name,
                                                   const char *attr_value);
-xmlChar *vh_get_attr_value_from_xml_tree (xmlNode *root,
+xmlChar *vh_xml_get_attr_value_from_tree (xmlNode *root,
                                           const char *prop,
                                           const char *attr_name);
-xmlChar *vh_get_attr_value_from_node (xmlNode *node, const char *attr_name);
-xmlXPathObjectPtr vh_get_xnodes_from_xml_tree (xmlDocPtr doc, xmlChar *xpath);
+xmlChar *vh_xml_get_attr_value_from_node (xmlNode *node, const char *attr_name);
+xmlXPathObjectPtr vh_xml_get_xnodes_from_tree (xmlDocPtr doc, xmlChar *xpath);
 int vh_xml_search_str (xmlNode *n, const char *node, char **str);
 int vh_xml_search_int (xmlNode *n, const char *node, int *val);
 int vh_xml_search_year (xmlNode *n, const char *node, int *year);

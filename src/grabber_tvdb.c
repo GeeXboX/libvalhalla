@@ -152,14 +152,14 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return NULL;
 
   /* check for a known DB entry */
-  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), item);
+  n = vh_xml_get_node_tree (xmlDocGetRootElement (doc), item);
   if (!n)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
@@ -168,7 +168,7 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   else
   {
     /* get value */
-    tmp = vh_get_prop_value_from_xml_tree (n, value);
+    tmp = vh_xml_get_prop_value_from_tree (n, value);
     if (tmp)
     {
       res = strdup ((const char *) tmp);
@@ -250,7 +250,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -270,7 +270,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
 
   /* fetch tv show categories */
-  tmp = vh_get_prop_value_from_xml_tree (n, "Genre");
+  tmp = vh_xml_get_prop_value_from_tree (n, "Genre");
   if (tmp)
   {
     grabber_tvdb_parse_genre (fdata, tmp, tvdb->pl);
@@ -282,7 +282,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
                         VALHALLA_METADATA_RUNTIME, tvdb->pl);
 
   /* fetch tv show poster */
-  tmp = vh_get_prop_value_from_xml_tree (n, "poster");
+  tmp = vh_xml_get_prop_value_from_tree (n, "poster");
   if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp,
@@ -291,7 +291,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
 
   /* fetch tv show fan art */
-  tmp = vh_get_prop_value_from_xml_tree (n, "fanart");
+  tmp = vh_xml_get_prop_value_from_tree (n, "fanart");
   if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp,

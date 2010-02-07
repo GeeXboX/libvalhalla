@@ -120,7 +120,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
@@ -128,7 +128,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
 
   /* check for total number of results */
   n = xmlDocGetRootElement (doc);
-  tmp = vh_get_prop_value_from_xml_tree (n, "totalResults");
+  tmp = vh_xml_get_prop_value_from_tree (n, "totalResults");
   if (!tmp)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
@@ -146,7 +146,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   xmlFree (tmp);
 
   /* get TMDB Movie ID */
-  tmp = vh_get_prop_value_from_xml_tree (n, "id");
+  tmp = vh_xml_get_prop_value_from_tree (n, "id");
   if (!tmp)
     goto error;
 
@@ -168,7 +168,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -208,10 +208,10 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                         VALHALLA_METADATA_REVENUE, tmdb->pl);
 
   /* fetch movie country */
-  node = vh_get_node_xml_tree (n, "country");
+  node = vh_xml_get_node_tree (n, "country");
   if (node)
   {
-    tmp = vh_get_prop_value_from_xml_tree (node, "short_name");
+    tmp = vh_xml_get_prop_value_from_tree (node, "short_name");
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
@@ -227,7 +227,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   vh_grabber_parse_casting (fdata, n, tmdb->pl);
 
   /* fetch movie poster */
-  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "poster", "size", "mid");
+  tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "poster", "size", "mid");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp,
@@ -236,7 +236,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   }
 
   /* fetch movie fan art */
-  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "backdrop", "size", "mid");
+  tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "backdrop", "size", "mid");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp,

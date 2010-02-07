@@ -86,14 +86,14 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
   /* check for a known DB entry */
-  n = vh_get_node_xml_tree (xmlDocGetRootElement (doc), "show");
+  n = vh_xml_get_node_tree (xmlDocGetRootElement (doc), "show");
   if (!n)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
@@ -102,7 +102,7 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
   }
 
   /* get TVRage show id */
-  tmp = vh_get_prop_value_from_xml_tree (n, "showid");
+  tmp = vh_xml_get_prop_value_from_tree (n, "showid");
   if (!tmp)
     goto error;
 
@@ -124,7 +124,7 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
   vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
   if (!doc)
     goto error;
@@ -132,7 +132,7 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch tv show french title (to be extended to language param) */
-  tmp = vh_get_prop_value_from_xml_tree_by_attr (n, "aka", "country", "FR");
+  tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "aka", "country", "FR");
   if (tmp)
   {
     vh_metadata_add_auto (&fdata->meta_grabber,
@@ -154,13 +154,13 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
                         VALHALLA_METADATA_RUNTIME, tvrage->pl);
 
   /* fetch movie categories */
-  node = vh_get_node_xml_tree (n, "genre");
+  node = vh_xml_get_node_tree (n, "genre");
   for (i = 0; i < 5; i++)
   {
     if (!node)
       break;
 
-    tmp = vh_get_prop_value_from_xml_tree (node, "genre");
+    tmp = vh_xml_get_prop_value_from_tree (node, "genre");
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,

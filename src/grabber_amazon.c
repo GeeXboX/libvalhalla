@@ -201,13 +201,13 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", data.buffer);
 
   /* 4. Parse the answer to get ASIN value */
-  doc = vh_get_xml_doc_from_memory (data.buffer);
+  doc = vh_xml_get_doc_from_memory (data.buffer);
   free (data.buffer);
 
   if (!doc)
     return -1;
 
-  asin = vh_get_prop_value_from_xml_tree (xmlDocGetRootElement (doc), "ASIN");
+  asin = vh_xml_get_prop_value_from_tree (xmlDocGetRootElement (doc), "ASIN");
   xmlFreeDoc (doc);
 
   if (!asin)
@@ -254,11 +254,11 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   if (!doc)
     return -1;
 
-  img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "LargeImage");
+  img = vh_xml_get_node_tree (xmlDocGetRootElement(doc), "LargeImage");
   if (!img)
-    img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "MediumImage");
+    img = vh_xml_get_node_tree (xmlDocGetRootElement(doc), "MediumImage");
   if (!img)
-    img = vh_get_node_xml_tree (xmlDocGetRootElement(doc), "SmallImage");
+    img = vh_xml_get_node_tree (xmlDocGetRootElement(doc), "SmallImage");
 
   if (!img)
   {
@@ -266,7 +266,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
     return -1;
   }
 
-  cover_url = vh_get_prop_value_from_xml_tree (img, "URL");
+  cover_url = vh_xml_get_prop_value_from_tree (img, "URL");
   if (!cover_url)
   {
     vh_log (VALHALLA_MSG_VERBOSE,

@@ -84,13 +84,13 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
   vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
 
   /* parse the XML answer */
-  doc = vh_get_xml_doc_from_memory (udata.buffer);
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
   free (udata.buffer);
 
   if (!doc)
     return -1;
 
-  cv = vh_get_prop_value_from_xml_tree_by_attr (xmlDocGetRootElement (doc),
+  cv = vh_xml_get_prop_value_from_tree_by_attr (xmlDocGetRootElement (doc),
                                                 "image", "size", "extralarge");
   xmlFreeDoc (doc);
   if (!cv)
