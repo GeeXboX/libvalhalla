@@ -126,8 +126,6 @@ dispatcher_thread (void *arg)
     case ACTION_DB_NEXT_LOOP:
       vh_grabber_action_send (VH_HANDLE->grabber,
                               FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
-      vh_downloader_action_send (VH_HANDLE->downloader,
-                                 FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
       break;
 #endif /* USE_GRABBER */
 

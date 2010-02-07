@@ -105,12 +105,6 @@ downloader_thread (void *arg)
     if (e == ACTION_KILL_THREAD)
       break;
 
-    if (e == ACTION_DB_NEXT_LOOP)
-    {
-      vh_stats_dump (VH_HANDLE->stats, STATS_GROUP);
-      continue;
-    }
-
     if (e == ACTION_PAUSE_THREAD)
     {
       VH_THREAD_PAUSE_ACTION (downloader)

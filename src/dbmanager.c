@@ -123,7 +123,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_dispatcher_action_send (VH_HANDLE->dispatcher,
                                  FIFO_QUEUE_PRIORITY_NORMAL, e, NULL);
 
-      vh_stats_dump (VH_HANDLE->stats, STATS_GROUP);
+      vh_stats_dump (VH_HANDLE->stats, NULL);
       goto out;
     }
 
