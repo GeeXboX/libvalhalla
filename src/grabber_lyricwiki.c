@@ -30,6 +30,7 @@
 #include "xml_utils.h"
 #include "url_utils.h"
 #include "utils.h"
+#include "osdep.h"
 #include "logs.h"
 
 #define GRABBER_CAP_FLAGS \

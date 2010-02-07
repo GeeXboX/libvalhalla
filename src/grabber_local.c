@@ -28,6 +28,7 @@
 #include "grabber_local.h"
 #include "metadata.h"
 #include "utils.h"
+#include "osdep.h"
 #include "logs.h"
 
 #define GRABBER_CAP_FLAGS \
