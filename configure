@@ -986,7 +986,7 @@ if [ "$?" != 0 ]; then
   if [ "$?" != 0 ]; then
     check_lib mach/clock.h clock_get_time
     [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
-    add_cppflags -DUSE_CLOCK_GETTIME_DARWIN
+    add_cppflags -DOSDEP_CLOCK_GETTIME_DARWIN
   else
     add_pkgconfig_libs -lrt
   fi

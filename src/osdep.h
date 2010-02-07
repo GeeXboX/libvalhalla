@@ -24,7 +24,7 @@
 
 #include <time.h>
 
-#ifdef USE_CLOCK_GETTIME_DARWIN
+#ifdef OSDEP_CLOCK_GETTIME_DARWIN
 typedef enum {
   CLOCK_REALTIME = 0,
   CLOCK_MONOTONIC,          /* unsupported */
@@ -34,7 +34,7 @@ typedef enum {
 
 
 int clock_gettime (clockid_t clk_id, struct timespec *tp);
-#endif /* USE_CLOCK_GETTIME_DARWIN */
+#endif /* OSDEP_CLOCK_GETTIME_DARWIN */
 
 #ifdef OSDEP_STRNDUP
 char *strndup (const char *s, size_t n);

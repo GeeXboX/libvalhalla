@@ -22,16 +22,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef USE_CLOCK_GETTIME_DARWIN
+#ifdef OSDEP_CLOCK_GETTIME_DARWIN
 #include <mach/mach.h>
 #include <mach/clock.h>
 #include <mach/mach_time.h>
-#endif /* USE_CLOCK_GETTIME_DARWIN */
+#endif /* OSDEP_CLOCK_GETTIME_DARWIN */
 
 #include "osdep.h"
 
 
-#ifdef USE_CLOCK_GETTIME_DARWIN
+#ifdef OSDEP_CLOCK_GETTIME_DARWIN
 /*
  * Partial implementation of clock_gettime for Darwin. Only CLOCK_REALTIME
  * is supported and errno is not set appropriately.
@@ -62,7 +62,7 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
     return -1;
   }
 }
-#endif /* USE_CLOCK_GETTIME_DARWIN */
+#endif /* OSDEP_CLOCK_GETTIME_DARWIN */
 
 #ifdef OSDEP_STRNDUP
 char *
