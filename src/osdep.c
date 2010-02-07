@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #ifdef USE_CLOCK_GETTIME_DARWIN
 #include <mach/mach.h>
 #include <mach/clock.h>
@@ -60,3 +63,25 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
   }
 }
 #endif /* USE_CLOCK_GETTIME_DARWIN */
+
+#ifdef OSDEP_STRNDUP
+char *
+strndup (const char *s, size_t n)
+{
+  char *res;
+  size_t length;
+
+  length = strlen (s);
+  if (length > n)
+    length = n;
+
+  res = malloc (length + 1);
+  if (!res)
+    return NULL;
+
+  memcpy (res, s, length);
+  res[length] = '\0';
+
+  return res;
+}
+#endif /* OSDEP_STRNDUP */

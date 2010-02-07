@@ -36,4 +36,8 @@ typedef enum {
 int clock_gettime (clockid_t clk_id, struct timespec *tp);
 #endif /* USE_CLOCK_GETTIME_DARWIN */
 
+#ifdef OSDEP_STRNDUP
+char *strndup (const char *s, size_t n);
+#endif /* OSDEP_STRNDUP */
+
 #endif /* VALHALLA_OSDEP_H */
