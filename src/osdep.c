@@ -29,10 +29,10 @@
 
 
 #ifdef USE_CLOCK_GETTIME_DARWIN
-  /*
-   * Partial implementation of clock_gettime for Darwin. Only CLOCK_REALTIME
-   * is supported and errno is not set appropriately.
-   */
+/*
+ * Partial implementation of clock_gettime for Darwin. Only CLOCK_REALTIME
+ * is supported and errno is not set appropriately.
+ */
 int
 clock_gettime (clockid_t clk_id, struct timespec *tp)
 {
