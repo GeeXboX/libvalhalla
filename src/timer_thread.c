@@ -50,7 +50,7 @@ vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout)
   pthread_mutex_lock (&timer->mutex);
   if (timer->run)
   {
-    vh_clock_gettime (CLOCK_REALTIME, &ts);
+    clock_gettime (CLOCK_REALTIME, &ts);
     VH_TIMERADD (&ts, &ti, &ts);
 
     pthread_cond_timedwait (&timer->cond, &timer->mutex, &ts);

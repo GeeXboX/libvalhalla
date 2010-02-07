@@ -25,13 +25,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #include "valhalla.h"
 #include "utils.h"    /* for VH_TIMERSUB */
-#include "osdep.h"    /* vh_clock_gettime */
+#include "osdep.h"    /* clock_gettime */
 
 #define APPNAME "libvalhalla-test"
 
@@ -349,7 +348,7 @@ main (int argc, char **argv)
   }
 #endif /* USE_GRABBER */
 
-  vh_clock_gettime (CLOCK_REALTIME, &tss);
+  clock_gettime (CLOCK_REALTIME, &tss);
 
   rc = valhalla_run (handle, loop_nb, loop_wait, priority);
   if (rc)
@@ -364,7 +363,7 @@ main (int argc, char **argv)
   else
     usleep (time_limit * 1000);
 
-  vh_clock_gettime (CLOCK_REALTIME, &tse);
+  clock_gettime (CLOCK_REALTIME, &tse);
 
   /* statistics */
   printf ("Statistics dump: %s\n", !stats ? "(ignored)" : "");

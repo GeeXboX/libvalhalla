@@ -95,7 +95,7 @@ int vh_get_list_length (void *list);
   {                                                   \
     struct timespec tp;                               \
     *(t) = 0;                                         \
-    if (!vh_clock_gettime (CLOCK_REALTIME, &tp))      \
+    if (!clock_gettime (CLOCK_REALTIME, &tp))         \
       *(t) = tp.tv_sec * 1000000000 + tp.tv_nsec;     \
   }                                                   \
   while (0)

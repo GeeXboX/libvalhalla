@@ -155,7 +155,7 @@ vh_stats_timer (vh_stats_tmr_t *timer, int start)
   if (!timer)
     return;
 
-  vh_clock_gettime (CLOCK_REALTIME, start ? &timer->ts : &te);
+  clock_gettime (CLOCK_REALTIME, start ? &timer->ts : &te);
 
   if (!start)
   {

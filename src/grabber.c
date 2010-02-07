@@ -244,7 +244,7 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
         break;
 
       case 1: /* second pass */
-        vh_clock_gettime (CLOCK_REALTIME, &ts);
+        clock_gettime (CLOCK_REALTIME, &ts);
         VH_TIMERADD (&ts, &ta, &ts);
         rc = pthread_mutex_timedlock (&it->mutex, &ts);
         break;

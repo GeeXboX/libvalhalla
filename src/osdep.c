@@ -28,14 +28,14 @@
 #include "osdep.h"
 
 
-int
-vh_clock_gettime (clockid_t clk_id, struct timespec *tp)
-{
 #ifdef USE_CLOCK_GETTIME_DARWIN
   /*
    * Partial implementation of clock_gettime for Darwin. Only CLOCK_REALTIME
    * is supported and errno is not set appropriately.
    */
+int
+clock_gettime (clockid_t clk_id, struct timespec *tp)
+{
   kern_return_t   ret;
   clock_serv_t    clk;
   mach_timespec_t tm;
@@ -58,7 +58,5 @@ vh_clock_gettime (clockid_t clk_id, struct timespec *tp)
   default:
     return -1;
   }
-#else /* POSIX */
-  return clock_gettime (clk_id, tp);
-#endif /* USE_CLOCK_GETTIME_DARWIN */
 }
+#endif /* USE_CLOCK_GETTIME_DARWIN */

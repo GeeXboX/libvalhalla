@@ -31,8 +31,9 @@ typedef enum {
   CLOCK_PROCESS_CPUTIME_ID, /* unsupported */
   CLOCK_THREAD_CPUTIME_ID   /* unsupported */
 } clockid_t;
-#endif /* USE_CLOCK_GETTIME_DARWIN */
 
-int vh_clock_gettime (clockid_t clk_id, struct timespec *tp);
+
+int clock_gettime (clockid_t clk_id, struct timespec *tp);
+#endif /* USE_CLOCK_GETTIME_DARWIN */
 
 #endif /* VALHALLA_OSDEP_H */
