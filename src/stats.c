@@ -28,6 +28,7 @@
 #include "valhalla_internals.h"
 #include "logs.h"
 #include "utils.h"
+#include "osdep.h"
 #include "stats.h"
 
 struct vh_stats_tmr_s {

@@ -34,6 +34,7 @@ SRCS =  database.c \
 	logs.c \
 	metadata.c \
 	ondemand.c \
+	osdep.c \
 	parser.c \
 	scanner.c \
 	stats.c \
@@ -73,6 +74,7 @@ EXTRADIST = \
 	md5.h \
 	metadata.h \
 	ondemand.h \
+	osdep.h \
 	parser.h \
 	scanner.h \
 	sql_statements.h \

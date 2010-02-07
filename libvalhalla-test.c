@@ -30,7 +30,8 @@
 #include <sys/types.h>
 
 #include "valhalla.h"
-#include "utils.h"    /* for VH_TIMERSUB and vh_clock_gettime */
+#include "utils.h"    /* for VH_TIMERSUB */
+#include "osdep.h"    /* vh_clock_gettime */
 
 #define APPNAME "libvalhalla-test"
 

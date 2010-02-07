@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <time.h>
 #include <semaphore.h>
 
 #include "valhalla.h"
@@ -33,15 +32,6 @@
 #include "metadata.h"
 #include "fifo_queue.h"
 #include "list.h"
-
-#ifdef USE_CLOCK_GETTIME_DARWIN
-typedef enum {
-  CLOCK_REALTIME = 0,
-  CLOCK_MONOTONIC,          /* unsupported */
-  CLOCK_PROCESS_CPUTIME_ID, /* unsupported */
-  CLOCK_THREAD_CPUTIME_ID   /* unsupported */
-} clockid_t;
-#endif /* USE_CLOCK_GETTIME_DARWIN */
 
 typedef enum od_type {
   OD_TYPE_DEF = 0,  /* created by "scanner" (default value) */
@@ -81,7 +71,6 @@ typedef struct file_data_s {
 
 void vh_strtolower (char *str);
 char *vh_strrcasestr (const char *buf, const char *str);
-int vh_clock_gettime (clockid_t clk_id, struct timespec *tp);
 int vh_file_exists (const char *file);
 int vh_file_copy (const char *src, const char *dst);
 void vh_file_dl_add (file_dl_t **dl,

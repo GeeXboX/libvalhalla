@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "utils.h"
+#include "osdep.h"
 #include "timer_thread.h"
 
 struct timer_thread_s {
