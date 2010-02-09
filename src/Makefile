@@ -23,10 +23,10 @@ ifeq ($(BUILD_SHARED),yes)
       SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME)
       SHARED_LIBNAME_FLAGS   = -shared -Wl,--out-implib=$(LIBNAME).dll.a -Wl,--export-all-symbols -Wl,--enable-auto-import
     else
-    SHARED_LIBNAME         = $(LIBNAME).so
-    SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME).$(VERSION)
-    SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
-    SHARED_LIBNAME_FLAGS   = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
+      SHARED_LIBNAME         = $(LIBNAME).so
+      SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME).$(VERSION)
+      SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
+      SHARED_LIBNAME_FLAGS   = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
     endif
   endif
 endif
@@ -153,9 +153,9 @@ install: $(BUILD_RULES)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
 	  if [ $(BUILD_MINGW32) = no ]; then \
-	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
-	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
-	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
+	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
+	    $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
+	    $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	  else \
 	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
 	    $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
