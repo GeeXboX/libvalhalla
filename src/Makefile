@@ -159,7 +159,7 @@ install: $(BUILD_RULES)
 	  else \
 	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
 	    $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
-	  fi
+	  fi \
 	fi
 	$(INSTALL) -d $(includedir)
 	$(INSTALL) -c -m 644 valhalla.h $(includedir)
