@@ -902,10 +902,10 @@ else
   dylib="no"
 fi
 
-if test -n "`$cc -v 2>&1 | grep version | grep mingw`"; then
+mingw32="no"
+if test -n "`$cc -v 2>&1 | grep version | grep mingw`" \
+     -o -n "`$cc -v 2>&1 | grep Target  | grep mingw`"; then
   mingw32="yes"
-else
-  mingw32="no"
 fi
 
 #################################################
