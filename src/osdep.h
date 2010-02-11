@@ -42,5 +42,8 @@ char *strndup (const char *s, size_t n);
 #ifdef OSDEP_STRCASESTR
 char *strcasestr (const char *haystack, const char *needle);
 #endif /* OSDEP_STRCASESTR */
+#ifdef OSDEP_STRTOK_R
+char *strtok_r (char *str, const char *delim, char **saveptr);
+#endif /* OSDEP_STRTOK_R */
 
 #endif /* VALHALLA_OSDEP_H */

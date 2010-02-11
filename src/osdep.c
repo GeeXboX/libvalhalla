@@ -105,3 +105,25 @@ strcasestr (const char *haystack, const char *needle)
   return NULL;
 }
 #endif /* OSDEP_STRCASESTR */
+
+#ifdef OSDEP_STRTOK_R
+char *
+strtok_r (char *str, const char *delim, char **saveptr)
+{
+  char *token;
+
+  if (str)
+    *saveptr = str;
+  token = *saveptr;
+
+  if (!token)
+    return NULL;
+
+  token += strspn (token, delim);
+  *saveptr = strpbrk (token, delim);
+  if (*saveptr)
+    *(*saveptr)++ = '\0';
+
+  return *token ? token : NULL;
+}
+#endif /* OSDEP_STRTOK_R */

@@ -30,6 +30,7 @@
 #include "url_utils.h"
 #include "grabber_utils.h"
 #include "utils.h"
+#include "osdep.h"
 #include "logs.h"
 #include "md5.h"
 
