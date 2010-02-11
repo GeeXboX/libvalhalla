@@ -20,9 +20,15 @@
  */
 
 #include <unistd.h>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#else
 #include <sys/resource.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#endif /* !_WIN32 */
 
 #include "thread_utils.h"
 
@@ -30,6 +36,12 @@
 int
 vh_setpriority (int prio)
 {
+#ifdef _WIN32
+  /* FIXME: the priority must be chosen accordingly to prio! */
+  HANDLE hThread = GetCurrentThread ();
+  SetThreadPriority (hThread, THREAD_PRIORITY_LOWEST);
+  return (int) GetCurrentThreadId ();
+#else
   /*
    * Linux creates the threads with the clone system call. The function
    * pthread_create() uses the flag CLONE_THREAD with clone(). All threads
@@ -52,4 +64,5 @@ vh_setpriority (int prio)
 #endif /* __linux__ */
   setpriority (PRIO_PROCESS, pid, prio);
   return (int) pid;
+#endif /* !_WIN32 */
 }
