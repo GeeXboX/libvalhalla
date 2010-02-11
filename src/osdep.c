@@ -28,6 +28,7 @@
 #include <mach/mach_time.h>
 #endif /* OSDEP_CLOCK_GETTIME_DARWIN */
 
+#include "utils.h"
 #include "osdep.h"
 
 
