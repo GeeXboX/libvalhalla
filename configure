@@ -993,10 +993,10 @@ if [ "$?" != 0 ]; then
     if [ "$?" != 0 ]; then
       # QueryPerformanceCounter()
       check_header windows.h
-    [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
+      [ "$?" != 0 ] && die "Error, can't find clock_gettime !"
       add_cppflags -DOSDEP_CLOCK_GETTIME_WINDOWS
     else
-    add_cppflags -DOSDEP_CLOCK_GETTIME_DARWIN
+      add_cppflags -DOSDEP_CLOCK_GETTIME_DARWIN
     fi
   else
     add_pkgconfig_libs -lrt
