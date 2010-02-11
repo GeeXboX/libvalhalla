@@ -295,7 +295,11 @@ main (int argc, char **argv)
   if (download)
   {
     printf ("Destination directory for downloaded files: %s\n", download);
+#ifdef _WIN32
+    mkdir (download);
+#else
     mkdir (download, 0755);
+#endif /* !_WIN32 */
     valhalla_config_set (handle,
                          DOWNLOADER_DEST, download, VALHALLA_DL_DEFAULT);
   }
