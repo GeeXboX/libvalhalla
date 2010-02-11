@@ -24,7 +24,16 @@
 
 #include <time.h>
 
-#ifdef OSDEP_CLOCK_GETTIME_DARWIN
+#ifdef OSDEP_CLOCK_GETTIME_WINDOWS
+#ifndef HAVE_STRUCT_TIMESPEC
+struct timespec {
+  time_t   tv_sec;
+  long int tv_nsec;
+};
+#endif /* HAVE_STRUCT_TIMESPEC */
+#endif /* OSDEP_CLOCK_GETTIME_WINDOWS */
+
+#if defined (OSDEP_CLOCK_GETTIME_DARWIN) || defined (OSDEP_CLOCK_GETTIME_WINDOWS)
 typedef enum {
   CLOCK_REALTIME = 0,
   CLOCK_MONOTONIC,          /* unsupported */
@@ -34,8 +43,7 @@ typedef enum {
 
 
 int clock_gettime (clockid_t clk_id, struct timespec *tp);
-#endif /* OSDEP_CLOCK_GETTIME_DARWIN */
-
+#endif /* OSDEP_CLOCK_GETTIME_DARWIN || OSDEP_CLOCK_GETTIME_WINDOWS */
 #ifdef OSDEP_STRNDUP
 char *strndup (const char *s, size_t n);
 #endif /* OSDEP_STRNDUP */
@@ -48,5 +56,7 @@ char *strtok_r (char *str, const char *delim, char **saveptr);
 #ifdef OSDEP_LSTAT
 int lstat (const char *path, struct stat *buf);
 #endif /* OSDEP_LSTAT */
+
+int vh_osdep_init (void);
 
 #endif /* VALHALLA_OSDEP_H */

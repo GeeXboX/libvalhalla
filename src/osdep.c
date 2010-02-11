@@ -2,6 +2,11 @@
  * GeeXboX Valhalla: tiny media scanner API.
  * Copyright (C) 2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
+ * The clock_gettime support for Windows comes from Evil, an EFL library
+ * mainly written by Vincent Torri <vtorri at univ-evry dot fr> and
+ * providing many UNIX functions for the Windows platform :
+ *   http://docs.enlightenment.org/auto/evil/
+ *
  * This file is part of libvalhalla.
  *
  * libvalhalla is free software; you can redistribute it and/or
@@ -28,9 +33,112 @@
 #include <mach/mach_time.h>
 #endif /* OSDEP_CLOCK_GETTIME_DARWIN */
 
+#ifdef OSDEP_CLOCK_GETTIME_WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#endif /* OSDEP_CLOCK_GETTIME_WINDOWS */
+
 #include "utils.h"
 #include "osdep.h"
 
+#ifdef OSDEP_CLOCK_GETTIME_WINDOWS
+static LONGLONG time_freq;
+static LONGLONG time_count;
+static long int time_second;
+
+
+static long int
+systemtime_to_time (SYSTEMTIME st)
+{
+  const int days[] = {
+    -1, 30, 58, 89, 119, 150, 180, 211, 242, 272, 303, 333, 364
+  };
+  int day;
+  time_t time;
+
+  st.wYear -= 1900;
+  if ((st.wYear < 70) || (st.wYear > 138))
+    return -1;
+
+  day = st.wDay + days[st.wMonth - 1];
+
+  if (!(st.wYear & 3) && (st.wMonth > 2) )
+    day++;
+
+  time =   ((st.wYear - 70) * 365
+         + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
+  time = (time * 60 + st.wMinute) * 60 + st.wSecond;
+
+  return (long int) time;
+}
+
+static int
+time_init (void)
+{
+  SYSTEMTIME    st;
+  LARGE_INTEGER freq;
+  LARGE_INTEGER count;
+  WORD          second = 59;
+
+  if (!QueryPerformanceFrequency (&freq))
+    return -1;
+
+  time_freq = freq.QuadPart;
+
+  /* be sure that second + 1 != 0 */
+  while (second == 59)
+  {
+    GetSystemTime (&st);
+    second = st.wSecond;
+  }
+
+  /* retrieve the tick corresponding to the time we retrieve above */
+  while (1)
+  {
+    GetSystemTime (&st);
+    QueryPerformanceCounter (&count);
+    if (st.wSecond == second + 1)
+      break;
+  }
+
+  time_second = systemtime_to_time (st);
+  if (time_second < 0)
+    return -1;
+
+  time_count = count.QuadPart;
+  return 0;
+}
+
+/*
+ * Partial implementation of clock_gettime for Windows. Only CLOCK_REALTIME
+ * is supported and errno is not set appropriately.
+ */
+int
+clock_gettime (clockid_t clk_id, struct timespec *tp)
+{
+  LARGE_INTEGER count;
+  LONGLONG      diff;
+  BOOL          ret;
+
+  switch (clk_id)
+  {
+  case CLOCK_REALTIME:
+    ret = QueryPerformanceCounter (&count);
+    if (!ret)
+      return -1;
+
+    diff = count.QuadPart - time_count;
+
+    tp->tv_sec  = time_second + diff / time_freq;
+    tp->tv_nsec = (diff % time_freq) * 1000000000000LL;
+    return 0;
+
+  default:
+    return -1;
+  }
+}
+#endif /* OSDEP_CLOCK_GETTIME_WINDOWS */
 
 #ifdef OSDEP_CLOCK_GETTIME_DARWIN
 /*
@@ -139,3 +247,13 @@ lstat (const char *path, struct stat *buf)
 #endif /* !_WIN32 */
 }
 #endif /* OSDEP_LSTAT */
+
+int
+vh_osdep_init (void)
+{
+  int rc = 0;
+#ifdef OSDEP_CLOCK_GETTIME_WINDOWS
+  rc = time_init ();
+#endif /* OSDEP_CLOCK_GETTIME_WINDOWS */
+  return rc;
+}

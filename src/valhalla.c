@@ -37,6 +37,7 @@
 #include "ondemand.h"
 #include "event_handler.h"
 #include "utils.h"
+#include "osdep.h"
 #include "stats.h"
 #include "metadata.h"
 #include "logs.h"
@@ -578,6 +579,9 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
   const valhalla_init_param_t *pp = &p;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!preinit && vh_osdep_init ())
+    return NULL;
 
   if (!db)
     return NULL;
