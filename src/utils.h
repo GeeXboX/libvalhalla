@@ -22,10 +22,11 @@
 #ifndef VALHALLA_UTILS_H
 #define VALHALLA_UTILS_H
 
+#include <pthread.h>
+#include <semaphore.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <semaphore.h>
 
 #include "valhalla.h"
 #include "valhalla_internals.h"
