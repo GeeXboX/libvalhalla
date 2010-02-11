@@ -42,6 +42,7 @@ vh_setpriority (int prio)
   SetThreadPriority (hThread, THREAD_PRIORITY_LOWEST);
   return (int) GetCurrentThreadId ();
 #else
+#ifdef __linux__
   /*
    * Linux creates the threads with the clone system call. The function
    * pthread_create() uses the flag CLONE_THREAD with clone(). All threads
@@ -50,18 +51,18 @@ vh_setpriority (int prio)
    * the TID of the thread. But gettid() is a Linux specific system call.
    *  http://www.kernel.org/doc/man-pages/online/pages/man2/clone.2.html
    *  (DESCRIPTION -> CLONE_THREAD)
-   *
+   */
+  pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
+#else
+  /*
    * A FreeBSD kernel has no clone and gettid system calls. The threads
    * are created by rfork() and every thread has its own PID which can be
    * retrieved with getpid().
    *  http://www.khmere.com/freebsd_book/html/ch03.html
    *  (ch. 3.4 and ch. 3.5)
    */
-#ifdef __linux__
-  pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
-#else
   pid_t pid = getpid ();
-#endif /* __linux__ */
+#endif /* !__linux__ */
   setpriority (PRIO_PROCESS, pid, prio);
   return (int) pid;
 #endif /* !_WIN32 */
