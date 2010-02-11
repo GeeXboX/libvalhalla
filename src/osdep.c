@@ -127,3 +127,15 @@ strtok_r (char *str, const char *delim, char **saveptr)
   return *token ? token : NULL;
 }
 #endif /* OSDEP_STRTOK_R */
+
+#ifdef OSDEP_LSTAT
+int
+lstat (const char *path, struct stat *buf)
+{
+#ifdef _WIN32
+  return stat (path, buf);
+#else
+#error "lstat unsupported by your OS"
+#endif /* !_WIN32 */
+}
+#endif /* OSDEP_LSTAT */

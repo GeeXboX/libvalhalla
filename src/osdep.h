@@ -45,5 +45,8 @@ char *strcasestr (const char *haystack, const char *needle);
 #ifdef OSDEP_STRTOK_R
 char *strtok_r (char *str, const char *delim, char **saveptr);
 #endif /* OSDEP_STRTOK_R */
+#ifdef OSDEP_LSTAT
+int lstat (const char *path, struct stat *buf);
+#endif /* OSDEP_LSTAT */
 
 #endif /* VALHALLA_OSDEP_H */

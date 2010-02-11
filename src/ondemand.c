@@ -27,6 +27,7 @@
 #include "valhalla.h"
 #include "valhalla_internals.h"
 #include "utils.h"
+#include "osdep.h"
 #include "fifo_queue.h"
 #include "logs.h"
 #include "stats.h"
