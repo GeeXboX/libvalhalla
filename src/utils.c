@@ -36,6 +36,7 @@
 #include "dbmanager.h"
 #include "metadata.h"
 #include "fifo_queue.h"
+#include "osdep.h"
 #include "utils.h"
 
 

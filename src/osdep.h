@@ -39,5 +39,8 @@ int clock_gettime (clockid_t clk_id, struct timespec *tp);
 #ifdef OSDEP_STRNDUP
 char *strndup (const char *s, size_t n);
 #endif /* OSDEP_STRNDUP */
+#ifdef OSDEP_STRCASESTR
+char *strcasestr (const char *haystack, const char *needle);
+#endif /* OSDEP_STRCASESTR */
 
 #endif /* VALHALLA_OSDEP_H */

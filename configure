@@ -1002,6 +1002,11 @@ temp_cppflags -D_GNU_SOURCE
 check_func_headers string.h strndup || add_cppflags -DOSDEP_STRNDUP
 restore_flags
 
+# strcasestr
+temp_cppflags -D_GNU_SOURCE
+check_func_headers string.h strcasestr || add_cppflags -DOSDEP_STRCASESTR
+restore_flags
+
 
 #################################################
 #   check for debug symbols

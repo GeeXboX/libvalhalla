@@ -85,3 +85,22 @@ strndup (const char *s, size_t n)
   return res;
 }
 #endif /* OSDEP_STRNDUP */
+
+#ifdef OSDEP_STRCASESTR
+char *
+strcasestr (const char *haystack, const char *needle)
+{
+  size_t length;
+
+  length = strlen (needle);
+  if (!length)
+    return (char *) haystack;
+
+  for (; *haystack; haystack++)
+    if (VH_TOLOWER (*haystack) == VH_TOLOWER (*needle))
+      if (!strncasecmp (haystack, needle, length))
+        return (char *) haystack;
+
+  return NULL;
+}
+#endif /* OSDEP_STRCASESTR */
