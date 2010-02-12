@@ -63,7 +63,7 @@ systemtime_to_time (SYSTEMTIME st)
 
   day = st.wDay + days[st.wMonth - 1];
 
-  if (!(st.wYear & 3) && (st.wMonth > 2) )
+  if (!(st.wYear & 3) && (st.wMonth > 2))
     day++;
 
   time =   ((st.wYear - 70) * 365
