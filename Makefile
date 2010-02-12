@@ -11,14 +11,14 @@ VHTEST_SRCS = libvalhalla-test.c
 VHTEST_OBJS = $(VHTEST_SRCS:.c=.o)
 VHTEST_MAN = $(VHTEST).1
 
-MANS = $(VHTEST_MAN)
+APPS_CPPFLAGS = $(CPPFLAGS) -Isrc
+APPS_LDFLAGS = $(LDFLAGS) -Lsrc -lvalhalla
 
-override CPPFLAGS += -Isrc
-override LDFLAGS += -Lsrc -lvalhalla
+MANS = $(VHTEST_MAN)
 
 ifeq ($(BUILD_STATIC),yes)
 ifeq ($(BUILD_SHARED),no)
-  override LDFLAGS += $(EXTRALIBS)
+  APPS_LDFLAGS += $(EXTRALIBS)
 endif
 endif
 
@@ -43,7 +43,7 @@ SUBDIRS = \
 all: lib apps docs
 
 .c.o:
-	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(APPS_CPPFLAGS) -o $@ $<
 
 config.mak: configure
 	@echo "############################################################"
@@ -54,10 +54,10 @@ lib:
 	$(MAKE) -C src
 
 $(VHTEST): $(VHTEST_OBJS)
-	$(CC) $(VHTEST_OBJS) $(LDFLAGS) -o $(VHTEST)
+	$(CC) $(VHTEST_OBJS) $(APPS_LDFLAGS) -o $(VHTEST)
 
 apps-dep:
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(VHTEST_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(VHTEST_SRCS) 1>.depend
 
 apps: apps-dep lib
 	$(MAKE) $(VHTEST)
