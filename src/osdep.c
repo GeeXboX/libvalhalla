@@ -131,7 +131,7 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
     diff = count.QuadPart - time_count;
 
     tp->tv_sec  = time_second + diff / time_freq;
-    tp->tv_nsec = (diff % time_freq) * 1000000000000LL;
+    tp->tv_nsec = ((diff % time_freq) * 1000000000LL) / time_freq;
     return 0;
 
   default:
