@@ -365,7 +365,7 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   /* if timeout is 0, there is no sleep between loops */
   if (timeout)
   {
-    scanner->timeout = timeout * 1000000000UL;
+    scanner->timeout = timeout * 1000000000ULL;
     vh_timer_thread_start (scanner->timer);
   }
 
