@@ -269,7 +269,7 @@ scanner_thread (void *arg)
           "[%s] tid: %i priority: %i", __FUNCTION__, tid, scanner->priority);
 
   vh_log (VALHALLA_MSG_INFO,
-          "[%s] Scanner initialized : loop = %i, timeout = %lu [nsec]",
+          "[%s] Scanner initialized : loop = %i, timeout = %"PRIu64" [nsec]",
           __FUNCTION__, scanner->loop, scanner->timeout);
 
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
