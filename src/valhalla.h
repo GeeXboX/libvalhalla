@@ -705,9 +705,11 @@ unsigned long valhalla_stats_read_next (valhalla_t *handle, const char *id,
  * The \p priority can be set to all thread especially to run the system
  * in background with less priority. In the case of a user, you can change
  * only for a lower priority.
- *  -  0 : normal priority (default)
- *  -  1 to  19 : lower priorities
- *  - -1 to -20 : higher priorities
+ *
+ *             0 (normal priority used by default)
+ * Linux   : -20 (highest) to 19 (lowest)
+ * FreeBSD : -20 (highest) to 20 (lowest)
+ * Windows :  -3 (highest) to  3 (lowest)
  *
  * \param[in] handle      Handle on the scanner.
  * \param[in] loop        Number of loops (<=0 for infinite).
