@@ -292,7 +292,7 @@ static void
 downloader_stats_dump (vh_stats_t *stats, void *data)
 {
   downloader_t *downloader = data;
-  unsigned long success, failure, skip, total;
+  uint64_t success, failure, skip, total;
   float time;
 
   if (!stats || !downloader)
@@ -310,10 +310,10 @@ downloader_stats_dump (vh_stats_t *stats, void *data)
   total   = success + failure;
   time    = vh_stats_timer_read (downloader->st_tmr) / 1000000000.0;
   vh_log (VALHALLA_MSG_INFO,
-          "Downloads  | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file",
+          "Downloads  | %6"PRIu64"/%-6"PRIu64" (%6.2f%%) %7.2f sec  %7.2f sec/file",
           success, total, total ? 100.0 * success / total : 100.0,
           time, total ? time / total : 0.0);
-  vh_log (VALHALLA_MSG_INFO, "Skipped    | %6lu/%-6lu", skip, total + skip);
+  vh_log (VALHALLA_MSG_INFO, "Skipped    | %6"PRIu64"/%-6"PRIu64"", skip, total + skip);
 }
 
 downloader_t *

@@ -57,7 +57,7 @@ struct scanner_s {
   int             run;
   pthread_mutex_t mutex_run;
 
-  unsigned long int timeout;
+  uint64_t        timeout;
   timer_thread_t *timer;
 
   struct path_s {

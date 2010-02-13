@@ -161,9 +161,9 @@ typedef struct grabber_list_s {
   int enable;
 
   /** \private Minimum time to wait before the next grab(). */
-  unsigned long int timewait;
+  uint64_t timewait;
   /** \private Time when the grab has finished. */
-  unsigned long int timegrab;
+  uint64_t timegrab;
 
   /** \private Prevent races with several grabbers. */
   pthread_mutex_t mutex;

@@ -22,6 +22,8 @@
 #ifndef VALHALLA_STATS_H
 #define VALHALLA_STATS_H
 
+#include <inttypes.h>
+
 typedef struct vh_stats_s vh_stats_t;
 typedef struct vh_stats_tmr_s vh_stats_tmr_t;
 typedef struct vh_stats_cnt_s vh_stats_cnt_t;
@@ -41,17 +43,17 @@ vh_stats_tmr_t *vh_stats_timer_get (vh_stats_t *stats, const char *grp,
                                     const char *tmr, const char *sub);
 vh_stats_cnt_t *vh_stats_counter_get (vh_stats_t *stats, const char *grp,
                                       const char *cnt, const char *sub);
-unsigned long int vh_stats_timer_read (vh_stats_tmr_t *timer);
-unsigned long int vh_stats_counter_read (vh_stats_cnt_t *counter);
+uint64_t vh_stats_timer_read (vh_stats_tmr_t *timer);
+uint64_t vh_stats_counter_read (vh_stats_cnt_t *counter);
 void vh_stats_timer (vh_stats_tmr_t *timer, int start);
-void vh_stats_counter (vh_stats_cnt_t *counter, unsigned long int val);
+void vh_stats_counter (vh_stats_cnt_t *counter, uint64_t val);
 
 void vh_stats_dump (vh_stats_t *stats, const char *grp);
 void vh_stats_debug_dump (vh_stats_t *stats);
 
 #ifdef VALHALLA_H
 const char *vh_stats_group_next (vh_stats_t *stats, const char *id);
-unsigned long vh_stats_read_next (vh_stats_t *stats, const char *id,
+uint64_t vh_stats_read_next (vh_stats_t *stats, const char *id,
                                   valhalla_stats_type_t type,
                                   const char **item);
 #endif /* VALHALLA_H */

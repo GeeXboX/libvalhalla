@@ -373,7 +373,7 @@ main (int argc, char **argv)
   printf ("Statistics dump: %s\n", !stats ? "(ignored)" : "");
   while (stats && (group = valhalla_stats_group_next (handle, group)))
   {
-    unsigned long val;
+    uint64_t val;
     const char *item = NULL;
 
     printf (" %s\n", group);
@@ -383,7 +383,7 @@ main (int argc, char **argv)
       val =
         valhalla_stats_read_next (handle, group, VALHALLA_STATS_COUNTER, &item);
       if (item)
-        printf ("   - %-20s %lu\n", item, val);
+        printf ("   - %-20s %"PRIu64"\n", item, val);
     }
     while (item);
 
@@ -394,7 +394,7 @@ main (int argc, char **argv)
       val =
         valhalla_stats_read_next (handle, group, VALHALLA_STATS_TIMER, &item);
       if (item)
-        printf ("   - %-20s %lu\n", item, val);
+        printf ("   - %-20s %"PRIu64"\n", item, val);
     }
     while (item);
   }

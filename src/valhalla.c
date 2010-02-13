@@ -523,7 +523,7 @@ valhalla_stats_group_next (valhalla_t *handle, const char *id)
   return vh_stats_group_next (handle->stats, id);
 }
 
-unsigned long
+uint64_t
 valhalla_stats_read_next (valhalla_t *handle, const char *id,
                           valhalla_stats_type_t type, const char **item)
 {

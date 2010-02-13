@@ -35,7 +35,7 @@ struct timer_thread_s {
 
 
 void
-vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout)
+vh_timer_thread_sleep (timer_thread_t *timer, uint64_t timeout)
 {
   struct timespec ts, ti;
 

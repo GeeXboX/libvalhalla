@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #ifdef OSDEP_CLOCK_GETTIME_DARWIN
 #include <mach/mach.h>
@@ -45,10 +46,10 @@
 #ifdef OSDEP_CLOCK_GETTIME_WINDOWS
 static LONGLONG time_freq;
 static LONGLONG time_count;
-static long int time_second;
+static int64_t  time_second;
 
 
-static long int
+static int64_t
 systemtime_to_time (SYSTEMTIME st)
 {
   const int days[] = {
@@ -70,7 +71,7 @@ systemtime_to_time (SYSTEMTIME st)
          + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
   time = (time * 60 + st.wMinute) * 60 + st.wSecond;
 
-  return (long int) time;
+  return (int64_t) time;
 }
 
 static int

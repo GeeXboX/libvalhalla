@@ -256,7 +256,7 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
 
       if (!rc)
       {
-        unsigned long int time;
+        uint64_t time;
 
         /* check for the minimum time between grab() */
         VH_TIMERNOW (&time);
@@ -666,7 +666,7 @@ grabber_register_childs (void)
 
 #define STATS_DUMP(name, success, total, time)                      \
   vh_log (VALHALLA_MSG_INFO,                                        \
-          "%-12s | %6lu/%-6lu (%6.2f%%) %7.2f sec  %7.2f sec/file", \
+          "%-12s | %6"PRIu64"/%-6"PRIu64" (%6.2f%%) %7.2f sec  %7.2f sec/file", \
           name, success, total,                                     \
           (total) ? 100.0 * (success) / (total) : 100.0,            \
           time, (total) ? (time) / (total) : 0.0)
@@ -677,7 +677,7 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
   grabber_t *grabber = data;
   grabber_list_t *it;
   float time_all = 0.0;
-  unsigned long int total_all = 0, success_all = 0;
+  uint64_t total_all = 0, success_all = 0;
 
   if (!stats || !grabber)
     return;
@@ -691,7 +691,7 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
   for (it = grabber->list; it; it = it->next)
   {
     float time;
-    unsigned long int success, failure, total;
+    uint64_t success, failure, total;
 
     time    = vh_stats_timer_read (it->tmr) / 1000000000.0;
     success = vh_stats_counter_read (it->cnt_success);
@@ -711,7 +711,7 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
   STATS_DUMP ("GLOBAL", success_all, total_all, total_all);
 #else
   vh_log (VALHALLA_MSG_INFO,
-          "%-12s | %6lu/%-6lu (%6.2f%%)",
+          "%-12s | %6"PRIu64"/%-6"PRIu64" (%6.2f%%)",
           "GLOBAL", success_all, total_all,
           (total_all) ? 100.0 * (success_all) / (total_all) : 100);
 #endif /* 0 */

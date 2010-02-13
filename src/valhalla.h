@@ -695,7 +695,7 @@ const char *valhalla_stats_group_next (valhalla_t *handle, const char *id);
  * \param[in,out] item    Item ID or NULL for the first.
  * \return the value (nanoseconds for the timers).
  */
-unsigned long valhalla_stats_read_next (valhalla_t *handle, const char *id,
+uint64_t valhalla_stats_read_next (valhalla_t *handle, const char *id,
                                         valhalla_stats_type_t type,
                                         const char **item);
 

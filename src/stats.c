@@ -43,7 +43,7 @@ struct vh_stats_cnt_s {
   struct vh_stats_cnt_s *next;
   char *id;
   pthread_mutex_t mutex; /* for .count */
-  unsigned long int count;
+  uint64_t count;
 };
 
 typedef struct vh_stats_grp_s {
@@ -119,10 +119,10 @@ vh_stats_counter_get (vh_stats_t *stats,
   return it2;
 }
 
-unsigned long int
+uint64_t
 vh_stats_timer_read (vh_stats_tmr_t *timer)
 {
-  unsigned long int time;
+  uint64_t time;
 
   if (!timer)
     return 0;
@@ -133,10 +133,10 @@ vh_stats_timer_read (vh_stats_tmr_t *timer)
   return time;
 }
 
-unsigned long int
+uint64_t
 vh_stats_counter_read (vh_stats_cnt_t *counter)
 {
-  unsigned long int count;
+  uint64_t count;
 
   if (!counter)
     return 0;
@@ -167,7 +167,7 @@ vh_stats_timer (vh_stats_tmr_t *timer, int start)
 }
 
 void
-vh_stats_counter (vh_stats_cnt_t *counter, unsigned long val)
+vh_stats_counter (vh_stats_cnt_t *counter, uint64_t val)
 {
   if (!counter)
     return;
@@ -341,7 +341,7 @@ vh_stats_group_next (vh_stats_t *stats, const char *id)
   return it ? it->id : NULL;
 }
 
-unsigned long
+uint64_t
 vh_stats_read_next (vh_stats_t *stats, const char *id,
                     valhalla_stats_type_t type, const char **item)
 {

@@ -357,7 +357,7 @@ dbmanager_thread (void *arg)
   do
   {
     int stats_delete   = 0;
-    unsigned long int stats_update = 0;
+    uint64_t stats_update = 0;
     int rst = 0;
 
     vh_log (VALHALLA_MSG_INFO, "[%s] Begin loop %i", __FUNCTION__, loop);
@@ -422,7 +422,7 @@ dbmanager_thread (void *arg)
     {
       int val = vh_database_cleanup (dbmanager->database);
       if (val > 0)
-        VH_STATS_COUNTER_ACC (dbmanager->st_cleanup, (unsigned) val);
+        VH_STATS_COUNTER_ACC (dbmanager->st_cleanup, (uint64_t) val);
     }
 
     vh_database_end_transaction (dbmanager->database);
