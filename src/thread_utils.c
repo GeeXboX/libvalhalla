@@ -37,9 +37,29 @@ int
 vh_setpriority (int prio)
 {
 #ifdef _WIN32
-  /* FIXME: the priority must be chosen accordingly to prio! */
-  HANDLE hThread = GetCurrentThread ();
-  SetThreadPriority (hThread, THREAD_PRIORITY_LOWEST);
+  HANDLE hThread;
+  const int thread_prio[] = {
+    THREAD_PRIORITY_TIME_CRITICAL,
+    THREAD_PRIORITY_HIGHEST,
+    THREAD_PRIORITY_ABOVE_NORMAL,
+    THREAD_PRIORITY_NORMAL,
+    THREAD_PRIORITY_BELOW_NORMAL,
+    THREAD_PRIORITY_LOWEST,
+    THREAD_PRIORITY_IDLE
+  };
+
+  /*
+   * Input values must be 0 for NORMAL priority, 3 for IDLE and -3
+   * for TIME_CRITICAL.
+   */
+  prio += 3;
+  if (prio > 6)
+    prio = 6; /* IDLE */
+  else if (prio < 0)
+    prio = 0; /* TIME_CRITICAL */
+
+  hThread = GetCurrentThread ();
+  SetThreadPriority (hThread, thread_prio[prio]);
   return (int) GetCurrentThreadId ();
 #else
 #ifdef __linux__
