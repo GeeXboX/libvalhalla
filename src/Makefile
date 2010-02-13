@@ -126,7 +126,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(BUILD_RULES)
 
 .c.o:
-	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) -o $@ $<
 
 lib_static: $(STATIC_LIBNAME)
 
@@ -138,7 +138,7 @@ $(STATIC_LIBNAME): $(OBJS)
 
 $(SHARED_LIBNAME): $(OBJS)
 	$(CC) $(SHARED_LIBNAME_FLAGS) \
-	  $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME_VERSION)
+	  $(OBJS) $(CFG_LDFLAGS) $(EXTRALIBS) $(LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
 	if [ $(BUILD_MINGW32) = no ]; then \
 	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR); \
 	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME); \
@@ -174,7 +174,7 @@ uninstall:
 	rm -f $(includedir)/valhalla.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall
