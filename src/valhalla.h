@@ -696,8 +696,8 @@ const char *valhalla_stats_group_next (valhalla_t *handle, const char *id);
  * \return the value (nanoseconds for the timers).
  */
 uint64_t valhalla_stats_read_next (valhalla_t *handle, const char *id,
-                                        valhalla_stats_type_t type,
-                                        const char **item);
+                                   valhalla_stats_type_t type,
+                                   const char **item);
 
 /**
  * \brief Run the scanner, the database manager and all parsers.

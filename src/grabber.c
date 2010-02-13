@@ -666,7 +666,8 @@ grabber_register_childs (void)
 
 #define STATS_DUMP(name, success, total, time)                      \
   vh_log (VALHALLA_MSG_INFO,                                        \
-          "%-12s | %6"PRIu64"/%-6"PRIu64" (%6.2f%%) %7.2f sec  %7.2f sec/file", \
+          "%-12s | %6"PRIu64"/%-6"PRIu64" "                         \
+          "(%6.2f%%) %7.2f sec  %7.2f sec/file",                    \
           name, success, total,                                     \
           (total) ? 100.0 * (success) / (total) : 100.0,            \
           time, (total) ? (time) / (total) : 0.0)

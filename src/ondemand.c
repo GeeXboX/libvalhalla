@@ -344,8 +344,9 @@ ondemand_stats_dump (vh_stats_t *stats, void *data)
 
   total = vh_stats_counter_read (ondemand->st_cnt);
   time  = vh_stats_timer_read (ondemand->st_tmr) / 1000000000.0;
-  vh_log (VALHALLA_MSG_INFO, "Queries    | %6"PRIu64"  %7.2f sec  %7.2f sec/file",
-                             total, time, total ? time / total : 0.0);
+  vh_log (VALHALLA_MSG_INFO,
+          "Queries    | %6"PRIu64"  %7.2f sec  %7.2f sec/file",
+          total, time, total ? time / total : 0.0);
 }
 
 ondemand_t *

@@ -54,8 +54,7 @@ void vh_stats_debug_dump (vh_stats_t *stats);
 #ifdef VALHALLA_H
 const char *vh_stats_group_next (vh_stats_t *stats, const char *id);
 uint64_t vh_stats_read_next (vh_stats_t *stats, const char *id,
-                                  valhalla_stats_type_t type,
-                                  const char **item);
+                             valhalla_stats_type_t type, const char **item);
 #endif /* VALHALLA_H */
 
 #define VH_STATS_TIMER_START(s)    vh_stats_timer (s, 1)
