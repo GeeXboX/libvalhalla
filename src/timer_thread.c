@@ -39,7 +39,7 @@ vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout)
 {
   struct timespec ts, ti;
 
-  ti.tv_sec  = 0;
+  ti.tv_sec = 0;
   while (timeout >= 1000000000)
   {
     ti.tv_sec++;
