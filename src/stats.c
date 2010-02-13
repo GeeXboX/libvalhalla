@@ -128,7 +128,7 @@ vh_stats_timer_read (vh_stats_tmr_t *timer)
     return 0;
 
   pthread_mutex_lock (&timer->mutex);
-  time = timer->time.tv_sec * 1000000000UL + timer->time.tv_nsec;
+  time = (uint64_t) timer->time.tv_sec * 1000000000 + timer->time.tv_nsec;
   pthread_mutex_unlock (&timer->mutex);
   return time;
 }
