@@ -121,7 +121,6 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
   LARGE_INTEGER count;
   LONGLONG      diff;
   BOOL          ret;
-  int64_t       sec, nsec;
 
   switch (clk_id)
   {
@@ -132,10 +131,8 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
 
     diff = count.QuadPart - time_count;
 
-    sec  = time_second + diff / time_freq;
-    nsec = ((diff % time_freq) * 1000000000) / time_freq;
-    tp->tv_sec  = (time_t) sec;
-    tp->tv_nsec = (long int) nsec;
+    tp->tv_sec  = time_second + diff / time_freq;
+    tp->tv_nsec = ((diff % time_freq) * 1000000000LL) / time_freq;
     return 0;
 
   default:
