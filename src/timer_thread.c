@@ -40,12 +40,12 @@ vh_timer_thread_sleep (timer_thread_t *timer, unsigned long int timeout)
   struct timespec ts, ti;
 
   ti.tv_sec  = 0;
-  ti.tv_nsec = timeout;
-  while (ti.tv_nsec >= 1000000000)
+  while (timeout >= 1000000000)
   {
     ti.tv_sec++;
-    ti.tv_nsec -= 1000000000;
+    timeout -= 1000000000;
   }
+  ti.tv_nsec = timeout;
 
   pthread_mutex_lock (&timer->mutex);
   if (timer->run)
