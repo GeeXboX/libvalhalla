@@ -47,7 +47,7 @@ int vh_clock_gettime (clockid_t clk_id, struct timespec *tp);
 #define clock_gettime vh_clock_gettime
 #endif /* OSDEP_CLOCK_GETTIME_DARWIN || OSDEP_CLOCK_GETTIME_WINDOWS */
 #ifdef OSDEP_STRNDUP
-char *ivh_strndup (const char *s, size_t n);
+char *vh_strndup (const char *s, size_t n);
 #undef  strndup
 #define strndup vh_strndup
 #endif /* OSDEP_STRNDUP */
