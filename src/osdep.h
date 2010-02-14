@@ -42,19 +42,29 @@ typedef enum {
 } clockid_t;
 
 
-int clock_gettime (clockid_t clk_id, struct timespec *tp);
+int vh_clock_gettime (clockid_t clk_id, struct timespec *tp);
+#undef  clock_gettime
+#define clock_gettime vh_clock_gettime
 #endif /* OSDEP_CLOCK_GETTIME_DARWIN || OSDEP_CLOCK_GETTIME_WINDOWS */
 #ifdef OSDEP_STRNDUP
-char *strndup (const char *s, size_t n);
+char *ivh_strndup (const char *s, size_t n);
+#undef  strndup
+#define strndup vh_strndup
 #endif /* OSDEP_STRNDUP */
 #ifdef OSDEP_STRCASESTR
-char *strcasestr (const char *haystack, const char *needle);
+char *vh_strcasestr (const char *haystack, const char *needle);
+#undef  strcasestr
+#define strcasestr vh_strcasestr
 #endif /* OSDEP_STRCASESTR */
 #ifdef OSDEP_STRTOK_R
-char *strtok_r (char *str, const char *delim, char **saveptr);
+char *vh_strtok_r (char *str, const char *delim, char **saveptr);
+#undef  strtok_r
+#define strtok_r vh_strtok_r
 #endif /* OSDEP_STRTOK_R */
 #ifdef OSDEP_LSTAT
-int lstat (const char *path, struct stat *buf);
+int vh_lstat (const char *path, struct stat *buf);
+#undef  lstat
+#define lstat vh_lstat
 #endif /* OSDEP_LSTAT */
 
 int vh_osdep_init (void);

@@ -116,7 +116,7 @@ time_init (void)
  * is supported and errno is not set appropriately.
  */
 int
-clock_gettime (clockid_t clk_id, struct timespec *tp)
+vh_clock_gettime (clockid_t clk_id, struct timespec *tp)
 {
   LARGE_INTEGER count;
   LONGLONG      diff;
@@ -147,7 +147,7 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
  * is supported and errno is not set appropriately.
  */
 int
-clock_gettime (clockid_t clk_id, struct timespec *tp)
+vh_clock_gettime (clockid_t clk_id, struct timespec *tp)
 {
   kern_return_t   ret;
   clock_serv_t    clk;
@@ -176,7 +176,7 @@ clock_gettime (clockid_t clk_id, struct timespec *tp)
 
 #ifdef OSDEP_STRNDUP
 char *
-strndup (const char *s, size_t n)
+vh_strndup (const char *s, size_t n)
 {
   char *res;
   size_t length;
@@ -198,7 +198,7 @@ strndup (const char *s, size_t n)
 
 #ifdef OSDEP_STRCASESTR
 char *
-strcasestr (const char *haystack, const char *needle)
+vh_strcasestr (const char *haystack, const char *needle)
 {
   size_t length;
 
@@ -217,7 +217,7 @@ strcasestr (const char *haystack, const char *needle)
 
 #ifdef OSDEP_STRTOK_R
 char *
-strtok_r (char *str, const char *delim, char **saveptr)
+vh_strtok_r (char *str, const char *delim, char **saveptr)
 {
   char *token;
 
@@ -239,7 +239,7 @@ strtok_r (char *str, const char *delim, char **saveptr)
 
 #ifdef OSDEP_LSTAT
 int
-lstat (const char *path, struct stat *buf)
+vh_lstat (const char *path, struct stat *buf)
 {
 #ifdef _WIN32
   return stat (path, buf);
