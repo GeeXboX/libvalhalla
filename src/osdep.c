@@ -87,7 +87,7 @@ time_init (void)
 
   time_freq = freq.QuadPart;
 
-    GetSystemTime (&st);
+  GetSystemTime (&st);
   second = st.wSecond + 1;
 
   /* retrieve the tick corresponding to the time we retrieve above */
