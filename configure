@@ -1027,6 +1027,7 @@ enabled debug && add_cflags -g"$debuglevel" && add_cppflags -DHAVE_DEBUG
 
 if enabled small; then
   check_cflags -Os
+  add_cppflags -DCONFIG_SMALL
 elif enabled optimize; then
   if test -n "`$cc -v 2>&1 | grep xlc`"; then
     add_cflags  "-O5"
