@@ -87,7 +87,7 @@ vh_hmac_sha256_reset (hmac_sha256_t *hd)
 #define HMAC_IPAD 0x36
 #define HMAC_OPAD 0x5C
 
-unsigned char *
+uint8_t *
 vh_hmac_sha256_compute (hmac_sha256_t *hd, const char *src, size_t size)
 {
   int i;
@@ -120,5 +120,5 @@ vh_hmac_sha256_compute (hmac_sha256_t *hd, const char *src, size_t size)
   vh_sha_update (hd->sha, hmac_buf, 64 + 32);
   vh_sha_final  (hd->sha, hd->dst);
 
-  return (unsigned char *) hd->dst;
+  return hd->dst;
 }

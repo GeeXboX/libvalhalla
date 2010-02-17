@@ -99,7 +99,7 @@ grabber_amazon_signature (hmac_sha256_t *hd, const char *args)
 {
   char *src;
   size_t size, off = 0;
-  unsigned char *sign;
+  uint8_t *sign;
   char *sign64, *res = NULL;
 
   if (!args)

@@ -22,6 +22,8 @@
 #ifndef VALHALLA_HMAC_SHA256_H
 #define VALHALLA_HMAC_SHA256_H
 
+#include <inttypes.h>
+
 typedef struct hmac_sha256_s hmac_sha256_t;
 
 #define VH_HMAC_SHA256_SIZE 32
@@ -30,7 +32,7 @@ typedef struct hmac_sha256_s hmac_sha256_t;
 hmac_sha256_t *vh_hmac_sha256_new (const char *key);
 void vh_hmac_sha256_free (hmac_sha256_t *hd);
 void vh_hmac_sha256_reset (hmac_sha256_t *hd);
-unsigned char *vh_hmac_sha256_compute (hmac_sha256_t *hd,
+uint8_t *vh_hmac_sha256_compute (hmac_sha256_t *hd,
                                        const char *src, size_t size);
 
 #endif /* VALHALLA_HMAC_SHA256_H */
