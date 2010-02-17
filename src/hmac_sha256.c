@@ -49,12 +49,11 @@ vh_hmac_sha256_new (const char *key)
   if (!hd->sha)
     goto err;
 
-  hd->key    = (uint8_t *) strdup (key);
+  hd->key = (uint8_t *) strdup (key);
   if (!hd->key)
     goto err;
 
   hd->keylen = strlen (key);
-
   return hd;
 
  err:
