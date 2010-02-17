@@ -22,7 +22,7 @@
 #ifndef VALHALLA_HMAC_SHA256_H
 #define VALHALLA_HMAC_SHA256_H
 
-typedef void hmac_sha256_t;
+typedef struct hmac_sha256_s hmac_sha256_t;
 
 #define VH_HMAC_SHA256_SIZE 32
 

@@ -84,6 +84,7 @@ EXTRADIST = \
 	osdep.h \
 	parser.h \
 	scanner.h \
+	sha.h \
 	sql_statements.h \
 	stats.h \
 	thread_utils.h \
@@ -101,7 +102,8 @@ SRCS_GRABBER-$(GRABBER)			+= downloader.c \
 
 SRCS_GRABBER-$(XML)			+= xml_utils.c
 SRCS_GRABBER-$(MD5)			+= md5.c
-SRCS_GRABBER-$(HMAC_SHA256)		+= hmac_sha256.c
+SRCS_GRABBER-$(HMAC_SHA256)		+= hmac_sha256.c \
+					   sha.c
 SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c
 SRCS_GRABBER-$(GRABBER_ALLOCINE)	+= grabber_allocine.c
 SRCS_GRABBER-$(GRABBER_AMAZON)		+= grabber_amazon.c

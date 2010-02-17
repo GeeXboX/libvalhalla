@@ -1,6 +1,8 @@
 /*
  * GeeXboX Valhalla: tiny media scanner API.
- * Copyright (C) 2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2009-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ *
+ * The HMAC-SHA2 digest is freely inspired by FFmpeg/libavformat/rtmpproto.c.
  *
  * This file is part of libvalhalla.
  *
@@ -20,33 +22,39 @@
  */
 
 #include <stdlib.h>
-#include <errno.h>
-#include <pthread.h>
-#include <gcrypt.h>
+#include <string.h>
 
+#include "sha.h"
 #include "hmac_sha256.h"
 
+struct hmac_sha256_s {
+  uint8_t  *key;
+  size_t    keylen;
 
-GCRY_THREAD_OPTION_PTHREAD_IMPL;
+  vh_sha_t *sha;
+  uint8_t   dst[VH_HMAC_SHA256_SIZE];
+};
+
 
 hmac_sha256_t *
 vh_hmac_sha256_new (const char *key)
 {
-  gcry_md_hd_t hd;
+  hmac_sha256_t *hd;
 
-  if (!gcry_control (GCRYCTL_INITIALIZATION_FINISHED_P))
-  {
-    gcry_control (GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
-    gcry_check_version (GCRYPT_VERSION);
-    gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
-    gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
-  }
-
-  gcry_md_open (&hd, GCRY_MD_SHA256, GCRY_MD_FLAG_HMAC);
+  hd = calloc (1, sizeof (hmac_sha256_t));
   if (!hd)
     return NULL;
 
-  gcry_md_setkey (hd, key, strlen (key));
+  hd->sha = calloc (1, vh_sha_size);
+  if (!hd->sha)
+  {
+    free (hd);
+    return NULL;
+  }
+
+  hd->key    = (uint8_t *) strdup (key);
+  hd->keylen = strlen (key);
+
   return hd;
 }
 
@@ -56,7 +64,8 @@ vh_hmac_sha256_free (hmac_sha256_t *hd)
   if (!hd)
     return;
 
-  gcry_md_close (hd);
+  free (hd->sha);
+  free (hd);
 }
 
 void
@@ -65,15 +74,45 @@ vh_hmac_sha256_reset (hmac_sha256_t *hd)
   if (!hd)
     return;
 
-  gcry_md_reset (hd);
+  memset (hd->sha, 0, vh_sha_size);
+  memset (hd->dst, 0, VH_HMAC_SHA256_SIZE);
 }
+
+#define HMAC_IPAD 0x36
+#define HMAC_OPAD 0x5C
 
 unsigned char *
 vh_hmac_sha256_compute (hmac_sha256_t *hd, const char *src, size_t size)
 {
+  int i;
+  uint8_t hmac_buf[64 + 32] = { 0 };
+
   if (!hd || !src)
     return NULL;
 
-  gcry_md_write (hd, src, size);
-  return gcry_md_read (hd, 0);
+  if (hd->keylen < 64)
+    memcpy (hmac_buf, hd->key, hd->keylen);
+  else
+  {
+    vh_sha_init   (hd->sha, 256);
+    vh_sha_update (hd->sha, hd->key, hd->keylen);
+    vh_sha_final  (hd->sha, hmac_buf);
+  }
+
+  for (i = 0; i < 64; i++)
+    hmac_buf[i] ^= HMAC_IPAD;
+
+  vh_sha_init   (hd->sha, 256);
+  vh_sha_update (hd->sha, hmac_buf, 64);
+  vh_sha_update (hd->sha, (uint8_t *) src, size);
+  vh_sha_final  (hd->sha, hmac_buf + 64);
+
+  for (i = 0; i < 64; i++)
+    hmac_buf[i] ^= HMAC_IPAD ^ HMAC_OPAD;
+
+  vh_sha_init   (hd->sha, 256);
+  vh_sha_update (hd->sha, hmac_buf, 64 + 32);
+  vh_sha_final  (hd->sha, hd->dst);
+
+  return (unsigned char *) hd->dst;
 }
