@@ -33,6 +33,6 @@ hmac_sha256_t *vh_hmac_sha256_new (const char *key);
 void vh_hmac_sha256_free (hmac_sha256_t *hd);
 void vh_hmac_sha256_reset (hmac_sha256_t *hd);
 uint8_t *vh_hmac_sha256_compute (hmac_sha256_t *hd,
-                                       const char *src, size_t size);
+                                 const char *src, size_t size);
 
 #endif /* VALHALLA_HMAC_SHA256_H */
