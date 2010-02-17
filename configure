@@ -79,7 +79,6 @@ show_help(){
   echo "  --with-xml2-dir=DIR          check for libxml-2.0 installed in DIR"
   echo "  --with-exif-dir=DIR          check for libexif installed in DIR"
   echo "  --with-nfo-dir=DIR           check for libnfo installed in DIR"
-  echo "  --with-gcrypt-dir=DIR        check for libgcrypt installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                  force architecture"
@@ -633,8 +632,6 @@ for opt do
   ;;
   --with-nfo-dir=*) nfodir="$optval";
   ;;
-  --with-gcrypt-dir=*) gcryptdir="$optval";
-  ;;
   --enable-grabbers) grabber_all="yes";
   ;;
   --disable-grabbers) grabber_all="no";
@@ -1138,9 +1135,6 @@ grabber_enable_dep avutil_dep_grabber
 exif_dep_grabber="exif"
 grabber_enable_dep exif_dep_grabber
 
-gcrypt_dep_grabber="amazon"
-grabber_enable_dep gcrypt_dep_grabber
-
 nfo_dep_grabber="nfo"
 grabber_enable_dep nfo_dep_grabber
 
@@ -1219,28 +1213,6 @@ if enabled avutil; then
     [ "$?" != 0 ] && die "Error, can't find libavutil !"
     avutil="no"
     grabber_set_no $avutil_dep_grabber
-  fi
-fi
-
-if enabled gcrypt; then
-  ###############################################
-  #   check for libgcrypt
-  ###############################################
-  if [ -n "$gcryptdir" ]; then
-    check_cppflags -I$gcryptdir
-    check_ldflags -L$gcryptdir
-  fi
-
-  echologn "Checking for libgcrypt ... "
-  check_lib_libcfg libgcrypt-config gcrypt.h gcry_md_open -lgcrypt
-  if [ "$?" = 0 ]; then
-    echolog "(yes)"
-  else
-    echolog "(no)"
-    grabber_forced $gcrypt_dep_grabber
-    [ "$?" != 0 ] && die "Error, can't find libgcrypt !"
-    gcrypt="no"
-    grabber_set_no $gcrypt_dep_grabber
   fi
 fi
 
@@ -1449,7 +1421,11 @@ append_config "XML=$xml"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
 append_config "MD5=$avutil"
-append_config "HMAC_SHA256=$gcrypt"
+if enabled grabber_amazon && enabled avutil; then
+  append_config "HMAC_SHA256=yes"
+else
+  append_config "HMAC_SHA256=no"
+fi
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_ALLOCINE=$grabber_allocine"
