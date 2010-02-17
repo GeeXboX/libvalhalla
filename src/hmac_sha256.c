@@ -64,6 +64,7 @@ vh_hmac_sha256_free (hmac_sha256_t *hd)
   if (!hd)
     return;
 
+  free (hd->key);
   free (hd->sha);
   free (hd);
 }
