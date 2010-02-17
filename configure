@@ -1421,11 +1421,7 @@ append_config "XML=$xml"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
 append_config "MD5=$avutil"
-if enabled grabber_amazon && enabled avutil; then
-  append_config "HMAC_SHA256=yes"
-else
-  append_config "HMAC_SHA256=no"
-fi
+append_config "HMAC_SHA256=$grabber_amazon"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
 append_config "GRABBER_ALLOCINE=$grabber_allocine"
