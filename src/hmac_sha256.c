@@ -47,15 +47,21 @@ vh_hmac_sha256_new (const char *key)
 
   hd->sha = calloc (1, vh_sha_size);
   if (!hd->sha)
-  {
-    free (hd);
-    return NULL;
-  }
+    goto err;
 
   hd->key    = (uint8_t *) strdup (key);
+  if (!hd->key)
+    goto err;
+
   hd->keylen = strlen (key);
 
   return hd;
+
+ err:
+  if (hd->sha)
+    free (hd->sha);
+  free (hd);
+  return NULL;
 }
 
 void
