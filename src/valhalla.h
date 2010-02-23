@@ -477,20 +477,23 @@ typedef enum valhalla_cfg {
 /** \brief Parameters for valhalla_init(). */
 typedef struct valhalla_init_param_s {
   /**
-   * Number of parsers (max 8) to initialize for metadata retrieving (all
-   * parsers are parallelized). The default number of parsers is 2.
+   * Number of threads for parsing (max 8); the parsers are concurrent.
+   * The default number of threads is 2.
    */
   unsigned int parser_nb;
   /**
-   * Number of grabbers (max 16) to initialize (all grabbers are concurrent
-   * as long as their ID is different). The default number of grabbers is 2.
-   * To use many grabbers will not increase a lot the use of memory, but
-   * it can increase significantly the use of the bandwidth for Internet.
+   * Number of threads for grabbing (max 16); the grabbers are concurrent
+   * as long as their ID are different. The default number of threads is 2.
+   * To use many threads will not increase a lot the use of memory, but
+   * it can increase significantly the use of the bandwidth for Internet
+   * and the CPU load. Set this parameter to 1, in order to serialize the
+   * calls on the grabbers. A value of 3 or 4 is a good choice for most of
+   * the uses.
    */
   unsigned int grabber_nb;
   /**
    * Number of data (set of metadata) to be inserted or updated in one pass
-   * in the database (BEGIN and COMMIT sql mechanism). A value between 100
+   * in the database (BEGIN and COMMIT sql mechanisms). A value between 100
    * and 200 is a good choice. The default interval is 128.
    */
   unsigned int commit_int;
