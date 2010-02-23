@@ -407,7 +407,7 @@ valhalla_uninit (valhalla_t *handle)
 
 #ifdef USE_LAVC
   if (!preinit)
-  av_lockmgr_register (NULL);
+    av_lockmgr_register (NULL);
 #endif /* USE_LAVC */
 
   vh_stats_free (handle->stats);
