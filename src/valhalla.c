@@ -48,6 +48,9 @@
 #include "url_utils.h"
 #endif /* USE_GRABBER */
 
+static int g_preinit;
+static pthread_mutex_t g_preinit_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 unsigned int
 libvalhalla_version (void)
@@ -369,10 +372,16 @@ valhalla_force_stop (valhalla_t *handle)
 void
 valhalla_uninit (valhalla_t *handle)
 {
+  int preinit;
+
   vh_log (VALHALLA_MSG_VERBOSE, "%s: begin", __FUNCTION__);
 
   if (!handle)
     return;
+
+  pthread_mutex_lock (&g_preinit_mutex);
+  preinit = --g_preinit;
+  pthread_mutex_unlock (&g_preinit_mutex);
 
   if (!handle->fstop)
     valhalla_force_stop (handle);
@@ -397,6 +406,7 @@ valhalla_uninit (valhalla_t *handle)
 #endif /* USE_GRABBER */
 
 #ifdef USE_LAVC
+  if (!preinit)
   av_lockmgr_register (NULL);
 #endif /* USE_LAVC */
 
@@ -573,12 +583,16 @@ valhalla_avlock (void **mutex, enum AVLockOp op)
 valhalla_t *
 valhalla_init (const char *db, valhalla_init_param_t *param)
 {
-  static int preinit = 0;
+  int preinit;
   valhalla_t *handle;
   valhalla_init_param_t p;
   const valhalla_init_param_t *pp = &p;
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  pthread_mutex_lock (&g_preinit_mutex);
+  preinit = g_preinit;
+  pthread_mutex_unlock (&g_preinit_mutex);
 
   if (!preinit && vh_osdep_init ())
     return NULL;
@@ -657,8 +671,11 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
 #endif /* USE_LAVC */
     av_log_set_level (AV_LOG_FATAL);
     av_register_all ();
-    preinit = 1;
   }
+
+  pthread_mutex_lock (&g_preinit_mutex);
+  g_preinit++;
+  pthread_mutex_unlock (&g_preinit_mutex);
 
   return handle;
 
