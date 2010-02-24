@@ -775,14 +775,17 @@ void valhalla_ondemand (valhalla_t *handle, const char *file);
 /*                                                                            */
 /******************************************************************************/
 
+/** \brief Prepared statement. */
 typedef struct valhalla_db_stmt_s valhalla_db_stmt_t;
 
+/** \brief Type of field. */
 typedef enum valhalla_db_type {
   VALHALLA_DB_TYPE_ID,
   VALHALLA_DB_TYPE_TEXT,
   VALHALLA_DB_TYPE_GROUP,
 } valhalla_db_type_t;
 
+/** \brief Operator for a restriction. */
 typedef enum valhalla_db_operator {
   VALHALLA_DB_OPERATOR_IN,
   VALHALLA_DB_OPERATOR_NOTIN,
