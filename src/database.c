@@ -1239,9 +1239,9 @@ database_sql_exec (sqlite3 *db, const char *sql,
   /* new query ? */
   if (!stmt)
   {
-  res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
-  if (res != SQLITE_OK)
-    goto out;
+    res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+      goto out;
   }
 
   res = sqlite3_step (stmt);
