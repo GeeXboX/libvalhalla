@@ -977,6 +977,7 @@ valhalla_db_filelist_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  * \param[in] handle      Handle on the scanner.
  * \param[in] id          File ID or 0.
  * \param[in] path        Path or NULL.
+ * \param[in] restriction Restrictions on the list.
  * \return the statement, NULL on error.
  */
 valhalla_db_stmt_t *
