@@ -60,6 +60,21 @@ typedef struct database_cb_s {
   database_t *database;
 } database_cb_t;
 
+#define VHSTMT_MAXCOLS  8
+
+struct valhalla_db_stmt_s {
+  char         *sql;
+  sqlite3_stmt *stmt;
+
+  unsigned int  cnt;
+  const char   *cols[VHSTMT_MAXCOLS];
+
+  union {
+    valhalla_db_metares_t metares;
+    valhalla_db_fileres_t fileres;
+  } u;
+};
+
 static const item_list_t g_file_type[] = {
   [VALHALLA_FILE_TYPE_NULL]     = { 0, "null"     },
   [VALHALLA_FILE_TYPE_AUDIO]    = { 0, "audio"    },
@@ -1211,32 +1226,35 @@ vh_database_step_transaction (database_t *database,
  * anymore. Only one SQL query must be passed in the argument. The goal is to
  * have in a near future, a non-blocked version for the public selections.
  */
-static void
+static int
 database_sql_exec (sqlite3 *db, const char *sql,
-                   int (*callback) (void *user_data, int argc,
-                                    const char **argv),
-                   void *data, char **errmsg)
+                   valhalla_db_stmt_t *vhstmt, char **errmsg)
 {
   int res;
   sqlite3_stmt *stmt = NULL;
 
+  if (vhstmt)
+    stmt = vhstmt->stmt;
+
+  /* new query ? */
+  if (!stmt)
+  {
   res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
   if (res != SQLITE_OK)
     goto out;
+  }
 
-  while ((res = sqlite3_step (stmt)) == SQLITE_ROW)
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_ROW && vhstmt)
   {
-    int argc, i;
-    const char *argv[32];
+    unsigned int i;
 
-    if (!callback)
-      continue;
+    vhstmt->stmt = stmt;
+    vhstmt->cnt  = sqlite3_column_count (stmt);
+    for (i = 0; i < vhstmt->cnt && i < VHSTMT_MAXCOLS; i++)
+      vhstmt->cols[i] = (const char *) sqlite3_column_text (stmt, i);
 
-    argc = sqlite3_column_count (stmt);
-    for (i = 0; i < argc; i++)
-      argv[i] = (const char *) sqlite3_column_text (stmt, i);
-
-    callback (data, argc, argv);
+    return 0;
   }
 
  out:
@@ -1247,11 +1265,19 @@ database_sql_exec (sqlite3 *db, const char *sql,
       *errmsg = strdup (err);
   }
 
+  if (vhstmt)
+  {
+    if (vhstmt->sql)
+      free (vhstmt->sql);
+    free (vhstmt);
+  }
+
   sqlite3_finalize (stmt);
+  return 1;
 }
 
 #define DB_SQL_EXEC_OR_GOTO(d, s, m, g)       \
-  database_sql_exec (d, s, NULL, NULL, &m);   \
+  database_sql_exec (d, s, NULL, &m);         \
   if (m)                                      \
     goto g;
 
@@ -1433,22 +1459,26 @@ vh_database_init (const char *path)
   }                                                                  \
   while (0)
 
-#define DATABASE_RETURN_SQL_EXEC(db, sql, cb, data, msg) \
-  {                                                      \
-    int res = 0;                                         \
-    valhalla_verb_t verb = VALHALLA_MSG_VERBOSE;         \
-    database_sql_exec (db, sql, cb, &data, &msg);        \
-    if (msg)                                             \
-    {                                                    \
-      vh_log (VALHALLA_MSG_ERROR, "%s", msg);            \
-      free (msg);                                        \
-      res = -1;                                          \
-      verb = VALHALLA_MSG_ERROR;                         \
-    }                                                    \
-    vh_log (verb, "query: %s", sql);                     \
-    return res;                                          \
+
+static inline int
+database_sql_vhstmt (sqlite3 *db,
+                     const char *sql, valhalla_db_stmt_t *vhstmt)
+{
+  int rc;
+  char *msg = NULL;
+  valhalla_verb_t verb = VALHALLA_MSG_VERBOSE;
+
+  rc = database_sql_exec (db, sql, vhstmt, &msg);
+  if (msg)
+  {
+    vh_log (VALHALLA_MSG_ERROR, "%s", msg);
+    free (msg);
+    verb = VALHALLA_MSG_ERROR;
   }
 
+  vh_log (verb, "query: %s", sql);
+  return rc;
+}
 
 static void
 database_list_get_restriction_sub (valhalla_db_restrict_t *restriction,
@@ -1550,38 +1580,36 @@ database_list_get_restriction (valhalla_db_restrict_t *restriction, char *sql)
   }
 }
 
-static int
-database_select_metalist_cb (void *user_data, int argc, const char **argv)
+const valhalla_db_metares_t *
+vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
-  database_cb_t *data_cb = user_data;
-  valhalla_db_metares_t res;
+  int rc;
+  valhalla_db_metares_t *metares = &vhstmt->u.metares;
 
-  if (argc != 6)
-    return 0;
+  rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
+  if (rc) /* no more row */
+    return NULL;
 
-  res.meta_id    = (int64_t) strtoimax (argv[0], NULL, 10);
-  res.meta_name  = argv[2];
-  res.data_id    = (int64_t) strtoimax (argv[1], NULL, 10);
-  res.data_value = argv[3];
-  res.group      = database_group_get (data_cb->database,
-                                       (int64_t) strtoimax (argv[4], NULL, 10));
-  res.external   = (int) strtol (argv[5], NULL, 10);
+  metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
+  metares->meta_name  = vhstmt->cols[2];
+  metares->data_id    = (int64_t) strtoimax (vhstmt->cols[1], NULL, 10);
+  metares->data_value = vhstmt->cols[3];
+  metares->external   = (int)     strtol    (vhstmt->cols[5], NULL, 10);
+  metares->group      =
+    database_group_get (database,
+                        (int64_t) strtoimax (vhstmt->cols[4], NULL, 10));
 
-  /* send to the frontend */
-  return data_cb->cb_mr (data_cb->data, &res);
+  return metares;
 }
 
-int
+valhalla_db_stmt_t *
 vh_database_metalist_get (database_t *database,
                           valhalla_db_item_t *search,
                           valhalla_file_type_t filetype,
-                          valhalla_db_restrict_t *restriction,
-                          int (*select_cb) (void *data,
-                                            valhalla_db_metares_t *res),
-                          void *data)
+                          valhalla_db_restrict_t *restriction)
 {
-  database_cb_t data_cb;
-  char *msg = NULL;
+  int res;
+  valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT meta.meta_id, data.data_id,
    *        meta.meta_name, data.data_value,
@@ -1593,6 +1621,10 @@ vh_database_metalist_get (database_t *database,
    * ON assoc.meta_id = meta.meta_id
    */
   char sql[SQL_BUFFER] = SELECT_LIST_METADATA_FROM;
+
+  vhstmt = calloc (1, sizeof (valhalla_db_stmt_t));
+  if (!vhstmt)
+    return NULL;
 
   /* WHERE */
   if (restriction || search->id || search->text || search->group || filetype)
@@ -1665,47 +1697,54 @@ vh_database_metalist_get (database_t *database,
    */
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
-  data_cb.cb_mr    = select_cb;
-  data_cb.data     = data;
-  data_cb.database = database;
+  vhstmt->sql = strdup (sql);
+  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
+  if (res != SQLITE_OK)
+  {
+    if (vhstmt->sql)
+      free (vhstmt->sql);
+    free (vhstmt);
+    return NULL;
+  }
 
-  DATABASE_RETURN_SQL_EXEC (database->db,
-                            sql, database_select_metalist_cb, data_cb, msg)
+  return vhstmt;
 }
 
-static int
-database_select_filelist_cb (void *user_data, int argc, const char **argv)
+const valhalla_db_fileres_t *
+vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
-  database_cb_t *data_cb = user_data;
-  valhalla_db_fileres_t res;
+  int rc;
+  valhalla_db_fileres_t *fileres = &vhstmt->u.fileres;
 
-  if (argc != 3)
-    return 0;
+  rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
+  if (rc) /* no more row */
+    return NULL;
 
-  res.id   = (int64_t) strtoimax (argv[0], NULL, 10);
-  res.path = argv[1];
-  res.type = database_file_type_get (data_cb->database,
-                                     (int64_t) strtoimax (argv[2], NULL, 10));
+  fileres->id   = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
+  fileres->path = vhstmt->cols[1];
+  fileres->type =
+    database_file_type_get (database,
+                            (int64_t) strtoimax (vhstmt->cols[2], NULL, 10));
 
-  /* send to the frontend */
-  return data_cb->cb_fr (data_cb->data, &res);
+  return fileres;
 }
 
-int
+valhalla_db_stmt_t *
 vh_database_filelist_get (database_t *database,
                           valhalla_file_type_t filetype,
-                          valhalla_db_restrict_t *restriction,
-                          int (*select_cb) (void *data,
-                                            valhalla_db_fileres_t *res),
-                          void *data)
+                          valhalla_db_restrict_t *restriction)
 {
-  database_cb_t data_cb;
-  char *msg = NULL;
+  int res;
+  valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT file_id, file_path, _type_id
    * FROM file AS assoc
    */
   char sql[SQL_BUFFER] = SELECT_LIST_FILE_FROM;
+
+  vhstmt = calloc (1, sizeof (valhalla_db_stmt_t));
+  if (!vhstmt)
+    return NULL;
 
   /* WHERE */
   if (restriction || filetype)
@@ -1743,61 +1782,48 @@ vh_database_filelist_get (database_t *database,
   /* ORDER BY file_id; */
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
 
-  data_cb.cb_fr    = select_cb;
-  data_cb.data     = data;
-  data_cb.database = database;
+  vhstmt->sql = strdup (sql);
+  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
+  if (res != SQLITE_OK)
+  {
+    if (vhstmt->sql)
+      free (vhstmt->sql);
+    free (vhstmt);
+    return NULL;
+  }
 
-  DATABASE_RETURN_SQL_EXEC (database->db,
-                            sql, database_select_filelist_cb, data_cb, msg)
+  return vhstmt;
 }
 
-static int
-database_select_file_cb (void *user_data, int argc, const char **argv)
+const valhalla_db_metares_t *
+vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
-  database_cb_t *data_cb = user_data;
-  valhalla_db_filemeta_t **res, *new;
+  int rc;
+  valhalla_db_metares_t *metares = &vhstmt->u.metares;
 
-  if (argc != 7)
-    return 0;
+  rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
+  if (rc) /* no more row */
+    return NULL;
 
-  res = data_cb->data;
+  metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[2], NULL, 10);
+  metares->meta_name  = strdup (vhstmt->cols[4]);
+  metares->data_id    = (int64_t) strtoimax (vhstmt->cols[3], NULL, 10);
+  metares->data_value = strdup (vhstmt->cols[5]);
+  metares->external   = (int)     strtol    (vhstmt->cols[6], NULL, 10);
+  metares->group      =
+    database_group_get (database,
+                        (int64_t) strtoimax (vhstmt->cols[1], NULL, 10));
 
-  if (*res)
-  {
-    for (new = *res; new->next; new = new->next)
-      ;
-    new->next = calloc (1, sizeof (valhalla_db_filemeta_t));
-    new = new->next;
-  }
-  else
-  {
-    *res = calloc (1, sizeof (valhalla_db_filemeta_t));
-    new = *res;
-  }
-
-  if (!new)
-    return 0;
-
-  new->meta_id    = (int64_t) strtoimax (argv[2], NULL, 10);
-  new->meta_name  = strdup (argv[4]);
-  new->data_id    = (int64_t) strtoimax (argv[3], NULL, 10);
-  new->data_value = strdup (argv[5]);
-
-  new->group = database_group_get (data_cb->database,
-                                   (int64_t) strtoimax (argv[1], NULL, 10));
-  new->external   = (int) strtol (argv[6], NULL, 10);
-
-  return 0;
+  return metares;
 }
 
-int
+valhalla_db_stmt_t *
 vh_database_file_get (database_t *database,
                       int64_t id, const char *path,
-                      valhalla_db_restrict_t *restriction,
-                      valhalla_db_filemeta_t **res)
+                      valhalla_db_restrict_t *restriction)
 {
-  database_cb_t data_cb;
-  char *msg = NULL;
+  int res;
+  valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT file.file_id, assoc._grp_id,
    *        meta.meta_id, data.data_id,
@@ -1811,6 +1837,10 @@ vh_database_file_get (database_t *database,
    * ON assoc.meta_id = meta.meta_id
    */
   char sql[SQL_BUFFER] = SELECT_FILE_FROM;
+
+  vhstmt = calloc (1, sizeof (valhalla_db_stmt_t));
+  if (!vhstmt)
+    return NULL;
 
   /* WHERE */
   SQL_CONCAT (sql, SELECT_LIST_WHERE);
@@ -1840,17 +1870,23 @@ vh_database_file_get (database_t *database,
   else if (path)
     SQL_CONCAT (sql, SELECT_FILE_WHERE_FILE_PATH, path);
   else
-    return -1;
+    goto err;
 
   /* ORDER BY assoc.priority__; */
   SQL_CONCAT (sql, SELECT_FILE_END);
 
-  *res = NULL;
-  data_cb.data     = res;
-  data_cb.database = database;
+  vhstmt->sql = strdup (sql);
+  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
+  if (res != SQLITE_OK)
+    goto err;
 
-  DATABASE_RETURN_SQL_EXEC (database->db,
-                            sql, database_select_file_cb, data_cb, msg)
+  return vhstmt;
+
+ err:
+  if (vhstmt->sql)
+    free (vhstmt->sql);
+  free (vhstmt);
+  return NULL;
 }
 
 /******************************************************************************/

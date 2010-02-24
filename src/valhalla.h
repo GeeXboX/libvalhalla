@@ -775,6 +775,8 @@ void valhalla_ondemand (valhalla_t *handle, const char *file);
 /*                                                                            */
 /******************************************************************************/
 
+typedef struct valhalla_db_stmt_s valhalla_db_stmt_t;
+
 typedef enum valhalla_db_type {
   VALHALLA_DB_TYPE_ID,
   VALHALLA_DB_TYPE_TEXT,
@@ -818,17 +820,6 @@ typedef struct valhalla_db_restrict_s {
   valhalla_db_item_t meta;
   valhalla_db_item_t data;
 } valhalla_db_restrict_t;
-
-/** \brief Results for valhalla_db_file_get(). */
-typedef struct valhalla_db_filemeta_s {
-  struct valhalla_db_filemeta_s *next;
-  int64_t  meta_id;
-  int64_t  data_id;
-  char    *meta_name;
-  char    *data_value;
-  valhalla_meta_grp_t group;
-  int      external;
-} valhalla_db_filemeta_t;
 
 #define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority)  \
   {                                                               \
@@ -880,24 +871,6 @@ typedef struct valhalla_db_filemeta_s {
 #define VALHALLA_DB_RESTRICT_LINK(from, to) \
   do {(to).next = &(from);} while (0)
 
-/** \brief Free a valhalla_db_filemeta_t pointer. */
-#define VALHALLA_DB_FILEMETA_FREE(meta) \
-  do                                    \
-  {                                     \
-    typeof (meta) tmp;                  \
-    while (meta)                        \
-    {                                   \
-      if ((meta)->meta_name)            \
-        free ((meta)->meta_name);       \
-      if ((meta)->data_value)           \
-        free ((meta)->data_value);      \
-      tmp = (meta)->next;               \
-      free (meta);                      \
-      meta = tmp;                       \
-    }                                   \
-  }                                     \
-  while (0)
-
 /**
  * @}
  * \name Database selections.
@@ -905,7 +878,7 @@ typedef struct valhalla_db_filemeta_s {
  */
 
 /**
- * \brief Retrieve a list of metadata according to a condition.
+ * \brief Init a statement to retrieve a list of metadata.
  *
  * It is possible to retrieve a list of metadata according to
  * restrictions on metadata and values.
@@ -921,20 +894,30 @@ typedef struct valhalla_db_filemeta_s {
  * \param[in] search      Condition for the search.
  * \param[in] filetype    File type.
  * \param[in] restriction Restrictions on the list.
- * \param[out] result_cb  Result callback.
- * \param[in,out] data    Data for the first callback argument.
- * \return !=0 on error.
+ * \return the statement, NULL on error.
  */
-int valhalla_db_metalist_get (valhalla_t *handle,
-                              valhalla_db_item_t *search,
-                              valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*result_cb) (void *data,
-                                                valhalla_db_metares_t *res),
-                              void *data);
+valhalla_db_stmt_t *
+valhalla_db_metalist_get (valhalla_t *handle,
+                          valhalla_db_item_t *search,
+                          valhalla_file_type_t filetype,
+                          valhalla_db_restrict_t *restriction);
 
 /**
- * \brief Retrieve a list of files.
+ * \brief Read the next row of a 'metalist' statement.
+ *
+ * The argument \p vhstmt must be initialized with valhalla_db_metalist_get().
+ * It is freed when the returned value is NULL. The pointer returned by the
+ * function is valid as long as no new call is done for the \p vhstmt.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] vhstmt      Statement.
+ * \return the result, NULL if no more row or on error.
+ */
+const valhalla_db_metares_t *
+valhalla_db_metalist_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
+
+/**
+ * \brief Init a statement to retrieve a list of files.
  *
  * It is possible to retrieve a list of files according to
  * restrictions on metadata and values.
@@ -950,24 +933,32 @@ int valhalla_db_metalist_get (valhalla_t *handle,
  * \param[in] handle      Handle on the scanner.
  * \param[in] filetype    File type.
  * \param[in] restriction Restrictions on the list.
- * \param[out] result_cb  Result callback.
- * \param[in,out] data    Data for the first callback argument.
- * \return !=0 on error.
+ * \return the statement, NULL on error.
  */
-int valhalla_db_filelist_get (valhalla_t *handle,
-                              valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*result_cb) (void *data,
-                                                valhalla_db_fileres_t *res),
-                              void *data);
+valhalla_db_stmt_t *
+valhalla_db_filelist_get (valhalla_t *handle,
+                          valhalla_file_type_t filetype,
+                          valhalla_db_restrict_t *restriction);
 
 /**
- * \brief Retrieve all metadata of a file.
+ * \brief Read the next row of a 'filelist' statement.
+ *
+ * The argument \p vhstmt must be initialized with valhalla_db_filelist_get().
+ * It is freed when the returned value is NULL. The pointer returned by the
+ * function is valid as long as no new call is done for the \p vhstmt.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] vhstmt      Statement.
+ * \return the result, NULL if no more row or on error.
+ */
+const valhalla_db_fileres_t *
+valhalla_db_filelist_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
+
+/**
+ * \brief Init a statement to retrieve the metadata of file.
  *
  * Only one parameter (\p id or \p path) must be set in order to retrieve
  * a file. If both parameters are not null, then the \p path is ignored.
- *
- * \p *res must be freed by VALHALLA_DB_FILEMETA_FREE().
  *
  * Example (to retrieve only the track and the title):
  *  \code
@@ -983,14 +974,25 @@ int valhalla_db_filelist_get (valhalla_t *handle,
  * \param[in] handle      Handle on the scanner.
  * \param[in] id          File ID or 0.
  * \param[in] path        Path or NULL.
- * \param[in] restriction Restrictions on the list of meta.
- * \param[out] res        Pointer on the linked list to populate.
- * \return !=0 on error.
+ * \return the statement, NULL on error.
  */
-int valhalla_db_file_get (valhalla_t *handle,
-                          int64_t id, const char *path,
-                          valhalla_db_restrict_t *restriction,
-                          valhalla_db_filemeta_t **res);
+valhalla_db_stmt_t *
+valhalla_db_file_get (valhalla_t *handle, int64_t id, const char *path,
+                      valhalla_db_restrict_t *restriction);
+
+/**
+ * \brief Read the next row of a 'file' statement.
+ *
+ * The argument \p vhstmt must be initialized with valhalla_db_file_get().
+ * It is freed when the returned value is NULL. The pointer returned by the
+ * function is valid as long as no new call is done for the \p vhstmt.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] vhstmt      Statement.
+ * \return the result, NULL if no more row or on error.
+ */
+const valhalla_db_metares_t *
+valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
 
 /**
  * @}

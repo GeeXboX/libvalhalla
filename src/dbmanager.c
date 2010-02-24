@@ -702,51 +702,78 @@ vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager)
   vh_database_end_transaction (dbmanager->database);
 }
 
-int
+valhalla_db_stmt_t *
 vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
                               valhalla_db_item_t *search,
                               valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*select_cb) (void *data,
-                                                valhalla_db_metares_t *res),
-                              void *data)
+                              valhalla_db_restrict_t *restriction)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
-    return -1;
+    return NULL;
 
-  return vh_database_metalist_get (dbmanager->database, search,
-                                   filetype, restriction, select_cb, data);
+  return vh_database_metalist_get (dbmanager->database,
+                                   search, filetype, restriction);
 }
 
-int
+const valhalla_db_metares_t *
+vh_dbmanager_db_metalist_read (dbmanager_t *dbmanager,
+                               valhalla_db_stmt_t *vhstmt)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return NULL;
+
+  return vh_database_metalist_read (dbmanager->database, vhstmt);
+}
+
+valhalla_db_stmt_t *
 vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
                               valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*select_cb) (void *data,
-                                                valhalla_db_fileres_t *res),
-                              void *data)
+                              valhalla_db_restrict_t *restriction)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
-    return -1;
+    return NULL;
 
-  return vh_database_filelist_get (dbmanager->database,
-                                   filetype, restriction, select_cb, data);
+  return vh_database_filelist_get (dbmanager->database, filetype, restriction);
 }
 
-int
-vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
-                          int64_t id, const char *path,
-                          valhalla_db_restrict_t *restriction,
-                          valhalla_db_filemeta_t **res)
+const valhalla_db_fileres_t *
+vh_dbmanager_db_filelist_read (dbmanager_t *dbmanager,
+                               valhalla_db_stmt_t *vhstmt)
 {
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   if (!dbmanager)
-    return -1;
+    return NULL;
 
-  return vh_database_file_get (dbmanager->database, id, path, restriction, res);
+  return vh_database_filelist_read (dbmanager->database, vhstmt);
+}
+
+valhalla_db_stmt_t *
+vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
+                          int64_t id, const char *path,
+                          valhalla_db_restrict_t *restriction)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return NULL;
+
+  return vh_database_file_get (dbmanager->database, id, path, restriction);
+}
+
+const valhalla_db_metares_t *
+vh_dbmanager_db_file_read (dbmanager_t *dbmanager, valhalla_db_stmt_t *vhstmt)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!dbmanager)
+    return NULL;
+
+  return vh_database_file_read (dbmanager->database, vhstmt);
 }

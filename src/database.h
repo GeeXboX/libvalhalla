@@ -62,25 +62,27 @@ void vh_database_uninit (database_t *database);
 int vh_database_cleanup (database_t *database);
 
 
-int vh_database_metalist_get (database_t *database,
-                              valhalla_db_item_t *search,
-                              valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*select_cb) (void *data,
-                                                valhalla_db_metares_t *res),
-                              void *data);
+valhalla_db_stmt_t *
+vh_database_metalist_get (database_t *database,
+                          valhalla_db_item_t *search,
+                          valhalla_file_type_t filetype,
+                          valhalla_db_restrict_t *restriction);
+const valhalla_db_metares_t *
+vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt);
 
-int vh_database_filelist_get (database_t *database,
-                              valhalla_file_type_t filetype,
-                              valhalla_db_restrict_t *restriction,
-                              int (*select_cb) (void *data,
-                                                valhalla_db_fileres_t *res),
-                              void *data);
+valhalla_db_stmt_t *
+vh_database_filelist_get (database_t *database,
+                          valhalla_file_type_t filetype,
+                          valhalla_db_restrict_t *restriction);
+const valhalla_db_fileres_t *
+vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt);
 
-int vh_database_file_get (database_t *database,
-                          int64_t id, const char *path,
-                          valhalla_db_restrict_t *restriction,
-                          valhalla_db_filemeta_t **res);
+valhalla_db_stmt_t *
+vh_database_file_get (database_t *database, int64_t id, const char *path,
+                      valhalla_db_restrict_t *restriction);
+const valhalla_db_metares_t *
+vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt);
+
 
 int vh_database_metadata_insert (database_t *database, const char *path,
                                  const char *meta, const char *data,

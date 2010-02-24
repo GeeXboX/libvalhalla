@@ -65,24 +65,27 @@ void vh_dbmanager_db_dlcontext_delete (dbmanager_t *dbmanager);
 void vh_dbmanager_db_begin_transaction (dbmanager_t *dbmanager);
 void vh_dbmanager_db_end_transaction (dbmanager_t *dbmanager);
 
-int vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
-                                  valhalla_db_item_t *search,
-                                  valhalla_file_type_t filetype,
-                                  valhalla_db_restrict_t *restriction,
-                                  int (*select_cb) (void *data,
-                                                    valhalla_db_metares_t *res),
-                                  void *data);
+valhalla_db_stmt_t *
+vh_dbmanager_db_metalist_get (dbmanager_t *dbmanager,
+                              valhalla_db_item_t *search,
+                              valhalla_file_type_t filetype,
+                              valhalla_db_restrict_t *restriction);
+const valhalla_db_metares_t *
+vh_dbmanager_db_metalist_read (dbmanager_t *dbmanager,
+                               valhalla_db_stmt_t *vhstmt);
 
-int vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
-                                  valhalla_file_type_t filetype,
-                                  valhalla_db_restrict_t *restriction,
-                                  int (*select_cb) (void *data,
-                                                    valhalla_db_fileres_t *res),
-                                  void *data);
+valhalla_db_stmt_t *
+vh_dbmanager_db_filelist_get (dbmanager_t *dbmanager,
+                              valhalla_file_type_t filetype,
+                              valhalla_db_restrict_t *restriction);
+const valhalla_db_fileres_t *
+vh_dbmanager_db_filelist_read (dbmanager_t *dbmanager,
+                               valhalla_db_stmt_t *vhstmt);
 
-int vh_dbmanager_db_file_get (dbmanager_t *dbmanager,
-                              int64_t id, const char *path,
-                              valhalla_db_restrict_t *restriction,
-                              valhalla_db_filemeta_t **res);
+valhalla_db_stmt_t *
+vh_dbmanager_db_file_get (dbmanager_t *dbmanager, int64_t id, const char *path,
+                          valhalla_db_restrict_t *restriction);
+const valhalla_db_metares_t *
+vh_dbmanager_db_file_read (dbmanager_t *dbmanager, valhalla_db_stmt_t *vhstmt);
 
 #endif /* VALHALLA_DBMANAGER_H */
