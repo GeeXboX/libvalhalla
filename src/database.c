@@ -1820,9 +1820,9 @@ vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   }
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[2], NULL, 10);
-  metares->meta_name  = strdup (vhstmt->cols[4]);
+  metares->meta_name  = vhstmt->cols[4];
   metares->data_id    = (int64_t) strtoimax (vhstmt->cols[3], NULL, 10);
-  metares->data_value = strdup (vhstmt->cols[5]);
+  metares->data_value = vhstmt->cols[5];
   metares->external   = (int)     strtol    (vhstmt->cols[6], NULL, 10);
   metares->group      =
     database_group_get (database,
