@@ -1587,6 +1587,13 @@ vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   if (rc) /* no more row */
     return NULL;
 
+  if (vhstmt->cnt != 6)
+  {
+    sqlite3_finalize (vhstmt->stmt);
+    database_vhstmt_free (vhstmt);
+    return NULL;
+  }
+
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
   metares->meta_name  = vhstmt->cols[2];
   metares->data_id    = (int64_t) strtoimax (vhstmt->cols[1], NULL, 10);
@@ -1715,6 +1722,13 @@ vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   if (rc) /* no more row */
     return NULL;
 
+  if (vhstmt->cnt != 3)
+  {
+    sqlite3_finalize (vhstmt->stmt);
+    database_vhstmt_free (vhstmt);
+    return NULL;
+  }
+
   fileres->id   = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
   fileres->path = vhstmt->cols[1];
   fileres->type =
@@ -1797,6 +1811,13 @@ vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
   if (rc) /* no more row */
     return NULL;
+
+  if (vhstmt->cnt != 7)
+  {
+    sqlite3_finalize (vhstmt->stmt);
+    database_vhstmt_free (vhstmt);
+    return NULL;
+  }
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[2], NULL, 10);
   metares->meta_name  = strdup (vhstmt->cols[4]);
