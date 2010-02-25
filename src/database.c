@@ -53,13 +53,6 @@ struct database_s {
   int64_t      *groups_id;
 };
 
-typedef struct database_cb_s {
-  int       (*cb_mr) (void *data, valhalla_db_metares_t *res);
-  int       (*cb_fr) (void *data, valhalla_db_fileres_t *res);
-  void       *data;
-  database_t *database;
-} database_cb_t;
-
 #define VHSTMT_MAXCOLS  8
 
 struct valhalla_db_stmt_s {
