@@ -1234,8 +1234,7 @@ database_vhstmt_free (valhalla_db_stmt_t *vhstmt)
 
 /*
  * This function is a replacement of sqlite3_exec() which should not be used
- * anymore. Only one SQL query must be passed in the argument. The goal is to
- * have in a near future, a non-blocked version for the public selections.
+ * anymore. Only one SQL query must be passed in the argument.
  */
 static int
 database_sql_exec (sqlite3 *db, const char *sql,
