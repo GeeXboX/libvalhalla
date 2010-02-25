@@ -1221,6 +1221,17 @@ vh_database_step_transaction (database_t *database,
   }
 }
 
+static void
+database_vhstmt_free (valhalla_db_stmt_t *vhstmt)
+{
+  if (!vhstmt)
+    return;
+
+  if (vhstmt->sql)
+    free (vhstmt->sql);
+  free (vhstmt);
+}
+
 /*
  * This function is a replacement of sqlite3_exec() which should not be used
  * anymore. Only one SQL query must be passed in the argument. The goal is to
@@ -1265,13 +1276,7 @@ database_sql_exec (sqlite3 *db, const char *sql,
       *errmsg = strdup (err);
   }
 
-  if (vhstmt)
-  {
-    if (vhstmt->sql)
-      free (vhstmt->sql);
-    free (vhstmt);
-  }
-
+  database_vhstmt_free (vhstmt);
   sqlite3_finalize (stmt);
   return 1;
 }
@@ -1701,9 +1706,7 @@ vh_database_metalist_get (database_t *database,
   res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
   if (res != SQLITE_OK)
   {
-    if (vhstmt->sql)
-      free (vhstmt->sql);
-    free (vhstmt);
+    database_vhstmt_free (vhstmt);
     return NULL;
   }
 
@@ -1786,9 +1789,7 @@ vh_database_filelist_get (database_t *database,
   res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
   if (res != SQLITE_OK)
   {
-    if (vhstmt->sql)
-      free (vhstmt->sql);
-    free (vhstmt);
+    database_vhstmt_free (vhstmt);
     return NULL;
   }
 
@@ -1883,9 +1884,7 @@ vh_database_file_get (database_t *database,
   return vhstmt;
 
  err:
-  if (vhstmt->sql)
-    free (vhstmt->sql);
-  free (vhstmt);
+  database_vhstmt_free (vhstmt);
   return NULL;
 }
 
