@@ -1456,6 +1456,18 @@ vh_database_init (const char *path)
   }                                                                  \
   while (0)
 
+#define VH_DB_RETURN_SQL_PREPARE(d, s, v)                     \
+  {                                                           \
+    int rc;                                                   \
+    v->sql = strdup (s);                                      \
+    rc = sqlite3_prepare_v2 (d, v->sql, -1, &v->stmt, NULL);  \
+    if (rc != SQLITE_OK)                                      \
+    {                                                         \
+      database_vhstmt_free (v);                               \
+      return NULL;                                            \
+    }                                                         \
+    return v;                                                 \
+  }
 
 static inline int
 database_sql_vhstmt (sqlite3 *db,
@@ -1612,7 +1624,6 @@ vh_database_metalist_get (database_t *database,
                           valhalla_file_type_t filetype,
                           valhalla_db_restrict_t *restriction)
 {
-  int res;
   valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT meta.meta_id, data.data_id,
@@ -1700,15 +1711,7 @@ vh_database_metalist_get (database_t *database,
    */
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
-  vhstmt->sql = strdup (sql);
-  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
-  if (res != SQLITE_OK)
-  {
-    database_vhstmt_free (vhstmt);
-    return NULL;
-  }
-
-  return vhstmt;
+  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
 }
 
 const valhalla_db_fileres_t *
@@ -1742,7 +1745,6 @@ vh_database_filelist_get (database_t *database,
                           valhalla_file_type_t filetype,
                           valhalla_db_restrict_t *restriction)
 {
-  int res;
   valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT file_id, file_path, _type_id
@@ -1790,15 +1792,7 @@ vh_database_filelist_get (database_t *database,
   /* ORDER BY file_id; */
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
 
-  vhstmt->sql = strdup (sql);
-  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
-  if (res != SQLITE_OK)
-  {
-    database_vhstmt_free (vhstmt);
-    return NULL;
-  }
-
-  return vhstmt;
+  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
 }
 
 const valhalla_db_metares_t *
@@ -1835,7 +1829,6 @@ vh_database_file_get (database_t *database,
                       int64_t id, const char *path,
                       valhalla_db_restrict_t *restriction)
 {
-  int res;
   valhalla_db_stmt_t *vhstmt;
   /*
    * SELECT file.file_id, assoc._grp_id,
@@ -1883,21 +1876,15 @@ vh_database_file_get (database_t *database,
   else if (path)
     SQL_CONCAT (sql, SELECT_FILE_WHERE_FILE_PATH, path);
   else
-    goto err;
+  {
+    database_vhstmt_free (vhstmt);
+    return NULL;
+  }
 
   /* ORDER BY assoc.priority__; */
   SQL_CONCAT (sql, SELECT_FILE_END);
 
-  vhstmt->sql = strdup (sql);
-  res = sqlite3_prepare_v2 (database->db, vhstmt->sql, -1, &vhstmt->stmt, NULL);
-  if (res != SQLITE_OK)
-    goto err;
-
-  return vhstmt;
-
- err:
-  database_vhstmt_free (vhstmt);
-  return NULL;
+  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
 }
 
 /******************************************************************************/
