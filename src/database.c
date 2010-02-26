@@ -1631,7 +1631,7 @@ vh_database_metalist_get (database_t *database,
     return NULL;
 
   /* WHERE */
-    SQL_CONCAT (sql, SELECT_LIST_WHERE);
+  SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
   /*
    * assoc.file_id IN (
