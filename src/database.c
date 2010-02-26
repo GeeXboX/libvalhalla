@@ -1631,7 +1631,6 @@ vh_database_metalist_get (database_t *database,
     return NULL;
 
   /* WHERE */
-  if (restriction || search->id || search->text || search->group || filetype)
     SQL_CONCAT (sql, SELECT_LIST_WHERE);
 
   /*
