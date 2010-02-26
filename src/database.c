@@ -1463,6 +1463,8 @@ vh_database_init (const char *path)
     rc = sqlite3_prepare_v2 (d, v->sql, -1, &v->stmt, NULL);  \
     if (rc != SQLITE_OK)                                      \
     {                                                         \
+      vh_log (VALHALLA_MSG_ERROR,                             \
+              "%s - query: %s", sqlite3_errmsg (d), s);       \
       database_vhstmt_free (v);                               \
       return NULL;                                            \
     }                                                         \
