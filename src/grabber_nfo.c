@@ -62,7 +62,7 @@ grab_nfo_actor (nfo_actor_t *actor,
   {
     char str[1024] = { 0 };
 
-    if (role && strcmp (role, ""))
+    if (role && *role)
       snprintf (str, sizeof (str), "%s (%s)", name, role);
     else
       snprintf (str, sizeof (str), "%s", name);
