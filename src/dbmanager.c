@@ -557,15 +557,15 @@ dbmanager_stats_dump (vh_stats_t *stats, void *data)
   vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
   vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-  vh_log (VALHALLA_MSG_INFO, "Files inserted    | %lu",
+  vh_log (VALHALLA_MSG_INFO, "Files inserted    | %"PRIu64,
           vh_stats_counter_read (dbmanager->st_insert));
-  vh_log (VALHALLA_MSG_INFO, "Files updated     | %lu",
+  vh_log (VALHALLA_MSG_INFO, "Files updated     | %"PRIu64,
           vh_stats_counter_read (dbmanager->st_update));
-  vh_log (VALHALLA_MSG_INFO, "Files deleted     | %lu",
+  vh_log (VALHALLA_MSG_INFO, "Files deleted     | %"PRIu64,
           vh_stats_counter_read (dbmanager->st_delete));
-  vh_log (VALHALLA_MSG_INFO, "Files unchanged   | %lu",
+  vh_log (VALHALLA_MSG_INFO, "Files unchanged   | %"PRIu64,
           vh_stats_counter_read (dbmanager->st_nochange));
-  vh_log (VALHALLA_MSG_INFO, "Relations cleaned | %lu",
+  vh_log (VALHALLA_MSG_INFO, "Relations cleaned | %"PRIu64,
           vh_stats_counter_read (dbmanager->st_cleanup));
 }
 
