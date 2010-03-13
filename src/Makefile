@@ -5,6 +5,10 @@ include ../config.mak
 
 LIBNAME = libvalhalla
 STATIC_LIBNAME = $(LIBNAME).a
+SHARED_LIBNAME = $(LIBNAME).so
+SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME).$(VERSION)
+SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
+SHARED_LIBNAME_FLAGS = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
 
 ifeq ($(BUILD_STATIC),yes)
   BUILD_RULES += lib_static
@@ -22,11 +26,6 @@ ifeq ($(BUILD_SHARED),yes)
       SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME)
       SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME)
       SHARED_LIBNAME_FLAGS   = -shared -Wl,--out-implib=$(LIBNAME).dll.a -Wl,--export-all-symbols -Wl,--enable-auto-import
-    else
-      SHARED_LIBNAME         = $(LIBNAME).so
-      SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME).$(VERSION)
-      SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
-      SHARED_LIBNAME_FLAGS   = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
     endif
   endif
 endif
