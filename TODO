@@ -23,3 +23,8 @@
      -> Add optional support for inotify.
      -> Implement a system to add filters (to ignore some directories)
         for a path.
+     -> Add the possibility to keep the files in the database for a path even
+        if these files are not reachable. Useful for example with the network
+        shares. In this case, it should be the role of the application using
+        libvalhalla, to ack the library that the files are now available and
+        a new scanning must be performed.
