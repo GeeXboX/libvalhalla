@@ -308,6 +308,15 @@
  "FROM file "            \
  "WHERE file_path = ?;"
 
+#define SELECT_FILE_ID_BY_META                        \
+ "SELECT file.file_id "                               \
+ "FROM ( "                                            \
+   "file INNER JOIN assoc_file_metadata AS assoc "    \
+   "ON file.file_id = assoc.file_id "                 \
+ ") INNER JOIN meta "                                 \
+ "ON assoc.meta_id = meta.meta_id "                   \
+ "WHERE file.file_path = ? AND meta.meta_name = ?;"
+
 #define SELECT_FILE_ID_BY_METADATA                    \
  "SELECT file.file_id "                               \
  "FROM (( "                                           \

@@ -85,6 +85,7 @@ typedef enum database_stmt {
   STMT_SELECT_GROUP_ID,
   STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
+  STMT_SELECT_FILE_ID_BY_META,
   STMT_SELECT_FILE_ID_BY_METADATA,
   STMT_SELECT_FILE_GRABBER_NAME,
   STMT_SELECT_FILE_DLCONTEXT,
@@ -130,6 +131,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
   [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
+  [STMT_SELECT_FILE_ID_BY_META]      = { SELECT_FILE_ID_BY_META,      NULL },
   [STMT_SELECT_FILE_ID_BY_METADATA]  = { SELECT_FILE_ID_BY_METADATA,  NULL },
   [STMT_SELECT_FILE_GRABBER_NAME]    = { SELECT_FILE_GRABBER_NAME,    NULL },
   [STMT_SELECT_FILE_DLCONTEXT]       = { SELECT_FILE_DLCONTEXT,       NULL },
@@ -519,10 +521,16 @@ database_file_id_by_metadata (database_t *database, const char *path,
 {
   int64_t val = 0;
   int res, err = -1;
-  sqlite3_stmt *stmt = STMT_GET (STMT_SELECT_FILE_ID_BY_METADATA);
+  sqlite3_stmt *stmt;
+
+  if (data)
+    stmt = STMT_GET (STMT_SELECT_FILE_ID_BY_METADATA);
+  else
+    stmt = STMT_GET (STMT_SELECT_FILE_ID_BY_META);
 
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, path, out);
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, meta, out_clear);
+  if (data)
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 3, data, out_clear);
 
   res = sqlite3_step (stmt);
