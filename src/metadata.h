@@ -57,4 +57,9 @@ valhalla_metadata_pl_t vh_metadata_plist_read (metadata_plist_t *pl,
 void vh_metadata_plist_set (metadata_plist_t **pl, const char *metadata,
                             valhalla_metadata_pl_t priority);
 
+#define METADATA_PL_CHECK(p)            \
+  (!(p % 32)                            \
+   && p >= VALHALLA_METADATA_PL_HIGHEST \
+   && p <= VALHALLA_METADATA_PL_LOWEST)
+
 #endif /* VALHALLA_METADATA */

@@ -336,8 +336,7 @@ vh_metadata_plist_set (metadata_plist_t **pl,
   if (!pl || !*pl)
     return;
 
-  if (p % 32 || p < VALHALLA_METADATA_PL_HIGHEST
-             || p > VALHALLA_METADATA_PL_LOWEST)
+  if (!METADATA_PL_CHECK (p))
     return;
 
   /* search the entry (if exists) in the list */
