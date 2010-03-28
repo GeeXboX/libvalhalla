@@ -97,6 +97,7 @@ queue_cleanup (fifo_queue_t *queue)
     case ACTION_DB_EXT_INSERT:
     case ACTION_DB_EXT_UPDATE:
     case ACTION_DB_EXT_DELETE:
+    case ACTION_DB_EXT_PRIORITY:
       if (data)
         vh_dbmanager_extmd_free (data);
       break;
@@ -870,5 +871,36 @@ valhalla_db_metadata_delete (valhalla_t *handle, const char *path,
 
   vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
                             ACTION_DB_EXT_DELETE, extmd);
+  return 0;
+}
+
+int
+valhalla_db_metadata_priority (valhalla_t *handle, const char *path,
+                               const char *meta, const char *data,
+                               valhalla_metadata_pl_t p)
+{
+  dbmanager_extmd_t *extmd;
+
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle || !path)
+    return -1;
+
+  if (!meta && data)
+    return -1;
+
+  extmd = calloc (1, sizeof (dbmanager_extmd_t));
+  if (!extmd)
+    return -1;
+
+  extmd->path = strdup (path);
+  if (meta)
+    extmd->meta = strdup (meta);
+  if (data)
+    extmd->data = strdup (data);
+  extmd->priority = p;
+
+  vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
+                            ACTION_DB_EXT_PRIORITY, extmd);
   return 0;
 }

@@ -36,6 +36,7 @@ typedef enum action_list {
   ACTION_DB_EXT_INSERT,     /* external metadata to insert */
   ACTION_DB_EXT_UPDATE,     /* external metadata to update */
   ACTION_DB_EXT_DELETE,     /* external metadata to delete */
+  ACTION_DB_EXT_PRIORITY,   /* new priority for one or more metadata */
   ACTION_ACKNOWLEDGE,       /* dbmanager: ack scanner for each file handled */
   ACTION_OD_ENGAGE,         /* engage ondemand procedure */
   ACTION_EH_EVENTOD,        /* ondemand event for the user */

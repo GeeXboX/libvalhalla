@@ -171,6 +171,19 @@ dbmanager_queue (dbmanager_t *dbmanager)
       vh_dbmanager_extmd_free (extmd);
       continue;
     }
+
+    case ACTION_DB_EXT_PRIORITY:
+    {
+      dbmanager_extmd_t *extmd = data;
+
+      if (!extmd)
+        continue;
+
+      vh_database_metadata_priority (dbmanager->database, extmd->path,
+                                     extmd->meta, extmd->data, extmd->priority);
+      vh_dbmanager_extmd_free (extmd);
+      continue;
+    }
     }
 
     /* Manage BEGIN / COMMIT transactions */

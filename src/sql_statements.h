@@ -460,6 +460,21 @@
  "    priority__ = ? "             \
  "WHERE file_id = ? AND meta_id = ? AND data_id = ?; "
 
+#define UPDATE_ASSOC_FILE_MD_P    \
+ "UPDATE assoc_file_metadata "    \
+ "SET priority__ = ? "            \
+ "WHERE file_id = ?;"
+
+#define UPDATE_ASSOC_FILE_MD_PM   \
+ "UPDATE assoc_file_metadata "    \
+ "SET priority__ = ? "            \
+ "WHERE file_id = ? AND meta_id = ?;"
+
+#define UPDATE_ASSOC_FILE_MD_PMD  \
+ "UPDATE assoc_file_metadata "    \
+ "SET priority__ = ? "            \
+ "WHERE file_id = ? AND meta_id = ? AND data_id = ?;"
+
 /******************************************************************************/
 /*                                                                            */
 /*                                  Delete                                    */

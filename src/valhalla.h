@@ -1019,6 +1019,7 @@ valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  * \see valhalla_db_metadata_insert().
  * \see valhalla_db_metadata_update().
  * \see valhalla_db_metadata_delete().
+ * \see valhalla_db_metadata_priority() (only 6.).
  *
  * <ol>
  * <li>A data inserted/updated by these functions can not be updated by
@@ -1105,6 +1106,28 @@ int valhalla_db_metadata_update (valhalla_t *handle, const char *path,
  */
 int valhalla_db_metadata_delete (valhalla_t *handle, const char *path,
                                  const char *meta, const char *data);
+
+/**
+ * \brief Change the priority for one or more metadata in the database.
+ *
+ * If \p meta is NULL, all metadata are changed. If \p data is NULL, all
+ * metadata for a specific \p meta are changed. If \p meta is NULL, but
+ * \p data is set, then the function returns an error.
+ *
+ * The 'external' flag is not altered by this function.
+ *
+ * Please, refer to \ref ext_metadata.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] path        Path on the file.
+ * \param[in] meta        Meta name.
+ * \param[in] data        Data value.
+ * \param[in] p           New priority.
+ * \return !=0 on error.
+ */
+int valhalla_db_metadata_priority (valhalla_t *handle, const char *path,
+                                   const char *meta, const char *data,
+                                   valhalla_metadata_pl_t p);
 
 /**
  * @}

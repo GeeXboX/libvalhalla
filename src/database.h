@@ -92,5 +92,8 @@ int vh_database_metadata_update (database_t *database, const char *path,
                                  const char *ndata);
 int vh_database_metadata_delete (database_t *database, const char *path,
                                  const char *meta, const char *data);
+int vh_database_metadata_priority (database_t *database, const char *path,
+                                   const char *meta, const char *data,
+                                   valhalla_metadata_pl_t p);
 
 #endif /* VALHALLA_DATABASE_H */

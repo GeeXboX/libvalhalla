@@ -101,6 +101,9 @@ typedef enum database_stmt {
   STMT_INSERT_ASSOC_FILE_GRABBER,
   STMT_UPDATE_FILE,
   STMT_UPDATE_ASSOC_FILE_METADATA,
+  STMT_UPDATE_ASSOC_FILE_MD_P,
+  STMT_UPDATE_ASSOC_FILE_MD_PM,
+  STMT_UPDATE_ASSOC_FILE_MD_PMD,
   STMT_DELETE_FILE,
   STMT_DELETE_ASSOC_FILE_METADATA,
   STMT_DELETE_ASSOC_FILE_METADATA2,
@@ -147,6 +150,9 @@ static const stmt_list_t g_stmts[] = {
   [STMT_INSERT_ASSOC_FILE_GRABBER]   = { INSERT_ASSOC_FILE_GRABBER,   NULL },
   [STMT_UPDATE_FILE]                 = { UPDATE_FILE,                 NULL },
   [STMT_UPDATE_ASSOC_FILE_METADATA]  = { UPDATE_ASSOC_FILE_METADATA,  NULL },
+  [STMT_UPDATE_ASSOC_FILE_MD_P]      = { UPDATE_ASSOC_FILE_MD_P,      NULL },
+  [STMT_UPDATE_ASSOC_FILE_MD_PM]     = { UPDATE_ASSOC_FILE_MD_PM,     NULL },
+  [STMT_UPDATE_ASSOC_FILE_MD_PMD]    = { UPDATE_ASSOC_FILE_MD_PMD,    NULL },
   [STMT_DELETE_FILE]                 = { DELETE_FILE,                 NULL },
   [STMT_DELETE_ASSOC_FILE_METADATA]  = { DELETE_ASSOC_FILE_METADATA,  NULL },
   [STMT_DELETE_ASSOC_FILE_METADATA2] = { DELETE_ASSOC_FILE_METADATA2, NULL },
@@ -449,6 +455,44 @@ database_assoc_filemd_update (database_t *database,
   VH_DB_BIND_INT64_OR_GOTO (stmt, 4, file_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 5, meta_id,  out_clear);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 6, data_id,  out_clear);
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+    err = 0;
+
+  sqlite3_reset (stmt);
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out:
+  if (err < 0)
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+}
+
+static void
+database_assoc_filemd_update_p (database_t *database,
+                                int64_t file_id, int64_t meta_id,
+                                int64_t data_id, int priority)
+{
+  int res, err = -1;
+  sqlite3_stmt *stmt;
+
+  if (meta_id)
+  {
+    if (data_id)
+    {
+      stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_MD_PMD);
+      VH_DB_BIND_INT64_OR_GOTO (stmt, 4, data_id, out_clear);
+    }
+    else
+      stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_MD_PM);
+
+    VH_DB_BIND_INT64_OR_GOTO (stmt, 3, meta_id, out_clear);
+  }
+  else
+    stmt = STMT_GET (STMT_UPDATE_ASSOC_FILE_MD_P);
+
+  VH_DB_BIND_INT_OR_GOTO   (stmt, 1, priority, out);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, file_id,  out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_DONE)
@@ -2021,5 +2065,47 @@ vh_database_metadata_delete (database_t *database, const char *path,
     return -2;
 
   database_assoc_filemd_delete (database, file_id, meta_id, data_id);
+  return 0;
+}
+
+int
+vh_database_metadata_priority (database_t *database, const char *path,
+                               const char *meta, const char *data,
+                               valhalla_metadata_pl_t p)
+{
+  int64_t file_id, meta_id = 0, data_id = 0;
+
+  if (!path)
+    return -1;
+
+  if (!meta && data)
+    return -1;
+
+  if (meta)
+    file_id = database_file_id_by_metadata (database, path, meta, data);
+  else
+    file_id =
+      database_table_get_id (database, STMT_GET (STMT_SELECT_FILE_ID), path);
+
+  if (!file_id)
+    return 0; /* association unknown */
+
+  if (meta)
+  {
+    meta_id =
+      database_table_get_id (database, STMT_GET (STMT_SELECT_META_ID), meta);
+    if (!meta_id)
+      return -2;
+  }
+
+  if (data)
+  {
+    data_id =
+      database_table_get_id (database, STMT_GET (STMT_SELECT_DATA_ID), data);
+    if (!data_id)
+      return -2;
+  }
+
+  database_assoc_filemd_update_p (database, file_id, meta_id, data_id, p);
   return 0;
 }

@@ -37,6 +37,7 @@ typedef struct dbmanager_extmd_s {
   char *path;
   char *meta, *data, *ndata;
   valhalla_meta_grp_t group;
+  valhalla_metadata_pl_t priority;
 } dbmanager_extmd_t;
 
 #define DBMANAGER_COMMIT_INTERVAL_DEF 128
