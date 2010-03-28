@@ -2081,6 +2081,9 @@ vh_database_metadata_priority (database_t *database, const char *path,
   if (!meta && data)
     return -1;
 
+  if (!METADATA_PL_CHECK (p))
+    return -1;
+
   if (meta)
     file_id = database_file_id_by_metadata (database, path, meta, data);
   else
