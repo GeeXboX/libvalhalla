@@ -575,7 +575,7 @@ database_file_id_by_metadata (database_t *database, const char *path,
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, path, out);
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, meta, out_clear);
   if (data)
-  VH_DB_BIND_TEXT_OR_GOTO (stmt, 3, data, out_clear);
+    VH_DB_BIND_TEXT_OR_GOTO (stmt, 3, data, out_clear);
 
   res = sqlite3_step (stmt);
   if (res == SQLITE_ROW)
