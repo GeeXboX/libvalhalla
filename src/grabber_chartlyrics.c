@@ -44,8 +44,7 @@
 
 #define CHARTLYRICS_HOSTNAME     "api.chartlyrics.com"
 
-#define CHARTLYRICS_QUERY_SEARCH "http://%s/apiv1.asmx/SearchLyric?artist=%s&song=%s"
-#define CHARTLYRICS_QUERY_GET    "http://%s/apiv1.asmx/GetLyric?lyricId=%s&lyricCheckSum=%s"
+#define CHARTLYRICS_QUERY_GET    "http://%s/apiv1.asmx/SearchLyricDirect?artist=%s&song=%s"
 
 typedef struct grabber_chartlyrics_s {
   url_t *handler;
@@ -66,59 +65,19 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
   int res = -1;
 
   xmlDocPtr doc;
-  xmlChar *tmp, *tmp2;;
   xmlNode *n;
 
-  /* proceed with ChartLyrics search request */
-  snprintf (url, sizeof (url), CHARTLYRICS_QUERY_SEARCH,
-            CHARTLYRICS_HOSTNAME, artist, song);
-
-  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
-
-  udata = vh_url_get_data (chartlyrics->handler, url);
-  if (udata.status)
-    return -1;
-
-  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
-
-  /* parse the XML answer */
-  doc = vh_xml_get_doc_from_memory (udata.buffer);
-  free (udata.buffer);
-
-  if (!doc)
-    return -1;
-
-  n = xmlDocGetRootElement (doc);
-
-  /* get ChartLyrics Lyric ID */
-  tmp = vh_xml_get_prop_value_from_tree (n, "LyricId");
-  if (!tmp)
-    goto error;
-
-  /* get ChartLyrics Lyric Checksum */
-  tmp2 = vh_xml_get_prop_value_from_tree (n, "LyricChecksum");
-  if (!tmp2)
-  {
-    xmlFree (tmp);
-    goto error;
-  }
-
-  xmlFreeDoc (doc);
-  doc = NULL;
-
-  /* proceed with ChartLyrics get request */
+  /* proceed with ChartLyrics search and get request */
   snprintf (url, sizeof (url),
-            CHARTLYRICS_QUERY_GET, CHARTLYRICS_HOSTNAME, tmp, tmp2);
-  xmlFree (tmp);
-  xmlFree (tmp2);
+            CHARTLYRICS_QUERY_GET, CHARTLYRICS_HOSTNAME, artist, song);
 
-  vh_log (VALHALLA_MSG_VERBOSE, "Get Request: %s", url);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search/Get Request: %s", url);
 
   udata = vh_url_get_data (chartlyrics->handler, url);
   if (udata.status)
     return -1;
 
-  vh_log (VALHALLA_MSG_VERBOSE, "Get Reply: %s", udata.buffer);
+  vh_log (VALHALLA_MSG_VERBOSE, "Search/Get Reply: %s", udata.buffer);
 
   /* parse the XML answer */
   doc = vh_xml_get_doc_from_memory (udata.buffer);
@@ -133,7 +92,6 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
                         VALHALLA_METADATA_LYRICS, chartlyrics->pl);
   res = 0;
 
- error:
   xmlFreeDoc (doc);
   return res;
 }
