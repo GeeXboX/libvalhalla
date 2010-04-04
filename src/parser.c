@@ -358,6 +358,9 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
 #endif /* 0 */
 
+  if (!meta)
+    vh_log (VALHALLA_MSG_VERBOSE, "no available metadata for %s", file);
+
   /* if necessary, use the filename as title */
   if (parser->decrapifier
       && vh_metadata_get (meta, VALHALLA_METADATA_TITLE, 0, &title_tag))
