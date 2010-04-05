@@ -75,8 +75,13 @@
  *@}
  */
 
+/**
+ * \brief Structure for the init of a grabber.
+ */
 typedef struct grabber_param_s {
+  /** \brief List of priorities for metadata. */
   metadata_plist_t *pl;
+  /** \brief This pointer is intended to be used with all vh_url_new(). */
   struct url_ctl_s *url_ctl;
 } grabber_param_t;
 
@@ -98,7 +103,7 @@ typedef struct grabber_list_s {
    * The private structure (\p priv) must be created before this initialization.
    *
    * \param[in] priv      Private structure registered with the grabber.
-   * \param[in] pl        List of metadata priorities.
+   * \param[in] param     Parameters, see ::grabber_param_t.
    * \return 0 for success, != 0 on error.
    */
   int (*init) (void *priv, const grabber_param_t *param);
