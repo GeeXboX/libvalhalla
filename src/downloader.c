@@ -168,7 +168,8 @@ downloader_thread (void *arg)
         }
         else
         {
-          if (err == -2) /* download aborted, consider to save the context */
+          /* download aborted, consider to save the context */
+          if (err == URL_ERROR_ABORT)
             interrup = 1;
           VH_STATS_COUNTER_INC (downloader->st_cnt_failure);
         }

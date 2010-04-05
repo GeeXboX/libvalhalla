@@ -22,6 +22,14 @@
 #ifndef VALHALLA_URL_UTILS_H
 #define VALHALLA_URL_UTILS_H
 
+enum url_errno {
+  URL_ERROR_PARAMS    = -4,
+  URL_ERROR_FILE      = -3,
+  URL_ERROR_ABORT     = -2,
+  URL_ERROR_TRANSFER  = -1,
+  URL_SUCCESS         =  0,
+};
+
 typedef struct url_data_s {
   int status;
   char *buffer;

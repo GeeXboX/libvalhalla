@@ -176,7 +176,7 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   CURL *curl = (CURL *) handler;
 
   if (!curl || !src || !dst)
-    return -1;
+    return URL_ERROR_PARAMS;
 
   vh_log (VALHALLA_MSG_VERBOSE, "Saving %s to %s", src, dst);
 
@@ -184,10 +184,10 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   if (data.status != CURLE_OK)
   {
     if (data.status == CURLE_ABORTED_BY_CALLBACK)
-      return -2;
+      return URL_ERROR_ABORT;
 
     vh_log (VALHALLA_MSG_WARNING, "Unable to download requested file %s", src);
-    return -1;
+    return URL_ERROR_TRANSFER;
   }
 
   fd = open (dst, O_WRONLY | O_CREAT, 0666);
@@ -195,14 +195,14 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   {
     vh_log (VALHALLA_MSG_WARNING, "Unable to open stream to save file %s", dst);
     free (data.buffer);
-    return -1;
+    return URL_ERROR_FILE;
   }
 
   n = write (fd, data.buffer, data.size);
   close (fd);
   free (data.buffer);
 
-  return 0;
+  return URL_SUCCESS;
 }
 
 url_ctl_t *
