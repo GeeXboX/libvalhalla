@@ -364,9 +364,11 @@ valhalla_force_stop (valhalla_t *handle)
 #endif /* USE_GRABBER */
     vh_event_handler_stop (handle->event_handler, f);
 
+#ifdef USE_GRABBER
     /* abort all cURL transfers as fast as possible */
     if (f == STOP_FLAG_REQUEST)
       vh_url_ctl_abort (handle->url_ctl);
+#endif /* USE_GRABBER */
   }
 
   valhalla_mrproper (handle);
