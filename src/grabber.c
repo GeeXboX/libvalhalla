@@ -347,6 +347,8 @@ grabber_thread (void *arg)
      */
     if (pdata->wait)
     {
+      int stop;
+
       vh_log (VALHALLA_MSG_VERBOSE,
               "[%s] waiting grabbing: %s", __FUNCTION__, pdata->file.path);
 
@@ -354,13 +356,17 @@ grabber_thread (void *arg)
       grabber->sem_grabber[id] = &pdata->sem_grabber;
       pthread_mutex_unlock (&grabber->mutex_grabber[id]);
 
+      stop = grabber_is_stopped (grabber);
+      if (!stop)
+      {
       sem_wait (&pdata->sem_grabber);
       pdata->wait = 0;
+      }
 
       pthread_mutex_lock (&grabber->mutex_grabber[id]);
       grabber->sem_grabber[id] = NULL;
 
-      if (grabber_is_stopped (grabber))
+      if (stop)
         break;
     }
 
@@ -579,8 +585,13 @@ vh_grabber_stop (grabber_t *grabber, int f)
 
     for (i = 0; i < grabber->nb; i++)
     {
+      int rc;
+
       /* wake up the thread if this is asleep by dbmanager */
-      pthread_mutex_lock (&grabber->mutex_grabber[i]);
+      rc = pthread_mutex_trylock (&grabber->mutex_grabber[i]);
+      if (rc)
+        continue;
+
       if (grabber->sem_grabber[i])
         sem_post (grabber->sem_grabber[i]);
       pthread_mutex_unlock (&grabber->mutex_grabber[i]);
