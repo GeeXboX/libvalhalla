@@ -359,8 +359,8 @@ grabber_thread (void *arg)
       stop = grabber_is_stopped (grabber);
       if (!stop)
       {
-      sem_wait (&pdata->sem_grabber);
-      pdata->wait = 0;
+        sem_wait (&pdata->sem_grabber);
+        pdata->wait = 0;
       }
 
       pthread_mutex_lock (&grabber->mutex_grabber[id]);
