@@ -337,6 +337,7 @@ parser_decrapify (parser_t *parser, const char *file, metadata_t **meta)
 static metadata_t *
 parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 {
+  unsigned int i;
   metadata_t *meta = NULL;
   const metadata_t *title_tag = NULL;
   AVMetadataTag *tag = NULL;
@@ -357,6 +358,14 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 #else
     vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
 #endif /* 0 */
+
+  for (i = 0; i < ctx->nb_streams; i++)
+  {
+    AVStream *st = ctx->streams[i];
+    while ((tag = av_metadata_get (st->metadata,
+                                   "", tag, AV_METADATA_IGNORE_SUFFIX)))
+      vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
+  }
 
   if (!meta)
     vh_log (VALHALLA_MSG_VERBOSE, "no available metadata for %s", file);
