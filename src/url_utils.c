@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -29,9 +30,15 @@
 #include <curl/easy.h>
 
 #include "valhalla.h"
+#include "valhalla_internals.h"
 #include "url_utils.h"
 #include "logs.h"
 
+
+struct url_ctl_s {
+  pthread_mutex_t mutex;
+  int abort;
+};
 
 static size_t
 url_buffer_get (void *ptr, size_t size, size_t nmemb, void *data)
@@ -50,8 +57,26 @@ url_buffer_get (void *ptr, size_t size, size_t nmemb, void *data)
   return realsize;
 }
 
+static int
+url_progress_cb (void *clientp,
+                 vh_unused double dltotal, vh_unused double dlnow,
+                 vh_unused double ultotal, vh_unused double ulnow)
+{
+  url_ctl_t *a = clientp;
+  int abort;
+
+  if (!a)
+    return 0;
+
+  pthread_mutex_lock (&a->mutex);
+  abort = a->abort;
+  pthread_mutex_unlock (&a->mutex);
+
+  return abort;
+}
+
 url_t *
-vh_url_new (void)
+vh_url_new (url_ctl_t *url_ctl)
 {
   char useragent[256];
   CURL *curl;
@@ -70,6 +95,19 @@ vh_url_new (void)
   curl_easy_setopt (curl, CURLOPT_CONNECTTIMEOUT, 5);
   curl_easy_setopt (curl, CURLOPT_USERAGENT, useragent);
   curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
+
+  if (url_ctl)
+  {
+    /*
+     * The progress callback provides a way to abort a download. A call on
+     * vh_url_ctl_abort() with the same url_ctl, will break vh_url_get_data()
+     * with the status code CURLE_ABORTED_BY_CALLBACK. The breaking is not
+     * immediate. The callback is called roughly once per second.
+     */
+    curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, url_ctl);
+    curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, url_progress_cb);
+  }
 
   return (url_t *) curl;
 }
@@ -145,6 +183,9 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   data = vh_url_get_data (curl, src);
   if (data.status != CURLE_OK)
   {
+    if (data.status == CURLE_ABORTED_BY_CALLBACK)
+      return -2;
+
     vh_log (VALHALLA_MSG_WARNING, "Unable to download requested file %s", src);
     return -1;
   }
@@ -163,3 +204,38 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
 
   return 0;
 }
+
+url_ctl_t *
+vh_url_ctl_new (void)
+{
+  url_ctl_t *url_ctl;
+
+  url_ctl = calloc (1, sizeof (url_ctl_t));
+  if (!url_ctl)
+    return NULL;
+
+  pthread_mutex_init (&url_ctl->mutex, NULL);
+  return url_ctl;
+}
+
+void
+vh_url_ctl_free (url_ctl_t *url_ctl)
+{
+  if (!url_ctl)
+    return;
+
+  pthread_mutex_destroy (&url_ctl->mutex);
+  free (url_ctl);
+}
+
+void
+vh_url_ctl_abort (url_ctl_t *url_ctl)
+{
+  if (!url_ctl)
+    return;
+
+  pthread_mutex_lock (&url_ctl->mutex);
+  url_ctl->abort = 1;
+  pthread_mutex_unlock (&url_ctl->mutex);
+}
+

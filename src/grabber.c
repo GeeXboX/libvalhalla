@@ -33,6 +33,7 @@
 #include "fifo_queue.h"
 #include "logs.h"
 #include "thread_utils.h"
+#include "url_utils.h"
 #include "grabber.h"
 #include "grabber_common.h"
 #include "dbmanager.h"
@@ -116,7 +117,7 @@ struct grabber_s {
  * prefered but not fully respected. Nevertheless, the priorities for the
  * metadata are not affected by the order of this list.
  */
-static grabber_list_t *(*const g_grabber_register[]) (void) = {
+static grabber_list_t *(*const g_grabber_register[]) (url_ctl_t *url_ctl) = {
 #ifdef HAVE_GRABBER_DUMMY
   vh_grabber_dummy_register,
 #endif /* HAVE_GRABBER_DUMMY */
@@ -658,16 +659,16 @@ grabber_childs_add (grabber_list_t **list, grabber_list_t *child)
  *       grabber_childs_add() adds the grabber always at the end of the list.
  */
 static grabber_list_t *
-grabber_register_childs (void)
+grabber_register_childs (url_ctl_t *url_ctl)
 {
   grabber_list_t *list = NULL, *child;
-  grabber_list_t *(*const *reg) (void);
+  grabber_list_t *(*const *reg) (url_ctl_t *url_ctl);
 
   vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
 
   for (reg = g_grabber_register; *reg; reg++)
   {
-    child = (*reg) ();
+    child = (*reg) (url_ctl);
     if (child)
       grabber_childs_add (&list, child);
   }
@@ -760,7 +761,7 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   grabber->valhalla = handle; /* VH_HANDLE */
   grabber->nb       = nb ? nb : GRABBER_NUMBER_DEF;
 
-  grabber->list = grabber_register_childs ();
+  grabber->list = grabber_register_childs (handle->url_ctl);
   if (!grabber->list)
     goto err;
 

@@ -118,7 +118,7 @@ grabber_chartlyrics_init (void *priv, const grabber_param_t *param)
   if (!chartlyrics)
     return -1;
 
-  chartlyrics->handler = vh_url_new ();
+  chartlyrics->handler = vh_url_new (param->url_ctl);
   chartlyrics->pl      = param->pl;
   return chartlyrics->handler ? 0 : -1;
 }

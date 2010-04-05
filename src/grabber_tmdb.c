@@ -276,7 +276,7 @@ grabber_tmdb_init (void *priv, const grabber_param_t *param)
   if (!tmdb)
     return -1;
 
-  tmdb->handler = vh_url_new ();
+  tmdb->handler = vh_url_new (param->url_ctl);
   tmdb->pl      = param->pl;
   return tmdb->handler ? 0 : -1;
 }

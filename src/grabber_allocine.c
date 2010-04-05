@@ -189,7 +189,7 @@ grabber_allocine_init (void *priv, const grabber_param_t *param)
   if (!allocine)
     return -1;
 
-  allocine->handler = vh_url_new ();
+  allocine->handler = vh_url_new (param->url_ctl);
   allocine->pl      = param->pl;
   return allocine->handler ? 0 : -1;
 }

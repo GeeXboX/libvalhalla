@@ -363,6 +363,10 @@ valhalla_force_stop (valhalla_t *handle)
     vh_downloader_stop (handle->downloader, f);
 #endif /* USE_GRABBER */
     vh_event_handler_stop (handle->event_handler, f);
+
+    /* abort all cURL transfers as fast as possible */
+    if (f == STOP_FLAG_REQUEST)
+      vh_url_ctl_abort (handle->url_ctl);
   }
 
   valhalla_mrproper (handle);
@@ -404,6 +408,7 @@ valhalla_uninit (valhalla_t *handle)
 
 #if USE_GRABBER
   vh_url_global_uninit ();
+  vh_url_ctl_free (handle->url_ctl);
 #endif /* USE_GRABBER */
 
 #ifdef USE_LAVC
@@ -611,6 +616,10 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
     return NULL;
 
 #ifdef USE_GRABBER
+  handle->url_ctl = vh_url_ctl_new ();
+  if (!handle->url_ctl)
+    return NULL;
+
   vh_url_global_init ();
 #endif /* USE_GRABBER */
 

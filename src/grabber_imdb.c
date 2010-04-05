@@ -186,7 +186,7 @@ grabber_imdb_init (void *priv, const grabber_param_t *param)
   if (!imdb)
     return -1;
 
-  imdb->handler = vh_url_new ();
+  imdb->handler = vh_url_new (param->url_ctl);
   imdb->pl      = param->pl;
   return imdb->handler ? 0 : -1;
 }

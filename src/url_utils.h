@@ -29,14 +29,19 @@ typedef struct url_data_s {
 } url_data_t;
 
 typedef void url_t;
+typedef struct url_ctl_s url_ctl_t;
 
 void vh_url_global_init (void);
 void vh_url_global_uninit (void);
 
-url_t *vh_url_new (void);
+url_t *vh_url_new (url_ctl_t *abort);
 void vh_url_free (url_t *url);
 url_data_t vh_url_get_data (url_t *handler, char *url);
 char *vh_url_escape_string (url_t *handler, const char *buf);
 int vh_url_save_to_disk (url_t *handler, char *src, char *dst);
+
+url_ctl_t *vh_url_ctl_new (void);
+void vh_url_ctl_free (url_ctl_t *url_ctl);
+void vh_url_ctl_abort (url_ctl_t *url_ctl);
 
 #endif /* VALHALLA_URL_UTILS_H */

@@ -203,7 +203,7 @@ grabber_tvrage_init (void *priv, const grabber_param_t *param)
   if (!tvrage)
     return -1;
 
-  tvrage->handler = vh_url_new ();
+  tvrage->handler = vh_url_new (param->url_ctl);
   tvrage->pl      = param->pl;
   return tvrage->handler ? 0 : -1;
 }

@@ -68,6 +68,10 @@ struct valhalla_s {
 
   struct vh_stats_s *stats;
 
+#ifdef USE_GRABBER
+  struct url_ctl_s *url_ctl;
+#endif /* USE_GRABBER */
+
   unsigned int run    : 1;  /* check if valhalla_run() is called two times */
   unsigned int noscan : 1;  /* only ondemand, scanner disabled */
   unsigned int fstop  : 1;  /* check if stop was called */

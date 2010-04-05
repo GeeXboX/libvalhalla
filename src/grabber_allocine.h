@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_ALLOCINE_H
 #define VALHALLA_GRABBER_ALLOCINE_H
 
-grabber_list_t *vh_grabber_allocine_register (void);
+grabber_list_t *vh_grabber_allocine_register (struct url_ctl_s *url_ctl);
 
 #endif /* VALHALLA_GRABBER_ALLOCINE_H */

@@ -77,6 +77,7 @@
 
 typedef struct grabber_param_s {
   metadata_plist_t *pl;
+  struct url_ctl_s *url_ctl;
 } grabber_param_t;
 
 /**
@@ -201,7 +202,7 @@ typedef struct grabber_list_s {
 #define GRABBER_REGISTER(p_name, p_caps, p_pl, p_tw,                          \
                          fct_priv, fct_init, fct_uninit, fct_grab, fct_loop)  \
   grabber_list_t *                                                            \
-  vh_grabber_##p_name##_register (void)                                       \
+  vh_grabber_##p_name##_register (struct url_ctl_s *url_ctl)                  \
   {                                                                           \
     grabber_list_t *grabber;                                                  \
                                                                               \
@@ -222,6 +223,7 @@ typedef struct grabber_list_s {
     grabber->grab      = fct_grab;                                            \
     grabber->loop      = fct_loop;                                            \
                                                                               \
+    grabber->param.url_ctl = url_ctl;                                         \
     grabber->param.pl = malloc (sizeof (p_pl));                               \
     if (!grabber->param.pl)                                                   \
     {                                                                         \

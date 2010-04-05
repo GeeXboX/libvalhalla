@@ -167,7 +167,11 @@ downloader_thread (void *arg)
           VH_STATS_COUNTER_INC (downloader->st_cnt_success);
         }
         else
+        {
+          if (err == -2) /* download aborted, consider to save the context */
+            interrup = 1;
           VH_STATS_COUNTER_INC (downloader->st_cnt_failure);
+        }
         free (dest);
       }
     }
@@ -336,7 +340,7 @@ vh_downloader_init (valhalla_t *handle)
   if (!downloader->fifo)
     goto err;
 
-  downloader->url_handler = vh_url_new ();
+  downloader->url_handler = vh_url_new (handle->url_ctl);
   if (!downloader->url_handler)
     goto err;
 

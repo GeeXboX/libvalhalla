@@ -22,6 +22,6 @@
 #ifndef VALHALLA_GRABBER_LOCAL_H
 #define VALHALLA_GRABBER_LOCAL_H
 
-grabber_list_t *vh_grabber_local_register (void);
+grabber_list_t *vh_grabber_local_register (struct url_ctl_s *url_ctl);
 
 #endif /* VALHALLA_GRABBER_LOCAL_H */

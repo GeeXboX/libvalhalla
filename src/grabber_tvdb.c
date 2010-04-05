@@ -334,7 +334,7 @@ grabber_tvdb_init (void *priv, const grabber_param_t *param)
   if (!tvdb)
     return -1;
 
-  tvdb->handler = vh_url_new ();
+  tvdb->handler = vh_url_new (param->url_ctl);
   tvdb->pl      = param->pl;
   return tvdb->handler ? 0 : -1;
 }

@@ -337,7 +337,7 @@ grabber_amazon_init (void *priv, const grabber_param_t *param)
   if (!amazon->list)
     return -1;
 
-  amazon->handler = vh_url_new ();
+  amazon->handler = vh_url_new (param->url_ctl);
   amazon->pl      = param->pl;
   return amazon->handler ? 0 : -1;
 }

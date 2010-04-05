@@ -153,7 +153,7 @@ grabber_lastfm_init (void *priv, const grabber_param_t *param)
   if (!lastfm->list)
     return -1;
 
-  lastfm->handler = vh_url_new ();
+  lastfm->handler = vh_url_new (param->url_ctl);
   lastfm->pl      = param->pl;
   return lastfm->handler ? 0 : -1;
 }

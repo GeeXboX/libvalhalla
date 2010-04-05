@@ -199,7 +199,7 @@ grabber_lyricwiki_init (void *priv, const grabber_param_t *param)
   if (!lyricwiki)
     return -1;
 
-  lyricwiki->handler = vh_url_new ();
+  lyricwiki->handler = vh_url_new (param->url_ctl);
   lyricwiki->pl      = param->pl;
   return lyricwiki->handler ? 0 : -1;
 }
