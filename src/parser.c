@@ -79,66 +79,6 @@ parser_is_stopped (parser_t *parser)
   return !run;
 }
 
-#if 0
-static void
-parser_metadata_group (metadata_t **meta,
-                       const char *fmtname, const char *key, const char *value)
-{
-  /*
-   * This array provides a list of keys for the attribution of group. The name
-   * of the fmt is used for special cases where a key must be used with a group
-   * different of the default attribution (default attributions are identified
-   * by fmtname to NULL).
-   * If the key can't be identified in the list, the default group is set.
-   *
-   * FIXME: the list must be completed.
-   *        http://age.hobba.nl/audio/tag_frame_reference.html
-   */
-  static const struct metagrp_s {
-    const char *key;
-    const char *fmtname; /* special case for a specific AVInputFormat */
-    const valhalla_meta_grp_t grp;
-  } metagrp[] = {
-    /* special attributions */
-    /* ... */
-
-    /* default attributions */
-    { "album",      NULL,         VALHALLA_META_GRP_TITLES         },
-    { "artist",     NULL,         VALHALLA_META_GRP_ENTITIES       },
-    { "author",     NULL,         VALHALLA_META_GRP_ENTITIES       },
-    { "date",       NULL,         VALHALLA_META_GRP_TEMPORAL       },
-    { "genre",      NULL,         VALHALLA_META_GRP_CLASSIFICATION },
-    { "title",      NULL,         VALHALLA_META_GRP_TITLES         },
-    { "track",      NULL,         VALHALLA_META_GRP_ORGANIZATIONAL },
-    { "year",       NULL,         VALHALLA_META_GRP_TEMPORAL       },
-
-    /* default group */
-    { NULL,         NULL,         VALHALLA_META_GRP_MISCELLANEOUS  }
-  };
-  unsigned int i;
-
-  if (!key || !value)
-    return;
-
-  for (i = 0; i < ARRAY_NB_ELEMENTS (metagrp); i++)
-  {
-    char str[32];
-
-    if (metagrp[i].key && strcasecmp (metagrp[i].key, key))
-      continue;
-
-    if (fmtname
-        && metagrp[i].fmtname && strcasecmp (metagrp[i].fmtname, fmtname))
-      continue;
-
-    snprintf (str, sizeof (str), "%s", key);
-    vh_strtolower (str);
-    vh_metadata_add (meta, str, value, metagrp[i].grp);
-    break;
-  }
-}
-#endif /* 0 */
-
 #define PATTERN_NUMBER "NUM"
 #define PATTERN_SEASON  "SE"
 #define PATTERN_EPISODE "EP"
@@ -353,11 +293,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 
   while ((tag = av_metadata_get (ctx->metadata,
                                  "", tag, AV_METADATA_IGNORE_SUFFIX)))
-#if 0
-    parser_metadata_group (&meta, ctx->iformat->name, tag->key, tag->value);
-#else
     vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
-#endif /* 0 */
 
   for (i = 0; i < ctx->nb_streams; i++)
   {
