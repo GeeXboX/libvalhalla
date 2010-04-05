@@ -177,7 +177,7 @@ grabber_imdb_priv (void)
 }
 
 static int
-grabber_imdb_init (void *priv, const metadata_plist_t *pl)
+grabber_imdb_init (void *priv, const grabber_param_t *param)
 {
   grabber_imdb_t *imdb = priv;
 
@@ -187,7 +187,7 @@ grabber_imdb_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   imdb->handler = vh_url_new ();
-  imdb->pl      = pl;
+  imdb->pl      = param->pl;
   return imdb->handler ? 0 : -1;
 }
 

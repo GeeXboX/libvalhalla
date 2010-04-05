@@ -61,7 +61,7 @@ grabber_dummy_priv (void)
 }
 
 static int
-grabber_dummy_init (void *priv, vh_unused const metadata_plist_t *pl)
+grabber_dummy_init (void *priv, vh_unused const grabber_param_t *param)
 {
   grabber_dummy_t *dummy = priv;
 

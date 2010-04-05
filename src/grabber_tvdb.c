@@ -325,7 +325,7 @@ grabber_tvdb_priv (void)
 }
 
 static int
-grabber_tvdb_init (void *priv, const metadata_plist_t *pl)
+grabber_tvdb_init (void *priv, const grabber_param_t *param)
 {
   grabber_tvdb_t *tvdb = priv;
 
@@ -335,7 +335,7 @@ grabber_tvdb_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   tvdb->handler = vh_url_new ();
-  tvdb->pl      = pl;
+  tvdb->pl      = param->pl;
   return tvdb->handler ? 0 : -1;
 }
 

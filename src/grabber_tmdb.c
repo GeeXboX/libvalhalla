@@ -267,7 +267,7 @@ grabber_tmdb_priv (void)
 }
 
 static int
-grabber_tmdb_init (void *priv, const metadata_plist_t *pl)
+grabber_tmdb_init (void *priv, const grabber_param_t *param)
 {
   grabber_tmdb_t *tmdb = priv;
 
@@ -277,7 +277,7 @@ grabber_tmdb_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   tmdb->handler = vh_url_new ();
-  tmdb->pl      = pl;
+  tmdb->pl      = param->pl;
   return tmdb->handler ? 0 : -1;
 }
 

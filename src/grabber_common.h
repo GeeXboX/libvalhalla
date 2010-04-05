@@ -75,6 +75,10 @@
  *@}
  */
 
+typedef struct grabber_param_s {
+  metadata_plist_t *pl;
+} grabber_param_t;
+
 /**
  * \brief Structure for a grabber.
  */
@@ -96,7 +100,7 @@ typedef struct grabber_list_s {
    * \param[in] pl        List of metadata priorities.
    * \return 0 for success, != 0 on error.
    */
-  int (*init) (void *priv, const metadata_plist_t *pl);
+  int (*init) (void *priv, const grabber_param_t *param);
 
   /**
    * \brief Uninit function for the grabber.
@@ -154,8 +158,8 @@ typedef struct grabber_list_s {
    */
   void *priv;
 
-  /** \brief Priorities for the metadata. */
-  metadata_plist_t *pl;
+  /** \brief Parameters for the grabber. */
+  grabber_param_t param;
 
   /** \private Different of 0 if the grabber is enabled. */
   int enable;
@@ -218,13 +222,13 @@ typedef struct grabber_list_s {
     grabber->grab      = fct_grab;                                            \
     grabber->loop      = fct_loop;                                            \
                                                                               \
-    grabber->pl = malloc (sizeof (p_pl));                                     \
-    if (!grabber->pl)                                                         \
+    grabber->param.pl = malloc (sizeof (p_pl));                               \
+    if (!grabber->param.pl)                                                   \
     {                                                                         \
       free (grabber);                                                         \
       return NULL;                                                            \
     }                                                                         \
-    memcpy (grabber->pl, p_pl, sizeof (p_pl));                                \
+    memcpy (grabber->param.pl, p_pl, sizeof (p_pl));                          \
                                                                               \
     pthread_mutex_init (&grabber->mutex, NULL);                               \
                                                                               \

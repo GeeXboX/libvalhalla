@@ -472,7 +472,7 @@ vh_grabber_priority_read (grabber_t *grabber,
 
   for (it = grabber->list; it; it = it->next)
     if (!strcmp (id, it->name))
-      return vh_metadata_plist_read (it->pl, metadata);
+      return vh_metadata_plist_read (it->param.pl, metadata);
 
   return 0;
 }
@@ -491,9 +491,9 @@ vh_grabber_priority_set (grabber_t *grabber, const char *id,
   for (it = grabber->list; it; it = it->next)
     if (!id || !strcmp (it->name, id))
     {
-      vh_metadata_plist_set (&it->pl, metadata, p);
+      vh_metadata_plist_set (&it->param.pl, metadata, p);
       vh_log (VALHALLA_MSG_VERBOSE, "Metadata priorities (%s) :", it->name);
-      vh_metadata_plist_dump (it->pl);
+      vh_metadata_plist_dump (it->param.pl);
 
       if (id)
         break;
@@ -620,7 +620,7 @@ vh_grabber_uninit (grabber_t *grabber)
   {
     grabber_list_t *tmp = it->next;
     pthread_mutex_destroy (&it->mutex);
-    free (it->pl);
+    free (it->param.pl);
     free (it);
     it = tmp;
   }
@@ -759,7 +759,7 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   for (it = grabber->list; it; it = it->next)
   {
     const char *name = it->name;
-    int res = it->init (it->priv, it->pl);
+    int res = it->init (it->priv, &it->param);
     if (res)
       goto err;
 

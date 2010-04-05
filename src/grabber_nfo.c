@@ -327,7 +327,7 @@ grabber_nfo_priv (void)
 }
 
 static int
-grabber_nfo_init (void *priv, const metadata_plist_t *pl)
+grabber_nfo_init (void *priv, const grabber_param_t *param)
 {
   grabber_nfo_t *nfo = priv;
 
@@ -336,7 +336,7 @@ grabber_nfo_init (void *priv, const metadata_plist_t *pl)
   if (!nfo)
     return -1;
 
-  nfo->pl = pl;
+  nfo->pl = param->pl;
   return 0;
 }
 

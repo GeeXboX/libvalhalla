@@ -123,7 +123,7 @@ grabber_local_priv (void)
 }
 
 static int
-grabber_local_init (void *priv, const metadata_plist_t *pl)
+grabber_local_init (void *priv, const grabber_param_t *param)
 {
   grabber_local_t *local = priv;
 
@@ -132,7 +132,7 @@ grabber_local_init (void *priv, const metadata_plist_t *pl)
   if (!local)
     return -1;
 
-  local->pl = pl;
+  local->pl = param->pl;
   return 0;
 }
 

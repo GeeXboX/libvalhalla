@@ -90,7 +90,7 @@ grabber_exif_priv (void)
 }
 
 static int
-grabber_exif_init (void *priv, const metadata_plist_t *pl)
+grabber_exif_init (void *priv, const grabber_param_t *param)
 {
   grabber_exif_t *exif = priv;
 
@@ -99,7 +99,7 @@ grabber_exif_init (void *priv, const metadata_plist_t *pl)
   if (!exif)
     return -1;
 
-  exif->pl = pl;
+  exif->pl = param->pl;
   return 0;
 }
 

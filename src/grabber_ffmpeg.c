@@ -170,7 +170,7 @@ grabber_ffmpeg_priv (void)
 }
 
 static int
-grabber_ffmpeg_init (void *priv, const metadata_plist_t *pl)
+grabber_ffmpeg_init (void *priv, const grabber_param_t *param)
 {
   grabber_ffmpeg_t *ffmpeg = priv;
 
@@ -179,7 +179,7 @@ grabber_ffmpeg_init (void *priv, const metadata_plist_t *pl)
   if (!ffmpeg)
     return -1;
 
-  ffmpeg->pl = pl;
+  ffmpeg->pl = param->pl;
   return 0;
 }
 

@@ -320,7 +320,7 @@ grabber_amazon_priv (void)
 }
 
 static int
-grabber_amazon_init (void *priv, const metadata_plist_t *pl)
+grabber_amazon_init (void *priv, const grabber_param_t *param)
 {
   grabber_amazon_t *amazon = priv;
 
@@ -338,7 +338,7 @@ grabber_amazon_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   amazon->handler = vh_url_new ();
-  amazon->pl      = pl;
+  amazon->pl      = param->pl;
   return amazon->handler ? 0 : -1;
 }
 

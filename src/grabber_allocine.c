@@ -180,7 +180,7 @@ grabber_allocine_priv (void)
 }
 
 static int
-grabber_allocine_init (void *priv, const metadata_plist_t *pl)
+grabber_allocine_init (void *priv, const grabber_param_t *param)
 {
   grabber_allocine_t *allocine = priv;
 
@@ -190,7 +190,7 @@ grabber_allocine_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   allocine->handler = vh_url_new ();
-  allocine->pl      = pl;
+  allocine->pl      = param->pl;
   return allocine->handler ? 0 : -1;
 }
 

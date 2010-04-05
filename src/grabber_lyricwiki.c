@@ -190,7 +190,7 @@ grabber_lyricwiki_priv (void)
 }
 
 static int
-grabber_lyricwiki_init (void *priv, const metadata_plist_t *pl)
+grabber_lyricwiki_init (void *priv, const grabber_param_t *param)
 {
   grabber_lyricwiki_t *lyricwiki = priv;
 
@@ -200,7 +200,7 @@ grabber_lyricwiki_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   lyricwiki->handler = vh_url_new ();
-  lyricwiki->pl      = pl;
+  lyricwiki->pl      = param->pl;
   return lyricwiki->handler ? 0 : -1;
 }
 

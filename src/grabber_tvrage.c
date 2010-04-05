@@ -194,7 +194,7 @@ grabber_tvrage_priv (void)
 }
 
 static int
-grabber_tvrage_init (void *priv, const metadata_plist_t *pl)
+grabber_tvrage_init (void *priv, const grabber_param_t *param)
 {
   grabber_tvrage_t *tvrage = priv;
 
@@ -204,7 +204,7 @@ grabber_tvrage_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   tvrage->handler = vh_url_new ();
-  tvrage->pl      = pl;
+  tvrage->pl      = param->pl;
   return tvrage->handler ? 0 : -1;
 }
 

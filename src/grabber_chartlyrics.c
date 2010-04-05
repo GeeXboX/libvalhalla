@@ -109,7 +109,7 @@ grabber_chartlyrics_priv (void)
 }
 
 static int
-grabber_chartlyrics_init (void *priv, const metadata_plist_t *pl)
+grabber_chartlyrics_init (void *priv, const grabber_param_t *param)
 {
   grabber_chartlyrics_t *chartlyrics = priv;
 
@@ -119,7 +119,7 @@ grabber_chartlyrics_init (void *priv, const metadata_plist_t *pl)
     return -1;
 
   chartlyrics->handler = vh_url_new ();
-  chartlyrics->pl      = pl;
+  chartlyrics->pl      = param->pl;
   return chartlyrics->handler ? 0 : -1;
 }
 
