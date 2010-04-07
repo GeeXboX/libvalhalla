@@ -152,6 +152,12 @@ vh_url_get_data (url_t *handler, char *url)
   {
     const char *err = curl_easy_strerror (chunk.status);
     vh_log (VALHALLA_MSG_VERBOSE, "%s: %s", __FUNCTION__, err);
+
+    if (chunk.buffer)
+    {
+      free (chunk.buffer);
+      chunk.buffer = NULL;
+    }
   }
 
   return chunk;
