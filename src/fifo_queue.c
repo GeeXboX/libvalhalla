@@ -211,6 +211,8 @@ vh_fifo_queue_moveup (fifo_queue_t *queue, const void *tomove,
       if (!item_p)
         break;
       item_p->next = item->next;
+      if (!item_p->next)
+        queue->item_last = item_p;
       item->next = queue->item;
       queue->item = item;
       break;
