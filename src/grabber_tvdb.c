@@ -78,20 +78,25 @@ static const metadata_plist_t tvdb_pl[] = {
 
 
 static void
-grabber_tvdb_parse_genre (file_data_t *fdata,
-                          xmlChar *genre, const metadata_plist_t *pl)
+grabber_tvdb_parse_list (file_data_t *fdata, xmlNode *node, const char *tag,
+                         const char *name, const metadata_plist_t *pl)
 {
-  char *category, *saveptr = NULL;
+  char *value, *saveptr = NULL;
+  xmlChar *tmp = NULL;
 
-  if (!fdata || !genre)
+  if (!fdata || !node || !tag || !name)
     return;
 
-  category = strtok_r ((char *) genre, "|", &saveptr);
-  while (category)
+  tmp = vh_xml_get_prop_value_from_tree (node, tag);
+  if (tmp)
   {
-    vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_CATEGORY, category, pl);
-    category = strtok_r (NULL, "|", &saveptr);
+    value = strtok_r ((char *) tmp, "|", &saveptr);
+    while (value)
+    {
+      vh_metadata_add_auto (&fdata->meta_grabber, name, value, pl);
+      value = strtok_r (NULL, "|", &saveptr);
+    }
+    xmlFree (tmp);
   }
 }
 
@@ -271,12 +276,12 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
 
   /* fetch tv show categories */
-  tmp = vh_xml_get_prop_value_from_tree (n, "Genre");
-  if (tmp)
-  {
-    grabber_tvdb_parse_genre (fdata, tmp, tvdb->pl);
-    xmlFree (tmp);
-  }
+  grabber_tvdb_parse_list (fdata, n, "Genre", VALHALLA_METADATA_CATEGORY,
+                           tvdb->pl);
+
+  /* fetch tv show actors */
+  grabber_tvdb_parse_list (fdata, n, "Actors", VALHALLA_METADATA_ACTOR,
+                           tvdb->pl);
 
   /* fetch tv show runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "Runtime",
