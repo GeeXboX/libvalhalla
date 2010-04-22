@@ -283,6 +283,10 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   vh_grabber_parse_str (fdata, n, "Runtime",
                         VALHALLA_METADATA_RUNTIME, tvdb->pl);
 
+  /* fetch tv show content rating */
+  vh_grabber_parse_str (fdata, n, "ContentRating",
+                        VALHALLA_METADATA_MPAA, tvdb->pl);
+
   /* fetch tv show poster */
   tmp = vh_xml_get_prop_value_from_tree (n, "poster");
   if (tmp && *tmp)
