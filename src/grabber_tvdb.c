@@ -102,33 +102,29 @@ grabber_tvdb_parse_list (file_data_t *fdata, xmlNode *node, const char *tag,
 
 static void
 grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
-                          xmlChar *url, valhalla_dl_t dl,
+                          xmlChar *url, const char *metadata_name,
                           const metadata_plist_t *pl)
 {
   char name[1024] = { 0 };
   char complete_url[MAX_URL_SIZE] = { 0 };
-  const char *type;
   char *cover = NULL;
+  valhalla_dl_t dl = VALHALLA_DL_COVER;
 
   if (!fdata || !url)
     return;
 
-  if (dl == VALHALLA_DL_COVER)
-    type = VALHALLA_METADATA_COVER;
-  else if (dl == VALHALLA_DL_FAN_ART)
-    type = VALHALLA_METADATA_FAN_ART;
-  else
-    return;
+  if (!strcmp (metadata_name, VALHALLA_METADATA_FAN_ART))
+    dl = VALHALLA_DL_FAN_ART;
 
   /* constructing url for download tvdb covers and fan art */
   memset (complete_url, '\0', MAX_URL_SIZE);
   snprintf (complete_url, MAX_URL_SIZE, TVDB_COVERS_URL,
             TVDB_IMAGES_HOSTNAME, (char *) url);
 
-  snprintf (name, sizeof (name), "%s-%s", type, keywords);
+  snprintf (name, sizeof (name), "%s-%s", metadata_name, keywords);
   cover = vh_md5sum (name);
 
-  vh_metadata_add_auto (&fdata->meta_grabber, type, cover, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber, metadata_name, cover, pl);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
   free (cover);
 }
@@ -292,7 +288,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_DL_COVER, tvdb->pl);
+                              VALHALLA_METADATA_COVER, tvdb->pl);
     xmlFree (tmp);
   }
 
@@ -301,7 +297,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (tmp && *tmp)
   {
     grabber_tvdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_DL_FAN_ART, tvdb->pl);
+                              VALHALLA_METADATA_FAN_ART, tvdb->pl);
     xmlFree (tmp);
   }
 
