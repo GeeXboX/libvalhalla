@@ -189,6 +189,7 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_DIRECTOR_PHOTO             "director_photo"
 #define VALHALLA_METADATA_EDITOR                     "editor"
 #define VALHALLA_METADATA_PRODUCER                   "producer"
+#define VALHALLA_METADATA_WRITER                     "writer"
 
 /* Miscellaneous */
 #define VALHALLA_METADATA_COVER                      "cover"
