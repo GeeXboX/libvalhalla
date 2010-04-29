@@ -193,6 +193,10 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   grabber_tvdb_parse_list (fdata, n, "GuestStars", VALHALLA_METADATA_ACTOR,
                            tvdb->pl);
 
+  /* fetch tv show writers */
+  grabber_tvdb_parse_list (fdata, n, "Writer", VALHALLA_METADATA_WRITER,
+                           tvdb->pl);
+
   /* fetch tv show poster */
   tmp = vh_xml_get_prop_value_from_tree (n, "filename");
   if (tmp && *tmp)
