@@ -132,7 +132,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
 
 static int
 grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
-                          const char *keywords, const char* seriesid)
+                          const char *keywords, const char *seriesid)
 {
   char name[1024] = { 0 };
   const metadata_t *tag = NULL;
@@ -144,14 +144,14 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   xmlChar *tmp = NULL;
   xmlNode *n;
 
-  err = vh_metadata_get (fdata->meta_parser, VALHALLA_METADATA_SEASON, 0,
-                         &tag);
+  err = vh_metadata_get (fdata->meta_parser,
+                         VALHALLA_METADATA_SEASON, 0, &tag);
   if (err)
     return -1;
   season = atoi (tag->value);
 
-  err = vh_metadata_get (fdata->meta_parser, VALHALLA_METADATA_EPISODE, 0,
-                         &tag);
+  err = vh_metadata_get (fdata->meta_parser,
+                         VALHALLA_METADATA_EPISODE, 0, &tag);
   if (err)
     return -1;
   episode = atoi (tag->value);
@@ -182,28 +182,28 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
                         VALHALLA_METADATA_SYNOPSIS_SHOW, tvdb->pl);
 
   /* fetch tv show first air date */
-  vh_grabber_parse_str (fdata, n, "FirstAired", VALHALLA_METADATA_PREMIERED,
-                        tvdb->pl);
+  vh_grabber_parse_str (fdata, n, "FirstAired",
+                        VALHALLA_METADATA_PREMIERED, tvdb->pl);
 
   /* fetch tv show directors */
-  grabber_tvdb_parse_list (fdata, n, "Director", VALHALLA_METADATA_DIRECTOR,
-                           tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Director",
+                           VALHALLA_METADATA_DIRECTOR, tvdb->pl);
 
   /* fetch tv show guest stars */
-  grabber_tvdb_parse_list (fdata, n, "GuestStars", VALHALLA_METADATA_ACTOR,
-                           tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "GuestStars",
+                           VALHALLA_METADATA_ACTOR, tvdb->pl);
 
   /* fetch tv show writers */
-  grabber_tvdb_parse_list (fdata, n, "Writer", VALHALLA_METADATA_WRITER,
-                           tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Writer",
+                           VALHALLA_METADATA_WRITER, tvdb->pl);
 
   /* fetch tv show poster */
   tmp = vh_xml_get_prop_value_from_tree (n, "filename");
   if (tmp && *tmp)
   {
     snprintf (name, sizeof (name), "%s-%d-%d", keywords, season, episode);
-    grabber_tvdb_get_picture (fdata, name, tmp, VALHALLA_METADATA_COVER_SHOW,
-                              tvdb->pl);
+    grabber_tvdb_get_picture (fdata, name, tmp,
+                              VALHALLA_METADATA_COVER_SHOW, tvdb->pl);
     xmlFree (tmp);
   }
 
@@ -359,12 +359,12 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
 
   /* fetch tv show categories */
-  grabber_tvdb_parse_list (fdata, n, "Genre", VALHALLA_METADATA_CATEGORY,
-                           tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Genre",
+                           VALHALLA_METADATA_CATEGORY, tvdb->pl);
 
   /* fetch tv show actors */
-  grabber_tvdb_parse_list (fdata, n, "Actors", VALHALLA_METADATA_ACTOR,
-                           tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Actors",
+                           VALHALLA_METADATA_ACTOR, tvdb->pl);
 
   /* fetch tv show runtime (in minutes) */
   vh_grabber_parse_str (fdata, n, "Runtime",
