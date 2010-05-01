@@ -203,9 +203,9 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   {
     if (*tmp)
     {
-    snprintf (name, sizeof (name), "%s-%d-%d", keywords, season, episode);
-    grabber_tvdb_get_picture (fdata, name, tmp,
-                              VALHALLA_METADATA_COVER_SHOW, tvdb->pl);
+      snprintf (name, sizeof (name), "%s-%d-%d", keywords, season, episode);
+      grabber_tvdb_get_picture (fdata, name, tmp,
+                                VALHALLA_METADATA_COVER_SHOW, tvdb->pl);
     }
     xmlFree (tmp);
   }
@@ -382,8 +382,8 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (tmp)
   {
     if (*tmp)
-    grabber_tvdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_METADATA_COVER, tvdb->pl);
+      grabber_tvdb_get_picture (fdata, keywords, tmp,
+                                VALHALLA_METADATA_COVER, tvdb->pl);
     xmlFree (tmp);
   }
 
@@ -392,8 +392,8 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (tmp)
   {
     if (*tmp)
-    grabber_tvdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_METADATA_FAN_ART, tvdb->pl);
+      grabber_tvdb_get_picture (fdata, keywords, tmp,
+                                VALHALLA_METADATA_FAN_ART, tvdb->pl);
     xmlFree (tmp);
   }
 
