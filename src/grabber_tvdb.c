@@ -63,6 +63,7 @@
 #define TVDB_QUERY_SEARCH       "http://%s/api/GetSeries.php?seriesname=%s"
 #define TVDB_QUERY_SEARCH_NEW   "http://%s/api/GetSeriesNew.php?seriesname=%s"
 #define TVDB_QUERY_INFO         "http://%s/api/%s/series/%s/%s.xml"
+#define TVDB_EPISODE_INFO       "http://%s/api/%s/series/%s/default/%u/%u/%s.xml"
 #define TVDB_COVERS_URL         "http://%s/banners/%s"
 
 typedef struct grabber_tvdb_s {
@@ -127,6 +128,89 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   vh_metadata_add_auto (&fdata->meta_grabber, metadata_name, cover, pl);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
   free (cover);
+}
+
+static int
+grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
+                          const char *keywords, const char* seriesid)
+{
+  char name[1024] = { 0 };
+  const metadata_t *tag = NULL;
+  int err;
+  unsigned int season, episode;
+  char url[MAX_URL_SIZE];
+  url_data_t udata;
+  xmlDocPtr doc;
+  xmlChar *tmp = NULL;
+  xmlNode *n;
+
+  err = vh_metadata_get (fdata->meta_parser, VALHALLA_METADATA_SEASON, 0,
+                         &tag);
+  if (err)
+    return -1;
+  season = atoi (tag->value);
+
+  err = vh_metadata_get (fdata->meta_parser, VALHALLA_METADATA_EPISODE, 0,
+                         &tag);
+  if (err)
+    return -1;
+  episode = atoi (tag->value);
+
+  /* proceed with TVDB episode request */
+  snprintf (url, MAX_URL_SIZE, TVDB_EPISODE_INFO,
+            TVDB_HOSTNAME, TVDB_API_KEY, seriesid, season, episode,
+            TVDB_DEFAULT_LANGUAGE);
+
+  vh_log (VALHALLA_MSG_VERBOSE, "Episode Info Request: %s", url);
+
+  udata = vh_url_get_data (tvdb->handler, url);
+  if (udata.status != 0)
+    goto error;
+
+  vh_log (VALHALLA_MSG_VERBOSE, "Episode Info Reply: %s", udata.buffer);
+
+  /* parse the XML answer */
+  doc = vh_xml_get_doc_from_memory (udata.buffer);
+  free (udata.buffer);
+  if (!doc)
+    goto error;
+
+  n = xmlDocGetRootElement (doc);
+
+  /* fetch tv show overview description */
+  vh_grabber_parse_str (fdata, n, "Overview",
+                        VALHALLA_METADATA_SYNOPSIS_SHOW, tvdb->pl);
+
+  /* fetch tv show first air date */
+  vh_grabber_parse_str (fdata, n, "FirstAired", VALHALLA_METADATA_PREMIERED,
+                        tvdb->pl);
+
+  /* fetch tv show directors */
+  grabber_tvdb_parse_list (fdata, n, "Director", VALHALLA_METADATA_DIRECTOR,
+                           tvdb->pl);
+
+  /* fetch tv show guest stars */
+  grabber_tvdb_parse_list (fdata, n, "GuestStars", VALHALLA_METADATA_ACTOR,
+                           tvdb->pl);
+
+  /* fetch tv show poster */
+  tmp = vh_xml_get_prop_value_from_tree (n, "filename");
+  if (tmp && *tmp)
+  {
+    snprintf (name, sizeof (name), "%s-%d-%d", keywords, season, episode);
+    grabber_tvdb_get_picture (fdata, name, tmp, VALHALLA_METADATA_COVER_SHOW,
+                              tvdb->pl);
+    xmlFree (tmp);
+  }
+
+  xmlFreeDoc (doc);
+  return 0;
+
+ error:
+  if (doc)
+    xmlFreeDoc (doc);
+
+  return -1;
 }
 
 static char *
@@ -241,7 +325,6 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, TVDB_QUERY_INFO,
             TVDB_HOSTNAME, TVDB_API_KEY, seriesid, TVDB_DEFAULT_LANGUAGE);
-  free (seriesid);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
 
@@ -305,14 +388,18 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
     xmlFree (tmp);
   }
 
+  grabber_tvdb_get_episode (tvdb, fdata, keywords, seriesid);
+
   xmlFreeDoc (doc);
   free (keywords);
+  free (seriesid);
   return 0;
 
  error:
   if (doc)
     xmlFreeDoc (doc);
   free (keywords);
+  free (seriesid);
 
   return -1;
 }
