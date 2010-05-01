@@ -318,10 +318,15 @@ main (int argc, char **argv)
   printf ("Grabbers available:\n");
   while ((grabber = valhalla_grabber_next (handle, grabber)))
   {
+    int en = 0;
+
     if (nograbber)
       valhalla_config_set (handle, GRABBER_STATE, grabber, 0);
     else if (gid == 0) /* no grabber has been specified */
+    {
       printf ("  %s\n", grabber);
+      en = 1;
+    }
     else
     {
       valhalla_config_set (handle, GRABBER_STATE, grabber, 0);
@@ -331,10 +336,14 @@ main (int argc, char **argv)
         {
           valhalla_config_set (handle, GRABBER_STATE, grabber, 1);
           printf ("  %s\n", grabber);
+          en = 1;
           break;
         }
       }
     }
+
+    if (!en)
+      continue;
 
     printf ("   priorities\n");
     do
