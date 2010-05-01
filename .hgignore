@@ -4,10 +4,10 @@ syntax: regexp
 \.depend
 \.a
 ~$
-config.log
-config.mak
+config\.log
+config\.mak
 libvalhalla-test$
-^libvalhalla.pc
+^libvalhalla\.pc
 ^DOCS/doxygen
 ^TAGS
-^valhalla.db
+^valhalla\.db
