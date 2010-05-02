@@ -402,7 +402,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   xmlFreeDoc (doc);
   free (keywords);
   if (seriesid)
-  free (seriesid);
+    free (seriesid);
   return 0;
 
  error:
@@ -410,8 +410,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
     xmlFreeDoc (doc);
   free (keywords);
   if (seriesid)
-  free (seriesid);
-
+    free (seriesid);
   return -1;
 }
 
