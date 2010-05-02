@@ -280,7 +280,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   char url[MAX_URL_SIZE];
   url_data_t udata;
   int res_int = 0;
-  char *title, *seriesid, *keywords;
+  char *title, *seriesid = NULL, *keywords;
 #ifdef GRABBER_TVDB_UNOFFICIAL_API
   char *tmp2;
 #endif /* GRABBER_TVDB_UNOFFICIAL_API */
@@ -401,6 +401,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
 
   xmlFreeDoc (doc);
   free (keywords);
+  if (seriesid)
   free (seriesid);
   return 0;
 
@@ -408,6 +409,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (doc)
     xmlFreeDoc (doc);
   free (keywords);
+  if (seriesid)
   free (seriesid);
 
   return -1;
