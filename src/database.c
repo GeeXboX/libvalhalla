@@ -1866,11 +1866,7 @@ vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
     return NULL;
 
   if (vhstmt->cnt != 7)
-  {
-    sqlite3_finalize (vhstmt->stmt);
-    database_vhstmt_free (vhstmt);
-    return NULL;
-  }
+    goto err;
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[2], NULL, 10);
   metares->meta_name  = vhstmt->cols[4];
