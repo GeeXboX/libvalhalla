@@ -140,7 +140,7 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   unsigned int season, episode;
   char url[MAX_URL_SIZE];
   url_data_t udata;
-  xmlDocPtr doc;
+  xmlDocPtr doc = NULL;
   xmlChar *tmp = NULL;
   xmlNode *n;
 
