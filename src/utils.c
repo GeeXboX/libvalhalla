@@ -97,7 +97,7 @@ vh_file_copy (const char *src, const char *dst)
     goto end;
 
   /* open the corresponding file descriptors */
-  fd_src = open (src, O_RDONLY);
+  fd_src = open (src, O_RDONLY | O_BINARY);
   if (fd_src == -1)
     goto end;
 

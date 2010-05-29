@@ -159,7 +159,7 @@ lavf_utils_probe (AVInputFormat *fmt, const char *file)
     goto out;
   }
 
-  fd = fopen (file, "r");
+  fd = fopen (file, "rb");
   if (!fd)
     return 0;
 
