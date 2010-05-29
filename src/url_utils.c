@@ -196,7 +196,7 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
     return URL_ERROR_TRANSFER;
   }
 
-  fd = open (dst, O_WRONLY | O_CREAT, 0666);
+  fd = open (dst, O_WRONLY | O_CREAT | O_BINARY, 0666);
   if (fd < 0)
   {
     vh_log (VALHALLA_MSG_WARNING, "Unable to open stream to save file %s", dst);

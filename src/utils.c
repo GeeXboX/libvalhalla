@@ -101,7 +101,7 @@ vh_file_copy (const char *src, const char *dst)
   if (fd_src == -1)
     goto end;
 
-  fd_dst = open (dst, O_CREAT | O_WRONLY, 0644);
+  fd_dst = open (dst, O_CREAT | O_WRONLY | O_BINARY, 0644);
   if (fd_dst == -1)
     goto end;
 

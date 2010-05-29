@@ -77,6 +77,11 @@ struct valhalla_s {
   unsigned int fstop  : 1;  /* check if stop was called */
 };
 
+/* this is required on windows */
+#ifndef O_BINARY
+#define O_BINARY (0)
+#endif
+
 #define STOP_FLAG_REQUEST (1 << 0)
 #define STOP_FLAG_WAIT    (1 << 1)
 
