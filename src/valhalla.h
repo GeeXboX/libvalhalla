@@ -828,8 +828,8 @@ typedef struct valhalla_db_restrict_s {
 #define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority)  \
   {                                                               \
     VALHALLA_DB_TYPE_##_type,                     /* .type     */ \
-    id,                                           /* .id       */ \
-    text,                                         /* .text     */ \
+    _id,                                          /* .id       */ \
+    _text,                                        /* .text     */ \
     VALHALLA_META_GRP_##_group,                   /* .group    */ \
     _priority                                     /* .priority */ \
   }
