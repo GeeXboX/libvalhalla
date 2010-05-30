@@ -834,9 +834,9 @@ typedef struct valhalla_db_restrict_s {
     _priority                                     /* .priority */ \
   }
 
-#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text, \
-                             _m_type, _d_type, _priority)         \
-  {                                                               \
+#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,             \
+                             _m_type, _d_type, _priority)                     \
+  {                                                                           \
     NULL,                                                         /* .next */ \
     VALHALLA_DB_OPERATOR_##_op,                                   /* .op   */ \
     VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority), /* .meta */ \
