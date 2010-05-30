@@ -827,20 +827,20 @@ typedef struct valhalla_db_restrict_s {
 
 #define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority)  \
   {                                                               \
-    .type     = VALHALLA_DB_TYPE_##_type,                         \
-    .id       = _id,                                              \
-    .text     = _text,                                            \
-    .group    = VALHALLA_META_GRP_##_group,                       \
-    .priority = _priority                                         \
+    VALHALLA_DB_TYPE_##_type,                     /* .type     */ \
+    id,                                           /* .id       */ \
+    text,                                         /* .text     */ \
+    VALHALLA_META_GRP_##_group,                   /* .group    */ \
+    _priority                                     /* .priority */ \
   }
 
-#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,         \
-                             _m_type, _d_type, _priority)                 \
-  {                                                                       \
-    .next = NULL,                                                         \
-    .op   = VALHALLA_DB_OPERATOR_##_op,                                   \
-    .meta = VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority), \
-    .data = VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)  \
+#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text, \
+                             _m_type, _d_type, _priority)         \
+  {                                                               \
+    NULL,                                                         /* .next */ \
+    VALHALLA_DB_OPERATOR_##_op,                                   /* .op   */ \
+    VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority), /* .meta */ \
+    VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)  /* .data */ \
   }
 
 
