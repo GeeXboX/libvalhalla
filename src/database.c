@@ -1754,7 +1754,7 @@ vh_database_metalist_get (database_t *database,
                 database_groupid_get (database, search->group));
   }
   /* AND */
-  if (search->group || search->id || search->text)
+  if (search->group || search->id || search->text || restriction)
     SQL_CONCAT (sql, SELECT_LIST_AND);
   /* assoc.priority__ <= <PRIORITY> */
   SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, search->priority);
