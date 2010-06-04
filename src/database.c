@@ -1647,9 +1647,15 @@ const valhalla_db_metares_t *
 vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
+  char *sql;
   valhalla_db_metares_t *metares = &vhstmt->u.metares;
 
-  rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
+  sql = strdup (vhstmt->sql);
+  if (!sql)
+    goto err;
+
+  rc = database_sql_vhstmt (database->db, sql, vhstmt);
+  free (sql);
   if (rc) /* no more row */
     return NULL;
 
@@ -1670,6 +1676,11 @@ vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
                         (int64_t) strtoimax (vhstmt->cols[4], NULL, 10));
 
   return metares;
+
+ err:
+  sqlite3_finalize (vhstmt->stmt);
+  database_vhstmt_free (vhstmt);
+  return NULL;
 }
 
 valhalla_db_stmt_t *
@@ -1772,9 +1783,15 @@ const valhalla_db_fileres_t *
 vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
+  char *sql;
   valhalla_db_fileres_t *fileres = &vhstmt->u.fileres;
 
-  rc = database_sql_vhstmt (database->db, vhstmt->sql, vhstmt);
+  sql = strdup (vhstmt->sql);
+  if (!sql)
+    goto err;
+
+  rc = database_sql_vhstmt (database->db, sql, vhstmt);
+  free (sql);
   if (rc) /* no more row */
     return NULL;
 
@@ -1792,6 +1809,11 @@ vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
                             (int64_t) strtoimax (vhstmt->cols[2], NULL, 10));
 
   return fileres;
+
+ err:
+  sqlite3_finalize (vhstmt->stmt);
+  database_vhstmt_free (vhstmt);
+  return NULL;
 }
 
 valhalla_db_stmt_t *
