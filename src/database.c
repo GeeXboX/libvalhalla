@@ -1524,14 +1524,15 @@ vh_database_init (const char *path)
   }
 
 static inline int
-database_sql_vhstmt (sqlite3 *db,
-                     const char *sql, valhalla_db_stmt_t *vhstmt)
+database_sql_vhstmt (sqlite3 *db, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
   char *msg = NULL;
   valhalla_verb_t verb = VALHALLA_MSG_VERBOSE;
 
-  rc = database_sql_exec (db, sql, vhstmt, &msg);
+  vh_log (verb, "query: %s", vhstmt->sql);
+
+  rc = database_sql_exec (db, vhstmt->sql, vhstmt, &msg);
   if (msg)
   {
     vh_log (VALHALLA_MSG_ERROR, "%s", msg);
@@ -1539,7 +1540,6 @@ database_sql_vhstmt (sqlite3 *db,
     verb = VALHALLA_MSG_ERROR;
   }
 
-  vh_log (verb, "query: %s", sql);
   return rc;
 }
 
@@ -1647,15 +1647,9 @@ const valhalla_db_metares_t *
 vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
-  char *sql;
   valhalla_db_metares_t *metares = &vhstmt->u.metares;
 
-  sql = strdup (vhstmt->sql);
-  if (!sql)
-    goto err;
-
-  rc = database_sql_vhstmt (database->db, sql, vhstmt);
-  free (sql);
+  rc = database_sql_vhstmt (database->db, vhstmt);
   if (rc) /* no more row */
     return NULL;
 
@@ -1779,15 +1773,9 @@ const valhalla_db_fileres_t *
 vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
-  char *sql;
   valhalla_db_fileres_t *fileres = &vhstmt->u.fileres;
 
-  sql = strdup (vhstmt->sql);
-  if (!sql)
-    goto err;
-
-  rc = database_sql_vhstmt (database->db, sql, vhstmt);
-  free (sql);
+  rc = database_sql_vhstmt (database->db, vhstmt);
   if (rc) /* no more row */
     return NULL;
 
@@ -1867,15 +1855,9 @@ const valhalla_db_metares_t *
 vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
 {
   int rc;
-  char *sql;
   valhalla_db_metares_t *metares = &vhstmt->u.metares;
 
-  sql = strdup (vhstmt->sql);
-  if (!sql)
-    goto err;
-
-  rc = database_sql_vhstmt (database->db, sql, vhstmt);
-  free (sql);
+  rc = database_sql_vhstmt (database->db, vhstmt);
   if (rc) /* no more row */
     return NULL;
 
