@@ -1660,11 +1660,7 @@ vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
     return NULL;
 
   if (vhstmt->cnt != 6)
-  {
-    sqlite3_finalize (vhstmt->stmt);
-    database_vhstmt_free (vhstmt);
-    return NULL;
-  }
+    goto err;
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
   metares->meta_name  = vhstmt->cols[2];
@@ -1796,11 +1792,7 @@ vh_database_filelist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
     return NULL;
 
   if (vhstmt->cnt != 3)
-  {
-    sqlite3_finalize (vhstmt->stmt);
-    database_vhstmt_free (vhstmt);
-    return NULL;
-  }
+    goto err;
 
   fileres->id   = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
   fileres->path = vhstmt->cols[1];
