@@ -426,7 +426,8 @@ valhalla_uninit (valhalla_t *handle)
 }
 
 int
-valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
+valhalla_run (valhalla_t *handle,
+              int loop, uint16_t timeout, uint16_t delay, int priority)
 {
   int res;
 
@@ -447,7 +448,7 @@ valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority)
       return VALHALLA_ERROR_THREAD;
   }
 
-  res = vh_scanner_run (handle->scanner, loop, timeout, priority);
+  res = vh_scanner_run (handle->scanner, loop, timeout, delay, priority);
   if (res)
   {
     if (res == SCANNER_ERROR_PATH)

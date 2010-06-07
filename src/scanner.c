@@ -58,6 +58,7 @@ struct scanner_s {
   pthread_mutex_t mutex_run;
 
   uint64_t        timeout;
+  uint64_t        delay;
   timer_thread_t *timer;
 
   struct path_s {
@@ -272,6 +273,18 @@ scanner_thread (void *arg)
           "[%s] Scanner initialized : loop = %i, timeout = %"PRIu64" [nsec]",
           __FUNCTION__, scanner->loop, scanner->timeout);
 
+  if (scanner->delay)
+  {
+    vh_log (VALHALLA_MSG_INFO,
+            "[%s] The scanner is delayed of %"PRIu64" [nsec]",
+            __FUNCTION__, scanner->delay);
+
+    vh_timer_thread_sleep (scanner->timer, scanner->delay);
+
+    if (scanner_is_stopped (scanner))
+      goto kill;
+  }
+
   for (i = scanner->loop; i; i = i > 0 ? i - 1 : i)
   {
     vh_event_handler_gl_send (VH_HANDLE->event_handler,
@@ -349,7 +362,8 @@ vh_scanner_wakeup (scanner_t *scanner)
 }
 
 int
-vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
+vh_scanner_run (scanner_t *scanner,
+                int loop, uint16_t timeout, uint16_t delay, int priority)
 {
   int res = SCANNER_SUCCESS;
   pthread_attr_t attr;
@@ -362,12 +376,15 @@ vh_scanner_run (scanner_t *scanner, int loop, uint16_t timeout, int priority)
   if (!scanner->paths)
     return SCANNER_ERROR_PATH;
 
+  if (delay)
+    scanner->delay = (uint64_t) delay * 1000000000;
+
   /* if timeout is 0, there is no sleep between loops */
   if (timeout)
-  {
     scanner->timeout = (uint64_t) timeout * 1000000000;
+
+  if (delay || timeout)
     vh_timer_thread_start (scanner->timer);
-  }
 
   /* -1 for infinite loop */
   scanner->loop = loop < 1 ? -1 : loop;

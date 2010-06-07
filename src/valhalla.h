@@ -718,10 +718,12 @@ uint64_t valhalla_stats_read_next (valhalla_t *handle, const char *id,
  * \param[in] handle      Handle on the scanner.
  * \param[in] loop        Number of loops (<=0 for infinite).
  * \param[in] timeout     Timeout between loops, 0 to disable [seconds].
+ * \param[in] delay       Delay before the scanning begins [seconds].
  * \param[in] priority    Priority set to all threads.
  * \return 0 for success and <0 on error (see enum valhalla_errno).
  */
-int valhalla_run (valhalla_t *handle, int loop, uint16_t timeout, int priority);
+int valhalla_run (valhalla_t *handle,
+                  int loop, uint16_t timeout, uint16_t delay, int priority);
 
 /**
  * \brief Wait until the scanning is finished.

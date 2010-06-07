@@ -36,7 +36,7 @@ enum scanner_errno {
 
 void vh_scanner_wakeup (scanner_t *scanner);
 int vh_scanner_run (scanner_t *scanner,
-                    int loop, uint16_t timeout, int priority);
+                    int loop, uint16_t timeout, uint16_t delay, int priority);
 void vh_scanner_wait (scanner_t *scanner);
 fifo_queue_t *vh_scanner_fifo_get (scanner_t *scanner);
 void vh_scanner_stop (scanner_t *scanner, int f);
