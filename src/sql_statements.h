@@ -22,6 +22,23 @@
 #ifndef VALHALLA_SQL_STATEMENTS_H
 #define VALHALLA_SQL_STATEMENTS_H
 
+/*
+ * PRIi64 is replaced by I64i with inttypes.h provided by MinGW. These SQL
+ * statements are built with sqlite3_snprintf() [1]. This one does not use
+ * the functions from MSVC, then I64i is not known by SQLite.
+ *
+ * Note that %lli is supported only by sqlite3_snprintf(). With the *printf
+ * functions of MSVC, %ll is considered like %l. It is for this reason that
+ * MinGW uses %I64i instead of %lli in inttypes.h.
+ *
+ * [1]: see SQL_CONCAT() in database.c
+ */
+#ifdef _WIN32
+#define VH_I64 "lli"
+#else
+#define VH_I64 PRIi64
+#endif /* !_WIN32 */
+
 /******************************************************************************/
 /*                                                                            */
 /*                                 Controls                                   */
@@ -186,7 +203,7 @@
  "ORDER BY assoc.priority__;"
 
 #define SELECT_FILE_WHERE_FILE_ID \
- "file.file_id = %"PRIi64" "
+ "file.file_id = %"VH_I64" "
 #define SELECT_FILE_WHERE_FILE_PATH \
  "file.file_path = '%q' "
 
@@ -200,7 +217,7 @@
  "ORDER BY file_id;"
 
 #define SELECT_LIST_WHERE_TYPE_ID \
- "_type_id = %"PRIi64" "
+ "_type_id = %"VH_I64" "
 
 /* Metadata list selection */
 
@@ -218,7 +235,7 @@
  "assoc.file_id IN ( "                      \
    "SELECT file_id "                        \
    "FROM file "                             \
-   "WHERE _type_id = %"PRIi64" "            \
+   "WHERE _type_id = %"VH_I64" "            \
  ") "
 
 #define SELECT_LIST_METADATA_END          \
@@ -251,13 +268,13 @@
 #define SELECT_LIST_WHERE_META_NAME \
  "meta.meta_name = '%q' "
 #define SELECT_LIST_WHERE_META_ID \
- "meta.meta_id = %"PRIi64" "
+ "meta.meta_id = %"VH_I64" "
 #define SELECT_LIST_WHERE_DATA_NAME \
  "data.data_value = '%q' "
 #define SELECT_LIST_WHERE_DATA_ID \
- "data.data_id = %"PRIi64" "
+ "data.data_id = %"VH_I64" "
 #define SELECT_LIST_WHERE_GROUP_ID \
- "assoc._grp_id = %"PRIi64" "
+ "assoc._grp_id = %"VH_I64" "
 #define SELECT_LIST_WHERE_PRIORITY \
  "assoc.priority__ <= %i " /* << highest,  >> lowest */
 
