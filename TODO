@@ -26,3 +26,7 @@
         shares. In this case, it should be the role of the application using
         libvalhalla, to ack the library that the files are now available and
         a new scanning must be performed.
+
+ * Ondemand
+     -> Add the capability to force an ondemand for files where the mtime has
+        not changed.
