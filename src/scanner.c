@@ -337,7 +337,7 @@ scanner_thread (void *arg)
       vh_event_handler_gl_send (VH_HANDLE->event_handler,
                                 VALHALLA_EVENTGL_SCANNER_SLEEP);
       if (scanner->timeout)
-      vh_timer_thread_sleep (scanner->timer, scanner->timeout);
+        vh_timer_thread_sleep (scanner->timer, scanner->timeout);
     }
 
     if (scanner_is_stopped (scanner))
