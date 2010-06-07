@@ -44,6 +44,7 @@
   " -v --verbose            increase verbosity\n" \
   " -l --loop               number of loops\n" \
   " -t --timewait           time to wait between loops [sec]\n" \
+  " -e --delay              delay before the scanning begins [sec]\n" \
   " -m --timelimit          time limit [ms] for the scanning\n" \
   " -a --priority           priority for the threads\n" \
   " -d --database           path for the database\n" \
@@ -109,7 +110,7 @@ int
 main (int argc, char **argv)
 {
   int rc, i;
-  int loop_nb = 1, loop_wait = 0, time_limit = 0;
+  int loop_nb = 1, loop_wait = 0, delay, time_limit = 0;
   int priority = 0, commit = 128, decrap = 0;
   valhalla_t *handle;
   valhalla_init_param_t param;
@@ -129,12 +130,13 @@ main (int argc, char **argv)
   const char *group = NULL;
 
   int c, index;
-  const char *const short_options = "hvl:t:m:a:d:f:c:p:nk:s:g:r:ijq";
+  const char *const short_options = "hvl:t:e:m:a:d:f:c:p:nk:s:g:r:ijq";
   const struct option long_options[] = {
     { "help",        no_argument,       0, 'h'  },
     { "verbose",     no_argument,       0, 'v'  },
     { "loop",        required_argument, 0, 'l'  },
     { "timewait",    required_argument, 0, 't'  },
+    { "delay",       required_argument, 0, 'e'  },
     { "timelimit",   required_argument, 0, 'm'  },
     { "priority",    required_argument, 0, 'a'  },
     { "database",    required_argument, 0, 'd'  },
@@ -182,6 +184,10 @@ main (int argc, char **argv)
 
     case 't':
       loop_wait = atoi (optarg);
+      break;
+
+    case 'e':
+      delay = atoi (optarg);
       break;
 
     case 'm':
@@ -363,7 +369,7 @@ main (int argc, char **argv)
 
   clock_gettime (CLOCK_REALTIME, &tss);
 
-  rc = valhalla_run (handle, loop_nb, loop_wait, priority);
+  rc = valhalla_run (handle, loop_nb, loop_wait, delay, priority);
   if (rc)
   {
     fprintf (stderr, "Error code: %i\n", rc);
