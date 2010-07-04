@@ -112,7 +112,7 @@ struct grabber_s {
 #define STATS_GROUP   "grabber"
 #define STATS_SUCCESS "success"
 #define STATS_FAILURE "failure"
-#define STATS_SKIP    "skip"
+#define STATS_RETRY   "retry"
 
 
 /*
@@ -806,7 +806,7 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
                                 STATS_GROUP, name, STATS_FAILURE);
     it->cnt_skip =
       vh_stats_grp_counter_add (handle->stats,
-                                STATS_GROUP, name, STATS_SKIP);
+                                STATS_GROUP, name, STATS_RETRY);
   }
 
   return grabber;
