@@ -89,7 +89,15 @@
 #define CREATE_TABLE_DATA                                 \
  "CREATE TABLE IF NOT EXISTS data ( "                     \
    "data_id          INTEGER PRIMARY KEY AUTOINCREMENT, " \
-   "data_value       TEXT    NOT NULL UNIQUE "            \
+   "data_value       TEXT    NOT NULL UNIQUE, "           \
+   "_lang_id         INTEGER NULL "                       \
+ ");"
+
+#define CREATE_TABLE_LANG                                 \
+ "CREATE TABLE IF NOT EXISTS lang ( "                     \
+   "lang_id          INTEGER PRIMARY KEY AUTOINCREMENT, " \
+   "lang_short       TEXT    NOT NULL UNIQUE, "           \
+   "lang_long        TEXT    NULL "                       \
  ");"
 
 #define CREATE_TABLE_GROUP                                \
@@ -310,6 +318,11 @@
  "FROM data "            \
  "WHERE data_value = ?;"
 
+#define SELECT_LANG_ID   \
+ "SELECT lang_id "       \
+ "FROM lang "            \
+ "WHERE lang_short = ?;"
+
 #define SELECT_GROUP_ID  \
  "SELECT grp_id "        \
  "FROM grp "             \
@@ -407,8 +420,15 @@
 
 #define INSERT_DATA        \
  "INSERT "                 \
- "INTO data (data_value) " \
- "VALUES (?);"
+ "INTO data (data_value, " \
+ "           _lang_id) "   \
+ "VALUES (?, ?);"
+
+#define INSERT_LANG        \
+ "INSERT "                 \
+ "INTO lang (lang_short, " \
+ "           lang_long) "  \
+ "VALUES (?, ?);"
 
 #define INSERT_GROUP       \
  "INSERT "                 \

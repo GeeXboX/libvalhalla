@@ -68,7 +68,8 @@ exif_content_foreach_func (ExifEntry *entry, void *data)
   vh_metadata_add (&fdata->meta_grabber,
                    exif_tag_get_name (entry->tag),
                    exif_entry_get_value (entry, buf, BUF_SIZE),
-                   VALHALLA_META_GRP_TECHNICAL, pl->priority);
+                   VALHALLA_META_GRP_TECHNICAL,
+                   VALHALLA_LANG_UNDEF, pl->priority);
 }
 
 static void
@@ -141,7 +142,8 @@ grabber_exif_grab (void *priv, file_data_t *data)
 
     snprintf (val, sizeof (val), "%d", orientation);
     vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_PICTURE_ORIENTATION, val, exif->pl);
+                          VALHALLA_METADATA_PICTURE_ORIENTATION,
+                          val, VALHALLA_LANG_UNDEF, exif->pl);
   }
 
   exif->fdata = data;

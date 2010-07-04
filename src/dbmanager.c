@@ -141,7 +141,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
         continue;
 
       vh_database_metadata_insert (dbmanager->database, extmd->path,
-                                   extmd->meta, extmd->data, extmd->group);
+                                   extmd->meta, extmd->data,
+                                   extmd->lang, extmd->group);
       vh_dbmanager_extmd_free (extmd);
       continue;
     }
@@ -154,7 +155,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
         continue;
 
       vh_database_metadata_update (dbmanager->database, extmd->path,
-                                   extmd->meta, extmd->data, extmd->ndata);
+                                   extmd->meta, extmd->data,
+                                   extmd->ndata, extmd->lang);
       vh_dbmanager_extmd_free (extmd);
       continue;
     }

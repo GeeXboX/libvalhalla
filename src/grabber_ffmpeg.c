@@ -94,7 +94,8 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
       name = grabber_ffmpeg_codec_name (codec->codec_id);
       if (name)
         vh_metadata_add_auto (&data->meta_grabber,
-                              VALHALLA_METADATA_AUDIO_CODEC, name, ffmpeg->pl);
+                              VALHALLA_METADATA_AUDIO_CODEC,
+                              name, VALHALLA_LANG_UNDEF, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->channels,
                             VALHALLA_METADATA_AUDIO_CHANNELS, ffmpeg->pl);
       if (codec->bit_rate)
@@ -108,7 +109,8 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
       name = grabber_ffmpeg_codec_name (codec->codec_id);
       if (name)
         vh_metadata_add_auto (&data->meta_grabber,
-                              VALHALLA_METADATA_VIDEO_CODEC, name, ffmpeg->pl);
+                              VALHALLA_METADATA_VIDEO_CODEC,
+                              name, VALHALLA_LANG_UNDEF, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->width,
                             VALHALLA_METADATA_WIDTH, ffmpeg->pl);
       vh_grabber_parse_int (data, codec->height,

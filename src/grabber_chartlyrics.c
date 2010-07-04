@@ -88,8 +88,8 @@ grabber_chartlyrics_get (grabber_chartlyrics_t *chartlyrics, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch lyrics */
-  vh_grabber_parse_str (fdata, n, "Lyric",
-                        VALHALLA_METADATA_LYRICS, chartlyrics->pl);
+  vh_grabber_parse_str (fdata, n, "Lyric", VALHALLA_METADATA_LYRICS,
+                        VALHALLA_LANG_EN, chartlyrics->pl);
   res = 0;
 
   xmlFreeDoc (doc);

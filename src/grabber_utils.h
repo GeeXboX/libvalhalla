@@ -35,10 +35,11 @@ void vh_grabber_parse_float (file_data_t *fdata, float val,
 
 #ifdef USE_XML
 void vh_grabber_parse_str (file_data_t *fdata,
-                           xmlNode *nd, const char *tag,
-                           const char *name, const metadata_plist_t *pl);
+                           xmlNode *nd, const char *tag, const char *name,
+                           valhalla_lang_t lang, const metadata_plist_t *pl);
 void vh_grabber_parse_categories (file_data_t *fdata,
-                                  xmlNode *node, const metadata_plist_t *pl);
+                                  xmlNode *node, valhalla_lang_t lang,
+                                  const metadata_plist_t *pl);
 void vh_grabber_parse_casting (file_data_t *fdata,
                                xmlNode *node, const metadata_plist_t *pl);
 #endif /* USE_XML */

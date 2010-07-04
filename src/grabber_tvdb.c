@@ -80,7 +80,8 @@ static const metadata_plist_t tvdb_pl[] = {
 
 static void
 grabber_tvdb_parse_list (file_data_t *fdata, xmlNode *node, const char *tag,
-                         const char *name, const metadata_plist_t *pl)
+                         const char *name, valhalla_lang_t lang,
+                         const metadata_plist_t *pl)
 {
   char *value, *saveptr = NULL;
   xmlChar *tmp = NULL;
@@ -94,7 +95,7 @@ grabber_tvdb_parse_list (file_data_t *fdata, xmlNode *node, const char *tag,
     value = strtok_r ((char *) tmp, "|", &saveptr);
     while (value)
     {
-      vh_metadata_add_auto (&fdata->meta_grabber, name, value, pl);
+      vh_metadata_add_auto (&fdata->meta_grabber, name, value, lang, pl);
       value = strtok_r (NULL, "|", &saveptr);
     }
     xmlFree (tmp);
@@ -125,7 +126,8 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
   snprintf (name, sizeof (name), "%s-%s", metadata_name, keywords);
   cover = vh_md5sum (name);
 
-  vh_metadata_add_auto (&fdata->meta_grabber, metadata_name, cover, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber,
+                        metadata_name, cover, VALHALLA_LANG_UNDEF, pl);
   vh_file_dl_add (&fdata->list_downloader, complete_url, cover, dl);
   free (cover);
 }
@@ -178,24 +180,24 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch tv show overview description */
-  vh_grabber_parse_str (fdata, n, "Overview",
-                        VALHALLA_METADATA_SYNOPSIS_SHOW, tvdb->pl);
+  vh_grabber_parse_str (fdata, n, "Overview", VALHALLA_METADATA_SYNOPSIS_SHOW,
+                        VALHALLA_LANG_EN, tvdb->pl);
 
   /* fetch tv show first air date */
-  vh_grabber_parse_str (fdata, n, "FirstAired",
-                        VALHALLA_METADATA_PREMIERED, tvdb->pl);
+  vh_grabber_parse_str (fdata, n, "FirstAired", VALHALLA_METADATA_PREMIERED,
+                        VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show directors */
-  grabber_tvdb_parse_list (fdata, n, "Director",
-                           VALHALLA_METADATA_DIRECTOR, tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Director", VALHALLA_METADATA_DIRECTOR,
+                           VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show guest stars */
-  grabber_tvdb_parse_list (fdata, n, "GuestStars",
-                           VALHALLA_METADATA_ACTOR, tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "GuestStars", VALHALLA_METADATA_ACTOR,
+                           VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show writers */
-  grabber_tvdb_parse_list (fdata, n, "Writer",
-                           VALHALLA_METADATA_WRITER, tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Writer", VALHALLA_METADATA_WRITER,
+                           VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show poster */
   tmp = vh_xml_get_prop_value_from_tree (n, "filename");
@@ -351,7 +353,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
 
   /* fetch tv show overview description */
   vh_grabber_parse_str (fdata, n, "Overview",
-                        VALHALLA_METADATA_SYNOPSIS, tvdb->pl);
+                        VALHALLA_METADATA_SYNOPSIS, VALHALLA_LANG_EN, tvdb->pl);
 
   /* fetch tv show first air date */
   vh_xml_search_year (n, "FirstAired", &res_int);
@@ -362,20 +364,20 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
 
   /* fetch tv show categories */
-  grabber_tvdb_parse_list (fdata, n, "Genre",
-                           VALHALLA_METADATA_CATEGORY, tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Genre", VALHALLA_METADATA_CATEGORY,
+                           VALHALLA_LANG_EN, tvdb->pl);
 
   /* fetch tv show actors */
-  grabber_tvdb_parse_list (fdata, n, "Actors",
-                           VALHALLA_METADATA_ACTOR, tvdb->pl);
+  grabber_tvdb_parse_list (fdata, n, "Actors", VALHALLA_METADATA_ACTOR,
+                           VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "Runtime",
-                        VALHALLA_METADATA_RUNTIME, tvdb->pl);
+  vh_grabber_parse_str (fdata, n, "Runtime", VALHALLA_METADATA_RUNTIME,
+                        VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show content rating */
-  vh_grabber_parse_str (fdata, n, "ContentRating",
-                        VALHALLA_METADATA_MPAA, tvdb->pl);
+  vh_grabber_parse_str (fdata, n, "ContentRating", VALHALLA_METADATA_MPAA,
+                        VALHALLA_LANG_UNDEF, tvdb->pl);
 
   /* fetch tv show poster */
   tmp = vh_xml_get_prop_value_from_tree (n, "poster");

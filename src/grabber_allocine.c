@@ -112,22 +112,23 @@ grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
     /* special trick to retrieve english title,
      *  used by next grabbers to find cover and fan arts.
      */
-    vh_metadata_add_auto (&fdata->meta_grabber,
-                          VALHALLA_METADATA_TITLE, (char *) tmp, allocine->pl);
+    vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_TITLE,
+                          (char *) tmp, VALHALLA_LANG_EN, allocine->pl);
     xmlFree (tmp);
   }
 
   /* fetch movie alternative title */
   vh_grabber_parse_str (fdata, n, "alternative_title",
-                        VALHALLA_METADATA_TITLE_ALTERNATIVE, allocine->pl);
+                        VALHALLA_METADATA_TITLE_ALTERNATIVE,
+                        VALHALLA_LANG_FR, allocine->pl);
 
   /* fetch movie overview description */
-  vh_grabber_parse_str (fdata, n, "short_overview",
-                        VALHALLA_METADATA_SYNOPSIS, allocine->pl);
+  vh_grabber_parse_str (fdata, n, "short_overview", VALHALLA_METADATA_SYNOPSIS,
+                        VALHALLA_LANG_FR, allocine->pl);
 
   /* fetch movie runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME, allocine->pl);
+  vh_grabber_parse_str (fdata, n, "runtime", VALHALLA_METADATA_RUNTIME,
+                        VALHALLA_LANG_UNDEF, allocine->pl);
 
   /* fetch movie year of production */
   vh_xml_search_year (n, "release", &res_int);
@@ -138,7 +139,7 @@ grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n, allocine->pl);
+  vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_FR, allocine->pl);
 
   /* fetch movie rating */
   vh_xml_search_int (n, "popularity", &res_int);
@@ -151,8 +152,8 @@ grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
   }
 
   /* fetch movie budget */
-  vh_grabber_parse_str (fdata, n, "budget",
-                        VALHALLA_METADATA_BUDGET, allocine->pl);
+  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET,
+                        VALHALLA_LANG_UNDEF, allocine->pl);
 
   /* fetch movie people */
   vh_grabber_parse_casting (fdata, n, allocine->pl);

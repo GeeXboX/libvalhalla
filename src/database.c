@@ -51,6 +51,7 @@ struct database_s {
   stmt_list_t  *stmts;
   item_list_t  *file_type;
   int64_t      *groups_id;
+  int64_t      *langs_id;
 };
 
 #define VHSTMT_MAXCOLS  8
@@ -82,6 +83,7 @@ typedef enum database_stmt {
   STMT_SELECT_TYPE_ID,
   STMT_SELECT_META_ID,
   STMT_SELECT_DATA_ID,
+  STMT_SELECT_LANG_ID,
   STMT_SELECT_GROUP_ID,
   STMT_SELECT_GRABBER_ID,
   STMT_SELECT_FILE_ID,
@@ -94,6 +96,7 @@ typedef enum database_stmt {
   STMT_INSERT_TYPE,
   STMT_INSERT_META,
   STMT_INSERT_DATA,
+  STMT_INSERT_LANG,
   STMT_INSERT_GROUP,
   STMT_INSERT_GRABBER,
   STMT_INSERT_DLCONTEXT,
@@ -131,6 +134,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_SELECT_TYPE_ID]              = { SELECT_TYPE_ID,              NULL },
   [STMT_SELECT_META_ID]              = { SELECT_META_ID,              NULL },
   [STMT_SELECT_DATA_ID]              = { SELECT_DATA_ID,              NULL },
+  [STMT_SELECT_LANG_ID]              = { SELECT_LANG_ID,              NULL },
   [STMT_SELECT_GROUP_ID]             = { SELECT_GROUP_ID,             NULL },
   [STMT_SELECT_GRABBER_ID]           = { SELECT_GRABBER_ID,           NULL },
   [STMT_SELECT_FILE_ID]              = { SELECT_FILE_ID,              NULL },
@@ -143,6 +147,7 @@ static const stmt_list_t g_stmts[] = {
   [STMT_INSERT_TYPE]                 = { INSERT_TYPE,                 NULL },
   [STMT_INSERT_META]                 = { INSERT_META,                 NULL },
   [STMT_INSERT_DATA]                 = { INSERT_DATA,                 NULL },
+  [STMT_INSERT_LANG]                 = { INSERT_LANG,                 NULL },
   [STMT_INSERT_GROUP]                = { INSERT_GROUP,                NULL },
   [STMT_INSERT_GRABBER]              = { INSERT_GRABBER,              NULL },
   [STMT_INSERT_DLCONTEXT]            = { INSERT_DLCONTEXT,            NULL },
@@ -230,6 +235,18 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
 
   if (grp < vh_metadata_group_size)
     return database->groups_id[grp];
+
+  return 0;
+}
+
+static int64_t
+database_langid_get (database_t *database, valhalla_lang_t lang)
+{
+  if (!database)
+    return 0;
+
+  if (lang < vh_metadata_lang_size)
+    return database->langs_id[lang];
 
   return 0;
 }
@@ -342,6 +359,72 @@ database_insert_name (database_t *database,
   return val;
 }
 
+static int64_t
+database_insert_data (database_t *database,
+                      sqlite3_stmt *stmt, const char *data, int64_t id)
+{
+  int res, err = -1;
+  int64_t val = 0, val_tmp;
+
+  if (!data)
+    return 0;
+
+  VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data, out);
+  VH_DB_BIND_INT64_OR_GOTO (stmt, 2, id,   out_clear);
+
+  val_tmp = sqlite3_last_insert_rowid (database->db);
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+  {
+    err = 0;
+    val = sqlite3_last_insert_rowid (database->db);
+
+    if (val == val_tmp)
+      val = 0;
+  }
+
+  sqlite3_reset (stmt);
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out:
+  if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return val;
+}
+
+static int64_t
+database_insert_lang (database_t *database,
+                      sqlite3_stmt *stmt, const char *lshort, const char *llong)
+{
+  int res, err = -1;
+  int64_t val = 0, val_tmp;
+
+  if (!lshort)
+    return 0;
+
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, lshort, out);
+  VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, llong,  out_clear);
+
+  val_tmp = sqlite3_last_insert_rowid (database->db);
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_DONE)
+  {
+    err = 0;
+    val = sqlite3_last_insert_rowid (database->db);
+
+    if (val == val_tmp)
+      val = 0;
+  }
+
+  sqlite3_reset (stmt);
+ out_clear:
+  sqlite3_clear_bindings (stmt);
+ out:
+  if (err < 0 && res != SQLITE_CONSTRAINT) /* ignore constraint violation */
+    vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
+  return val;
+}
+
 static inline int64_t
 database_type_insert (database_t *database, const char *name)
 {
@@ -371,15 +454,32 @@ database_meta_insert (database_t *database, const char *name)
 }
 
 static inline int64_t
-database_data_insert (database_t *database, const char *value)
+database_data_insert (database_t *database, const char *value, int64_t langid)
 {
   int64_t val;
-  val = database_insert_name (database, STMT_GET (STMT_INSERT_DATA), value);
+  val =
+    database_insert_data (database, STMT_GET (STMT_INSERT_DATA), value, langid);
 
   /* retrieve ID if aborted */
   if (!val)
     return
       database_table_get_id (database, STMT_GET (STMT_SELECT_DATA_ID), value);
+
+  return val;
+}
+
+static inline int64_t
+database_lang_insert (database_t *database,
+                      const char *lshort, const char *llong)
+{
+  int64_t val;
+  val =
+    database_insert_lang (database, STMT_GET (STMT_INSERT_LANG), lshort, llong);
+
+  /* retrieve ID if aborted */
+  if (!val)
+    return
+      database_table_get_id (database, STMT_GET (STMT_SELECT_LANG_ID), lshort);
 
   return val;
 }
@@ -674,8 +774,11 @@ database_file_metadata (database_t *database,
 
   while (!vh_metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
   {
+    int64_t lang_id;
+
     meta_id  = database_meta_insert (database, tag->name);
-    data_id  = database_data_insert (database, tag->value);
+    lang_id  = database_langid_get  (database, tag->lang);
+    data_id  = database_data_insert (database, tag->value, lang_id);
     group_id = database_groupid_get (database, tag->group);
 
     database_assoc_filemd_insert (database,
@@ -713,7 +816,8 @@ database_file_data (database_t *database, file_data_t *data, int insert)
      *       because there is only one property which is added in this way.
      */
     snprintf (v, sizeof (v), "%"PRIi64, data->file.size);
-    vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE, v, &pl);
+    vh_metadata_add_auto (&meta, VALHALLA_METADATA_FILESIZE,
+                          v, VALHALLA_LANG_UNDEF, &pl);
     database_file_metadata (database, file_id, meta, 0);
     vh_metadata_free (meta);
   }
@@ -1343,6 +1447,7 @@ database_create_table (database_t *database)
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_TYPE,                m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_META,                m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_DATA,                m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_LANG,                m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_GROUP,               m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_GRABBER,             m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_DLCONTEXT,           m, err);
@@ -1392,6 +1497,8 @@ vh_database_uninit (database_t *database)
     free (database->file_type);
   if (database->groups_id)
     free (database->groups_id);
+  if (database->langs_id)
+    free (database->langs_id);
 
   if (database->db)
     sqlite3_close (database->db);
@@ -1450,8 +1557,9 @@ vh_database_init (const char *path)
 
   database->file_type = malloc (sizeof (g_file_type));
   database->groups_id = calloc (vh_metadata_group_size, sizeof (int64_t));
+  database->langs_id  = calloc (vh_metadata_lang_size,  sizeof (int64_t));
 
-  if (!database->file_type || !database->groups_id)
+  if (!database->file_type || !database->groups_id || !database->langs_id)
     goto err;
 
   memcpy (database->file_type, g_file_type, sizeof (g_file_type));
@@ -1464,6 +1572,13 @@ vh_database_init (const char *path)
   {
     const char *group = vh_metadata_group_str (i);
     database->groups_id[i] = database_group_insert (database, group);
+  }
+
+  for (i = 0; i < vh_metadata_lang_size; i++)
+  {
+    const char *lshort, *llong;
+    vh_metadata_lang_str (i, &lshort, &llong);
+    database->langs_id[i] = database_lang_insert (database, lshort, llong);
   }
 
   return database;
@@ -1953,7 +2068,7 @@ vh_database_file_get (database_t *database,
 int
 vh_database_metadata_insert (database_t *database, const char *path,
                              const char *meta, const char *data,
-                             valhalla_meta_grp_t group)
+                             valhalla_lang_t lang, valhalla_meta_grp_t group)
 {
   int res = -1;
   int64_t file_id, meta_id, data_id, group_id;
@@ -1996,7 +2111,10 @@ vh_database_metadata_insert (database_t *database, const char *path,
     if (!meta_id)
       meta_id = database_meta_insert (database, meta);
     if (!data_id)
-      data_id = database_data_insert (database, data);
+    {
+      int64_t lang_id = database_langid_get (database, lang);
+      data_id = database_data_insert (database, data, lang_id);
+    }
     group_id = database_groupid_get (database, group);
     database_assoc_filemd_insert (database,
                                   file_id, meta_id, data_id,
@@ -2009,10 +2127,10 @@ vh_database_metadata_insert (database_t *database, const char *path,
 int
 vh_database_metadata_update (database_t *database, const char *path,
                              const char *meta, const char *data,
-                             const char *ndata)
+                             const char *ndata, valhalla_lang_t lang)
 {
   int res, ext;
-  int64_t file_id, meta_id, data_id, group_id;
+  int64_t file_id, meta_id, data_id, group_id, lang_id;
 
   if (!path || !meta || !data || !ndata)
     return -1;
@@ -2034,7 +2152,8 @@ vh_database_metadata_update (database_t *database, const char *path,
     return -3;
 
   database_assoc_filemd_delete (database, file_id, meta_id, data_id);
-  data_id = database_data_insert (database, ndata);
+  lang_id = database_langid_get (database, lang);
+  data_id = database_data_insert (database, ndata, lang_id);
   database_assoc_filemd_insert (database,
                                 file_id, meta_id, data_id,
                                 group_id, 1, VALHALLA_METADATA_PL_HIGHEST);

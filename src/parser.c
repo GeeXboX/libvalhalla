@@ -179,9 +179,11 @@ parser_decrap_blacklist (char **list, char *str, metadata_t **meta)
 
         snprintf (v, sizeof (v), "%u", val);
         if (i)
-          vh_metadata_add_auto (meta, VALHALLA_METADATA_EPISODE, v, NULL);
+          vh_metadata_add_auto (meta, VALHALLA_METADATA_EPISODE,
+                                v, VALHALLA_LANG_UNDEF, NULL);
         else
-          vh_metadata_add_auto (meta, VALHALLA_METADATA_SEASON, v, NULL);
+          vh_metadata_add_auto (meta, VALHALLA_METADATA_SEASON,
+                                v, VALHALLA_LANG_UNDEF, NULL);
       }
       continue;
     }
@@ -293,14 +295,16 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
 
   while ((tag = av_metadata_get (ctx->metadata,
                                  "", tag, AV_METADATA_IGNORE_SUFFIX)))
-    vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
+    vh_metadata_add_auto (&meta, tag->key, tag->value,
+                          VALHALLA_LANG_UNDEF, &pl);
 
   for (i = 0; i < ctx->nb_streams; i++)
   {
     AVStream *st = ctx->streams[i];
     while ((tag = av_metadata_get (st->metadata,
                                    "", tag, AV_METADATA_IGNORE_SUFFIX)))
-      vh_metadata_add_auto (&meta, tag->key, tag->value, &pl);
+      vh_metadata_add_auto (&meta, tag->key, tag->value,
+                            VALHALLA_LANG_UNDEF, &pl);
   }
 
   if (!meta)
@@ -314,7 +318,8 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     if (title)
     {
       vh_metadata_add (&meta, VALHALLA_METADATA_TITLE, title,
-                       VALHALLA_META_GRP_TITLES, VALHALLA_METADATA_PL_NORMAL);
+                       VALHALLA_LANG_UNDEF, VALHALLA_META_GRP_TITLES,
+                       VALHALLA_METADATA_PL_NORMAL);
       free (title);
     }
   }

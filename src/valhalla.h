@@ -62,6 +62,15 @@ extern "C" {
  */
 unsigned int libvalhalla_version (void);
 
+/** \brief Languages for metadata. */
+typedef enum valhalla_lang {
+  VALHALLA_LANG_UNDEF = 0,    /**< Undefined.       */
+  VALHALLA_LANG_DE,           /**< German.          */
+  VALHALLA_LANG_EN,           /**< English.         */
+  VALHALLA_LANG_ES,           /**< Spanish.         */
+  VALHALLA_LANG_FR,           /**< French.          */
+  VALHALLA_LANG_IT,           /**< Italian.         */
+} valhalla_lang_t;
 
 typedef enum valhalla_file_type {
   VALHALLA_FILE_TYPE_NULL = 0,
@@ -324,6 +333,7 @@ typedef struct valhalla_metadata_s {
   const char         *name;
   const char         *value;
   valhalla_meta_grp_t group;
+  valhalla_lang_t     lang;
 } valhalla_metadata_t;
 
 /** \brief File structure for general purpose. */
@@ -1056,8 +1066,9 @@ valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  * be available (for both values).
  *
  * If the metadata is already available in the database and the \p group
- * passed with this function is not the same, then the insertion is canceled
- * and no error is returned, else the 'external' flag is set to 1.
+ * (or the \p lang) passed with this function is not the same, then the
+ * insertion is canceled and no error is returned, else the 'external' flag is
+ * set to 1.
  * \see ::valhalla_db_metares_t
  * \see ::valhalla_db_filemeta_t
  *
@@ -1067,11 +1078,13 @@ valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  * \param[in] path        Path on the file.
  * \param[in] meta        Meta name.
  * \param[in] data        Data value.
+ * \param[in] lang        Language.
  * \param[in] group       Group.
  * \return !=0 on error.
  */
 int valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
                                  const char *meta, const char *data,
+                                 valhalla_lang_t lang,
                                  valhalla_meta_grp_t group);
 
 /**
@@ -1080,6 +1093,9 @@ int valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
  * The previous \p data is necessary for Valhalla to identify the
  * association for the update.
  *
+ * If \p ndata already exists in the database, the language is not updated
+ * with the value passed by this function.
+ *
  * Please, refer to \ref ext_metadata.
  *
  * \param[in] handle      Handle on the scanner.
@@ -1087,11 +1103,12 @@ int valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
  * \param[in] meta        Meta name.
  * \param[in] data        Current data value.
  * \param[in] ndata       New data value.
+ * \param[in] lang        Language.
  * \return !=0 on error.
  */
 int valhalla_db_metadata_update (valhalla_t *handle, const char *path,
                                  const char *meta, const char *data,
-                                 const char *ndata);
+                                 const char *ndata, valhalla_lang_t lang);
 
 /**
  * \brief Delete an external metadata in the database.

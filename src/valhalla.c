@@ -813,7 +813,7 @@ valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt)
 int
 valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
                              const char *meta, const char *data,
-                             valhalla_meta_grp_t group)
+                             valhalla_lang_t lang, valhalla_meta_grp_t group)
 {
   dbmanager_extmd_t *extmd;
 
@@ -830,6 +830,7 @@ valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
   extmd->meta  = strdup (meta);
   extmd->data  = strdup (data);
   extmd->group = group;
+  extmd->lang  = lang;
 
   vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
                             ACTION_DB_EXT_INSERT, extmd);
@@ -839,7 +840,7 @@ valhalla_db_metadata_insert (valhalla_t *handle, const char *path,
 int
 valhalla_db_metadata_update (valhalla_t *handle, const char *path,
                              const char *meta, const char *data,
-                             const char *ndata)
+                             const char *ndata, valhalla_lang_t lang)
 {
   dbmanager_extmd_t *extmd;
 
@@ -856,6 +857,7 @@ valhalla_db_metadata_update (valhalla_t *handle, const char *path,
   extmd->meta  = strdup (meta);
   extmd->data  = strdup (data);
   extmd->ndata = strdup (ndata);
+  extmd->lang  = lang;
 
   vh_dbmanager_action_send (handle->dbmanager, FIFO_QUEUE_PRIORITY_HIGH,
                             ACTION_DB_EXT_UPDATE, extmd);

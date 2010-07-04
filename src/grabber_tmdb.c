@@ -84,7 +84,8 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
   cover = vh_md5sum (name);
 
-  vh_metadata_add_auto (&fdata->meta_grabber, type, cover, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber,
+                        type, cover, VALHALLA_LANG_UNDEF, pl);
   vh_file_dl_add (&fdata->list_downloader, (char *) url, cover, dl);
 
   free (cover);
@@ -176,12 +177,12 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch movie overview description */
-  vh_grabber_parse_str (fdata, n,
-                        "short_overview", VALHALLA_METADATA_SYNOPSIS, tmdb->pl);
+  vh_grabber_parse_str (fdata, n, "short_overview",
+                        VALHALLA_METADATA_SYNOPSIS, VALHALLA_LANG_EN, tmdb->pl);
 
   /* fetch movie runtime (in minutes) */
-  vh_grabber_parse_str (fdata, n, "runtime",
-                        VALHALLA_METADATA_RUNTIME, tmdb->pl);
+  vh_grabber_parse_str (fdata, n, "runtime", VALHALLA_METADATA_RUNTIME,
+                        VALHALLA_LANG_UNDEF, tmdb->pl);
 
   /* fetch movie year of production */
   vh_xml_search_int (n, "release", &res_int);
@@ -201,11 +202,12 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   }
 
   /* fetch movie budget */
-  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET, tmdb->pl);
+  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET,
+                        VALHALLA_LANG_UNDEF, tmdb->pl);
 
   /* fetch movie revenue */
-  vh_grabber_parse_str (fdata, n, "revenue",
-                        VALHALLA_METADATA_REVENUE, tmdb->pl);
+  vh_grabber_parse_str (fdata, n, "revenue", VALHALLA_METADATA_REVENUE,
+                        VALHALLA_LANG_UNDEF, tmdb->pl);
 
   /* fetch movie country */
   node = vh_xml_get_node_tree (n, "country");
@@ -214,14 +216,14 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     tmp = vh_xml_get_prop_value_from_tree (node, "short_name");
     if (tmp)
     {
-      vh_metadata_add_auto (&fdata->meta_grabber,
-                            VALHALLA_METADATA_COUNTRY, (char *) tmp, tmdb->pl);
+      vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_COUNTRY,
+                            (char *) tmp, VALHALLA_LANG_EN, tmdb->pl);
       xmlFree (tmp);
     }
   }
 
   /* fetch movie categories */
-  vh_grabber_parse_categories (fdata, n, tmdb->pl);
+  vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
   /* fetch movie people */
   vh_grabber_parse_casting (fdata, n, tmdb->pl);

@@ -160,8 +160,8 @@ grabber_local_grab (void *priv, file_data_t *data)
   cover = grabber_local_get (data->file.path);
   if (cover)
   {
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, local->pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER,
+                          cover, VALHALLA_LANG_UNDEF, local->pl);
     free (cover);
   }
 

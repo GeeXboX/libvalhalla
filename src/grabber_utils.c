@@ -51,7 +51,7 @@ vh_grabber_parse_int (file_data_t *fdata, int val,
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%d", val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, VALHALLA_LANG_UNDEF, pl);
 }
 
 void
@@ -61,7 +61,7 @@ vh_grabber_parse_int64 (file_data_t *fdata, int64_t val,
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%"PRIi64, val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, VALHALLA_LANG_UNDEF, pl);
 }
 
 void
@@ -71,13 +71,14 @@ vh_grabber_parse_float (file_data_t *fdata, float val,
   char v[32] = { 0 };
 
   snprintf (v, sizeof (v), "%.5f", val);
-  vh_metadata_add_auto (&fdata->meta_grabber, name, v, pl);
+  vh_metadata_add_auto (&fdata->meta_grabber, name, v, VALHALLA_LANG_UNDEF, pl);
 }
 
 #ifdef USE_XML
 void
 vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
-                      const char *name, const metadata_plist_t *pl)
+                      const char *name, valhalla_lang_t lang,
+                      const metadata_plist_t *pl)
 {
   char *res = NULL;
 
@@ -87,15 +88,15 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
   vh_xml_search_str (nd, tag, &res);
   if (res)
   {
-    vh_metadata_add_auto (&fdata->meta_grabber, name, res, pl);
+    vh_metadata_add_auto (&fdata->meta_grabber, name, res, lang, pl);
     free (res);
     res = NULL;
   }
 }
 
 void
-vh_grabber_parse_categories (file_data_t *fdata,
-                             xmlNode *node, const metadata_plist_t *pl)
+vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node,
+                             valhalla_lang_t lang, const metadata_plist_t *pl)
 {
   xmlNode *n;
   int i;
@@ -115,7 +116,7 @@ vh_grabber_parse_categories (file_data_t *fdata,
     if (tmp)
     {
       vh_metadata_add_auto (&fdata->meta_grabber,
-                            VALHALLA_METADATA_CATEGORY, (char *) tmp, pl);
+                            VALHALLA_METADATA_CATEGORY, (char *) tmp, lang, pl);
       xmlFree (tmp);
     }
     n = n->next;
@@ -143,7 +144,8 @@ grabber_add_person (file_data_t *fdata,
     else
       snprintf (str, sizeof (str), "%s", name);
     free (name);
-    vh_metadata_add_auto (&fdata->meta_grabber, cat, str, pl);
+    vh_metadata_add_auto (&fdata->meta_grabber,
+                          cat, str, VALHALLA_LANG_UNDEF, pl);
   }
 
   if (role)

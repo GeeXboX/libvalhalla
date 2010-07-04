@@ -217,16 +217,16 @@ grabber_lastfm_grab (void *priv, file_data_t *data)
   res = grabber_lastfm_check (lastfm, cover);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, lastfm->pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER,
+                          cover, VALHALLA_LANG_UNDEF, lastfm->pl);
     goto out;
   }
 
   res = grabber_lastfm_get (lastfm->handler, &url, artist, alb);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, lastfm->pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER,
+                          cover, VALHALLA_LANG_UNDEF, lastfm->pl);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

@@ -36,6 +36,7 @@ enum dbmanager_errno {
 typedef struct dbmanager_extmd_s {
   char *path;
   char *meta, *data, *ndata;
+  valhalla_lang_t lang;
   valhalla_meta_grp_t group;
   valhalla_metadata_pl_t priority;
 } dbmanager_extmd_t;

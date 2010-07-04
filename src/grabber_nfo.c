@@ -66,15 +66,16 @@ grab_nfo_actor (nfo_actor_t *actor,
       snprintf (str, sizeof (str), "%s (%s)", name, role);
     else
       snprintf (str, sizeof (str), "%s", name);
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_ACTOR, str, pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_ACTOR,
+                          str, VALHALLA_LANG_UNDEF, pl);
   }
 }
 
 #define META_VIDEO_ADD(meta, field)                                         \
   if (nfo_video_stream_get (video, NFO_VIDEO_##field))                      \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_video_stream_get (video, NFO_VIDEO_##field), pl)
+                          nfo_video_stream_get (video, NFO_VIDEO_##field),  \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_video_stream (nfo_stream_video_t *video,
@@ -93,7 +94,8 @@ grab_nfo_video_stream (nfo_stream_video_t *video,
 #define META_AUDIO_ADD(meta, field)                                         \
   if (nfo_audio_stream_get (audio, NFO_AUDIO_##field))                      \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_audio_stream_get (audio, NFO_AUDIO_##field), pl)
+                          nfo_audio_stream_get (audio, NFO_AUDIO_##field),  \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_audio_stream (nfo_stream_audio_t *audio,
@@ -111,7 +113,8 @@ grab_nfo_audio_stream (nfo_stream_audio_t *audio,
 #define META_SUB_ADD(meta, field)                                           \
   if (nfo_sub_stream_get (sub, NFO_SUB_##field))                            \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_sub_stream_get (sub, NFO_SUB_##field), pl)
+                          nfo_sub_stream_get (sub, NFO_SUB_##field),        \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_sub_stream (nfo_stream_sub_t *sub,
@@ -130,7 +133,8 @@ grab_nfo_sub_stream (nfo_stream_sub_t *sub,
 #define META_MOVIE_ADD(meta, field)                                         \
   if (nfo_movie_get (movie, NFO_MOVIE_##field))                             \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_movie_get (movie, NFO_MOVIE_##field), pl)
+                          nfo_movie_get (movie, NFO_MOVIE_##field),         \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_movie (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
@@ -166,8 +170,8 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
 
     rating = nfo_movie_get (movie, NFO_MOVIE_RATING);
     snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_RATING, str, pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_RATING,
+                          str, VALHALLA_LANG_UNDEF, pl);
   }
 
   c = nfo_movie_get_actors_count (movie);
@@ -214,7 +218,8 @@ grab_nfo_movie (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
 #define META_SHOW_ADD(meta, field)                                          \
   if (nfo_tvshow_get (tvshow, NFO_TVSHOW_##field))                          \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
-                          nfo_tvshow_get (tvshow, NFO_TVSHOW_##field), pl)
+                          nfo_tvshow_get (tvshow, NFO_TVSHOW_##field),      \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_show (nfo_tvshow_t *tvshow,
@@ -236,7 +241,8 @@ grab_nfo_show (nfo_tvshow_t *tvshow,
   if (nfo_tvshow_episode_get (episode, NFO_TVSHOW_EPISODE_##field))         \
     vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_##meta,    \
                           nfo_tvshow_episode_get                            \
-                            (episode, NFO_TVSHOW_EPISODE_##field), pl)
+                            (episode, NFO_TVSHOW_EPISODE_##field),          \
+                          VALHALLA_LANG_UNDEF, pl)
 
 static void
 grab_nfo_tvshow (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
@@ -270,8 +276,8 @@ grab_nfo_tvshow (nfo_t *nfo, file_data_t *data, const metadata_plist_t *pl)
 
     rating = nfo_tvshow_episode_get (episode, NFO_MOVIE_RATING);
     snprintf (rating, sizeof (rating), "%d", atoi (rating) / 2);
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_RATING, str, pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_RATING,
+                          str, VALHALLA_LANG_UNDEF, pl);
   }
 
   tvshow = nfo_tvshow_episode_get_show (episode);

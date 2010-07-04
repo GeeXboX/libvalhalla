@@ -396,8 +396,8 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   res = grabber_amazon_check (amazon, cover);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, amazon->pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER,
+                          cover, VALHALLA_LANG_UNDEF, amazon->pl);
     free (cover);
     return 0;
   }
@@ -427,8 +427,8 @@ grabber_amazon_grab (void *priv, file_data_t *data)
   free (escaped_keywords);
   if (!res)
   {
-    vh_metadata_add_auto (&data->meta_grabber,
-                          VALHALLA_METADATA_COVER, cover, amazon->pl);
+    vh_metadata_add_auto (&data->meta_grabber, VALHALLA_METADATA_COVER,
+                          cover, VALHALLA_LANG_UNDEF, amazon->pl);
     vh_file_dl_add (&data->list_downloader, url, cover, VALHALLA_DL_COVER);
     free (url);
   }

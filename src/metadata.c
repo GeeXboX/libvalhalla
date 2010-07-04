@@ -133,6 +133,21 @@ static const char *const metadata_group_str[] = {
 const size_t vh_metadata_group_size =
   ARRAY_NB_ELEMENTS (metadata_group_str);
 
+static const struct {
+  const char *lshort;
+  const char *llong;
+} metadata_lang_str[] = {
+  [VALHALLA_LANG_UNDEF] = { "undef",  "undefined" },
+  [VALHALLA_LANG_DE]    = { "de",     "german"    },
+  [VALHALLA_LANG_EN]    = { "en",     "english"   },
+  [VALHALLA_LANG_ES]    = { "es",     "spanish"   },
+  [VALHALLA_LANG_FR]    = { "fr",     "french"    },
+  [VALHALLA_LANG_IT]    = { "it",     "italian"   },
+};
+
+const size_t vh_metadata_lang_size =
+  ARRAY_NB_ELEMENTS (metadata_lang_str);
+
 
 const char *
 vh_metadata_group_str (valhalla_meta_grp_t group)
@@ -141,6 +156,19 @@ vh_metadata_group_str (valhalla_meta_grp_t group)
     return NULL;
 
   return metadata_group_str[group];
+}
+
+void
+vh_metadata_lang_str (valhalla_lang_t lang,
+                      const char **lshort, const char **llong)
+{
+  if (lang >= vh_metadata_lang_size)
+    return;
+
+  if (lshort)
+    *lshort = metadata_lang_str[lang].lshort;
+  if (llong)
+    *llong = metadata_lang_str[lang].llong;
 }
 
 int
@@ -189,6 +217,7 @@ vh_metadata_dup (metadata_t **dst, const metadata_t *src)
 
     tmp->name     = strdup (src->name);
     tmp->value    = strdup (src->value);
+    tmp->lang     = src->lang;
     tmp->group    = src->group;
     tmp->priority = src->priority;
 
@@ -221,7 +250,7 @@ vh_metadata_free (metadata_t *meta)
 
 void
 vh_metadata_add (metadata_t **meta,
-                 const char *name, const char *value,
+                 const char *name, const char *value, valhalla_lang_t lang,
                  valhalla_meta_grp_t group, valhalla_metadata_pl_t priority)
 {
   metadata_t *it;
@@ -249,6 +278,7 @@ vh_metadata_add (metadata_t **meta,
   vh_strtolower (it->name);
 
   it->value    = strdup (value);
+  it->lang     = lang;
   it->group    = group;
   it->priority = priority;
 
@@ -268,7 +298,7 @@ metadata_priority_get (const char *name, const metadata_plist_t *pl)
 void
 vh_metadata_add_auto (metadata_t **meta,
                       const char *name, const char *value,
-                      const metadata_plist_t *pl)
+                      valhalla_lang_t lang, const metadata_plist_t *pl)
 {
   unsigned int i;
   valhalla_meta_grp_t grp;
@@ -288,7 +318,7 @@ vh_metadata_add_auto (metadata_t **meta,
   priority =
     pl ? metadata_priority_get (name, pl) : VALHALLA_METADATA_PL_NORMAL;
 
-  vh_metadata_add (meta, name, value, grp, priority);
+  vh_metadata_add (meta, name, value, lang, grp, priority);
 }
 
 void

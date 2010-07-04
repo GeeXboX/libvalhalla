@@ -86,10 +86,11 @@ vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt);
 
 int vh_database_metadata_insert (database_t *database, const char *path,
                                  const char *meta, const char *data,
+                                 valhalla_lang_t lang,
                                  valhalla_meta_grp_t group);
 int vh_database_metadata_update (database_t *database, const char *path,
                                  const char *meta, const char *data,
-                                 const char *ndata);
+                                 const char *ndata, valhalla_lang_t lang);
 int vh_database_metadata_delete (database_t *database, const char *path,
                                  const char *meta, const char *data);
 int vh_database_metadata_priority (database_t *database, const char *path,
