@@ -678,12 +678,12 @@ grabber_register_childs (url_ctl_t *url_ctl)
   return list;
 }
 
-#define STATS_DUMP(name, success, total, time, skip)                \
-  vh_log (VALHALLA_MSG_INFO,                                        \
-          "%-12s | %6"PRIu64"/%-6"PRIu64" "                         \
+#define STATS_DUMP(name, success, total, time, skip)                    \
+  vh_log (VALHALLA_MSG_INFO,                                            \
+          "%-12s | %6"PRIu64"/%-6"PRIu64" "                             \
           "(%6.2f%%) %7.2f sec  %7.2f sec/file  (%5"PRIu64" retries)",  \
-          name, success, total,                                     \
-          (total) ? 100.0 * (success) / (total) : 100.0,            \
+          name, success, total,                                         \
+          (total) ? 100.0 * (success) / (total) : 100.0,                \
           time, (total) ? (time) / (total) : 0.0, skip)
 
 static void
