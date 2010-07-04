@@ -328,28 +328,39 @@ database_table_get_id (database_t *database,
   return val;
 }
 
+static inline int64_t
+database_step_rowid (database_t *database,
+                     sqlite3_stmt *stmt, int *res, int *err)
+{
+  int64_t val = 0, val_tmp;
+
+  val_tmp = sqlite3_last_insert_rowid (database->db);
+  *res = sqlite3_step (stmt);
+  if (*res == SQLITE_DONE)
+  {
+    *err = 0;
+    val = sqlite3_last_insert_rowid (database->db);
+
+    if (val == val_tmp)
+      return 0;
+  }
+
+  return val;
+}
+
 static int64_t
 database_insert_name (database_t *database,
                       sqlite3_stmt *stmt, const char *name)
 {
   int res, err = -1;
-  int64_t val = 0, val_tmp;
+  int64_t val = 0;
 
   if (!name)
     return 0;
 
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, name, out);
 
-  val_tmp = sqlite3_last_insert_rowid (database->db);
-  res = sqlite3_step (stmt);
-  if (res == SQLITE_DONE)
-  {
-    err = 0;
-    val = sqlite3_last_insert_rowid (database->db);
-
-    if (val == val_tmp)
-      val = 0;
-  }
+  val = database_step_rowid (database, stmt, &res, &err);
 
   sqlite3_reset (stmt);
   sqlite3_clear_bindings (stmt);
@@ -364,7 +375,7 @@ database_insert_data (database_t *database,
                       sqlite3_stmt *stmt, const char *data, int64_t id)
 {
   int res, err = -1;
-  int64_t val = 0, val_tmp;
+  int64_t val = 0;
 
   if (!data)
     return 0;
@@ -372,16 +383,7 @@ database_insert_data (database_t *database,
   VH_DB_BIND_TEXT_OR_GOTO  (stmt, 1, data, out);
   VH_DB_BIND_INT64_OR_GOTO (stmt, 2, id,   out_clear);
 
-  val_tmp = sqlite3_last_insert_rowid (database->db);
-  res = sqlite3_step (stmt);
-  if (res == SQLITE_DONE)
-  {
-    err = 0;
-    val = sqlite3_last_insert_rowid (database->db);
-
-    if (val == val_tmp)
-      val = 0;
-  }
+  val = database_step_rowid (database, stmt, &res, &err);
 
   sqlite3_reset (stmt);
  out_clear:
@@ -397,7 +399,7 @@ database_insert_lang (database_t *database,
                       sqlite3_stmt *stmt, const char *lshort, const char *llong)
 {
   int res, err = -1;
-  int64_t val = 0, val_tmp;
+  int64_t val = 0;
 
   if (!lshort)
     return 0;
@@ -405,16 +407,7 @@ database_insert_lang (database_t *database,
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 1, lshort, out);
   VH_DB_BIND_TEXT_OR_GOTO (stmt, 2, llong,  out_clear);
 
-  val_tmp = sqlite3_last_insert_rowid (database->db);
-  res = sqlite3_step (stmt);
-  if (res == SQLITE_DONE)
-  {
-    err = 0;
-    val = sqlite3_last_insert_rowid (database->db);
-
-    if (val == val_tmp)
-      val = 0;
-  }
+  val = database_step_rowid (database, stmt, &res, &err);
 
   sqlite3_reset (stmt);
  out_clear:
