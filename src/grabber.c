@@ -32,6 +32,7 @@
 #include "stats.h"
 #include "fifo_queue.h"
 #include "logs.h"
+#include "timer_thread.h"
 #include "thread_utils.h"
 #include "url_utils.h"
 #include "grabber.h"
@@ -105,6 +106,7 @@ struct grabber_s {
   grabber_list_t *list;
   sem_t          *sem_grabber[GRABBER_NB_MAX];
   pthread_mutex_t mutex_grabber[GRABBER_NB_MAX];
+  timer_thread_t *timer[GRABBER_NB_MAX];
 };
 
 #define STATS_GROUP   "grabber"
@@ -222,7 +224,7 @@ grabber_cmp_fct (const void *tocmp, const void *data)
  * a slow grabber with many files, to monopolize all threads by locking.
  */
 static inline grabber_list_t *
-grabber_lock (grabber_list_t *list, file_data_t *fdata)
+grabber_lock (grabber_list_t *list, file_data_t *fdata, timer_thread_t *timer)
 {
   const struct timespec ta = {
     .tv_sec  = GRABBER_LOCK_TIMEOUT_S,
@@ -254,6 +256,13 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
       default: /* give the chance to an other */
         fdata->skip = 1;
         VH_STATS_COUNTER_INC (it->cnt_skip);
+
+        /*
+         * We should wait here in order to reduce the load. Without this
+         * sleep, when the last available grabbers use a minimum time
+         * between grabs, the mutex is locked/unlocked without waiting.
+         */
+        vh_timer_thread_sleep (timer, ta.tv_sec * 1000000000 + ta.tv_nsec);
         return NULL;
       }
 
@@ -373,7 +382,7 @@ grabber_thread (void *arg)
         break;
     }
 
-    it = grabber_lock (grabber->list, pdata);
+    it = grabber_lock (grabber->list, pdata, grabber->timer[id]);
     if (it) /* one grabber available */
     {
       int res;
@@ -439,6 +448,7 @@ vh_grabber_run (grabber_t *grabber, int priority)
 
   for (i = 0; i < grabber->nb; i++)
   {
+    vh_timer_thread_start (grabber->timer[i]);
     pthread_mutex_lock (&grabber->mutex_grabber[i]);
     res = pthread_create (&grabber->thread[i], &attr, grabber_thread, grabber);
     if (res)
@@ -590,6 +600,8 @@ vh_grabber_stop (grabber_t *grabber, int f)
     {
       int rc;
 
+      vh_timer_thread_stop (grabber->timer[i]);
+
       /* wake up the thread if this is asleep by dbmanager */
       rc = pthread_mutex_trylock (&grabber->mutex_grabber[i]);
       if (rc)
@@ -623,7 +635,10 @@ vh_grabber_uninit (grabber_t *grabber)
   vh_fifo_queue_free (grabber->fifo);
   pthread_mutex_destroy (&grabber->mutex_run);
   for (i = 0; i < grabber->nb; i++)
+  {
+    vh_timer_thread_delete (grabber->timer[i]);
     pthread_mutex_destroy (&grabber->mutex_grabber[i]);
+  }
   VH_THREAD_PAUSE_UNINIT (grabber)
 
   /* uninit all childs */
@@ -754,7 +769,10 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
 
   pthread_mutex_init (&grabber->mutex_run, NULL);
   for (i = 0; i < nb; i++)
+  {
+    grabber->timer[i] = vh_timer_thread_create ();
     pthread_mutex_init (&grabber->mutex_grabber[i], NULL);
+  }
   VH_THREAD_PAUSE_INIT (grabber)
 
   grabber->fifo = vh_fifo_queue_new ();
