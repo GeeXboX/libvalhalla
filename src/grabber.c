@@ -110,6 +110,7 @@ struct grabber_s {
 #define STATS_GROUP   "grabber"
 #define STATS_SUCCESS "success"
 #define STATS_FAILURE "failure"
+#define STATS_SKIP    "skip"
 
 
 /*
@@ -252,6 +253,7 @@ grabber_lock (grabber_list_t *list, file_data_t *fdata)
 
       default: /* give the chance to an other */
         fdata->skip = 1;
+        VH_STATS_COUNTER_INC (it->cnt_skip);
         return NULL;
       }
 
@@ -676,13 +678,13 @@ grabber_register_childs (url_ctl_t *url_ctl)
   return list;
 }
 
-#define STATS_DUMP(name, success, total, time)                      \
+#define STATS_DUMP(name, success, total, time, skip)                \
   vh_log (VALHALLA_MSG_INFO,                                        \
           "%-12s | %6"PRIu64"/%-6"PRIu64" "                         \
-          "(%6.2f%%) %7.2f sec  %7.2f sec/file",                    \
+          "(%6.2f%%) %7.2f sec  %7.2f sec/file  (%5"PRIu64" retries)",  \
           name, success, total,                                     \
           (total) ? 100.0 * (success) / (total) : 100.0,            \
-          time, (total) ? (time) / (total) : 0.0)
+          time, (total) ? (time) / (total) : 0.0, skip)
 
 static void
 grabber_stats_dump (vh_stats_t *stats, void *data)
@@ -695,18 +697,19 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
   if (!stats || !grabber)
     return;
 
-  vh_log (VALHALLA_MSG_INFO, "=================================="
-                             "==================================");
+  vh_log (VALHALLA_MSG_INFO, "==========================================="
+                             "==========================================");
   vh_log (VALHALLA_MSG_INFO, "Statistics dump (" STATS_GROUP ")");
-  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   for (it = grabber->list; it; it = it->next)
   {
     float time;
-    uint64_t success, failure, total;
+    uint64_t success, failure, total, skip;
 
     time    = vh_stats_timer_read (it->tmr) / 1000000000.0;
+    skip    = vh_stats_counter_read (it->cnt_skip);
     success = vh_stats_counter_read (it->cnt_success);
     failure = vh_stats_counter_read (it->cnt_failure);
     total   = success + failure;
@@ -715,11 +718,11 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
     success_all += success;
     total_all   += total;
 
-    STATS_DUMP (it->name, success, total, time);
+    STATS_DUMP (it->name, success, total, time, skip);
   }
 
-  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~ | "
-          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  vh_log (VALHALLA_MSG_INFO, "~~~~~~~~~~~~ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 #if 0
   STATS_DUMP ("GLOBAL", success_all, total_all, total_all);
 #else
@@ -783,6 +786,9 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
     it->cnt_failure =
       vh_stats_grp_counter_add (handle->stats,
                                 STATS_GROUP, name, STATS_FAILURE);
+    it->cnt_skip =
+      vh_stats_grp_counter_add (handle->stats,
+                                STATS_GROUP, name, STATS_SKIP);
   }
 
   return grabber;

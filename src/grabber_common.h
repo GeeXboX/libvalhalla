@@ -184,6 +184,8 @@ typedef struct grabber_list_s {
   vh_stats_cnt_t *cnt_success;
   /** \private Counter for statistics (::grab() returns != 0). */
   vh_stats_cnt_t *cnt_failure;
+  /** \private Counter for statistics when the grabber has been skipped. */
+  vh_stats_cnt_t *cnt_skip;
 
 } grabber_list_t;
 
