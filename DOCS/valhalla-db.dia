@@ -188,13 +188,13 @@
     </dia:object>
     <dia:object type="ER - Entity" version="0" id="O3">
       <dia:attribute name="obj_pos">
-        <dia:point val="18.0602,6.0255"/>
+        <dia:point val="18.0602,6.01925"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.0102,5.9755;21.0502,7.8755"/>
+        <dia:rectangle val="18.0102,5.96925;21.0502,7.86925"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="18.0602,6.0255"/>
+        <dia:point val="18.0602,6.01925"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="2.9399999999999999"/>
@@ -995,13 +995,13 @@
         <dia:point val="15.4554,6.9215"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="15.4054,6.8715;18.0598,6.9755"/>
+        <dia:rectangle val="15.4054,6.86925;18.0598,6.9715"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="15.4554,6.9215"/>
         <dia:point val="16.7326,6.9215"/>
-        <dia:point val="16.7326,6.9255"/>
-        <dia:point val="18.0098,6.9255"/>
+        <dia:point val="16.7326,6.91925"/>
+        <dia:point val="18.0098,6.91925"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -1173,13 +1173,13 @@
     </dia:object>
     <dia:object type="ER - Attribute" version="0" id="O30">
       <dia:attribute name="obj_pos">
-        <dia:point val="23.2,6.0255"/>
+        <dia:point val="23.2,6.01925"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="23.15,5.9755;26.02,7.8755"/>
+        <dia:rectangle val="23.15,5.96925;26.02,7.86925"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="23.2,6.0255"/>
+        <dia:point val="23.2,6.01925"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="2.77"/>
@@ -1361,16 +1361,16 @@
     </dia:object>
     <dia:object type="ER - Participation" version="1" id="O34">
       <dia:attribute name="obj_pos">
-        <dia:point val="21.0506,6.9255"/>
+        <dia:point val="21.0506,6.91925"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="21.0506,6.8755;23.2204,6.9755"/>
+        <dia:rectangle val="21.0506,6.86925;23.2204,6.96925"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="21.0506,6.9255"/>
-        <dia:point val="21.0506,6.9255"/>
-        <dia:point val="23.1496,6.9255"/>
-        <dia:point val="23.1496,6.9255"/>
+        <dia:point val="21.0506,6.91925"/>
+        <dia:point val="21.0506,6.91925"/>
+        <dia:point val="23.1496,6.91925"/>
+        <dia:point val="23.1496,6.91925"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -1390,13 +1390,13 @@
     </dia:object>
     <dia:object type="ER - Participation" version="1" id="O35">
       <dia:attribute name="obj_pos">
-        <dia:point val="19.5302,5.97503"/>
+        <dia:point val="19.5302,5.96879"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.4802,3.65;21.0996,6.02503"/>
+        <dia:rectangle val="19.4802,3.65;21.0996,6.01879"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="19.5302,5.97503"/>
+        <dia:point val="19.5302,5.96879"/>
         <dia:point val="19.5302,3.7"/>
         <dia:point val="21.0496,3.7"/>
       </dia:attribute>
@@ -2986,16 +2986,16 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O79">
       <dia:attribute name="obj_pos">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="25.8537,14.7255;28.9549,16.7098"/>
+        <dia:rectangle val="25.8537,14.7256;28.9549,16.7097"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
         <dia:point val="28.9049,15.7176"/>
         <dia:point val="25.9037,15.7176"/>
-        <dia:point val="25.9037,16.6598"/>
+        <dia:point val="25.9037,16.6597"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -3012,16 +3012,16 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O80">
       <dia:attribute name="obj_pos">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="28.8549,14.7255;31.6909,16.7098"/>
+        <dia:rectangle val="28.8549,14.7256;31.6909,16.7097"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
         <dia:point val="28.9049,15.7176"/>
         <dia:point val="31.6409,15.7176"/>
-        <dia:point val="31.6409,16.6598"/>
+        <dia:point val="31.6409,16.6597"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -3038,16 +3038,16 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O81">
       <dia:attribute name="obj_pos">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="28.8549,14.7255;28.9587,18.7571"/>
+        <dia:rectangle val="28.8549,14.7256;28.9587,18.757"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="28.9049,14.7755"/>
+        <dia:point val="28.9049,14.7756"/>
         <dia:point val="28.9049,16.7413"/>
         <dia:point val="28.9087,16.7413"/>
-        <dia:point val="28.9087,18.7071"/>
+        <dia:point val="28.9087,18.707"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
