@@ -239,6 +239,21 @@ database_groupid_get (database_t *database, valhalla_meta_grp_t grp)
   return 0;
 }
 
+static valhalla_lang_t
+database_lang_get (database_t *database, int64_t id)
+{
+  unsigned int i;
+
+  if (!database)
+    return VALHALLA_LANG_UNDEF;
+
+  for (i = 0; i < vh_metadata_lang_size; i++)
+    if (database->langs_id[i] == id)
+      return i;
+
+  return VALHALLA_LANG_UNDEF;
+}
+
 static int64_t
 database_langid_get (database_t *database, valhalla_lang_t lang)
 {
