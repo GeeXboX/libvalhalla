@@ -1666,6 +1666,31 @@ database_sql_vhstmt (sqlite3 *db, valhalla_db_stmt_t *vhstmt)
   return rc;
 }
 
+static inline void
+database_list_get_restriction_common (database_t *database,
+                                      valhalla_db_restrict_t *restriction,
+                                      char *sql)
+{
+  SQL_CONCAT_TYPE (sql, restriction->meta, META);
+  if (restriction->data.text || restriction->data.id)
+  {
+    SQL_CONCAT (sql, SELECT_LIST_AND);
+    SQL_CONCAT_TYPE (sql, restriction->data, DATA);
+  }
+
+  if (restriction->data.lang >= 0)
+  {
+    int64_t lang_id;
+
+    lang_id = database_langid_get (database, restriction->data.lang);
+    SQL_CONCAT (sql, SELECT_LIST_AND);
+    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID, lang_id);
+  }
+
+  SQL_CONCAT (sql, SELECT_LIST_AND);
+  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
+}
+
 static void
 database_list_get_restriction_sub (database_t *database,
                                    valhalla_db_restrict_t *restriction,
@@ -1690,24 +1715,8 @@ database_list_get_restriction_sub (database_t *database,
 
   /* sub-where */
   SQL_CONCAT (sql, SELECT_LIST_WHERE);
-  SQL_CONCAT_TYPE (sql, restriction->meta, META);
-  if (restriction->data.text || restriction->data.id)
-  {
-    SQL_CONCAT (sql, SELECT_LIST_AND);
-    SQL_CONCAT_TYPE (sql, restriction->data, DATA);
-  }
 
-  if (restriction->data.lang >= 0)
-  {
-    int64_t lang_id;
-
-    lang_id = database_langid_get (database, restriction->data.lang);
-    SQL_CONCAT (sql, SELECT_LIST_AND);
-    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID, lang_id);
-  }
-
-  SQL_CONCAT (sql, SELECT_LIST_AND);
-  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
+  database_list_get_restriction_common (database, restriction, sql);
 
   /* sub-end */
   SQL_CONCAT (sql, SELECT_LIST_WHERE_SUB_END);
@@ -1723,24 +1732,7 @@ database_list_get_restriction_equal (database_t *database,
 
   SQL_CONCAT (sql, "( ");
 
-  SQL_CONCAT_TYPE (sql, restriction->meta, META);
-  if (restriction->data.text || restriction->data.id)
-  {
-    SQL_CONCAT (sql, SELECT_LIST_AND);
-    SQL_CONCAT_TYPE (sql, restriction->data, DATA);
-  }
-
-  if (restriction->data.lang >= 0)
-  {
-    int64_t lang_id;
-
-    lang_id = database_langid_get (database, restriction->data.lang);
-    SQL_CONCAT (sql, SELECT_LIST_AND);
-    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID, lang_id);
-  }
-
-  SQL_CONCAT (sql, SELECT_LIST_AND);
-  SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
+  database_list_get_restriction_common (database, restriction, sql);
 
   SQL_CONCAT (sql, ") ");
 }
