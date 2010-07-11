@@ -36,6 +36,7 @@ EXTRADIST = \
 SUBDIRS = \
 	DOCS \
 	src \
+	tests \
 	utils \
 
 .SUFFIXES: .c .o
@@ -68,13 +69,19 @@ docs:
 docs-clean:
 	$(MAKE) -C DOCS clean
 
+tests:
+	$(MAKE) -C tests
+
+tests-clean:
+	$(MAKE) -C tests clean
+
 clean:
 	$(MAKE) -C src clean
 	rm -f *.o
 	rm -f $(VHTEST)
 	rm -f .depend
 
-distclean: clean docs-clean
+distclean: clean docs-clean tests-clean
 	rm -f config.log
 	rm -f config.mak
 	rm -f $(DISTFILE)
@@ -123,7 +130,7 @@ uninstall-man:
 	  rm -f $(mandir)/man$$section/$$m; \
 	done
 
-.PHONY: *clean *install* docs apps*
+.PHONY: *clean *install* docs tests apps*
 
 dist:
 	-$(RM) $(DISTFILE)
