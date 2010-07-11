@@ -907,9 +907,10 @@ typedef struct valhalla_db_restrict_s {
  *
  * Example (to list all albums of an author):
  *  \code
- *  pmin        = VALHALLA_METADATA_PL_LOWEST;
- *  search      = VALHALLA_DB_SEARCH_TEXT ("album", TITLES, pmin);
- *  restriction = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", pmin);
+ *  lang   = VALHALLA_LANG_ALL;
+ *  pmin   = VALHALLA_METADATA_PL_LOWEST;
+ *  search = VALHALLA_DB_SEARCH_TEXT ("album", TITLES, lang, pmin);
+ *  restr  = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", lang, pmin);
  *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
@@ -946,10 +947,11 @@ valhalla_db_metalist_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  *
  * Example (to list all files of an author, without album):
  *  \code
- *  pmin          = VALHALLA_METADATA_PL_NORMAL;
- *  restriction_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", pmin);
- *  restriction_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL, pmin);
- *  VALHALLA_DB_RESTRICT_LINK (restriction_2, restriction_1);
+ *  lang    = VALHALLA_LANG_ALL;
+ *  pmin    = VALHALLA_METADATA_PL_NORMAL;
+ *  restr_1 = VALHALLA_DB_RESTRICT_STR (IN, "author", "John Doe", lang, pmin);
+ *  restr_2 = VALHALLA_DB_RESTRICT_STR (NOTIN, "album", NULL, lang, pmin);
+ *  VALHALLA_DB_RESTRICT_LINK (restr_2, restr_1);
  *  \endcode
  *
  * \param[in] handle      Handle on the scanner.
