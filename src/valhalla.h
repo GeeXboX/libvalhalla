@@ -65,7 +65,7 @@ unsigned int libvalhalla_version (void);
 /** \brief Languages for metadata. */
 typedef enum valhalla_lang {
   VALHALLA_LANG_ALL   = -1,   /**< All languages.   */
-  VALHALLA_LANG_UNDEF = 0,    /**< Undefined.       */
+  VALHALLA_LANG_UNDEF =  0,   /**< Undefined.       */
   VALHALLA_LANG_DE,           /**< German.          */
   VALHALLA_LANG_EN,           /**< English.         */
   VALHALLA_LANG_ES,           /**< Spanish.         */
