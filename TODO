@@ -6,8 +6,6 @@
  * Database
      -> When files are downloaded and the reference on this file is no longer
         available in the DB, the file must be removed (covers, etc, ...).
-     -> Add a means to easily select an information provided in a specific
-        language.
      -> Add a public function to retrieve the number of records in the tables
         according to some conditions.
 
