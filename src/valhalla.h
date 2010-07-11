@@ -812,6 +812,7 @@ typedef struct valhalla_db_item_s {
   int64_t     id;
   const char *text;
   valhalla_meta_grp_t group;
+  valhalla_lang_t lang;
   valhalla_metadata_pl_t priority;
 } valhalla_db_item_t;
 
@@ -820,6 +821,7 @@ typedef struct valhalla_db_metares_s {
   int64_t     meta_id,    data_id;
   const char *meta_name, *data_value;
   valhalla_meta_grp_t group;
+  valhalla_lang_t lang;
   int         external;
 } valhalla_db_metares_t;
 
@@ -838,22 +840,25 @@ typedef struct valhalla_db_restrict_s {
   valhalla_db_item_t data;
 } valhalla_db_restrict_t;
 
-#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _priority)  \
+#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _lang, _priority)  \
   {                                                               \
     VALHALLA_DB_TYPE_##_type,                     /* .type     */ \
     _id,                                          /* .id       */ \
     _text,                                        /* .text     */ \
     VALHALLA_META_GRP_##_group,                   /* .group    */ \
+    _lang,                                        /* .lang     */ \
     _priority                                     /* .priority */ \
   }
 
 #define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,             \
-                             _m_type, _d_type, _priority)                     \
+                             _m_type, _d_type, _lang, _priority)              \
   {                                                                           \
     NULL,                                                         /* .next */ \
     VALHALLA_DB_OPERATOR_##_op,                                   /* .op   */ \
-    VALHALLA_DB_SEARCH (_m_id, _m_text, NIL, _m_type, _priority), /* .meta */ \
-    VALHALLA_DB_SEARCH (_d_id, _d_text, NIL, _d_type, _priority)  /* .data */ \
+    VALHALLA_DB_SEARCH (_m_id, _m_text, NIL,                                  \
+                        _m_type, _lang, _priority),               /* .meta */ \
+    VALHALLA_DB_SEARCH (_d_id, _d_text, NIL,                                  \
+                        _d_type, _lang, _priority)                /* .data */ \
   }
 
 
@@ -863,27 +868,27 @@ typedef struct valhalla_db_restrict_s {
  */
 
 /** \brief Set valhalla_db_item_t local variable for an id. */
-#define VALHALLA_DB_SEARCH_ID(meta_id, group, p) \
-  VALHALLA_DB_SEARCH (meta_id, NULL, group, ID, p)
+#define VALHALLA_DB_SEARCH_ID(meta_id, group, l, p) \
+  VALHALLA_DB_SEARCH (meta_id, NULL, group, ID, l, p)
 /** \brief Set valhalla_db_item_t local variable for a text. */
-#define VALHALLA_DB_SEARCH_TEXT(meta_name, group, p) \
-  VALHALLA_DB_SEARCH (0, meta_name, group, TEXT, p)
+#define VALHALLA_DB_SEARCH_TEXT(meta_name, group, l, p) \
+  VALHALLA_DB_SEARCH (0, meta_name, group, TEXT, l, p)
 /** \brief Set valhalla_db_item_t local variable for a group. */
-#define VALHALLA_DB_SEARCH_GRP(group, p) \
-  VALHALLA_DB_SEARCH (0, NULL, group, GROUP, p)
+#define VALHALLA_DB_SEARCH_GRP(group, l, p) \
+  VALHALLA_DB_SEARCH (0, NULL, group, GROUP, l, p)
 
 /** \brief Set valhalla_db_restrict_t local variable for meta.id, data.id. */
-#define VALHALLA_DB_RESTRICT_INT(op, meta, data, p) \
-  VALHALLA_DB_RESTRICT (op, meta, data, NULL, NULL, ID, ID, p)
+#define VALHALLA_DB_RESTRICT_INT(op, meta, data, l, p) \
+  VALHALLA_DB_RESTRICT (op, meta, data, NULL, NULL, ID, ID, l, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.text, data.text. */
-#define VALHALLA_DB_RESTRICT_STR(op, meta, data, p) \
-  VALHALLA_DB_RESTRICT (op, 0, 0, meta, data, TEXT, TEXT, p)
+#define VALHALLA_DB_RESTRICT_STR(op, meta, data, l, p) \
+  VALHALLA_DB_RESTRICT (op, 0, 0, meta, data, TEXT, TEXT, l, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.id, data.text. */
-#define VALHALLA_DB_RESTRICT_INTSTR(op, meta, data, p) \
-  VALHALLA_DB_RESTRICT (op, meta, 0, NULL, data, ID, TEXT, p)
+#define VALHALLA_DB_RESTRICT_INTSTR(op, meta, data, l, p) \
+  VALHALLA_DB_RESTRICT (op, meta, 0, NULL, data, ID, TEXT, l, p)
 /** \brief Set valhalla_db_restrict_t local variable for meta.text, data.id. */
-#define VALHALLA_DB_RESTRICT_STRINT(op, meta, data, p) \
-  VALHALLA_DB_RESTRICT (op, 0, data, meta, NULL, TEXT, ID, p)
+#define VALHALLA_DB_RESTRICT_STRINT(op, meta, data, l, p) \
+  VALHALLA_DB_RESTRICT (op, 0, data, meta, NULL, TEXT, ID, l, p)
 /** \brief Link two valhalla_db_restrict_t variables together. */
 #define VALHALLA_DB_RESTRICT_LINK(from, to) \
   do {(to).next = &(from);} while (0)

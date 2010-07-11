@@ -198,7 +198,8 @@
 #define SELECT_FILE_FROM                                               \
  "SELECT file.file_id, assoc._grp_id, "                                \
         "meta.meta_id, data.data_id, "                                 \
-        "meta.meta_name, data.data_value, assoc.external "             \
+        "meta.meta_name, data.data_value, "                            \
+        "data._lang_id, assoc.external "                               \
  "FROM (( "                                                            \
      "file INNER JOIN assoc_file_metadata AS assoc "                   \
      "ON file.file_id = assoc.file_id "                                \
@@ -232,6 +233,7 @@
 #define SELECT_LIST_METADATA_FROM                         \
  "SELECT meta.meta_id, data.data_id, "                    \
         "meta.meta_name, data.data_value, "               \
+        "data._lang_id, "                                 \
         "assoc._grp_id, assoc.external "                  \
  "FROM ( "                                                \
    "data INNER JOIN assoc_file_metadata AS assoc "        \
@@ -281,6 +283,8 @@
  "data.data_value = '%q' "
 #define SELECT_LIST_WHERE_DATA_ID \
  "data.data_id = %"VH_I64" "
+#define SELECT_LIST_WHERE_LANG_ID \
+ "data._lang_id = %"VH_I64" "
 #define SELECT_LIST_WHERE_GROUP_ID \
  "assoc._grp_id = %"VH_I64" "
 #define SELECT_LIST_WHERE_PRIORITY \

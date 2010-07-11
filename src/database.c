@@ -1667,7 +1667,8 @@ database_sql_vhstmt (sqlite3 *db, valhalla_db_stmt_t *vhstmt)
 }
 
 static void
-database_list_get_restriction_sub (valhalla_db_restrict_t *restriction,
+database_list_get_restriction_sub (database_t *database,
+                                   valhalla_db_restrict_t *restriction,
                                    char *sql)
 {
   /* sub-query */
@@ -1695,6 +1696,16 @@ database_list_get_restriction_sub (valhalla_db_restrict_t *restriction,
     SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT_TYPE (sql, restriction->data, DATA);
   }
+
+  if (restriction->data.lang >= 0)
+  {
+    int64_t lang_id;
+
+    lang_id = database_langid_get (database, restriction->data.lang);
+    SQL_CONCAT (sql, SELECT_LIST_AND);
+    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID, lang_id);
+  }
+
   SQL_CONCAT (sql, SELECT_LIST_AND);
   SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
 
@@ -1703,7 +1714,8 @@ database_list_get_restriction_sub (valhalla_db_restrict_t *restriction,
 }
 
 static void
-database_list_get_restriction_equal (valhalla_db_restrict_t *restriction,
+database_list_get_restriction_equal (database_t *database,
+                                     valhalla_db_restrict_t *restriction,
                                      char *sql, int equal)
 {
   if (equal)
@@ -1717,6 +1729,16 @@ database_list_get_restriction_equal (valhalla_db_restrict_t *restriction,
     SQL_CONCAT (sql, SELECT_LIST_AND);
     SQL_CONCAT_TYPE (sql, restriction->data, DATA);
   }
+
+  if (restriction->data.lang >= 0)
+  {
+    int64_t lang_id;
+
+    lang_id = database_langid_get (database, restriction->data.lang);
+    SQL_CONCAT (sql, SELECT_LIST_AND);
+    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID, lang_id);
+  }
+
   SQL_CONCAT (sql, SELECT_LIST_AND);
   SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, restriction->meta.priority);
 
@@ -1724,7 +1746,8 @@ database_list_get_restriction_equal (valhalla_db_restrict_t *restriction,
 }
 
 static void
-database_list_get_restriction (valhalla_db_restrict_t *restriction, char *sql)
+database_list_get_restriction (database_t *database,
+                               valhalla_db_restrict_t *restriction, char *sql)
 {
   int equal = 0, restr = 0;
   char sql_tmp[SQL_BUFFER] = "( ";
@@ -1738,12 +1761,13 @@ database_list_get_restriction (valhalla_db_restrict_t *restriction, char *sql)
     {
     case VALHALLA_DB_OPERATOR_IN:
     case VALHALLA_DB_OPERATOR_NOTIN:
-      database_list_get_restriction_sub (restriction, sql);
+      database_list_get_restriction_sub (database, restriction, sql);
       restr = 1;
       break;
 
     case VALHALLA_DB_OPERATOR_EQUAL:
-      database_list_get_restriction_equal (restriction, sql_tmp, equal);
+      database_list_get_restriction_equal (database,
+                                           restriction, sql_tmp, equal);
       equal = 1;
       break;
 
@@ -1776,16 +1800,19 @@ vh_database_metalist_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   if (rc) /* no more row */
     return NULL;
 
-  if (vhstmt->cnt != 6)
+  if (vhstmt->cnt != 7)
     goto err;
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[0], NULL, 10);
   metares->meta_name  = vhstmt->cols[2];
   metares->data_id    = (int64_t) strtoimax (vhstmt->cols[1], NULL, 10);
   metares->data_value = vhstmt->cols[3];
-  metares->external   = (int)     strtol    (vhstmt->cols[5], NULL, 10);
+  metares->external   = (int)     strtol    (vhstmt->cols[6], NULL, 10);
   metares->group      =
     database_group_get (database,
+                        (int64_t) strtoimax (vhstmt->cols[5], NULL, 10));
+  metares->lang       =
+    database_lang_get  (database,
                         (int64_t) strtoimax (vhstmt->cols[4], NULL, 10));
 
   return metares;
@@ -1806,6 +1833,7 @@ vh_database_metalist_get (database_t *database,
   /*
    * SELECT meta.meta_id, data.data_id,
    *        meta.meta_name, data.data_value,
+   *        data._lang_id,
    *        assoc._grp_id, assoc.external
    * FROM (
    *   data INNER JOIN assoc_file_metadata AS assoc
@@ -1851,13 +1879,14 @@ vh_database_metalist_get (database_t *database,
    *   ON assoc.meta_id = meta.meta_id
    *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
    *     AND data.<data_id|data_value> = <ID|"TEXT">
+   *     AND data._lang_id = <ID>
    *     AND assoc.priority__ <= <PRIORITY>
    * )
    * <AND>
    */
   if (restriction)
   {
-    database_list_get_restriction (restriction, sql);
+    database_list_get_restriction (database, restriction, sql);
     /* AND */
     if (search->id || search->text)
       SQL_CONCAT (sql, SELECT_LIST_AND);
@@ -1877,8 +1906,18 @@ vh_database_metalist_get (database_t *database,
     SQL_CONCAT (sql, SELECT_LIST_WHERE_GROUP_ID,
                 database_groupid_get (database, search->group));
   }
+  if (search->lang >= 0)
+  {
+    /* AND */
+    if (search->group || search->id || search->text || restriction)
+      SQL_CONCAT (sql, SELECT_LIST_AND);
+    /* data._lang_id = <ID> */
+    SQL_CONCAT (sql, SELECT_LIST_WHERE_LANG_ID,
+                database_langid_get (database, search->lang));
+  }
   /* AND */
-  if (search->group || search->id || search->text || restriction)
+  if (search->group || search->id || search->text || restriction
+      || search->lang >= 0)
     SQL_CONCAT (sql, SELECT_LIST_AND);
   /* assoc.priority__ <= <PRIORITY> */
   SQL_CONCAT (sql, SELECT_LIST_WHERE_PRIORITY, search->priority);
@@ -1951,12 +1990,13 @@ vh_database_filelist_get (database_t *database,
    *   ON assoc.meta_id = meta.meta_id
    *   WHERE meta.<meta_id|meta_name>  = <ID|"TEXT">
    *     AND data.<data_id|data_value> = <ID|"TEXT">
+   *     AND data._lang_id = <ID>
    *     AND assoc.priority__ <= <PRIORITY>
    * )
    * <AND>
    */
   if (restriction)
-    database_list_get_restriction (restriction, sql);
+    database_list_get_restriction (database, restriction, sql);
 
   if (filetype)
   {
@@ -1984,17 +2024,20 @@ vh_database_file_read (database_t *database, valhalla_db_stmt_t *vhstmt)
   if (rc) /* no more row */
     return NULL;
 
-  if (vhstmt->cnt != 7)
+  if (vhstmt->cnt != 8)
     goto err;
 
   metares->meta_id    = (int64_t) strtoimax (vhstmt->cols[2], NULL, 10);
   metares->meta_name  = vhstmt->cols[4];
   metares->data_id    = (int64_t) strtoimax (vhstmt->cols[3], NULL, 10);
   metares->data_value = vhstmt->cols[5];
-  metares->external   = (int)     strtol    (vhstmt->cols[6], NULL, 10);
+  metares->external   = (int)     strtol    (vhstmt->cols[7], NULL, 10);
   metares->group      =
     database_group_get (database,
                         (int64_t) strtoimax (vhstmt->cols[1], NULL, 10));
+  metares->lang       =
+    database_lang_get  (database,
+                        (int64_t) strtoimax (vhstmt->cols[6], NULL, 10));
 
   return metares;
 
@@ -2013,7 +2056,8 @@ vh_database_file_get (database_t *database,
   /*
    * SELECT file.file_id, assoc._grp_id,
    *        meta.meta_id, data.data_id,
-   *        meta.meta_name, data.data_value, assoc.external
+   *        meta.meta_name, data.data_value,
+   *        data._lang_id, assoc.external
    * FROM ((
    *     file INNER JOIN assoc_file_metadata AS assoc
    *     ON file.file_id = assoc.file_id
@@ -2038,6 +2082,7 @@ vh_database_file_get (database_t *database,
    *   (
    *     meta.<meta_id|meta_name> = <ID|"TEXT">
    *       AND data.<data_id|data_value> = <ID|"TEXT">
+   *       AND data._lang_id = <ID>
    *       AND assoc.priority__ <= <PRIORITY>
    *   )
    *   <OR>
@@ -2045,7 +2090,7 @@ vh_database_file_get (database_t *database,
    */
   if (restriction)
   {
-    database_list_get_restriction (restriction, sql);
+    database_list_get_restriction (database, restriction, sql);
     /* AND */
     SQL_CONCAT (sql, SELECT_LIST_AND);
   }
