@@ -27,6 +27,10 @@
 #include "osdep.h"
 #include "vh_test.h"
 
+#undef strndup
+#undef strcasestr
+#undef strtok_r
+
 
 START_TEST (test_osdep_strndup)
 {
