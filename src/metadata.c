@@ -162,7 +162,7 @@ void
 vh_metadata_lang_str (valhalla_lang_t lang,
                       const char **lshort, const char **llong)
 {
-  if (lang >= vh_metadata_lang_size)
+  if (lang >= 0 && lang >= (int) vh_metadata_lang_size)
     return;
 
   if (lshort)

@@ -260,7 +260,7 @@ database_langid_get (database_t *database, valhalla_lang_t lang)
   if (!database)
     return 0;
 
-  if (lang < vh_metadata_lang_size)
+  if (lang >= 0 && lang < (int) vh_metadata_lang_size)
     return database->langs_id[lang];
 
   return 0;
