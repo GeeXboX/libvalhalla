@@ -262,11 +262,11 @@ typedef struct valhalla_s valhalla_t;
 
 /** \brief Error code returned by valhalla_run(). */
 enum valhalla_errno {
-  VALHALLA_ERROR_DEAD    = -4,
-  VALHALLA_ERROR_PATH    = -3,
-  VALHALLA_ERROR_HANDLER = -2,
-  VALHALLA_ERROR_THREAD  = -1,
-  VALHALLA_SUCCESS       =  0,
+  VALHALLA_ERROR_DEAD    = -4,    /**< Valhalla is already running.         */
+  VALHALLA_ERROR_PATH    = -3,    /**< Problem with the paths for the scan. */
+  VALHALLA_ERROR_HANDLER = -2,    /**< Allocation memory error.             */
+  VALHALLA_ERROR_THREAD  = -1,    /**< Problem with at least one thread.    */
+  VALHALLA_SUCCESS       =  0,    /**< The Valkyries are running.           */
 };
 
 /** \brief Verbosity level. */
@@ -306,8 +306,8 @@ typedef enum valhalla_event_gl {
 
 /** \brief Events for metadata callback. */
 typedef enum valhalla_event_md {
-  VALHALLA_EVENTMD_PARSER = 0,
-  VALHALLA_EVENTMD_GRABBER,
+  VALHALLA_EVENTMD_PARSER = 0,    /**< New parsed data.                     */
+  VALHALLA_EVENTMD_GRABBER,       /**< New grabbed data.                    */
 } valhalla_event_md_t;
 
 /** \brief Type of statistic. */
@@ -316,17 +316,21 @@ typedef enum valhalla_stats_type {
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
 
-/** \brief Priorities for the metadata. */
+/**
+ * \brief Priorities for the metadata.
+ *
+ * The values which are not mod 32, are only for internal use.
+ */
 typedef enum valhalla_metadata_pl {
-  VALHALLA_METADATA_PL_HIGHEST = -128,
-  VALHALLA_METADATA_PL_HIGHER  =  -96,
-  VALHALLA_METADATA_PL_HIGH    =  -64,
-  VALHALLA_METADATA_PL_ABOVE   =  -32,
-  VALHALLA_METADATA_PL_NORMAL  =    0,
-  VALHALLA_METADATA_PL_BELOW   =   32,
-  VALHALLA_METADATA_PL_LOW     =   64,
-  VALHALLA_METADATA_PL_LOWER   =   96,
-  VALHALLA_METADATA_PL_LOWEST  =  128,
+  VALHALLA_METADATA_PL_HIGHEST = -128,    /**< The highest priority.        */
+  VALHALLA_METADATA_PL_HIGHER  =  -96,    /**< The higher priority.         */
+  VALHALLA_METADATA_PL_HIGH    =  -64,    /**< High priority.               */
+  VALHALLA_METADATA_PL_ABOVE   =  -32,    /**< Priority above normal.       */
+  VALHALLA_METADATA_PL_NORMAL  =    0,    /**< Normal (usual) priority.     */
+  VALHALLA_METADATA_PL_BELOW   =   32,    /**< Priority below normal.       */
+  VALHALLA_METADATA_PL_LOW     =   64,    /**< Low priority.                */
+  VALHALLA_METADATA_PL_LOWER   =   96,    /**< The lower priority.          */
+  VALHALLA_METADATA_PL_LOWEST  =  128,    /**< The lowest priority.         */
 } valhalla_metadata_pl_t;
 
 /** \brief Metadata structure for general purpose. */
