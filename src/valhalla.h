@@ -844,32 +844,56 @@ typedef struct valhalla_db_restrict_s {
   valhalla_db_item_t data;
 } valhalla_db_restrict_t;
 
-#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _lang, _priority)  \
-  {                                                               \
-    VALHALLA_DB_TYPE_##_type,                     /* .type     */ \
-    _id,                                          /* .id       */ \
-    _text,                                        /* .text     */ \
-    VALHALLA_META_GRP_##_group,                   /* .group    */ \
-    _lang,                                        /* .lang     */ \
-    _priority                                     /* .priority */ \
-  }
-
-#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,             \
-                             _m_type, _d_type, _lang, _priority)              \
-  {                                                                           \
-    NULL,                                                         /* .next */ \
-    VALHALLA_DB_OPERATOR_##_op,                                   /* .op   */ \
-    VALHALLA_DB_SEARCH (_m_id, _m_text, NIL,                                  \
-                        _m_type, _lang, _priority),               /* .meta */ \
-    VALHALLA_DB_SEARCH (_d_id, _d_text, NIL,                                  \
-                        _d_type, _lang, _priority)                /* .data */ \
-  }
-
 
 /**
  * \name Macros for selection functions handling.
  * @{
  */
+
+/**
+ * \brief Set valhalla_db_item_t local variable.
+ *
+ * If possible, prefer the macros VALHALLA_DB_SEARCH_*() instead of this one.
+ *
+ * \param[in] id      Meta or data ID.
+ * \param[in] txt     Meta or data text.
+ * \param[in] g       Meta group.
+ * \param[in] t       Type of field.
+ * \param[in] l       Language.
+ * \param[in] p       Minimum priority.
+ */
+#define VALHALLA_DB_SEARCH(id, txt, g, t, l, p)   \
+  {                                               \
+    /* .type     = */ VALHALLA_DB_TYPE_##t,       \
+    /* .id       = */ id,                         \
+    /* .text     = */ txt,                        \
+    /* .group    = */ VALHALLA_META_GRP_##g,      \
+    /* .lang     = */ l,                          \
+    /* .priority = */ p                           \
+  }
+
+/**
+ * \brief Set valhalla_db_restrict_t local variable.
+ *
+ * If possible, prefer the macros VALHALLA_DB_RESTRICT_*() instead of this one.
+ *
+ * \param[in] op      Operator applied on the restriction.
+ * \param[in] m_id    Meta ID.
+ * \param[in] d_id    Data ID.
+ * \param[in] m_txt   Meta text.
+ * \param[in] d_txt   Data text.
+ * \param[in] m_t     Type of field for meta.
+ * \param[in] d_t     Type of field for data.
+ * \param[in] l       Language.
+ * \param[in] p       Minimum priority.
+ */
+#define VALHALLA_DB_RESTRICT(op, m_id, d_id, m_txt, d_txt, m_t, d_t, l, p)  \
+  {                                                                         \
+    /* .next = */ NULL,                                                     \
+    /* .op   = */ VALHALLA_DB_OPERATOR_##op,                                \
+    /* .meta = */ VALHALLA_DB_SEARCH (m_id, m_txt, NIL, m_t, l, p),         \
+    /* .data = */ VALHALLA_DB_SEARCH (d_id, d_txt, NIL, d_t, l, p)          \
+  }
 
 /** \brief Set valhalla_db_item_t local variable for an id. */
 #define VALHALLA_DB_SEARCH_ID(meta_id, group, l, p) \
