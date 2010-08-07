@@ -2353,7 +2353,7 @@
         <dia:point val="16.8,23.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.75,23.55;22.35,25.2815"/>
+        <dia:rectangle val="16.75,23.55;22.35,26.175"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="16.8,23.6"/>
@@ -2362,7 +2362,7 @@
         <dia:real val="5.5"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="1.6314986944198608"/>
+        <dia:real val="2.5249999999999999"/>
       </dia:attribute>
       <dia:attribute name="draw_border">
         <dia:boolean val="false"/>
