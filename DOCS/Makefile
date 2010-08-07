@@ -9,23 +9,48 @@ EXTRADIST = \
 	ffmpeg.png \
 	priorities.txt \
 	sqlite3.png \
+	states_general.dia \
+	states_grabbers_01.dia \
+	states_grabbers_lock.dia \
+	states_ondemand_01.dia \
+	valhalla.eps \
+	valhalla.lyx \
 	valhalla.svg \
 	valhalla-db.dia \
 	valhalla-db.png \
 	valhalla-internals.dia \
 	valhalla-internals.png \
 
-all: doxygen
+all: doxygen lyx
 
 doxygen:
 ifeq ($(DOC),yes)
+ifeq ($(DOC_DOXYGEN),yes)
 ifeq (,$(wildcard doxygen))
 	PROJECT_NUMBER="$(VERSION)" doxygen Doxyfile
+endif
+endif
+endif
+
+lyx:
+ifeq ($(DOC),yes)
+ifeq ($(DOC_LYX),yes)
+ifeq (,$(wildcard valhalla-$(VERSION).pdf))
+	sed 's,filename valhalla-internals.dia,filename valhalla-internals.tmp.dia,' valhalla.lyx > valhalla.tmp.lyx
+	sed -e 's,\./curl.png,$(shell pwd)/curl.png,' \
+	    -e 's,\./ffmpeg.png,$(shell pwd)/ffmpeg.png,' \
+	    -e 's,\./sqlite3.png,$(shell pwd)/sqlite3.png,' \
+            valhalla-internals.dia > valhalla-internals.tmp.dia
+	lyx valhalla.tmp.lyx -e pdf2
+	mv valhalla.tmp.pdf valhalla-$(VERSION).pdf
+	rm -f *.tmp.*
+endif
 endif
 endif
 
 clean:
 	rm -rf doxygen
+	rm -f valhalla-$(VERSION).pdf
 
 install:
 ifeq ($(DOC),yes)
@@ -41,4 +66,4 @@ uninstall:
 dist-all:
 	cp $(EXTRADIST) Makefile $(DIST)
 
-.PHONY: clean dist-all doxygen *install
+.PHONY: clean dist-all doxygen *install lyx

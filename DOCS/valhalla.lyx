@@ -1,0 +1,2851 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass report
+\begin_preamble
+\usepackage{listings}
+\usepackage{framed}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage[Sonny]{fncychap}
+\usepackage[
+  unicode=true, 
+  bookmarks=true,
+  breaklinks=false,
+  pdfborder={0 0 0},
+  backref=true,
+  colorlinks=false
+]
+{hyperref}
+
+\usepackage{draftwatermark}
+\SetWatermarkFontSize{7.5cm}
+\SetWatermarkText{DRAFT}
+\SetWatermarkLightness{0.94}
+\SetWatermarkAngle{60}
+
+% PDF
+\hypersetup{
+  pdftitle={GeeXboX Valhalla},
+  pdfauthor={Mathieu SCHROETER},
+  pdfsubject={GeeXboX Valhalla - Documentation},
+  pdfstartview=FitBH
+}
+
+% Fancy
+\rfoot[\sc\small GeeXboX Valhalla]{\thepage}
+\lfoot[\thepage]{\sc\small GeeXboX Valhalla}
+\cfoot[]{}
+\fancypagestyle{plain}{
+  \rfoot[\sc\small GeeXboX Valhalla]{\thepage}
+  \lfoot[\thepage]{\sc\small GeeXboX Valhalla}
+  \cfoot[]{}
+  \rhead{}
+  \lhead{}
+  \chead{}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Notice
+\definecolor{midgray}{gray}{0.3}
+\renewenvironment{lyxgreyedout}{\textcolor{midgray}\bgroup}{\egroup}
+
+% Array
+\renewcommand{\arraystretch}{1.3}
+
+% Ccode
+\definecolor{colKeys}{rgb}{0.5,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.5,0.5,0.5}
+\definecolor{colString}{rgb}{0.86,0,0}
+\definecolor{colDirective}{rgb}{0,0.5,0}
+\definecolor{shadecolor}{rgb}{1,1,1}
+\lstset{language=C}
+\lstset{
+  float=hbp,
+  basicstyle=\ttfamily\footnotesize,
+  identifierstyle=\color{colIdentifier},
+  keywordstyle=\color{colKeys},
+  stringstyle=\color{colString},
+  commentstyle=\color{colComments},
+  %directivestyle=\color{colDirective},
+  %columns=flexible,
+  tabsize=2,
+  extendedchars=true,
+  showspaces=false,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true,
+  breakautoindent=true,
+  captionpos=b,
+  xrightmargin=0cm,
+  xleftmargin=1cm,
+}
+
+%\renewcommand{\maketitle}{
+%  \newpage
+%  \title
+%}
+\end_preamble
+\use_default_options true
+\begin_modules
+linguistics
+\end_modules
+\language english
+\inputencoding auto
+\font_roman lmodern
+\font_sans lmss
+\font_typewriter lmtt
+\font_default_family sfdefault
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\pdf_title "GeeXboX Valhalla"
+\pdf_author "Mathieu SCHROETER"
+\pdf_subject "GeeXboX Valhalla - Documentation"
+\pdf_keywords "geexbox,valhalla,libvalhalla,library,development"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "colorlinks=false"
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 3cm
+\topmargin 2.5cm
+\rightmargin 1.5cm
+\bottommargin 2.5cm
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\noindent
+GeeXboX Valhalla
+\begin_inset Newline newline
+\end_inset
+
+
+\size large
+Version 2
+\begin_inset VSpace 30mm
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Graphics
+	filename valhalla.eps
+	width 60text%
+
+\end_inset
+
+
+\begin_inset VSpace 15mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+Mathieu SCHROETER
+\begin_inset Newline newline
+\end_inset
+
+
+\size small
+libvalhalla.GeeXboX.org
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Introduction
+\end_layout
+
+\begin_layout Standard
+GeeXboX Valhalla is a library initially written for the GeeXboX
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+An embedded oriented Linux distribution 
+\lang french
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.geexbox.org
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ project.
+ Its first goal is to interact with the graphical user interface Enna
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+\lang french
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://enna.geexbox.org
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Valhalla can search audio, video and image files recursively from a directory.
+ Several mechanisms extract metadata and properties to save them in a SQLite
+ database.
+ Other informations can be retrieved from some web services, like covers,
+ lyrics, etc, ...
+\end_layout
+
+\begin_layout Standard
+This documenation is destinated to the developers which are interested by
+ hacking libvalhalla and to learn how to use it.
+ In all cases it is highly recommended to look at the source code (at the
+ same time that this document).
+ The public API has a 
+\emph on
+Doxygen 
+\emph default
+documentation and many special internal features are commented in the code.
+ Because libvalhalla uses many threads, the developer must take care of
+ all tasks on the pointers which are sent from one thread to an other.
+ In some exceptional conditions, a pointer can be available in two threads
+ at a time (for writing too).
+ It is not a bug, many attributes are considered to be read-only.
+ A tool like 
+\emph on
+Valgrind 
+\emph default
+will return many possible race-conditions (see the 
+\emph on
+Helgrind
+\emph default
+ tool).
+ But all of these are only false-positives.
+ This documentation tries to explain how are view the operations between
+ the threads and why 
+\emph on
+Valgrind 
+\emph default
+is 
+\begin_inset Quotes eld
+\end_inset
+
+wrong
+\begin_inset Quotes erd
+\end_inset
+
+ (in our case).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Note:
+\series default
+ if you are thinking that the 
+\begin_inset Quotes eld
+\end_inset
+
+threads are evil
+\begin_inset Quotes erd
+\end_inset
+
+, maybe you should re-consider the question.
+ It is like thinking that the object languages are better that imperative
+ languages.
+ There is no good or bad answer.
+ But for sure, the C language and the multi-threading programming need to
+ be more strict in the ways which are used in the architecture of the library.
+ To think that an imperative language can not be used to develop programs
+ with an object approach, it is only a misunderstanding of what is an object.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Why Valhalla?
+\end_layout
+
+\begin_layout Quotation
+« In Norse mythology, Valhalla (from Old Norse Valhöll "hall of the slain")
+ is a majestic, enormous hall located in Asgard, ruled over by the god Odin.
+ Chosen by Odin, half of those that die in combat travel to Valhalla upon
+ death, led by valkyries, while the other half go to the goddess Freyja's
+ field Fólkvangr.
+ In Valhalla, the dead join the masses of those who have died in combat
+ known as Einherjar, as well as various legendary Germanic heroes and kings,
+ as they prepare to aid Odin during the events of Ragnarök.
+ » 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Valhalla.
+ (2009, February 11).
+ In Wikipedia, The Free Encyclopedia.
+ Retrieved 14:49, February 14, 2009, from 
+\lang french
+
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://en.wikipedia.org/w/index.php?title=Valhalla&oldid=270025459
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In Valhalla, the heroes are happy: they fight, kill, are reborn to assail
+ again in a closed field.
+\end_layout
+
+\begin_layout Standard
+You can imagine by analogy, that the scanner (the Valkyries) finds the media
+ files (the legendary heroes) in order to insert them into the database
+ (to Valhalla).
+ And each file (hero) is checked in loop (is reborn to assail again).
+ The grabbers can be seen as the Valkyries too.
+\end_layout
+
+\begin_layout Chapter
+General overview
+\end_layout
+
+\begin_layout Standard
+Valhalla is heavily based on threads to parallelized all tasks.
+ FFmpeg/libavformat is used to fetch the metadata.
+ The data are saved in a database managed by SQLite.
+ This library can be extended with many grabbers.
+ The library is highly configurable, but the grabbers are only static.
+\end_layout
+
+\begin_layout Section
+Software architecture
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename valhalla-internals.dia
+	lyxscale 50
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+General architecture
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are height threads (or more) to handle all functionalities of the
+ library.
+ At the left, two inputs are available, the 
+\emph on
+Scanner
+\emph default
+ and the 
+\emph on
+OnDemand
+\emph default
+.
+ The 
+\emph on
+Scanner
+\emph default
+ searches the files from at least one directory (recursively or not).
+ The 
+\emph on
+OnDemand
+\emph default
+ is a file specifically pointed by the frontend.
+ When a file must be checked for metadata fetching, it is sent to the 
+\emph on
+DBManager
+\emph default
+.
+ Its goal is to check the validity of the demand by searching this one in
+ the database, and accordingly to some rules the file is sent to the 
+\emph on
+Dispatcher
+\emph default
+ to be proceeded.
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Dispatcher
+\emph default
+ is like a switching device.
+ It sends a file to the appropriate part like the 
+\emph on
+Parser
+\emph default
+, the 
+\emph on
+Grabber
+\emph default
+ or the 
+\emph on
+Downloader
+\emph default
+.
+ When a step is ended, the file is sent to the 
+\emph on
+Dispatcher
+\emph default
+, until all steps are done then it is sent to the 
+\emph on
+DBManager
+\emph default
+.
+ So, an acknowledge is sent to the 
+\emph on
+Scanner
+\emph default
+ or an event is sent to the 
+\emph on
+EventHandler
+\emph default
+ (if the file comes from the 
+\emph on
+OnDemand
+\emph default
+).
+ Note that many parts can be disabled at the compilation.
+ And some threads are not loaded accordingly to the configuration at the
+ init of Valhalla, like the 
+\emph on
+Scanner
+\emph default
+, the 
+\emph on
+Grabbers
+\emph default
+ and the 
+\emph on
+EventHandler
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+The steps with the 
+\emph on
+Dispatcher
+\emph default
+ can be seen as follow:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename states_general.dia
+	lyxscale 50
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+General view around the 
+\emph on
+Dispatcher
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The file jumps from component to component but every time by the 
+\emph on
+Dispatcher
+\emph default
+.
+ The number of grabbers depend of the configuration (at the compilation)
+ of libvalhalla, the type of file and if the user has disabled explicitly
+ one or more grabber.
+ As the grabbers are optional, it is possible to have only the 
+\emph on
+Parser
+\emph default
+ and nothing more.
+ A grabber fetches always and only textual metadata.
+ When a data looks like an image (a blob), then only the local path on the
+ binary is saved in the database.
+ The binaries are downloaded by the 
+\emph on
+Downloader
+\emph default
+ when all grabbers have ended they job.
+ In other words, many references on binaries can exist in the database before
+ that the binaries will be available.
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Database
+\end_layout
+
+\begin_layout Standard
+The database uses a relational model.
+ The design is think in order to be as generic as possible.
+ All sort (expect blob) of metadata can be saved and retrieved easily.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename valhalla-db.dia
+	lyxscale 50
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Entities/Relations diagram
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The table 
+\begin_inset Quotes eld
+\end_inset
+
+file
+\begin_inset Quotes erd
+\end_inset
+
+ can be considered as the main table.
+ It contents the list of all files which are been retrieved by the 
+\emph on
+Scanner
+\emph default
+ and by the 
+\emph on
+OnDemand
+\emph default
+.
+ A file has some public properties like the type (audio, video, image, unknown),
+ the path (which can be absolute or relative) and the time of the last modificat
+ion.
+ About the properties like checked__, interrupted__ and outofpath__, please
+ refer to the section ###SECTION###.
+\end_layout
+
+\begin_layout Standard
+The tables 
+\begin_inset Quotes eld
+\end_inset
+
+dlcontext
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+grabber
+\begin_inset Quotes erd
+\end_inset
+
+ are only for internal purposes.
+ The first one is used in order to save the contexts with the 
+\emph on
+Downloader
+\emph default
+ when the library is forced to stop as soon as possible (see the section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Force-stop"
+
+\end_inset
+
+).
+ The second one is the list of grabbers which have already been completed
+ for the file.
+ Here too, the goal is to avoid a useless regrabbing for a file which was
+ interrupted.
+\end_layout
+
+\begin_layout Standard
+The metadata are defined with three tables.
+ Every meta has a name in the 
+\begin_inset Quotes eld
+\end_inset
+
+meta
+\begin_inset Quotes erd
+\end_inset
+
+ table, and every meta can have one or more data with the 
+\begin_inset Quotes eld
+\end_inset
+
+data
+\begin_inset Quotes erd
+\end_inset
+
+ table.
+ The relations between the meta and the data are done with a relation table
+ (is defined by) with a joint on a file.
+ This relation table has some properties like the priority and a group.
+ The groups are used in order to prevent misunderstands between the meta
+ which can have the same name but not the same meaning.
+ For example, you can imagine a meta 
+\begin_inset Quotes eld
+\end_inset
+
+genre
+\begin_inset Quotes erd
+\end_inset
+
+ which is used to define a style of music, and the genre for a person.
+ Maybe you can have both meta for the same file.
+ Then the group can be used for the distinction.
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+info
+\begin_inset Quotes erd
+\end_inset
+
+ table is used only for internal purposes.
+ More informations are available in the section ###SECTION###.
+\end_layout
+
+\begin_layout Chapter
+Internals
+\end_layout
+
+\begin_layout Section
+Components
+\end_layout
+
+\begin_layout Standard
+Even if libvalhalla is written in C, the code is structured with an oriented
+ object approach.
+ Here we are speaking of 
+\begin_inset Quotes eld
+\end_inset
+
+components
+\begin_inset Quotes erd
+\end_inset
+
+.
+ A component is seen like an object, a file source and one (or more) thread(s).
+ All users inputs are sent via valhalla.c which can be seen like the factory
+ class.
+ This one is used in order to create and delete all components and to handle
+ all actions with the public API.
+\end_layout
+
+\begin_layout Standard
+For example, the actions dedicated to the database are always sent to the
+ 
+\emph on
+DBManager
+\emph default
+.
+ In this case, some functions are just a bridge between the public API and
+ the functions in database.c.
+ It looks like:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\family typewriter
+valhalla.c
+\family default
+ 
+\series bold
+→
+\series default
+ 
+\family typewriter
+dbmanager.c
+\family default
+ 
+\series bold
+→
+\series default
+ 
+\family typewriter
+database.c
+\family default
+ 
+\series bold
+instead of (
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \hspace{}
+\length 4em
+\end_inset
+
+
+\family typewriter
+valhalla.c
+\family default
+ 
+\series bold
+→
+\series default
+ 
+\family typewriter
+database.c
+\family default
+ 
+\series bold
+or even
+\series default
+ 
+\family typewriter
+database.c
+\family default
+ (directly) with a bad design
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\begin_layout Standard
+Where valhalla.c is like the factory class, dbmanager.c a class to handle
+ all actions on the database and database.c the low level handling with SQLite.
+\end_layout
+
+\begin_layout Subsection
+Scanner
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Scanner
+\emph default
+ searches for files in the paths provided by the user.
+ It is one of the components in the library to send files to the 
+\emph on
+DBManager
+\emph default
+.
+ The 
+\emph on
+Scanner
+\emph default
+ can be always alive, or can be used for only some loops.
+ A loop is one pass of all directories configured for the scan.
+ The scan can be recursive or not.
+ When a file is found, it is tested against some conditions and accordingly
+ to these, then it is sent to the 
+\emph on
+DBManager
+\emph default
+, or not.
+ If no path are set before the run, then the 
+\emph on
+Scanner
+\emph default
+ is not loaded.
+\end_layout
+
+\begin_layout Standard
+You can see below, the list of all interesting options which can be configured:
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Paths addition
+\end_layout
+
+\begin_layout Itemize
+File suffixes addition
+\end_layout
+
+\begin_layout Itemize
+Number of loops
+\end_layout
+
+\begin_layout Itemize
+Time to wait between the end and the start of a new loop
+\end_layout
+
+\begin_layout Itemize
+Time to wait before the first scan (delay)
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+To enable the 
+\emph on
+Scanner
+\emph default
+, at least one path must be added.
+ If several paths are added, then each one is scanned one by one in the
+ same order that the additions.
+ Each path can be configured for a recursive or simple scan.
+ If the scan is recursive, there is a security to limit the depth.
+ The limit is set to 42 sub-directories and it can't be changed dynamically.
+ Note that the symbolic links are ignored by the 
+\emph on
+Scanner
+\emph default
+ (and the 
+\emph on
+OnDemand
+\emph default
+).
+\end_layout
+
+\begin_layout Standard
+The file suffixes are a simple way to ignore the non-media files.
+ It is possible to don't add a suffix, in this case all files found are
+ sent to the 
+\emph on
+DBManager
+\emph default
+.
+ If at least one (or more) file suffix(es) is/are defined, only these suffixes
+ are considered for the scan.
+\end_layout
+
+\begin_layout Standard
+When one loop is finished, there are several possibilities.
+ It depends how the user is using the library.
+ An optional function provided by the public API can be used in order to
+ wait on the end of the 
+\emph on
+Scanner
+\emph default
+.
+ But in many cases, it can be useful to loop for an undetermined number
+ because the end of a program is not always depending to the end of the
+ scanning.
+ Then, the number of loops can be an integer higher than 0 or infinite.
+ The time to wait is useful to don't rescan the paths immediately after
+ a loop.
+ At the end of one loop, if the time is defined then it starts a timer,
+ and begins the new loop when the timer is reached.
+ A public function gives the possibility to wake up explicitly the 
+\emph on
+Scanner
+\emph default
+ in any time.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ instead of a recursive scan on the directories, we should use some mechanisms
+ like inotify with Linux.
+ But in this case, it needs to re-implement the way for every operating
+ system.
+ Maybe this functionality will be available in the future.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Next loop event
+\end_layout
+
+\begin_layout Standard
+When a full scan is finished, the 
+\emph on
+Scanner
+\emph default
+ waits for the file acknowledges and goes in waiting list.
+ The acks come from the 
+\emph on
+DBManager
+\emph default
+ when a file has been defined for the last step which is STEP_ENDED.
+ The ack is sent to the 
+\emph on
+Scanner
+\emph default
+, and this one waits for all acks, even for the files which were not handled
+ correctly.
+ In other words, 
+\bar under
+all
+\bar default
+ files sent to the 
+\emph on
+DBManager
+\emph default
+ return a ack.
+ After that, the 
+\emph on
+Scanner
+\emph default
+ uses an interruptible sleep in order to go in waiting list.
+ Because this sleep is interruptible, it is possible to wake up the 
+\emph on
+Scanner
+\emph default
+ with the public API.
+ Or it will wait the time which was configured by the frontend.
+\end_layout
+
+\begin_layout Standard
+Between the last ack received and the sleep, the scanner sends a NEXT_LOOP
+ event.
+ This one is useful for the other threads.
+ For example some grabbers wait on this event in order to do some cleanups
+ for their internal structure.
+ For the 
+\emph on
+DBManager
+\emph default
+ this event is very important.
+ It is used for many major cleanups in the database.
+ These cleanups are done only between the loops, because it takes a significantl
+y time (many deletions and updates in the whole tables, ...).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ when libvalhalla is forced to stop, the database is not cleaned.
+ In fact there is no effect for the user.
+ But if this action was done at the shutdown, 
+\family default
+it can increase the time and especially when the files (scanned) are available
+ through a network share.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+OnDemand
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+OnDemand
+\emph default
+ is the second component which is able to send files to the 
+\emph on
+DBManager
+\emph default
+.
+ Its goal is to retrieve with a top priority the metadata for one file,
+ over all other files which are coming from the 
+\emph on
+Scanner
+\emph default
+.
+ 
+\emph on
+OnDemand
+\emph default
+ is asynchronous, and events are sent for each step to the frontend.
+\end_layout
+
+\begin_layout Standard
+A demand can not be sent to the 
+\emph on
+DBManager
+\emph default
+ without several checks for the file.
+\end_layout
+
+\begin_layout Enumerate
+Is the file available? If the file does not exist, we can go out immediately.
+ The file must not be a symbolic link.
+\end_layout
+
+\begin_layout Enumerate
+Is the file already and fully available in the database?
+\begin_inset Newline newline
+\end_inset
+
+In this case, we can send the ENDED event because there is nothing more
+ to do.
+\end_layout
+
+\begin_layout Enumerate
+If the file is not available, then we must search if this one was already
+ sent in Valhalla by pausing all threads (
+\emph on
+Grabber
+\emph default
+, 
+\emph on
+Downloader
+\emph default
+, 
+\emph on
+Parser
+\emph default
+, 
+\emph on
+Dispatcher
+\emph default
+ and 
+\emph on
+DBManager
+\emph default
+).
+\begin_inset Newline newline
+\end_inset
+
+The threads must be sent in waiting list because the file can exist in a
+ thread but not in a queue.
+ When all threads are paused, we are sure that all files are somewhere in
+ the queues.
+ Note that the 
+\emph on
+Scanner
+\emph default
+ is not interrupted by the 
+\emph on
+OnDemand
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+For each queue, the file is searched.
+ Note that a file can exist several times, but the same pointer is used.
+ We can stop the search when the first occurrence is found.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If a file is found, then we must change its priority to HIGH.
+ This file is moved to the top of the queue, then the thread will handle
+ this one immediately.
+\end_layout
+
+\begin_layout Enumerate
+If nothing is found, a new file is sent to the 
+\emph on
+DBManager
+\emph default
+ with the HIGH priority.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Only here, all threads are woken.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename states_ondemand_01.dia
+	lyxscale 50
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Demand checking
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ the queues are named fifo_queue for historical reason.
+ The code comes from libplayer
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+\family sans
+A multimedia framework 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://libplayer.geexbox.org
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ where only the FIFO mechanism is used.
+ LIFO was used only with libvalhalla when the OnDemand component was added.
+ But the name for the queues was not changed.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Pause
+\end_layout
+
+\begin_layout Standard
+The pauses are synchronious.
+ It sends a message to the thread and waits on the answer.
+ A thread finishes always its last operation before the pause.
+ It is not like the force-stop mechanism which is able to break an operation
+ in the middle.
+ According to these facts, the pause is a bit slower.
+ It depends mostly of the grabbers, but it can use several seconds by demand.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ a future improvement will be to use an asychronious call on all components
+ (like the force-stop mechanism).
+ It should be a bit faster.
+ At the moment, the threads are sent in waiting list one by one.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Priorities
+\end_layout
+
+\begin_layout Standard
+The priorities are handled by the position in the queues.
+ A file with an high priority is a file which is alway put at the beginning
+ of the queue.
+ In other words, the queue is used as a LIFO.
+ The normal priority uses the queue as a FIFO.
+ Note that too much demands are not very efficient because all files with
+ an high priority will be always resent to the top of the queues.
+ Of course, these files will finished before all other files.
+\end_layout
+
+\begin_layout Subsection
+DBManager
+\end_layout
+
+\begin_layout Standard
+All actions on the database are handled by the 
+\emph on
+DBManager
+\emph default
+.
+ The selections can be parallelized, but the writes on the database are
+ always serialized in the thread.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ in the case where several writes are done in concurrency, even if SQLite
+ is fully thread-safe it can have many side effects for libvalhalla.
+ The database file will be always intact (SQLite is very robust even against
+ hardware problems).
+ But it can be possible to have some broken associations, wrong informations,
+ etc,...
+ Then only this thread is able to perform the writing.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+DBManager
+\emph default
+ is the second step after the 
+\emph on
+Scanner 
+\emph default
+and the 
+\emph on
+OnDemand
+\emph default
+.
+ The 
+\emph on
+DBManager
+\emph default
+ does many checks on the file to be sure that it must be sent to the next
+ step (or not).
+ And in some cases, informations are retrieved from the database in order
+ to restore the previous context for this file.
+ The reason is that libvalhalla can be interrupted in all parts of its component
+ (see force-stop in the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Force-stop"
+
+\end_inset
+
+).
+ Before that the whole library is uninitialized, the states are checked
+ and the contexts (for the 
+\emph on
+Downloader
+\emph default
+) are saved in the database if necessary.
+ These contexts (and the list of grabbers already completed) are loaded
+ by the 
+\emph on
+DBManager
+\emph default
+ (or not).
+ It depends if the file is still available (for example).
+\end_layout
+
+\begin_layout Subsubsection
+Steps for a file
+\end_layout
+
+\begin_layout Standard
+There are 6 distinct steps for one file.
+ The first one is the ACTION_DB_NEWFILE when the action comes from the 
+\emph on
+Scanner
+\emph default
+ or the 
+\emph on
+OnDemand
+\emph default
+.
+ The date of the last modification is searched in the database, then the
+ 
+\emph on
+DBManager
+\emph default
+ asks for the interrupted__ flag (see section ###SECTION###).
+ It is used to know if the file is complete or not (force-stop).
+ According to these informations, the context for the downloader and the
+ list of grabbers (to ignore for this file) are got from the database.
+ If the date of the last modification has changed, then the file is deleted
+ from the database in order to perform a new parsing, grabbing, etc,...
+ like with a new file.
+ If the file is new, it is inserted at this step (even if no metadata are
+ still available).
+\end_layout
+
+\begin_layout Standard
+In all cases the file is sent to the 
+\emph on
+Dispatcher
+\emph default
+ for the 
+\emph on
+Parser
+\emph default
+.
+ Because the 
+\emph on
+Parser
+\emph default
+ is necessary in order to retrieve the main metadata.
+ The next step is the 
+\emph on
+Grabber
+\emph default
+ a number of times which depends of the number of grabbers and some conditions.
+ The file is sent to the 
+\emph on
+Dispatcher
+\emph default
+ between every grabber.
+ When all grabbers have done their job, the step changes for the 
+\emph on
+Downloader
+\emph default
+.
+ When all distant files were downloaded, the file is in the ending step
+ and the 
+\emph on
+Dispatcher
+\emph default
+ sends this one to the 
+\emph on
+DBManager
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+DBManager
+\emph default
+ detroys the file with the ending step and sends a acknowledge to the 
+\emph on
+Scanner 
+\emph default
+(if the file comes from it) or it sends an event specifically for the 
+\emph on
+OnDemand
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Lock for the grabber
+\end_layout
+
+\begin_layout Standard
+When a file was sent from the 
+\emph on
+Dispatcher
+\emph default
+ to the 
+\emph on
+DBManager
+\emph default
+ and this file is still in the grabbing step, while that the metadata are
+ inserted in the database, the 
+\emph on
+Grabber
+\emph default
+ is locked.
+ This lock is needed in order to prevent a race condition between the 
+\emph on
+DBmanager
+\emph default
+ and the 
+\emph on
+Grabber
+\emph default
+ on the meta_grabber attribute of the file structure.
+ As soon as the metadata are inserted and flushed, the semaphore is unlocked.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+External metadata
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+Dispatcher
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Dispatcher
+\emph default
+ sends every file to the right component according to the step defined in
+ they attributes.
+ The step is never changed by the 
+\emph on
+Dispatcher
+\emph default
+.
+ But in one case, the priority can be changed for a lower.
+ More details at the end of this section.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Splitting-between-components"
+
+\end_inset
+
+Splitting between components
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Dispatcher
+\emph default
+ is intended to split a file into two components where appropriate.
+ There is currently only one case where it is necessary.
+ When a file has finished a PARSING or GRABBING step, the metadata must
+ be inserted in the database.
+ But if there is at least one grabber, the file is sent to this one too.
+ So, the file is split and available in both components (
+\emph on
+DBManager
+\emph default
+ and 
+\emph on
+Grabber
+\emph default
+).
+ The grabber must wait on the 
+\emph on
+DBManager
+\emph default
+ until that a semaphore is released, then it can continue with the new grab.
+\end_layout
+
+\begin_layout Subsubsection
+Last step (ending)
+\end_layout
+
+\begin_layout Standard
+For the last step, the 
+\emph on
+Dispatcher
+\emph default
+ must change the priority for the file.
+ We can think that it wil be a problem for the 
+\emph on
+OnDemand
+\emph default
+, but it is not the case.
+ When this step appears, all metadata are available in the database.
+ Only the acknowledge (or the last event) is not sent.
+ The last step can not be done with the high priority because the file is
+ sent two times to the 
+\emph on
+DBManager
+\emph default
+.
+ The first one is used in order to insert the metadata (the last grabber
+ or the parser), and the second one is used to destroy the file.
+ Of course, if the second is sent with an high priority, then the file will
+ be destroy before the insert.
+\end_layout
+
+\begin_layout Subsection
+Parser
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Parser
+\emph default
+ is the first step in order to retrieve the metadata about a file.
+ It is the most important step, because most of the 
+\emph on
+Grabbers 
+\emph default
+are unusable with at least the 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+author
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+artist
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+album
+\begin_inset Quotes erd
+\end_inset
+
+ metadata.
+ The 
+\emph on
+Parser
+\emph default
+ is based on libavformat for the metadata parsing.
+ But many files has no metadata, and the 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+ can not be found.
+ In this case a second functionality (optional) can be used to be sure that
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+ is always available.
+ A decrapifier tries to found a 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+ with the filename.
+ This one is able to clean the name and to strip some keywords (and more)
+ with the use of a blacklist.
+\end_layout
+
+\begin_layout Subsubsection
+libavformat
+\end_layout
+
+\begin_layout Standard
+FFmpeg is very powerful, but in the case of libvalhalla the speed for the
+ 
+\emph on
+Parsers
+\emph default
+ is very important.
+ When libavformat tries to guess the format, it uses many functions for
+ probing.
+ More formats will use more call on the probing functions.
+ A trick is used in libvalhalla to increase significantly the speed.
+ For more details about that, please refer to the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:FFmpeg-and-parsing"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Decrapifier
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Decrapifier
+\emph default
+ performs many operations on the filename in order to retrieve some useful
+ keywords (especially for the grabbers).
+ Note that this 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+ is useful for the frontend too.
+ There are two types of keywords.
+ The first one is the simple keyword where the 
+\emph on
+Decrapifier
+\emph default
+ searches and tries to remove it from the filename.
+ These keywords are case-insensitive.
+ The second type is a special keyword with a pattern.
+ Only three patterns are available where two are only related to TV show
+ and this type of pattern is case-sensitive.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Joker
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Description
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Examples (patterns)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+NUM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+trim a number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+\begin_inset Quotes eld
+\end_inset
+
+CDNUM
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+SE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+trim and retrieve a season
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+\begin_inset Quotes eld
+\end_inset
+
+SExEP
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+SeasonSE
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+EP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+trim and retrieve an episode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+\begin_inset Quotes eld
+\end_inset
+
+SSEEEP
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes erd
+\end_inset
+
+sSEeEP
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+EpisodeEP
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Decrapifier
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When an EP or SE is found, a new metadata is inserted with the name 
+\begin_inset Quotes eld
+\end_inset
+
+season
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+episode
+\begin_inset Quotes erd
+\end_inset
+
+.
+ These metadata can be used by the grabbers too.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ it is possible to use several times the same joker in a pattern.
+ In the case of SE and EP, several metadata will be inserted.
+ With NUM, it can be useful when these metadata are not interesting.
+ For example, something like 
+\begin_inset Quotes eld
+\end_inset
+
+NUMxNUM
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+SNUMENUM
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+sNUMeNUM
+\begin_inset Quotes erd
+\end_inset
+
+, etc,...
+ Remember that with a joker a pattern is always case-sensitive.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Grabber
+\end_layout
+
+\begin_layout Standard
+Several grabbers can exist in parallel.
+ Every grabber will have its own thread and can handle only one file at
+ a time.
+ The word 
+\begin_inset Quotes eld
+\end_inset
+
+grabber
+\begin_inset Quotes erd
+\end_inset
+
+ is used for two distinctive features.
+ There are the threads for grabbing, and there are the different grabbers
+ (what and where to grab).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename states_grabbers_01.dia
+	lyxscale 50
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Grabbers"
+
+\end_inset
+
+Grabbers (general)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Every thread tries to lock the first available grabber.
+ In the figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Grabbers"
+
+\end_inset
+
+, you can see three threads and 
+\begin_inset Quotes eld
+\end_inset
+
+five
+\begin_inset Quotes erd
+\end_inset
+
+ grabbers.
+ The thread 0 has locked the grabber Amazon, the thread 1 can not lock Amazon,
+ then it locks the next (FFmpeg).
+ Thread 2 can not lock Amazon and FFmpeg, then it locks an other somewhere.
+\end_layout
+
+\begin_layout Standard
+All threads don't try to lock every grabber.
+ The reason is that it depends of several conditions, like the type of file
+ (a grabber for movies can not be locked for an audio file), the state of
+ the grabber (is the grabber available for a new grab?) and if the grabber
+ is already locked or not.
+ A grabber can not be available for a new grab when this one needs some
+ time between the grabs.
+ With some webservices, it is impossible to grab too fast.
+ So, a delay is forced in the configuration of the grabber.
+\end_layout
+
+\begin_layout Subsubsection
+The locking
+\end_layout
+
+\begin_layout Standard
+The next figure is a simplification of the way that a thread is using in
+ order to lock a grabber.
+ The goal is to try the locking of every grabber until that one will be
+ available.
+ But if after two passes of the grabber list, none of them are available,
+ the thread stops the tries and re-sends the file to the 
+\emph on
+Dispatcher
+\emph default
+.
+ So, an other file can have a chance to lock a grabber.
+ This functionality ensure that a thread is never blocked (for nothing).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename states_grabbers_lock.dia
+	lyxscale 50
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Grabbers locking
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The first pass uses a trylock and the second pass uses a timedlock set to
+ 
+\begin_inset Formula $200\,\unit{ms}$
+\end_inset
+
+.
+ Of course, the lock is done only on the grabber which are compatible with
+ the file.
+ A second check is done after the lock.
+ A grabber can have a minimum time between two grabs.
+ The reason is that some web services block a user against too much accesses.
+ Then the grabber must sleep more time even if it seems not busy.
+\end_layout
+
+\begin_layout Subsubsection
+Waiting on the DBManager
+\end_layout
+
+\begin_layout Standard
+See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Splitting-between-components"
+
+\end_inset
+
+ for some general informations.
+ The 
+\emph on
+Grabber 
+\emph default
+must wait on the file until that the 
+\emph on
+DBManager
+\emph default
+ has done its work.
+ The pointer on the metadata grabbed is the same in both components.
+ In this case, until that the 
+\emph on
+DBManager
+\emph default
+ has not done its work (to save all metadata in the database), the 
+\emph on
+Grabber
+\emph default
+ can not use the pointer for the new metadata.
+ Then a semaphore is locked in the 
+\emph on
+Grabber
+\emph default
+ until that the 
+\emph on
+DBManager
+\emph default
+ will release this one.
+\end_layout
+
+\begin_layout Subsubsection
+Grabber API
+\end_layout
+
+\begin_layout Standard
+The API for the grabbers is available (mostly) through grabber_common.h.
+ For some special features, XML, lists, MD5, HMAC-SHA256, metadata, utils,
+ etc, ...
+ more headers are available.
+ But in all cases, a grabber has no access on the internals components like
+ the 
+\emph on
+DBManager
+\emph default
+, the 
+\emph on
+Parser
+\emph default
+, etc, ....
+ This API uses many documentation based on the 
+\emph on
+Doxygen
+\emph default
+ syntax.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Metadata additions:
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+When a grabber found new metadata, it must use the functions provided by
+ metadata.h in order to populate the meta_grabber attribute of the file.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Files for the 
+\emph on
+Downloader
+\emph default
+:
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+A metadata can be a name (hashed with MD5) for a blob.
+ Mostly for an image like a cover for example.
+ In this case, the list_downloader attribute must be populated with the
+ functions provided by utils.h.
+\end_layout
+
+\begin_layout Standard
+Only these attributes are safe for writing.
+ All other attributes of the file 
+\bar under
+must
+\bar default
+ be considered as read-only.
+\end_layout
+
+\begin_layout Subsection
+Downloader
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+Downloader
+\emph default
+ tries to download all files which were added to the list_downloader attribute
+ of a file.
+ The download is done only after all grabs for one file.
+ In other words, even if a metadata for a cover (for example) is already
+ available in the database, the image is not still downloaded until the
+ 
+\emph on
+Downloader
+\emph default
+ step is ended.
+ Because the download can take a significant time, this component can be
+ interrupted in any time.
+ The files which were not downloaded are saved in the dlcontext table at
+ the shutdown of libvalhalla.
+ These contexts are re-loaded when necessary by the 
+\emph on
+DBManager
+\emph default
+.
+\end_layout
+
+\begin_layout Subsection
+EventHandler
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+Global events
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+Metadata events
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+OnDemand events
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Other parts
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+Lists
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+Statistics
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Mechanisms
+\end_layout
+
+\begin_layout Standard
+This section describes the mechanisms to handle correctly the communications
+ between the components and some special features.
+\end_layout
+
+\begin_layout Subsection
+Waiting on the scanner
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Force-stop"
+
+\end_inset
+
+Force-stop
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+cURL
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+Concurrent demands for DBManager
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+Fifo queues priorities
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:FFmpeg-and-parsing"
+
+\end_inset
+
+FFmpeg and parsing tricks to be faster
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+libavcodec and multi-threading
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsection
+Cleanup
+\end_layout
+
+\begin_layout Standard
+There are two types of cleanup.
+ The first one is related to the database and the second one is related
+ to in-memory structures for the files.
+\end_layout
+
+\begin_layout Subsubsection
+Database
+\end_layout
+
+\begin_layout Standard
+The tables 
+\begin_inset Quotes eld
+\end_inset
+
+meta
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+data
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+grabber
+\begin_inset Quotes erd
+\end_inset
+
+, and the association tables are cleaned only at the end of a loop by the
+ 
+\emph on
+DBManager
+\emph default
+.
+ The goal is to delete only the essential data in the database in order
+ te be as fast as possible.
+ The idea is to delete the 
+\begin_inset Quotes eld
+\end_inset
+
+noise
+\begin_inset Quotes erd
+\end_inset
+
+ in a table with one query instead of many triggers.
+ This way is very efficient and works by searching all IDs which are no
+ longer available in the table.
+ For example, if a file is deleted from the 
+\begin_inset Quotes eld
+\end_inset
+
+file
+\begin_inset Quotes erd
+\end_inset
+
+ table, all associations on this file are broken, but they are not deleted
+ immediatly.
+ At the end of the loop, a query deletes all associations where the file_id
+ does not exist in the 
+\begin_inset Quotes eld
+\end_inset
+
+file
+\begin_inset Quotes erd
+\end_inset
+
+ table.
+\end_layout
+
+\begin_layout Standard
+There are two considerations.
+ First, the foreign key mechanism available with SQLite can not be used.
+ The second is that the database is not cleaned when libvalhalla is forced
+ to stop (see the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Force-stop"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsubsection
+Garbage
+\end_layout
+
+\begin_layout Standard
+A mechanism in libvalhalla does many work in order to prevent garbage at
+ the shutdown.
+ This one is called mrproper() and it is very important in the case where
+ libvalhalla is forced to stop.
+ Because in this case, many files exist in memory with many metadata.
+ The function mrproper() checks all files and does the right action accordingly
+ to its state.
+ And all files are finally released from the memory.
+ Note that libvalhalla is leak-free (otherwise there is a bug somewhere,
+ please report).
+ Look at valhalla.c for more informations.
+\end_layout
+
+\begin_layout Subsection
+OS dependent codes
+\end_layout
+
+\begin_layout Standard
+The library supports many platforms with the help of some specific codes.
+ The supported OS are:
+\end_layout
+
+\begin_layout Itemize
+Linux
+\end_layout
+
+\begin_layout Itemize
+*BSD (FreeBSD, OpenBSD, NetBSD, ...)
+\end_layout
+
+\begin_layout Itemize
+GNU Hurd
+\end_layout
+
+\begin_layout Itemize
+Darwin (MacOSX)
+\end_layout
+
+\begin_layout Itemize
+Windows (Windows NT and Windows CE)
+\end_layout
+
+\begin_layout Standard
+The main problems of portability between the OS are related to the high
+ precision timer functions and the priorities for the processes (threads).
+ There are two types of processes.
+ The process with its own memory space and the thread where the memory space
+ is shared.
+ In order to change the priority for a thread, it needs (in a general way)
+ to configure the type of scheduler in order to have the possibility to
+ use the real-time priorities.
+ These schedulers are SCHED_FIFO and SCHED_RR.
+ A thread by default uses SCHED_OTHER (like the processes).
+ But the major constraint is regarding the rights needed for the real-time
+ schedulers.
+ Only the root can use them.
+ In this case, the only way is the use of SCHED_OTHER with the non-real-time
+ priorities.
+ To proceed we need the process ID corresponding to the thread.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\family sans
+\series bold
+Note:
+\series default
+ with many kernels a thread is seen like a process.
+ Then it is possible to change the priority of the time-shared scheduler
+ with the common functions 
+\begin_inset Quotes eld
+\end_inset
+
+setpriority()
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is useful to look at thread_utils.c file.
+ For Linux, we should use the gettid() function which is able to retrieve
+ the ID for the thread.
+ We can not use getpid() which is intended to return the TGID (thread group
+ ID, or shared PID).
+ The main problem here is that the glibc has no function called gettid(),
+ then it is necessary to use a specific syscall().
+ For *BSD (and Darwin) it uses an other way.
+ The kernel creates a PID for every thread, then we must use getpid().
+ The last particular case is for Windows.
+ POSIX functions are not available, we must use the Windows API.
+ For GNU Hurd, we can not change the priority because getpid() returns always
+ the same PID and gettid() seems unavailable.
+ It is the only regression in libvalhalla with this kernel.
+\end_layout
+
+\begin_layout Standard
+The second major portability problem concerns the high precision timer.
+ All POSIX kernel provides the functions for this purpose.
+ But for Windows, it is a bit more difficult and needs an emulation.
+\end_layout
+
+\begin_layout Subsubsection
+Windows emulation for clock_gettime()
+\end_layout
+
+\begin_layout Standard
+The timer functions of Windows are not very efficient.
+ The granularity is about 
+\begin_inset Formula $15.625\,\unit{ms}$
+\end_inset
+
+.
+ libvalhalla uses the POSIX function clock_gettime() which work with the
+ nanosecond.
+ Linux is able to be very precise in the microsecond and retrieves the time
+ in the nanosecond.
+ The idea is to emulate the precision with the high precision timer available
+ with the processor (or the RTC).
+ This timer is readable with the functions provided by the Windows API.
+ QueryPerformanceFrequency() and QueryPerformanceCounter() are needed and
+ return the raw values provided by the precision timer.
+ From these values, it is necessary to compute the time and to sychronize
+ this time with the current time.
+ Please, look at osdep.c for the code related to this section.
+\end_layout
+
+\begin_layout Standard
+The current implementation is not perfect.
+ The main problem concerns the divergence between the real clock and the
+ precision timer.
+ A re-synchronization is needed sometimes in order to prevent side-effects
+ when libvalhalla is used on a very long time.
+ At the moment, the synchronization is done only at the initialization.
+\end_layout
+
+\begin_layout Subsubsection
+Darwin and clock_gettime()
+\end_layout
+
+\begin_layout Standard
+Darwin does not provide the POSIX version of clock_gettime.
+ But with the help of the Mach headers, a functions nearly the same is available.
+ 
+\end_layout
+
+\begin_layout Chapter
+How to use libvalhalla
+\end_layout
+
+\begin_layout Standard
+This chapter concerns only some particular use of the library.
+ Most of the documentation (
+\emph on
+Doxygen
+\emph default
+) is available in the public header 
+\begin_inset Quotes eld
+\end_inset
+
+valhalla.h
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Initialization
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Running
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Events
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Selections on the database
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+External metadata
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Section
+Uninitialization
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\end_body
+\end_document
