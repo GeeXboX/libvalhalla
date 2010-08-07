@@ -262,11 +262,11 @@ typedef struct valhalla_s valhalla_t;
 
 /** \brief Error code returned by valhalla_run(). */
 enum valhalla_errno {
-  VALHALLA_ERROR_DEAD    = -4,
-  VALHALLA_ERROR_PATH    = -3,
-  VALHALLA_ERROR_HANDLER = -2,
-  VALHALLA_ERROR_THREAD  = -1,
-  VALHALLA_SUCCESS       =  0,
+  VALHALLA_ERROR_DEAD    = -4,    /**< Valhalla is already running.         */
+  VALHALLA_ERROR_PATH    = -3,    /**< Problem with the paths for the scan. */
+  VALHALLA_ERROR_HANDLER = -2,    /**< Allocation memory error.             */
+  VALHALLA_ERROR_THREAD  = -1,    /**< Problem with at least one thread.    */
+  VALHALLA_SUCCESS       =  0,    /**< The Valkyries are running.           */
 };
 
 /** \brief Verbosity level. */
@@ -306,8 +306,8 @@ typedef enum valhalla_event_gl {
 
 /** \brief Events for metadata callback. */
 typedef enum valhalla_event_md {
-  VALHALLA_EVENTMD_PARSER = 0,
-  VALHALLA_EVENTMD_GRABBER,
+  VALHALLA_EVENTMD_PARSER = 0,    /**< New parsed data.                     */
+  VALHALLA_EVENTMD_GRABBER,       /**< New grabbed data.                    */
 } valhalla_event_md_t;
 
 /** \brief Type of statistic. */
@@ -316,17 +316,21 @@ typedef enum valhalla_stats_type {
   VALHALLA_STATS_COUNTER,     /**< Read value for a counter.                */
 } valhalla_stats_type_t;
 
-/** \brief Priorities for the metadata. */
+/**
+ * \brief Priorities for the metadata.
+ *
+ * The values which are not mod 32, are only for internal use.
+ */
 typedef enum valhalla_metadata_pl {
-  VALHALLA_METADATA_PL_HIGHEST = -128,
-  VALHALLA_METADATA_PL_HIGHER  =  -96,
-  VALHALLA_METADATA_PL_HIGH    =  -64,
-  VALHALLA_METADATA_PL_ABOVE   =  -32,
-  VALHALLA_METADATA_PL_NORMAL  =    0,
-  VALHALLA_METADATA_PL_BELOW   =   32,
-  VALHALLA_METADATA_PL_LOW     =   64,
-  VALHALLA_METADATA_PL_LOWER   =   96,
-  VALHALLA_METADATA_PL_LOWEST  =  128,
+  VALHALLA_METADATA_PL_HIGHEST = -128,    /**< The highest priority.        */
+  VALHALLA_METADATA_PL_HIGHER  =  -96,    /**< The higher priority.         */
+  VALHALLA_METADATA_PL_HIGH    =  -64,    /**< High priority.               */
+  VALHALLA_METADATA_PL_ABOVE   =  -32,    /**< Priority above normal.       */
+  VALHALLA_METADATA_PL_NORMAL  =    0,    /**< Normal (usual) priority.     */
+  VALHALLA_METADATA_PL_BELOW   =   32,    /**< Priority below normal.       */
+  VALHALLA_METADATA_PL_LOW     =   64,    /**< Low priority.                */
+  VALHALLA_METADATA_PL_LOWER   =   96,    /**< The lower priority.          */
+  VALHALLA_METADATA_PL_LOWEST  =  128,    /**< The lowest priority.         */
 } valhalla_metadata_pl_t;
 
 /** \brief Metadata structure for general purpose. */
@@ -840,32 +844,56 @@ typedef struct valhalla_db_restrict_s {
   valhalla_db_item_t data;
 } valhalla_db_restrict_t;
 
-#define VALHALLA_DB_SEARCH(_id, _text, _group, _type, _lang, _priority)  \
-  {                                                               \
-    VALHALLA_DB_TYPE_##_type,                     /* .type     */ \
-    _id,                                          /* .id       */ \
-    _text,                                        /* .text     */ \
-    VALHALLA_META_GRP_##_group,                   /* .group    */ \
-    _lang,                                        /* .lang     */ \
-    _priority                                     /* .priority */ \
-  }
-
-#define VALHALLA_DB_RESTRICT(_op, _m_id, _d_id, _m_text, _d_text,             \
-                             _m_type, _d_type, _lang, _priority)              \
-  {                                                                           \
-    NULL,                                                         /* .next */ \
-    VALHALLA_DB_OPERATOR_##_op,                                   /* .op   */ \
-    VALHALLA_DB_SEARCH (_m_id, _m_text, NIL,                                  \
-                        _m_type, _lang, _priority),               /* .meta */ \
-    VALHALLA_DB_SEARCH (_d_id, _d_text, NIL,                                  \
-                        _d_type, _lang, _priority)                /* .data */ \
-  }
-
 
 /**
  * \name Macros for selection functions handling.
  * @{
  */
+
+/**
+ * \brief Set valhalla_db_item_t local variable.
+ *
+ * If possible, prefer the macros VALHALLA_DB_SEARCH_*() instead of this one.
+ *
+ * \param[in] id      Meta or data ID.
+ * \param[in] txt     Meta or data text.
+ * \param[in] g       Meta group.
+ * \param[in] t       Type of field.
+ * \param[in] l       Language.
+ * \param[in] p       Minimum priority.
+ */
+#define VALHALLA_DB_SEARCH(id, txt, g, t, l, p)   \
+  {                                               \
+    /* .type     = */ VALHALLA_DB_TYPE_##t,       \
+    /* .id       = */ id,                         \
+    /* .text     = */ txt,                        \
+    /* .group    = */ VALHALLA_META_GRP_##g,      \
+    /* .lang     = */ l,                          \
+    /* .priority = */ p                           \
+  }
+
+/**
+ * \brief Set valhalla_db_restrict_t local variable.
+ *
+ * If possible, prefer the macros VALHALLA_DB_RESTRICT_*() instead of this one.
+ *
+ * \param[in] op      Operator applied on the restriction.
+ * \param[in] m_id    Meta ID.
+ * \param[in] d_id    Data ID.
+ * \param[in] m_txt   Meta text.
+ * \param[in] d_txt   Data text.
+ * \param[in] m_t     Type of field for meta.
+ * \param[in] d_t     Type of field for data.
+ * \param[in] l       Language.
+ * \param[in] p       Minimum priority.
+ */
+#define VALHALLA_DB_RESTRICT(op, m_id, d_id, m_txt, d_txt, m_t, d_t, l, p)  \
+  {                                                                         \
+    /* .next = */ NULL,                                                     \
+    /* .op   = */ VALHALLA_DB_OPERATOR_##op,                                \
+    /* .meta = */ VALHALLA_DB_SEARCH (m_id, m_txt, NIL, m_t, l, p),         \
+    /* .data = */ VALHALLA_DB_SEARCH (d_id, d_txt, NIL, d_t, l, p)          \
+  }
 
 /** \brief Set valhalla_db_item_t local variable for an id. */
 #define VALHALLA_DB_SEARCH_ID(meta_id, group, l, p) \
