@@ -119,7 +119,7 @@ START_TEST (test_osdep_strtok_r)
   }
 
   i = 0;
-  item = strtok_r (str, delim, &buffer);
+  item = vh_strtok_r (str, delim, &buffer);
   while (item)
   {
     fail_unless (!strcmp (item, aesir[i]),
