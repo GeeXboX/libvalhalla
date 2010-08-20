@@ -161,32 +161,6 @@
  "CREATE INDEX IF NOT EXISTS "    \
  "assoc_idx ON assoc_file_metadata (meta_id, data_id);"
 
-/* Unique */
-
-#define CREATE_INDEX_FILE_PATH         \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "file_path_idx ON file (file_path);"
-
-#define CREATE_INDEX_TYPE_NAME         \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "type_name_idx ON type (type_name);"
-
-#define CREATE_INDEX_META_NAME         \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "meta_name_idx ON meta (meta_name);"
-
-#define CREATE_INDEX_DATA_VALUE        \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "data_value_idx ON data (data_value);"
-
-#define CREATE_INDEX_GROUP_NAME        \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "grp_name_idx ON grp (grp_name);"
-
-#define CREATE_INDEX_GRABBER_NAME      \
- "CREATE UNIQUE INDEX IF NOT EXISTS "  \
- "grabber_name_idx ON grabber (grabber_name);"
-
 /******************************************************************************/
 /*                                                                            */
 /*                                  Select                                    */

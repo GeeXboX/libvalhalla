@@ -1463,15 +1463,9 @@ database_create_table (database_t *database)
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_TABLE_ASSOC_FILE_GRABBER,  m, err);
 
   /* Create indexes */
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_FILE_PATH,           m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_CHECKED,             m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_INTERRUPTED,         m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_OUTOFPATH,           m, err);
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_TYPE_NAME,           m, err);
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_META_NAME,           m, err);
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_DATA_VALUE,          m, err);
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_GROUP_NAME,          m, err);
-  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_GRABBER_NAME,        m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_ASSOC,               m, err);
 
   DB_SQL_EXEC_OR_GOTO (database->db, END_TRANSACTION,                  m, err);
