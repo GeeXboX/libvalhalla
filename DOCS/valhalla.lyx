@@ -22,7 +22,7 @@
 \usepackage{draftwatermark}
 \SetWatermarkFontSize{7.5cm}
 \SetWatermarkText{DRAFT}
-\SetWatermarkLightness{0.94}
+\SetWatermarkLightness{0.90}
 \SetWatermarkAngle{60}
 
 % PDF
@@ -250,7 +250,8 @@ http://enna.geexbox.org
 \end_inset
 
 .
- Valhalla can search audio, video and image files recursively from a directory.
+ Valhalla can search audio, video and image files recursively from one or
+ more directories.
  Several mechanisms extract metadata and properties to save them in a SQLite
  database.
  Other informations can be retrieved from some web services, like covers,
@@ -271,7 +272,8 @@ documentation and many special internal features are commented in the code.
  all tasks on the pointers which are sent from one thread to an other.
  In some exceptional conditions, a pointer can be available in two threads
  at a time (for writing too).
- It is not a bug, many attributes are considered to be read-only.
+ It is not a bug, many attributes are considered to be read-only (most of
+ time).
  A tool like 
 \emph on
 Valgrind 
@@ -390,7 +392,7 @@ General overview
 \end_layout
 
 \begin_layout Standard
-Valhalla is heavily based on threads to parallelized all tasks.
+Valhalla is heavily based on threads to parallelize all tasks.
  FFmpeg/libavformat is used to fetch the metadata.
  The data are saved in a database managed by SQLite.
  This library can be extended with many grabbers.
@@ -516,7 +518,7 @@ OnDemand
 ).
  Note that many parts can be disabled at the compilation.
  And some threads are not loaded accordingly to the configuration at the
- init of Valhalla, like the 
+ initialization of Valhalla, like the 
 \emph on
 Scanner
 \emph default
@@ -602,10 +604,95 @@ Downloader
  when all grabbers have ended they job.
  In other words, many references on binaries can exist in the database before
  that the binaries will be available.
-\begin_inset Newpage newpage
+\end_layout
+
+\begin_layout Section
+Organisation
+\end_layout
+
+\begin_layout Standard
+TODO: more informations
+\end_layout
+
+\begin_layout Standard
+All components use its own file.
+ It is organized as follow:
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+valhalla.c
+\family default
+
+\begin_inset Newline newline
 \end_inset
 
+like the factory class, it creates objects and all user inputs are sent
+ to it.
+\end_layout
 
+\begin_layout Itemize
+
+\family typewriter
+dbmanager.c, dispatcher.c, downloader.c, event_handler.c, grabber.c, ondemand.c,
+ parser.c
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+are the components, each one can have one or more threads.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+grabber_*.c
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+are the grabbers which are called by grabber.c.
+ The main header is 
+\family typewriter
+grabber_common.h
+\family default
+ with the necessary 
+\emph on
+Doxygen
+\emph default
+ documentation.
+\end_layout
+
+\begin_layout Itemize
+The other files are different features and functionalities which are used
+ by many parts.
+\end_layout
+
+\begin_layout Standard
+The public header is only 
+\family typewriter
+valhalla.h
+\family default
+.
+\end_layout
+
+\begin_layout Subsection
+Versioning policy
+\end_layout
+
+\begin_layout Standard
+The version number is composed of three values (as usual).
+ The major version means no backward compatibility to previous versions
+ (e.g.
+ removal of a function from the public API).
+ The minor version means backward compatible change (e.g.
+ addition of a function to the public API or extension of an existing data
+ structure).
+ The micro version means a noteworthy binary compatible change (e.g.
+ new grabber).
 \end_layout
 
 \begin_layout Section
@@ -802,7 +889,7 @@ For example, the actions dedicated to the database are always sent to the
 DBManager
 \emph default
 .
- In this case, some functions are just a bridge between the public API and
+ In this case, some functions are just bridges between the public API and
  the functions in database.c.
  It looks like:
 \end_layout
@@ -1327,7 +1414,7 @@ status open
 \series bold
 Note:
 \series default
- a future improvement will be to use an asychronious call on all components
+ a future improvement will be to use an asynchronious call on all components
  (like the force-stop mechanism).
  It should be a bit faster.
  At the moment, the threads are sent in waiting list one by one.
@@ -1555,7 +1642,7 @@ DBmanager
 Grabber
 \emph default
  on the meta_grabber attribute of the file structure.
- As soon as the metadata are inserted and flushed, the semaphore is unlocked.
+ As soon as the metadata are inserted and flushed, the semaphore is released.
  
 \end_layout
 
@@ -1633,7 +1720,7 @@ For the last step, the
 Dispatcher
 \emph default
  must change the priority for the file.
- We can think that it wil be a problem for the 
+ We can think that it will be a problem for the 
 \emph on
 OnDemand
 \emph default
@@ -2394,7 +2481,16 @@ EventHandler
 \end_layout
 
 \begin_layout Standard
-TODO
+The 
+\emph on
+EventHandler
+\emph default
+ is only destinated to the user of libvalhalla.
+ Internal events are handled in an other way and they are not available
+ for the public use.
+ The public events are a bit different.
+ There are three types of events accordingly to the functionalities which
+ are used.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2402,7 +2498,16 @@ Global events
 \end_layout
 
 \begin_layout Standard
-TODO
+These events are very general.
+ The goal is to prevent the user of some global actions in libvalhalla,
+ mostly accordingly to the state of the scanner.
+ For example, when the scanner is beginning a new scan, when it is sleeping,
+ etc,...
+ look at the public API (or 
+\emph on
+Doxygen
+\emph default
+) for more informations.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2418,7 +2523,15 @@ OnDemand events
 \end_layout
 
 \begin_layout Standard
-TODO
+When an on-demand request is generated, the frontend can follow all useful
+ steps by these events.
+ There are four events; whe the file is parsed, grabbed (for each grabber
+ with their name), and when the request is ended (implicitly it is the same
+ event that when the downloader has ended).
+ In order to know for what file the event is destinated, the path is sent
+ with the event.
+ In other words, only one callback is set by the frontend at the initialization.
+ The path must be used for the comparaison.
 \end_layout
 
 \begin_layout Section
@@ -2442,7 +2555,24 @@ Statistics
 \end_layout
 
 \begin_layout Standard
-TODO
+While libvalhalla is running, many values (counters and timers) are recorded
+ for some statistics.
+ A counter is just one (or more) values incremented accordingly to some
+ actions.
+ A timer is used in order to retrieve the difference of time between two
+ actions.
+ Most of components use the statistics.
+ All values can be read with the public API.
+ Note that the statistics are printed to the terminal in a more friendly
+ way when the verbosity is set to INFO.
+\end_layout
+
+\begin_layout Standard
+The statistics are grouped with an ID.
+ The frontend can retrieve all IDs and for each one, the counters and the
+ timers can be read with their raw values and a name.
+ The timers use a time based on the nanosecond and all values are returned
+ with an unsigned int64.
 \end_layout
 
 \begin_layout Section
@@ -2511,7 +2641,106 @@ FFmpeg and parsing tricks to be faster
 \end_layout
 
 \begin_layout Standard
-TODO
+When a file must be open by libavformat, several ways are possible.
+ The more common way is to pass only the essential arguments, then libavformat
+ will detect the format automatically.
+ A second way is to pass the right format to FFmpeg.
+ The second way is faster but in this case, the format must be the right
+ or unexpected behaviours can appear.
+\end_layout
+
+\begin_layout Standard
+The idea is using the functions for probing.
+ When FFmpeg tries to discover the format, it probes the file with every
+ demuxer from the first to the last and several times if necessary.
+ It can use a significant time.
+ In order to be faster, libvalhalla will use the probing functions only
+ with the demuxer which looks like the best choice.
+ This decision is done accordingly to the file suffix.
+ For example, if the file is something.mp3, the 
+\begin_inset Quotes eld
+\end_inset
+
+mp3
+\begin_inset Quotes erd
+\end_inset
+
+ demuxer will be used for the probe.
+ If the score for this demuxer is bad, then nothing is passed to FFmpeg
+ and the full autodetection will be engaged.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename states_ffmpeg_01.dia
+	lyxscale 50
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+FFmpeg file probe
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Note:
+\series default
+ the internal 
+\begin_inset Quotes eld
+\end_inset
+
+probe
+\begin_inset Quotes erd
+\end_inset
+
+ function uses the same way that FFmpeg.
+ But it depends of some behaviours of FFmpeg and this functionality can
+ be broken between the versions of libavformat.
+ Look in lavf_utils.c for more informations about this trick.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Indexes
+\end_layout
+
+\begin_layout Subsubsection
+About images
 \end_layout
 
 \begin_layout Subsubsection
@@ -2519,7 +2748,31 @@ libavcodec and multi-threading
 \end_layout
 
 \begin_layout Standard
-TODO
+Most of parts in FFmpeg are thread-safe.
+ Only libavcodec must be used with locking in order to prevent race conditions
+ with the codecs.
+ Libavcodec should not be a dependency of libvalhalla, but according to
+ the fact that the FFmpeg grabber is threaded and this one uses a function
+ of libavformat which depends of libavcodec 
+\begin_inset Quotes eld
+\end_inset
+
+av_find_stream_info()
+\begin_inset Quotes erd
+\end_inset
+
+, libvalhalla must provide the necessary locks for libavcodec.
+ A lock manager is registered by valhalla.c when libavcodec is available.
+ Note that the FFmpeg grabber is always disabled if the libavcodec headers
+ are not found by the 
+\begin_inset Quotes eld
+\end_inset
+
+configure
+\begin_inset Quotes erd
+\end_inset
+
+ script.
 \end_layout
 
 \begin_layout Subsection

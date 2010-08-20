@@ -9,6 +9,7 @@ EXTRADIST = \
 	ffmpeg.png \
 	priorities.txt \
 	sqlite3.png \
+	states_ffmpeg_01.dia \
 	states_general.dia \
 	states_grabbers_01.dia \
 	states_grabbers_lock.dia \
