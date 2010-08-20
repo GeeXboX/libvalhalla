@@ -119,7 +119,6 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
     dl = VALHALLA_DL_FAN_ART;
 
   /* constructing url for download tvdb covers and fan art */
-  memset (complete_url, '\0', MAX_URL_SIZE);
   snprintf (complete_url, MAX_URL_SIZE, TVDB_COVERS_URL,
             TVDB_IMAGES_HOSTNAME, (char *) url);
 
@@ -235,7 +234,6 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   xmlNode *n;
 
   /* proceed with TVDB search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, query, TVDB_HOSTNAME, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
@@ -331,7 +329,6 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
     goto error;
 
   /* proceed with TVDB search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, TVDB_QUERY_INFO,
             TVDB_HOSTNAME, TVDB_API_KEY, seriesid, TVDB_DEFAULT_LANGUAGE);
 

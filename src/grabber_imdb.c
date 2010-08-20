@@ -67,7 +67,6 @@ grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
     return -1;
 
   /* proceed with ImDB search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, IMDB_QUERY,
             IMDB_HOSTNAME, escaped_keywords);
 

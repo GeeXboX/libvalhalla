@@ -71,7 +71,6 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
   xmlDocPtr doc;
 
   /* proceed with Last.fm search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, LASTFM_QUERY_SEARCH,
             LASTFM_HOSTNAME, LASTFM_LICENSE_KEY, artist, album);
 

@@ -66,7 +66,6 @@ grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
     return -1;
 
   /* proceed with Allocine search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, ALLOCINE_QUERY,
             ALLOCINE_HOSTNAME, escaped_keywords);
 

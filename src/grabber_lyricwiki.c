@@ -70,7 +70,6 @@ grabber_lyricwiki_get (grabber_lyricwiki_t *lyricwiki, file_data_t *fdata,
   xmlDocPtr doc;
 
   /* proceed with LyricWiki.org search request */
-  memset (url, '\0', MAX_URL_SIZE);
   snprintf (url, MAX_URL_SIZE, LYRICWIKI_QUERY_SEARCH,
             LYRICWIKI_HOSTNAME, artist, song);
 
