@@ -36,8 +36,6 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_AUDIO
 
-#define MAX_URL_SIZE      1024
-
 #define LYRICWIKI_HOSTNAME     "lyrics.wikia.com"
 #define LYRICWIKI_QUERY_SEARCH "http://%s/api.php?func=getSong&artist=%s&song=%s&fmt=xml"
 

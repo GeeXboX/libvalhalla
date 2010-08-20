@@ -50,8 +50,6 @@
  */
 #define GRABBER_TVDB_UNOFFICIAL_API
 
-#define MAX_URL_SIZE      1024
-
 #define TVDB_DEFAULT_LANGUAGE   "en"
 
 #define TVDB_HOSTNAME           "thetvdb.com"

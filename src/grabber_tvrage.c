@@ -40,8 +40,6 @@
  *  http://services.tvrage.com/index.php?page=public
  */
 
-#define MAX_URL_SIZE      1024
-
 #define TVRAGE_HOSTNAME           "services.tvrage.com"
 
 #define TVRAGE_QUERY_SEARCH       "http://%s/feeds/search.php?show=%s"

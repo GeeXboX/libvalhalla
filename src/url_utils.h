@@ -52,4 +52,6 @@ url_ctl_t *vh_url_ctl_new (void);
 void vh_url_ctl_free (url_ctl_t *url_ctl);
 void vh_url_ctl_abort (url_ctl_t *url_ctl);
 
+#define MAX_URL_SIZE 1024
+
 #endif /* VALHALLA_URL_UTILS_H */

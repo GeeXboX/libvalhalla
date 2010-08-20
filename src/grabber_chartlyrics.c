@@ -40,8 +40,6 @@
  *  http://www.chartlyrics.com/api.aspx
  */
 
-#define MAX_URL_SIZE      1024
-
 #define CHARTLYRICS_HOSTNAME     "api.chartlyrics.com"
 
 #define CHARTLYRICS_QUERY_GET    "http://%s/apiv1.asmx/SearchLyricDirect?artist=%s&song=%s"

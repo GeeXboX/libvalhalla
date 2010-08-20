@@ -41,8 +41,6 @@
  *  http://api.themoviedb.org
  */
 
-#define MAX_URL_SIZE      1024
-
 #define TMDB_HOSTNAME     "api.themoviedb.org"
 
 #define TMDB_API_KEY      "5401cd030990fba60e1c23d2832de62e"

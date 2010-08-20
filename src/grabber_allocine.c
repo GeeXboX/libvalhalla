@@ -35,8 +35,6 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
-#define MAX_URL_SIZE             1024
-
 #define ALLOCINE_HOSTNAME        "www.geexbox.org/php"
 #define ALLOCINE_QUERY           "http://%s/searchMovieAllocine.php?title=%s"
 

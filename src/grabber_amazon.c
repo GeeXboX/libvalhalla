@@ -46,7 +46,6 @@
  *  http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/index.html
  */
 
-#define MAX_URL_SIZE        1024
 #define MAX_KEYWORD_SIZE    1024
 #define MAX_BUF_LEN         65535
 

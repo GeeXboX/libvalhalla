@@ -41,8 +41,6 @@
  *  http://www.lastfm.fr/api
  */
 
-#define MAX_URL_SIZE        1024
-
 #define MAX_LIST_DEPTH      100
 
 #define LASTFM_HOSTNAME     "ws.audioscrobbler.com"

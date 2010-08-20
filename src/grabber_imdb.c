@@ -36,8 +36,6 @@
 #define GRABBER_CAP_FLAGS \
   GRABBER_CAP_VIDEO
 
-#define MAX_URL_SIZE             1024
-
 #define IMDB_HOSTNAME        "www.geexbox.org/php"
 #define IMDB_QUERY           "http://%s/searchMovieIMDB.php?title=%s"
 
