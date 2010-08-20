@@ -2,6 +2,9 @@
  * Valhalla
      -> Improve the log system to send the messages in a callback
         instead of the stderr (if the callback is defined).
+     -> Add a public function to provide the ability to send all threads
+        in waiting list (pause). Like the ondemand but with the scanner
+        too.
 
  * Database
      -> When files are downloaded and the reference on this file is no longer
