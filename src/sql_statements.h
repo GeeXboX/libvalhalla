@@ -161,6 +161,14 @@
  "CREATE INDEX IF NOT EXISTS "    \
  "assoc_idx ON assoc_file_metadata (meta_id, data_id);"
 
+#define CREATE_INDEX_FK_FILE      \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "file_fk_idx ON dlcontext (_file_id);"
+
+#define CREATE_INDEX_FK_ASSOC     \
+ "CREATE INDEX IF NOT EXISTS "    \
+ "grp_fk_idx ON assoc_file_metadata (_grp_id);"
+
 /******************************************************************************/
 /*                                                                            */
 /*                                  Select                                    */

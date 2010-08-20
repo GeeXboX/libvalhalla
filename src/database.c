@@ -1467,6 +1467,8 @@ database_create_table (database_t *database)
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_INTERRUPTED,         m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_OUTOFPATH,           m, err);
   DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_ASSOC,               m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_FK_FILE,             m, err);
+  DB_SQL_EXEC_OR_GOTO (database->db, CREATE_INDEX_FK_ASSOC,            m, err);
 
   DB_SQL_EXEC_OR_GOTO (database->db, END_TRANSACTION,                  m, err);
   return;
