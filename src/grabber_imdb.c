@@ -65,7 +65,7 @@ grabber_imdb_get (grabber_imdb_t *imdb, file_data_t *fdata,
     return -1;
 
   /* proceed with ImDB search request */
-  snprintf (url, MAX_URL_SIZE, IMDB_QUERY,
+  snprintf (url, sizeof (url), IMDB_QUERY,
             IMDB_HOSTNAME, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);

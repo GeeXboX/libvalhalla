@@ -71,7 +71,7 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
     return -1;
 
   /* proceed with TVRage search request */
-  snprintf (url, MAX_URL_SIZE, TVRAGE_QUERY_SEARCH,
+  snprintf (url, sizeof (url), TVRAGE_QUERY_SEARCH,
             TVRAGE_HOSTNAME, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
@@ -107,7 +107,7 @@ grabber_tvrage_get (grabber_tvrage_t *tvrage, file_data_t *fdata,
   doc = NULL;
 
   /* proceed with TVRage search request */
-  snprintf (url, MAX_URL_SIZE,
+  snprintf (url, sizeof (url),
             TVRAGE_QUERY_INFO, TVRAGE_HOSTNAME, tmp);
   xmlFree (tmp);
 

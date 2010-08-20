@@ -117,7 +117,7 @@ grabber_tvdb_get_picture (file_data_t *fdata, const char *keywords,
     dl = VALHALLA_DL_FAN_ART;
 
   /* constructing url for download tvdb covers and fan art */
-  snprintf (complete_url, MAX_URL_SIZE, TVDB_COVERS_URL,
+  snprintf (complete_url, sizeof (complete_url), TVDB_COVERS_URL,
             TVDB_IMAGES_HOSTNAME, (char *) url);
 
   snprintf (name, sizeof (name), "%s-%s", metadata_name, keywords);
@@ -156,7 +156,7 @@ grabber_tvdb_get_episode (grabber_tvdb_t *tvdb, file_data_t *fdata,
   episode = atoi (tag->value);
 
   /* proceed with TVDB episode request */
-  snprintf (url, MAX_URL_SIZE, TVDB_EPISODE_INFO,
+  snprintf (url, sizeof (url), TVDB_EPISODE_INFO,
             TVDB_HOSTNAME, TVDB_API_KEY, seriesid, season, episode,
             TVDB_DEFAULT_LANGUAGE);
 
@@ -232,7 +232,7 @@ grabber_tvdb_search (url_t *handler, const char *escaped_keywords,
   xmlNode *n;
 
   /* proceed with TVDB search request */
-  snprintf (url, MAX_URL_SIZE, query, TVDB_HOSTNAME, escaped_keywords);
+  snprintf (url, sizeof (url), query, TVDB_HOSTNAME, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
@@ -327,7 +327,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
     goto error;
 
   /* proceed with TVDB search request */
-  snprintf (url, MAX_URL_SIZE, TVDB_QUERY_INFO,
+  snprintf (url, sizeof (url), TVDB_QUERY_INFO,
             TVDB_HOSTNAME, TVDB_API_KEY, seriesid, TVDB_DEFAULT_LANGUAGE);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);

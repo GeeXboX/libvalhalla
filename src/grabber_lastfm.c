@@ -69,7 +69,7 @@ grabber_lastfm_get (url_t *handler, char **dl_url,
   xmlDocPtr doc;
 
   /* proceed with Last.fm search request */
-  snprintf (url, MAX_URL_SIZE, LASTFM_QUERY_SEARCH,
+  snprintf (url, sizeof (url), LASTFM_QUERY_SEARCH,
             LASTFM_HOSTNAME, LASTFM_LICENSE_KEY, artist, album);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);

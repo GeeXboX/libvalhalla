@@ -173,7 +173,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
     return -1;
 
   /* 2. Prepare Amazon WebService URL for Search */
-  snprintf (args, MAX_URL_SIZE, AMAZON_ARGS, AMAZON_ACCESS_KEY,
+  snprintf (args, sizeof (args), AMAZON_ARGS, AMAZON_ACCESS_KEY,
             escaped_keywords, search_type, timestamp);
 
   sign64 = grabber_amazon_signature (hd, args);
@@ -219,7 +219,7 @@ grabber_amazon_cover_get (url_t *handler, hmac_sha256_t *hd,
   vh_log (VALHALLA_MSG_VERBOSE, "Found Amazon ASIN: %s", asin);
 
   /* 5. Prepare Amazon WebService URL for Cover Search */
-  snprintf (args, MAX_URL_SIZE,
+  snprintf (args, sizeof (args),
             AMAZON_ARGS_COVER, AMAZON_ACCESS_KEY, asin, timestamp);
   xmlFree (asin);
 

@@ -106,7 +106,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     return -1;
 
   /* proceed with TMDB search request */
-  snprintf (url, MAX_URL_SIZE, TMDB_QUERY_SEARCH,
+  snprintf (url, sizeof (url), TMDB_QUERY_SEARCH,
             TMDB_HOSTNAME, escaped_keywords, TMDB_API_KEY);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
@@ -152,7 +152,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   doc = NULL;
 
   /* proceed with TMDB search request */
-  snprintf (url, MAX_URL_SIZE,
+  snprintf (url, sizeof (url),
             TMDB_QUERY_INFO, TMDB_HOSTNAME, tmp, TMDB_API_KEY);
   xmlFree (tmp);
 

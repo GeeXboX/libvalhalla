@@ -68,7 +68,7 @@ grabber_lyricwiki_get (grabber_lyricwiki_t *lyricwiki, file_data_t *fdata,
   xmlDocPtr doc;
 
   /* proceed with LyricWiki.org search request */
-  snprintf (url, MAX_URL_SIZE, LYRICWIKI_QUERY_SEARCH,
+  snprintf (url, sizeof (url), LYRICWIKI_QUERY_SEARCH,
             LYRICWIKI_HOSTNAME, artist, song);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);

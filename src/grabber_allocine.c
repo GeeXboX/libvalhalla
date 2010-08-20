@@ -64,7 +64,7 @@ grabber_allocine_get (grabber_allocine_t *allocine, file_data_t *fdata,
     return -1;
 
   /* proceed with Allocine search request */
-  snprintf (url, MAX_URL_SIZE, ALLOCINE_QUERY,
+  snprintf (url, sizeof (url), ALLOCINE_QUERY,
             ALLOCINE_HOSTNAME, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
