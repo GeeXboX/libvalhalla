@@ -102,7 +102,42 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       development, you're highly welcomed to join in.
       </p>
       <p>
-      Current release is 1.0.1, featuring with the following changes :
+      Current stable release is 2.0.0, featuring with the following changes :
+      </p>
+      <ul>
+        <li>Faster shutdown on force-stop.</li>
+        <li>Support of concurrent grabbers.</li>
+        <li>New ChartLyrics grabber.</li>
+        <li>Support of languages and priorities with the metadata.</li>
+        <li>Rework of many public functions.</li>
+        <li>Support for MS Windows and Darwin.</li>
+        <li>... Many other changes, look at
+            <a href="http://hg.geexbox.org/libvalhalla/file/v2.0.0/ChangeLog">
+            ChangeLog</a></li>
+      </ul>
+      <p>Supported grabbers :</p>
+      <ul>
+        <li><b><a href="http://www.allocine.fr">Allocine</a></b></li>
+        <li><b><a href="http://webservices.amazon.com">Amazon</a></b></li>
+        <li><b>EXIF</b><br />
+            relies on <a href="http://libexif.sourceforge.net">libexif</a></li>
+        <li><b>FFmpeg</b><br />
+            relies on <a href="http://ffmpeg.org">libavcodec</a></li>
+        <li><b><a href="http://www.imdb.com">ImDB</a></b></li>
+        <li><b><a href="http://www.last.fm">Last.fm</a></b></li>
+        <li><b>localfiles</b></li>
+        <li><b><a href="http://www.chartlyrics.com">ChartLyrics</a></b></li>
+        <li><b><a href="http://lyrics.wikia.com">LyricWiki.org</a></b></li>
+        <li><b>NFO</b><br />
+            relies on <a href="http://libnfo.geexbox.org">libnfo</a></li>
+        <li><b><a href="http://thetvdb.com">TheTVDB.com</a></b></li>
+        <li><b><a href="http://www.themoviedb.org">TheMovieDB.org</a></b></li>
+        <li><b><a href="http://tvrage.com">TVRage.com</a></b></li>
+      </ul>
+
+      <h3>Previous stable release</h3>
+      <p>
+      Changes in 1.0.1 :
       </p>
       <ul>
         <li>Fixes and improvements in configure/Makefiles.</li>
@@ -124,25 +159,6 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       <ul>
         <li>Initial project release</li>
         <li>Full scanning, parsing and grabbing support</li>
-      </ul>
-      <p>Supported grabbers :</p>
-      <ul>
-        <li><b><a href="http://www.allocine.fr">Allocine</a></b></li>
-        <li><b><a href="http://webservices.amazon.com">Amazon</a></b></li>
-        <li><b>EXIF</b><br />
-            relies on <a href="http://libexif.sourceforge.net">libexif</a></li>
-        <li><b>FFmpeg</b><br />
-            relies on <a href="http://ffmpeg.org">libavcodec</a></li>
-        <li><b><a href="http://www.imdb.com">ImDB</a></b></li>
-        <li><b><a href="http://www.last.fm">Last.fm</a></b></li>
-        <li><b>localfiles</b></li>
-        <li><b><a href="http://lyricsfly.com">LyricsFly.com</a></b></li>
-        <li><b><a href="http://lyrics.wikia.com">LyricWiki.org</a></b></li>
-        <li><b>NFO</b><br />
-            relies on <a href="http://libnfo.geexbox.org">libnfo</a></li>
-        <li><b><a href="http://thetvdb.com">TheTVDB.com</a></b></li>
-        <li><b><a href="http://www.themoviedb.org">TheMovieDB.org</a></b></li>
-        <li><b><a href="http://tvrage.com">TVRage.com</a></b></li>
       </ul>
 
     <h2 id="Copyright_and_License">
@@ -188,22 +204,11 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       Download
     </h2>
       <p>
-      The currently available libvalhalla release is 1.0.1.<br />
+      The currently available libvalhalla release is 2.0.0.<br />
       Sources can be downloaded
-      <a href="http://libvalhalla.geexbox.org/releases/libvalhalla-1.0.1.tar.bz2">
+      <a href="http://libvalhalla.geexbox.org/releases/libvalhalla-2.0.0.tar.bz2">
       here</a>.
       </p>
-
-      <h3>Packages</h3>
-        <p>
-        If you're using Ubuntu 9.10 (Karmic) GNU/Linux distribution, libvalhalla
-        packages are available through your packet manager for your i386 and
-        amd64 architectures.
-        </p>
-        <p>Simply add the following line to your /etc/apt/sources.list file :</p>
-        <pre>deb http://packages.geexbox.org/ karmic main</pre>
-        <p>and install libvalhalla with : </p>
-        <pre>sudo aptitude update &amp;&amp; sudo aptitude install libvalhalla</pre>
 
       <h3>Development Tree</h3>
         <p>
