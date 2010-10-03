@@ -1266,75 +1266,6 @@ database_info_set (database_t *database, const char *name, const char *value)
     vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
 }
 
-#define VH_INFO_DB_VERSION  "vh_db_version"   /* LIBVALHALLA_DB_VERSION     */
-
-static int
-database_info (database_t *database)
-{
-  int ver = LIBVALHALLA_DB_VERSION;
-  char *val;
-
-  val = database_info_get (database, VH_INFO_DB_VERSION);
-  if (val)
-  {
-    ver = (int) strtol (val, NULL, 10);
-    free (val);
-  }
-  else
-    database_info_set (database, VH_INFO_DB_VERSION,
-                          VH_TOSTRING (LIBVALHALLA_DB_VERSION));
-
-  vh_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
-  if (ver > LIBVALHALLA_DB_VERSION)
-  {
-    vh_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
-                                "build (the version of your database is "
-                                "unsupported)");
-    return -1;
-  }
-  else if (ver < LIBVALHALLA_DB_VERSION)
-  {
-    char *err = NULL;
-
-    if (ver == 1 && LIBVALHALLA_DB_VERSION == 2)
-    {
-      const char *const up[] = {
-        DB_UPDATER_FROM_1_TO_2_A,
-        DB_UPDATER_FROM_1_TO_2_B,
-      };
-      unsigned int i;
-
-      vh_log (VALHALLA_MSG_WARNING,
-              "Upgrade the database from the version %i to the version %i",
-              ver, LIBVALHALLA_DB_VERSION);
-
-      for (i = 0; i < ARRAY_NB_ELEMENTS (up) && !err; i++)
-        database_sql_exec (database->db, up[i], NULL, &err);
-
-      if (!err)
-      {
-        database_info_set (database, VH_INFO_DB_VERSION,
-                           VH_TOSTRING (LIBVALHALLA_DB_VERSION));
-        return 0;
-      }
-    }
-
-    if (err)
-    {
-      vh_log (VALHALLA_MSG_ERROR, "%s", err);
-      free (err);
-    }
-
-    vh_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
-                                "version (%i) is too old and can not be "
-                                "upgraded to the version %i.",
-                                database->path, ver, LIBVALHALLA_DB_VERSION);
-    return -1;
-  }
-
-  return 0;
-}
-
 /******************************************************************************/
 /*                               Main Functions                               */
 /******************************************************************************/
@@ -1501,6 +1432,75 @@ database_create_table (database_t *database)
  err:
   vh_log (VALHALLA_MSG_ERROR, "%s", m);
   free (m);
+}
+
+#define VH_INFO_DB_VERSION  "vh_db_version"   /* LIBVALHALLA_DB_VERSION     */
+
+static int
+database_info (database_t *database)
+{
+  int ver = LIBVALHALLA_DB_VERSION;
+  char *val;
+
+  val = database_info_get (database, VH_INFO_DB_VERSION);
+  if (val)
+  {
+    ver = (int) strtol (val, NULL, 10);
+    free (val);
+  }
+  else
+    database_info_set (database, VH_INFO_DB_VERSION,
+                          VH_TOSTRING (LIBVALHALLA_DB_VERSION));
+
+  vh_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
+  if (ver > LIBVALHALLA_DB_VERSION)
+  {
+    vh_log (VALHALLA_MSG_ERROR, "Please, upgrade libvalhalla to a newest "
+                                "build (the version of your database is "
+                                "unsupported)");
+    return -1;
+  }
+  else if (ver < LIBVALHALLA_DB_VERSION)
+  {
+    char *err = NULL;
+
+    if (ver == 1 && LIBVALHALLA_DB_VERSION == 2)
+    {
+      const char *const up[] = {
+        DB_UPDATER_FROM_1_TO_2_A,
+        DB_UPDATER_FROM_1_TO_2_B,
+      };
+      unsigned int i;
+
+      vh_log (VALHALLA_MSG_WARNING,
+              "Upgrade the database from the version %i to the version %i",
+              ver, LIBVALHALLA_DB_VERSION);
+
+      for (i = 0; i < ARRAY_NB_ELEMENTS (up) && !err; i++)
+        database_sql_exec (database->db, up[i], NULL, &err);
+
+      if (!err)
+      {
+        database_info_set (database, VH_INFO_DB_VERSION,
+                           VH_TOSTRING (LIBVALHALLA_DB_VERSION));
+        return 0;
+      }
+    }
+
+    if (err)
+    {
+      vh_log (VALHALLA_MSG_ERROR, "%s", err);
+      free (err);
+    }
+
+    vh_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
+                                "version (%i) is too old and can not be "
+                                "upgraded to the version %i.",
+                                database->path, ver, LIBVALHALLA_DB_VERSION);
+    return -1;
+  }
+
+  return 0;
 }
 
 void
