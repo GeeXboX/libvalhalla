@@ -171,6 +171,24 @@
 
 /******************************************************************************/
 /*                                                                            */
+/*                                 Updater                                    */
+/*                                                                            */
+/******************************************************************************/
+
+/* Updater from 1 to 2 */
+
+/* The first language is always the "undef" then the ID is 1. */
+#define DB_UPDATER_FROM_1_TO_2_A            \
+ "ALTER TABLE data "                        \
+ "ADD COLUMN _lang_id INTEGER DEFAULT 1;"
+
+/* A priority of 0 is NORMAL. */
+#define DB_UPDATER_FROM_1_TO_2_B            \
+ "ALTER TABLE assoc_file_metadata "         \
+ "ADD COLUMN priority__ INTEGER DEFAULT 0;"
+
+/******************************************************************************/
+/*                                                                            */
 /*                                  Select                                    */
 /*                                                                            */
 /******************************************************************************/
@@ -381,7 +399,7 @@
 /******************************************************************************/
 
 #define INSERT_INFO                   \
- "INSERT "                            \
+ "INSERT OR REPLACE "                 \
  "INTO info (info_name, info_value) " \
  "VALUES (?, ?);"
 
@@ -447,11 +465,6 @@
 /*                                  Update                                    */
 /*                                                                            */
 /******************************************************************************/
-
-#define UPDATE_INFO     \
- "UPDATE info "         \
- "SET info_value = ? "  \
- "WHERE info_name = ?;"
 
 #define UPDATE_FILE          \
  "UPDATE file "              \

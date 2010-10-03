@@ -1243,7 +1243,7 @@ database_info_get (database_t *database, const char *name)
 }
 
 static void
-database_info_insert (database_t *database, const char *name, const char *value)
+database_info_set (database_t *database, const char *name, const char *value)
 {
   int res, err = -1;
   sqlite3_stmt *stmt;
@@ -1281,7 +1281,7 @@ database_info (database_t *database)
     free (val);
   }
   else
-    database_info_insert (database, VH_INFO_DB_VERSION,
+    database_info_set (database, VH_INFO_DB_VERSION,
                           VH_TOSTRING (LIBVALHALLA_DB_VERSION));
 
   vh_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
@@ -1294,12 +1294,37 @@ database_info (database_t *database)
   }
   else if (ver < LIBVALHALLA_DB_VERSION)
   {
-    /*
-     * XXX: The mechanisms to provide the upgrades must be implemented when
-     *      the first version of libvalhalla will be released.
-     *      For devel, it is acceptable to delete the database for each new
-     *      versions.
-     */
+    char *err = NULL;
+
+    if (ver == 1 && LIBVALHALLA_DB_VERSION == 2)
+    {
+      const char *const up[] = {
+        DB_UPDATER_FROM_1_TO_2_A,
+        DB_UPDATER_FROM_1_TO_2_B,
+      };
+      unsigned int i;
+
+      vh_log (VALHALLA_MSG_WARNING,
+              "Upgrade the database from the version %i to the version %i",
+              ver, LIBVALHALLA_DB_VERSION);
+
+      for (i = 0; i < ARRAY_NB_ELEMENTS (up) && !err; i++)
+        database_sql_exec (database->db, up[i], NULL, &err);
+
+      if (!err)
+      {
+        database_info_set (database, VH_INFO_DB_VERSION,
+                           VH_TOSTRING (LIBVALHALLA_DB_VERSION));
+        return 0;
+      }
+    }
+
+    if (err)
+    {
+      vh_log (VALHALLA_MSG_ERROR, "%s", err);
+      free (err);
+    }
+
     vh_log (VALHALLA_MSG_ERROR, "Please, delete your database (%s), your "
                                 "version (%i) is too old and can not be "
                                 "upgraded to the version %i.",
