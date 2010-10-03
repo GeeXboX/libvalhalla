@@ -1450,7 +1450,7 @@ database_info (database_t *database)
   }
   else
     database_info_set (database, VH_INFO_DB_VERSION,
-                          VH_TOSTRING (LIBVALHALLA_DB_VERSION));
+                       VH_TOSTRING (LIBVALHALLA_DB_VERSION));
 
   vh_log (VALHALLA_MSG_INFO, "Database version : %i", ver);
   if (ver > LIBVALHALLA_DB_VERSION)
