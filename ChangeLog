@@ -1,3 +1,65 @@
+libvalhalla (2.0)
+
+  2.0.0: 3 Oct, 2010
+
+    Core:
+    * The functions to configure an handle are unified with a variadic
+      function named valhalla_config_set().
+    * Some improvements (speed) with the communications between the threads.
+    * The statistics can be retrieved with the public API.
+    * Support for global events (only related to the scanner).
+    * Improvements with the internal lists (faster and configurable depth).
+    * A group name can be retrieved with the public API.
+    * The scanner is disabled when no path is specified.
+    * The pause mechanism is faster with a group (parsers and grabbers) of
+      threads. It uses an asynchronious call.
+    * Faster force-stop by using an asynchronious call with all threads.
+    * The timeout with cURL is now explicitly set to 20 seconds.
+    * A cURL transfer can be broken on the force-stop.
+    * Support for MS Windows and Darwin.
+
+    Scanner:
+    * The first scanning can be delayed. Useful when the front-end is still
+      loading.
+
+    Metadata:
+    * New metadata callback useful to retrieve the metadata with the front-end
+      as soon as they are available. Note that the use of this callback is not
+      recommended.
+    * Support of priorities with the metadata. The default priorities used by
+      the parsers and the grabbers can be changed with the public API.
+    * Support for language with the metadata. It depends of the configuration
+      in the grabbers.
+    * The filesize is now part of the metadata (technical group).
+
+    Database:
+    * The public functions for selections are reworked. A first function
+      prepares the statement and a second is used in order to retrieve the next
+      available row.
+    * The results with the public functions can be limited to a specific
+      filetype and language.
+    * The files entries with the flag 'external' are deleted when they are no
+      longer reachable.
+    * The priority and the language can be changed for a specific metadata.
+    * The databases from libvalhalla-1 are upgraded automatically.
+
+    Grabber:
+    * Support for concurrent grabbers. It can save about 30% of the time with
+      a music and video collection and more than one grabber.
+    * No more dependency on libgcrypt. The HMAC-SHA2 signature for Amazon is
+      computed by libvalhalla.
+    * New lyric grabber (ChartLyrics).
+    * A new attribute (used by ChartLyrics) provides the possibility to set a
+      minimum time to wait between two grabs.
+    * Drop LyricsFly grabber (unusable; no valid API key).
+    * The TVDB grabber is able to retrieve the metadata for a specific episode.
+
+    Other:
+    * Manpage for libvalhalla-test.
+    * Test suite based on libcheck.
+    * Many various improvements ...
+
+
 libvalhalla (1.0)
 
   1.0.1: 25 Feb, 2010
