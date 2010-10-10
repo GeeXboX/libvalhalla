@@ -1,6 +1,6 @@
 /*
  * GeeXboX Valhalla: tiny media scanner API.
- * Copyright (C) 2009-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2009-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * The HMAC-SHA2 digest is freely inspired by FFmpeg/libavformat/rtmpproto.c.
  *

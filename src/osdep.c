@@ -1,6 +1,6 @@
 /*
  * GeeXboX Valhalla: tiny media scanner API.
- * Copyright (C) 2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * The clock_gettime support for Windows comes from Evil, an EFL library
  * mainly written by Vincent Torri <vtorri at univ-evry dot fr> and
