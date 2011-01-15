@@ -23,5 +23,6 @@
 #define VH_TEST_H
 
 void vh_test_osdep (TCase *tc);
+void vh_test_parser (TCase *tc);
 
 #endif /* VH_TEST_H */

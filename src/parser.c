@@ -79,6 +79,7 @@ parser_is_stopped (parser_t *parser)
   return !run;
 }
 
+/* VH_TEST (parser_decrap_pattern) { */
 #define PATTERN_NUMBER "NUM"
 #define PATTERN_SEASON  "SE"
 #define PATTERN_EPISODE "EP"
@@ -151,6 +152,7 @@ parser_decrap_pattern (char *str, const char *bl,
     *ep = 0;
   }
 }
+/* } VH_TEST (parser_decrap_pattern) */
 
 static void
 parser_decrap_blacklist (char **list, char *str, metadata_t **meta)
