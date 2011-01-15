@@ -293,7 +293,9 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   if (!ctx)
     return NULL;
 
+#if LIBAVFORMAT_VERSION_MAJOR < 53
   av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
+#endif /* LIBAVFORMAT_VERSION_MAJOR < 53 */
 
   while ((tag = av_metadata_get (ctx->metadata,
                                  "", tag, AV_METADATA_IGNORE_SUFFIX)))
