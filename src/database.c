@@ -360,6 +360,9 @@ database_query_plan (database_t *database, const char *sql)
   const char *plan = "EXPLAIN QUERY PLAN ";
   valhalla_db_stmt_t *vhstmt;
 
+  if (!vh_log_test (VALHALLA_MSG_VERBOSE))
+    return;
+
   if (!sql)
     return;
 
@@ -417,8 +420,7 @@ database_prepare_stmt (database_t *database)
      * The query plan is useful in order to found the best way for indexing
      * the tables.
      */
-    if (vh_log_test (VALHALLA_MSG_VERBOSE))
-      database_query_plan (database, database->stmts[i].sql);
+    database_query_plan (database, database->stmts[i].sql);
   }
 
   return 0;
