@@ -352,6 +352,10 @@ database_file_typeid_get (database_t *database, valhalla_file_type_t type)
   return 0;
 }
 
+/*
+ * The query plan is useful in order to found the best way for indexing
+ * the tables.
+ */
 static void
 database_query_plan (database_t *database, const char *sql)
 {
@@ -416,10 +420,6 @@ database_prepare_stmt (database_t *database)
       return -1;
     }
 
-    /*
-     * The query plan is useful in order to found the best way for indexing
-     * the tables.
-     */
     database_query_plan (database, database->stmts[i].sql);
   }
 
