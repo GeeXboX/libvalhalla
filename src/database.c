@@ -1701,20 +1701,20 @@ vh_database_init (const char *path)
   }                                                                  \
   while (0)
 
-#define VH_DB_RETURN_SQL_PREPARE(d, s, v)                     \
-  {                                                           \
-    int rc;                                                   \
+#define VH_DB_RETURN_SQL_PREPARE(d, s, v)                         \
+  {                                                               \
+    int rc;                                                       \
     database_query_plan (d, s);                                   \
-    v->sql = strdup (s);                                      \
+    v->sql = strdup (s);                                          \
     rc = sqlite3_prepare_v2 (d->db, v->sql, -1, &v->stmt, NULL);  \
-    if (rc != SQLITE_OK)                                      \
-    {                                                         \
-      vh_log (VALHALLA_MSG_ERROR,                             \
+    if (rc != SQLITE_OK)                                          \
+    {                                                             \
+      vh_log (VALHALLA_MSG_ERROR,                                 \
               "%s - query: %s", sqlite3_errmsg (d->db), s);       \
-      database_vhstmt_free (v);                               \
-      return NULL;                                            \
-    }                                                         \
-    return v;                                                 \
+      database_vhstmt_free (v);                                   \
+      return NULL;                                                \
+    }                                                             \
+    return v;                                                     \
   }
 
 static inline int
