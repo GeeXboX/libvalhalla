@@ -33,6 +33,11 @@
 #include "logs.h"
 
 
+static int
+database_sql_exec (sqlite3 *db, const char *sql,
+                   valhalla_db_stmt_t *vhstmt, char **errmsg);
+
+
 #define SQL_BUFFER 8192
 
 typedef struct stmt_list_s {
@@ -313,8 +318,50 @@ database_prepare_stmt (database_t *database)
       vh_log (VALHALLA_MSG_ERROR, "%s", sqlite3_errmsg (database->db));
       return -1;
     }
+
+    /*
+     * The query plan is useful in order to found the best way for indexing
+     * the tables.
+     */
+    if (vh_log_test (VALHALLA_MSG_VERBOSE))
+    {
+      int row = 0;
+      size_t size;
+      const char *plan = "EXPLAIN QUERY PLAN ";
+      valhalla_db_stmt_t *vhstmt = calloc (1, sizeof (*vhstmt));
+
+      if (!vhstmt)
+        goto out;
+
+      size = strlen (database->stmts[i].sql) + strlen (plan) + 1;
+      vhstmt->sql = malloc (size);
+      if (!vhstmt->sql)
+      {
+        free (vhstmt);
+        goto out;
+      }
+
+      snprintf (vhstmt->sql, size, "%s%s", plan, database->stmts[i].sql);
+      while (!database_sql_exec (database->db, vhstmt->sql, vhstmt, NULL))
+      {
+        if (!row)
+        {
+          row = 1;
+          vh_log (VALHALLA_MSG_VERBOSE,
+                  "Query plan for : [%i] %s", i, database->stmts[i].sql);
+
+        }
+
+        vh_log (VALHALLA_MSG_VERBOSE, "| %s | %s | %s",
+                vhstmt->cols[0], vhstmt->cols[1], vhstmt->cols[2]);
+      }
+
+      if (row)
+        vh_log (VALHALLA_MSG_VERBOSE, "");
+    }
   }
 
+ out:
   return 0;
 }
 
