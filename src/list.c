@@ -79,13 +79,13 @@ vh_list_append (list_t *list, const void *data, size_t len)
 
   /* Remove the older item to preserve the depth. */
   if (list->depth && list->cnt >= list->depth)
-    {
-      list_item_t *item_n = list->item->next;
-      list_item_free (list, list->item);
-      list->item = item_n;
-    }
-    else
-      list->cnt++;
+  {
+    list_item_t *item_n = list->item->next;
+    list_item_free (list, list->item);
+    list->item = item_n;
+  }
+  else
+    list->cnt++;
 
   list->item_last = item;
 
