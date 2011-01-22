@@ -1704,12 +1704,13 @@ vh_database_init (const char *path)
 #define VH_DB_RETURN_SQL_PREPARE(d, s, v)                     \
   {                                                           \
     int rc;                                                   \
+    database_query_plan (d, s);                                   \
     v->sql = strdup (s);                                      \
-    rc = sqlite3_prepare_v2 (d, v->sql, -1, &v->stmt, NULL);  \
+    rc = sqlite3_prepare_v2 (d->db, v->sql, -1, &v->stmt, NULL);  \
     if (rc != SQLITE_OK)                                      \
     {                                                         \
       vh_log (VALHALLA_MSG_ERROR,                             \
-              "%s - query: %s", sqlite3_errmsg (d), s);       \
+              "%s - query: %s", sqlite3_errmsg (d->db), s);       \
       database_vhstmt_free (v);                               \
       return NULL;                                            \
     }                                                         \
@@ -1990,7 +1991,7 @@ vh_database_metalist_get (database_t *database,
    */
   SQL_CONCAT (sql, SELECT_LIST_METADATA_END);
 
-  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
+  VH_DB_RETURN_SQL_PREPARE (database, sql, vhstmt)
 }
 
 const valhalla_db_fileres_t *
@@ -2073,7 +2074,7 @@ vh_database_filelist_get (database_t *database,
   /* ORDER BY file_id; */
   SQL_CONCAT (sql, SELECT_LIST_FILE_END);
 
-  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
+  VH_DB_RETURN_SQL_PREPARE (database, sql, vhstmt)
 }
 
 const valhalla_db_metares_t *
@@ -2171,7 +2172,7 @@ vh_database_file_get (database_t *database,
   /* ORDER BY assoc.priority__; */
   SQL_CONCAT (sql, SELECT_FILE_END);
 
-  VH_DB_RETURN_SQL_PREPARE (database->db, sql, vhstmt)
+  VH_DB_RETURN_SQL_PREPARE (database, sql, vhstmt)
 }
 
 /******************************************************************************/
