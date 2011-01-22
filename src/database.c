@@ -33,11 +33,6 @@
 #include "logs.h"
 
 
-static int
-database_sql_exec (sqlite3 *db, const char *sql,
-                   valhalla_db_stmt_t *vhstmt, char **errmsg);
-
-
 #define SQL_BUFFER 8192
 
 typedef struct stmt_list_s {
@@ -216,6 +211,65 @@ static const stmt_list_t g_stmts[] = {
 /*                                 Internal                                   */
 /*                                                                            */
 /******************************************************************************/
+
+static void
+database_vhstmt_free (valhalla_db_stmt_t *vhstmt)
+{
+  if (!vhstmt)
+    return;
+
+  if (vhstmt->sql)
+    free (vhstmt->sql);
+  free (vhstmt);
+}
+
+/*
+ * This function is a replacement of sqlite3_exec() which should not be used
+ * anymore. Only one SQL query must be passed in the argument.
+ */
+static int
+database_sql_exec (sqlite3 *db, const char *sql,
+                   valhalla_db_stmt_t *vhstmt, char **errmsg)
+{
+  int res;
+  sqlite3_stmt *stmt = NULL;
+
+  if (vhstmt)
+    stmt = vhstmt->stmt;
+
+  /* new query ? */
+  if (!stmt)
+  {
+    res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+      goto out;
+  }
+
+  res = sqlite3_step (stmt);
+  if (res == SQLITE_ROW && vhstmt)
+  {
+    unsigned int i;
+
+    vhstmt->stmt = stmt;
+    vhstmt->cnt  = sqlite3_column_count (stmt);
+    for (i = 0; i < vhstmt->cnt && i < VHSTMT_MAXCOLS; i++)
+      vhstmt->cols[i] = (const char *) sqlite3_column_text (stmt, i);
+
+    return 0;
+  }
+
+ out:
+  if (res != SQLITE_DONE && res != SQLITE_OK)
+  {
+    const char *err = sqlite3_errmsg (db);
+    if (err)
+      *errmsg = strdup (err);
+  }
+
+  database_vhstmt_free (vhstmt);
+  sqlite3_finalize (stmt);
+  return 1;
+}
 
 static valhalla_meta_grp_t
 database_group_get (database_t *database, int64_t id)
@@ -1379,65 +1433,6 @@ vh_database_step_transaction (database_t *database,
     vh_database_end_transaction (database);
     vh_database_begin_transaction (database);
   }
-}
-
-static void
-database_vhstmt_free (valhalla_db_stmt_t *vhstmt)
-{
-  if (!vhstmt)
-    return;
-
-  if (vhstmt->sql)
-    free (vhstmt->sql);
-  free (vhstmt);
-}
-
-/*
- * This function is a replacement of sqlite3_exec() which should not be used
- * anymore. Only one SQL query must be passed in the argument.
- */
-static int
-database_sql_exec (sqlite3 *db, const char *sql,
-                   valhalla_db_stmt_t *vhstmt, char **errmsg)
-{
-  int res;
-  sqlite3_stmt *stmt = NULL;
-
-  if (vhstmt)
-    stmt = vhstmt->stmt;
-
-  /* new query ? */
-  if (!stmt)
-  {
-    res = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
-    if (res != SQLITE_OK)
-      goto out;
-  }
-
-  res = sqlite3_step (stmt);
-  if (res == SQLITE_ROW && vhstmt)
-  {
-    unsigned int i;
-
-    vhstmt->stmt = stmt;
-    vhstmt->cnt  = sqlite3_column_count (stmt);
-    for (i = 0; i < vhstmt->cnt && i < VHSTMT_MAXCOLS; i++)
-      vhstmt->cols[i] = (const char *) sqlite3_column_text (stmt, i);
-
-    return 0;
-  }
-
- out:
-  if (res != SQLITE_DONE && res != SQLITE_OK)
-  {
-    const char *err = sqlite3_errmsg (db);
-    if (err)
-      *errmsg = strdup (err);
-  }
-
-  database_vhstmt_free (vhstmt);
-  sqlite3_finalize (stmt);
-  return 1;
 }
 
 #define DB_SQL_EXEC_OR_GOTO(d, s, m, g)       \
