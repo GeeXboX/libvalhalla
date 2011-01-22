@@ -352,6 +352,46 @@ database_file_typeid_get (database_t *database, valhalla_file_type_t type)
   return 0;
 }
 
+static void
+database_query_plan (database_t *database, const char *sql)
+{
+  int row = 0;
+  size_t size;
+  const char *plan = "EXPLAIN QUERY PLAN ";
+  valhalla_db_stmt_t *vhstmt;
+
+  if (!sql)
+    return;
+
+  vhstmt = calloc (1, sizeof (*vhstmt));
+  if (!vhstmt)
+    return;
+
+  size = strlen (sql) + strlen (plan) + 1;
+  vhstmt->sql = malloc (size);
+  if (!vhstmt->sql)
+  {
+    free (vhstmt);
+    return;
+  }
+
+  snprintf (vhstmt->sql, size, "%s%s", plan, sql);
+  while (!database_sql_exec (database->db, vhstmt->sql, vhstmt, NULL))
+  {
+    if (!row)
+    {
+      row = 1;
+      vh_log (VALHALLA_MSG_VERBOSE, "Query plan for : %s", sql);
+    }
+
+    vh_log (VALHALLA_MSG_VERBOSE, "| %s | %s | %s",
+            vhstmt->cols[0], vhstmt->cols[1], vhstmt->cols[2]);
+  }
+
+  if (row)
+    vh_log (VALHALLA_MSG_VERBOSE, "");
+}
+
 static int
 database_prepare_stmt (database_t *database)
 {
@@ -378,44 +418,9 @@ database_prepare_stmt (database_t *database)
      * the tables.
      */
     if (vh_log_test (VALHALLA_MSG_VERBOSE))
-    {
-      int row = 0;
-      size_t size;
-      const char *plan = "EXPLAIN QUERY PLAN ";
-      valhalla_db_stmt_t *vhstmt = calloc (1, sizeof (*vhstmt));
-
-      if (!vhstmt)
-        goto out;
-
-      size = strlen (database->stmts[i].sql) + strlen (plan) + 1;
-      vhstmt->sql = malloc (size);
-      if (!vhstmt->sql)
-      {
-        free (vhstmt);
-        goto out;
-      }
-
-      snprintf (vhstmt->sql, size, "%s%s", plan, database->stmts[i].sql);
-      while (!database_sql_exec (database->db, vhstmt->sql, vhstmt, NULL))
-      {
-        if (!row)
-        {
-          row = 1;
-          vh_log (VALHALLA_MSG_VERBOSE,
-                  "Query plan for : [%i] %s", i, database->stmts[i].sql);
-
-        }
-
-        vh_log (VALHALLA_MSG_VERBOSE, "| %s | %s | %s",
-                vhstmt->cols[0], vhstmt->cols[1], vhstmt->cols[2]);
-      }
-
-      if (row)
-        vh_log (VALHALLA_MSG_VERBOSE, "");
-    }
+      database_query_plan (database, database->stmts[i].sql);
   }
 
- out:
   return 0;
 }
 
