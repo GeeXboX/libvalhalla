@@ -154,3 +154,20 @@ vh_list_search (const list_t *list, const void *tocmp,
 
   return NULL;
 }
+
+void *
+vh_list_pos (const list_t *list, unsigned int pos)
+{
+  list_item_t *item;
+
+  if (!list)
+    return NULL;
+
+  if (pos >= list->cnt)
+    return NULL;
+
+  for (item = list->item; pos; pos--, item = item->next)
+    ;
+
+  return item->data;
+}

@@ -31,5 +31,6 @@ void vh_list_free (list_t *list);
 void vh_list_empty (list_t *list);
 void *vh_list_search (const list_t *list, const void *tocmp,
                       int (*cmp_fct) (const void *tocmp, const void *data));
+void *vh_list_pos (const list_t *list, unsigned int pos);
 
 #endif /* VALHALLA_LIST_H */
