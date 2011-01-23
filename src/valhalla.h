@@ -521,6 +521,11 @@ typedef struct valhalla_init_param_s {
    * disabled.
    */
   unsigned int decrapifier : 1;
+  /**
+   * If the attribute is set, then the meta keys can be retrieved from the
+   * ondemand callback by using the function valhalla_ondemand_cb_meta().
+   */
+  unsigned int od_meta     : 1;
 
   /**
    * When \p od_cb is defined, an event is sent for each step with an on demand
@@ -782,6 +787,21 @@ void valhalla_scanner_wakeup (valhalla_t *handle);
  * \param[in] file        Target.
  */
 void valhalla_ondemand (valhalla_t *handle, const char *file);
+
+/**
+ * \brief Retrieve the meta key when running in the ondemand callback.
+ *
+ * This function is a no-op when it is used elsewhere that an ondemand callback
+ * or if the od_meta attribute of ::valhalla_init_param_t is 0.
+ *
+ * The function returns the key after \p meta, or the first key if \p meta
+ * is NULL. The returned pointer is valid as long as your are in the callback.
+ *
+ * \param[in] handle      Handle on the scanner.
+ * \param[in] meta        Meta or NULL to retrieve the first.
+ * \return the meta or NULL if \p meta is the last (or on error).
+ */
+const char *valhalla_ondemand_cb_meta (valhalla_t *handle, const char *meta);
 
 /**
  * @}

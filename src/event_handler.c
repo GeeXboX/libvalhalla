@@ -29,6 +29,7 @@
 #include "logs.h"
 #include "thread_utils.h"
 #include "metadata.h"
+#include "list.h"
 #include "event_handler.h"
 
 #define VH_HANDLE event_handler->valhalla
@@ -37,6 +38,7 @@ struct event_handler_od_s {
   char               *file;
   valhalla_event_od_t e;
   const char         *id;
+  list_t             *keys;
 };
 
 struct event_handler_md_s {
@@ -57,6 +59,11 @@ struct event_handler_s {
   int             wait;
   int             run;
   pthread_mutex_t mutex_run;
+
+  /* special for ondemand callback */
+  int                       od_meta;
+  const event_handler_od_t *edata;
+  pthread_mutex_t           mutex_meta;
 };
 
 
@@ -78,6 +85,7 @@ vh_event_handler_od_free (event_handler_od_t *data)
 
   if (data->file)
     free (data->file);
+  vh_list_free (data->keys);
   free (data);
 }
 
@@ -135,9 +143,22 @@ event_handler_thread (void *arg)
     {
       event_handler_od_t *edata = data;
 
+      if (event_handler->od_meta)
+      {
+        event_handler->edata = edata;
+        pthread_mutex_unlock (&event_handler->mutex_meta);
+      }
+
       /* Send to the front-end callback for ondemand events. */
       event_handler->cb.od_cb (edata->file,
                                edata->e, edata->id, event_handler->cb.od_data);
+
+      if (event_handler->od_meta)
+      {
+        pthread_mutex_lock (&event_handler->mutex_meta);
+        event_handler->edata = NULL;
+      }
+
       vh_event_handler_od_free (edata);
       break;
     }
@@ -257,11 +278,17 @@ vh_event_handler_uninit (event_handler_t *event_handler)
   vh_fifo_queue_free (event_handler->fifo);
   pthread_mutex_destroy (&event_handler->mutex_run);
 
+  if (event_handler->od_meta)
+  {
+    pthread_mutex_unlock (&event_handler->mutex_meta);
+    pthread_mutex_destroy (&event_handler->mutex_meta);
+  }
+
   free (event_handler);
 }
 
 event_handler_t *
-vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb)
+vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb, int od_meta)
 {
   event_handler_t *event_handler;
 
@@ -283,6 +310,17 @@ vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb)
 
   pthread_mutex_init (&event_handler->mutex_run, NULL);
 
+  /*
+   * The meta (without data) can be retrieved in the callback with the
+   * function valhalla_ondemand_cb_meta().
+   */
+  if (od_meta)
+  {
+    event_handler->od_meta = 1;
+    pthread_mutex_init (&event_handler->mutex_meta, NULL);
+    pthread_mutex_lock (&event_handler->mutex_meta);
+  }
+
   return event_handler;
 
  err:
@@ -290,9 +328,41 @@ vh_event_handler_init (valhalla_t *handle, event_handler_cb_t *cb)
   return NULL;
 }
 
+const char *
+vh_event_handler_od_cb_meta (event_handler_t *event_handler, const char *meta)
+{
+  int rc, i = 0, stop = 0;
+  const char *res = NULL;
+
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  /* We must check if this call comes from the callback. */
+  rc = pthread_mutex_trylock (&event_handler->mutex_meta);
+  if (rc)
+  {
+    vh_log (VALHALLA_MSG_WARNING,
+            "%s must be called only from the ondemand callback", __FUNCTION__);
+    return NULL;
+  }
+
+  do
+  {
+    if (res && !strcmp (res, meta))
+      stop = 1;
+    res = vh_list_pos (event_handler->edata->keys, i++);
+    if (!res || !meta)
+      stop = 1;
+  }
+  while (!stop);
+
+  pthread_mutex_unlock (&event_handler->mutex_meta);
+  return res;
+}
+
 void
 vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
-                          valhalla_event_od_t e, const char *id)
+                          valhalla_event_od_t e, const char *id,
+                          metadata_t *meta)
 {
   event_handler_od_t *edata;
 
@@ -308,6 +378,16 @@ vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
   edata->file = strdup (file);
   edata->e    = e;
   edata->id   = id;
+
+  if (meta && event_handler->od_meta)
+  {
+    const metadata_t *tag = NULL;
+
+    edata->keys = vh_list_new (0, NULL);
+
+    while (!vh_metadata_get (meta, "", METADATA_IGNORE_SUFFIX, &tag))
+      vh_list_append (edata->keys, tag->name, strlen (tag->name) + 1);
+  }
 
   vh_fifo_queue_push (event_handler->fifo,
                       FIFO_QUEUE_PRIORITY_NORMAL, ACTION_EH_EVENTOD, edata);

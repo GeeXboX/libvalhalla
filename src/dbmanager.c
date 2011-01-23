@@ -213,7 +213,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
-                                  VALHALLA_EVENTOD_ENDED, NULL);
+                                  VALHALLA_EVENTOD_ENDED, NULL, NULL);
       break;
 
     /* received from the dispatcher (grabbed data) */
@@ -230,7 +230,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
         vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
                                   VALHALLA_EVENTOD_GRABBED,
-                                  pdata->grabber_name);
+                                  pdata->grabber_name,
+                                  pdata->meta_grabber);
       res = vh_event_handler_md_send (VH_HANDLE->event_handler,
                                       VALHALLA_EVENTMD_GRABBER,
                                       pdata->grabber_name, &pdata->file,
@@ -254,7 +255,8 @@ dbmanager_queue (dbmanager_t *dbmanager)
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
-                                  VALHALLA_EVENTOD_PARSED, NULL);
+                                  VALHALLA_EVENTOD_PARSED, NULL,
+                                  pdata->meta_parser);
       vh_event_handler_md_send (VH_HANDLE->event_handler,
                                 VALHALLA_EVENTMD_PARSER, NULL,
                                 &pdata->file, pdata->meta_parser);
@@ -325,7 +327,7 @@ dbmanager_queue (dbmanager_t *dbmanager)
       if (pdata->od != OD_TYPE_DEF)
         vh_event_handler_od_send (VH_HANDLE->event_handler,
                                   pdata->file.path,
-                                  VALHALLA_EVENTOD_ENDED, NULL);
+                                  VALHALLA_EVENTOD_ENDED, NULL, NULL);
       VH_STATS_COUNTER_INC (dbmanager->st_nochange);
     }
     }
@@ -667,7 +669,7 @@ vh_dbmanager_file_complete (dbmanager_t *dbmanager,
       res = 1; /* must be updated */
     else
       vh_event_handler_od_send (VH_HANDLE->event_handler,
-                                file, VALHALLA_EVENTOD_ENDED, NULL);
+                                file, VALHALLA_EVENTOD_ENDED, NULL, NULL);
   }
 
   return !res;

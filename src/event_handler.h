@@ -52,13 +52,17 @@ fifo_queue_t *vh_event_handler_fifo_get (event_handler_t *event_handler);
 void vh_event_handler_stop (event_handler_t *event_handler, int f);
 void vh_event_handler_uninit (event_handler_t *event_handler);
 event_handler_t *vh_event_handler_init (valhalla_t *handle,
-                                        event_handler_cb_t *cb);
+                                        event_handler_cb_t *cb, int od_meta);
+
+const char *vh_event_handler_od_cb_meta (event_handler_t *event_handler,
+                                         const char *meta);
 
 void vh_event_handler_od_free (event_handler_od_t *data);
 void vh_event_handler_md_free (event_handler_md_t *data);
 
 void vh_event_handler_od_send (event_handler_t *event_handler, const char *file,
-                               valhalla_event_od_t e, const char *id);
+                               valhalla_event_od_t e, const char *id,
+                               metadata_t *meta);
 void vh_event_handler_gl_send (event_handler_t *event_handler,
                                valhalla_event_gl_t e);
 int vh_event_handler_md_send (event_handler_t *event_handler,

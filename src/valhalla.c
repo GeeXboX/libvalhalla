@@ -641,7 +641,7 @@ valhalla_init (const char *db, valhalla_init_param_t *param)
     cb.gl_data = pp->gl_data;
     cb.md_data = pp->md_data;
 
-    handle->event_handler = vh_event_handler_init (handle, &cb);
+    handle->event_handler = vh_event_handler_init (handle, &cb, pp->od_meta);
     if (!handle->event_handler)
       goto err;
   }
@@ -724,6 +724,17 @@ valhalla_ondemand (valhalla_t *handle, const char *file)
 
   vh_ondemand_action_send (handle->ondemand, FIFO_QUEUE_PRIORITY_HIGH,
                            ACTION_OD_ENGAGE, odfile);
+}
+
+const char *
+valhalla_ondemand_cb_meta (valhalla_t *handle, const char *meta)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, __FUNCTION__);
+
+  if (!handle)
+    return NULL;
+
+  return vh_event_handler_od_cb_meta (handle->event_handler, meta);
 }
 
 /******************************************************************************/
