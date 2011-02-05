@@ -68,7 +68,7 @@ bswap_64 (uint64_t x)
 #ifdef HAVE_BIGENDIAN
 #define be2me_32(x) (x)
 #define be2me_64(x) (x)
-#else
+#else /* HAVE_BIGENDIAN */
 #define be2me_32(x) bswap_32(x)
 #define be2me_64(x) bswap_64(x)
 #endif /* !HAVE_BIGENDIAN */
@@ -153,7 +153,7 @@ sha256_transform (uint32_t *state, const uint8_t buffer[64])
     b = a;
     a = T1 + T2;
   }
-#else
+#else /* CONFIG_SMALL */
   for (i = 0; i < 16;)
   {
     ROUND256_0_TO_15 (a, b, c, d, e, f, g, h);
@@ -244,7 +244,7 @@ vh_sha_update (vh_sha_t *ctx, const uint8_t *data, unsigned int len)
       j = 0;
     }
   }
-#else
+#else /* CONFIG_SMALL */
   if ((j + len) > 63)
   {
     memcpy (&ctx->buffer[j], data, (i = 64 - j));
@@ -268,7 +268,8 @@ vh_sha_final (vh_sha_t *ctx, uint8_t *digest)
   vh_sha_update (ctx, (uint8_t *) "\200", 1);
   while ((ctx->count & 63) != 56)
     vh_sha_update (ctx, (uint8_t *) "", 1);
-  vh_sha_update (ctx, (uint8_t *) &finalcount, 8); /* Should cause a transform() */
+  /* Should cause a transform() */
+  vh_sha_update (ctx, (uint8_t *) &finalcount, 8);
   for (i = 0; i < ctx->digest_len; i++)
     ((uint32_t *) digest)[i] = be2me_32 (ctx->state[i]);
 }

@@ -24,7 +24,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-#else
+#else /* _WIN32 */
 #include <sys/resource.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
@@ -61,7 +61,7 @@ vh_setpriority (int prio)
   hThread = GetCurrentThread ();
   SetThreadPriority (hThread, thread_prio[prio]);
   return (int) GetCurrentThreadId ();
-#else
+#else /* _WIN32 */
 #ifdef __linux__
   /*
    * Linux creates the threads with the clone system call. The function
@@ -73,7 +73,7 @@ vh_setpriority (int prio)
    *  (DESCRIPTION -> CLONE_THREAD)
    */
   pid_t pid = syscall (SYS_gettid); /* gettid() is not available with glibc */
-#else
+#else /* __linux__ */
   /*
    * A FreeBSD kernel has no clone and gettid system calls. The threads
    * are created by rfork() and every thread has its own PID which can be

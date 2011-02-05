@@ -165,11 +165,11 @@ dispatcher_thread (void *arg)
         if (step == STEP_GRABBING
             && (e == ACTION_DB_INSERT_G || e == ACTION_DB_UPDATE_G))
           pdata->wait = 1;
-#else
+#else /* USE_GRABBER */
       /* Parsed data added/updated. */
       if (step == STEP_ENDING)
       {
-#endif /* USE_GRABBER */
+#endif /* !USE_GRABBER */
         vh_dbmanager_action_send (VH_HANDLE->dbmanager,
                                   pdata->priority, e, pdata);
       }

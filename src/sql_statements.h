@@ -35,7 +35,7 @@
  */
 #ifdef _WIN32
 #define VH_I64 "lli"
-#else
+#else /* _WIN32 */
 #define VH_I64 PRIi64
 #endif /* !_WIN32 */
 

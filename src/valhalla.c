@@ -505,11 +505,11 @@ valhalla_grabber_next (valhalla_t *handle, const char *id)
 
 #ifdef USE_GRABBER
   return vh_grabber_next (handle->grabber, id);
-#else
+#else /* USE_GRABBER */
   vh_log (VALHALLA_MSG_WARNING,
           "This function is usable only with grabbing support!");
   return NULL;
-#endif /* USE_GRABBER */
+#endif /* !USE_GRABBER */
 }
 
 valhalla_metadata_pl_t
@@ -524,11 +524,11 @@ valhalla_grabber_priority_read (valhalla_t *handle,
 
 #ifdef USE_GRABBER
   return vh_grabber_priority_read (handle->grabber, id, meta);
-#else
+#else /* USE_GRABBER */
   vh_log (VALHALLA_MSG_WARNING,
           "This function is usable only with grabbing support!");
   return 0;
-#endif /* USE_GRABBER */
+#endif /* !USE_GRABBER */
 }
 
 const char *

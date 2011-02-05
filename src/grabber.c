@@ -740,12 +740,12 @@ grabber_stats_dump (vh_stats_t *stats, void *data)
                              "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 #if 0
   STATS_DUMP ("GLOBAL", success_all, total_all, total_all);
-#else
+#else /* 0 */
   vh_log (VALHALLA_MSG_INFO,
           "%-12s | %6"PRIu64"/%-6"PRIu64" (%6.2f%%)",
           "GLOBAL", success_all, total_all,
           (total_all) ? 100.0 * (success_all) / (total_all) : 100);
-#endif /* 0 */
+#endif /* !0 */
 }
 
 grabber_t *

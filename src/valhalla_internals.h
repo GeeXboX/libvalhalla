@@ -80,18 +80,18 @@ struct valhalla_s {
 /* this is required on windows */
 #ifndef O_BINARY
 #define O_BINARY (0)
-#endif
+#endif /* O_BINARY */
 
 #define STOP_FLAG_REQUEST (1 << 0)
 #define STOP_FLAG_WAIT    (1 << 1)
 
 #ifndef vh_unused
-#if defined(__GNUC__)
-#  define vh_unused __attribute__((unused))
-#else
+#ifdef __GNUC__
+#  define vh_unused __attribute__ ((unused))
+#else /* __GNUC__ */
 #  define vh_unused
-#endif
-#endif
+#endif /* !__GNUC__ */
+#endif /* !vh_unused */
 
 
 /****************************************************************************/

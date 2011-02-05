@@ -239,7 +239,7 @@ vh_lstat (const char *path, struct stat *buf)
 {
 #ifdef _WIN32
   return stat (path, buf);
-#else
+#else /* _WIN32 */
 #error "lstat unsupported by your OS"
 #endif /* !_WIN32 */
 }

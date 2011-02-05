@@ -101,10 +101,10 @@ vh_log_orig (valhalla_verb_t level, const char *format, ...)
   snprintf (fmt, sizeof (fmt),
             "[" BOLD "libvalhalla" NORMAL "] [%%s:%%i] %s%s" NORMAL ": %s\n",
             c[level], l[level], format);
-#else
+#else /* USE_LOGCOLOR */
   snprintf (fmt, sizeof (fmt),
             "[libvalhalla] [%%s:%%i] %s: %s\n", l[level], format);
-#endif /* USE_LOGCOLOR */
+#endif /* !USE_LOGCOLOR */
 
   va_start (va, format);
   vfprintf (stderr, fmt, va);

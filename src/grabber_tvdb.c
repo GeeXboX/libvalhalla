@@ -307,7 +307,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   }
   title = vh_url_escape_string (tvdb->handler, tmp2);
   free (tmp2);
-#else
+#else /* GRABBER_TVDB_UNOFFICIAL_API */
   if (!orig_keywords)
     return -1;
 
@@ -315,7 +315,7 @@ grabber_tvdb_get (grabber_tvdb_t *tvdb, file_data_t *fdata,
   if (!keywords)
     return -1;
   title = strdup (escaped_keywords);
-#endif /* GRABBER_TVDB_UNOFFICIAL_API */
+#endif /* !GRABBER_TVDB_UNOFFICIAL_API */
 
   if (!title)
     goto error;
