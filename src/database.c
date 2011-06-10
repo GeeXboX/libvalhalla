@@ -1599,9 +1599,9 @@ vh_database_init (const char *path)
     res = sqlite3_config (SQLITE_CONFIG_SERIALIZED);
     if (res != SQLITE_OK)
     {
-    vh_log (VALHALLA_MSG_ERROR,
-            "SQLite3 is not compiled with serialized threading mode!");
-    return NULL;
+      vh_log (VALHALLA_MSG_ERROR,
+              "SQLite3 is not compiled with serialized threading mode!");
+      return NULL;
     }
   }
 
