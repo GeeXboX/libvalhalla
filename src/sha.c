@@ -44,7 +44,7 @@ const int vh_sha_size = sizeof (vh_sha_t);
 
 
 static inline uint32_t
-bswap_32 (uint32_t x)
+vh_bswap_32 (uint32_t x)
 {
   x = ((x << 8) & 0xFF00FF00) | ((x >> 8) & 0x00FF00FF);
   x = (x >> 16) | (x << 16);
@@ -52,7 +52,7 @@ bswap_32 (uint32_t x)
 }
 
 static inline uint64_t
-bswap_64 (uint64_t x)
+vh_bswap_64 (uint64_t x)
 {
   union {
     uint64_t ll;
@@ -60,8 +60,8 @@ bswap_64 (uint64_t x)
   } w, r;
 
   w.ll = x;
-  r.l[0] = bswap_32 (w.l[1]);
-  r.l[1] = bswap_32 (w.l[0]);
+  r.l[0] = vh_bswap_32 (w.l[1]);
+  r.l[1] = vh_bswap_32 (w.l[0]);
   return r.ll;
 }
 
@@ -69,8 +69,8 @@ bswap_64 (uint64_t x)
 #define be2me_32(x) (x)
 #define be2me_64(x) (x)
 #else /* HAVE_BIGENDIAN */
-#define be2me_32(x) bswap_32(x)
-#define be2me_64(x) bswap_64(x)
+#define be2me_32(x) vh_bswap_32(x)
+#define be2me_64(x) vh_bswap_64(x)
 #endif /* !HAVE_BIGENDIAN */
 
 static const uint32_t K256[64] = {
