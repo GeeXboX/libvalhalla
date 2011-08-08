@@ -764,11 +764,14 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   if (!grabber)
     return NULL;
 
-  if (nb > ARRAY_NB_ELEMENTS (grabber->thread))
+  grabber->valhalla = handle; /* VH_HANDLE */
+  grabber->nb       = nb ? nb : GRABBER_NUMBER_DEF;
+
+  if (grabber->nb > ARRAY_NB_ELEMENTS (grabber->thread))
     goto err;
 
   pthread_mutex_init (&grabber->mutex_run, NULL);
-  for (i = 0; i < nb; i++)
+  for (i = 0; i < grabber->nb; i++)
   {
     grabber->timer[i] = vh_timer_thread_create ();
     pthread_mutex_init (&grabber->mutex_grabber[i], NULL);
@@ -778,9 +781,6 @@ vh_grabber_init (valhalla_t *handle, unsigned int nb)
   grabber->fifo = vh_fifo_queue_new ();
   if (!grabber->fifo)
     goto err;
-
-  grabber->valhalla = handle; /* VH_HANDLE */
-  grabber->nb       = nb ? nb : GRABBER_NUMBER_DEF;
 
   grabber->list = grabber_register_childs (handle->url_ctl);
   if (!grabber->list)
