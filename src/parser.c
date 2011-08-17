@@ -343,10 +343,21 @@ parser_stream_info (AVFormatContext *ctx)
   for (i = 0; i < ctx->nb_streams; i++)
   {
     AVStream *st = ctx->streams[i];
-
-    if (st->codec->codec_type == CODEC_TYPE_VIDEO)
+    if (st->codec->codec_type ==
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+    AVMEDIA_TYPE_VIDEO
+#else
+    CODEC_TYPE_VIDEO
+#endif
+    )
       video_st = 1;
-    else if (st->codec->codec_type == CODEC_TYPE_AUDIO)
+    else if (st->codec->codec_type ==
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+    AVMEDIA_TYPE_AUDIO
+#else
+    CODEC_TYPE_AUDIO
+#endif
+    )
       audio_st = 1;
   }
 
