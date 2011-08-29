@@ -89,11 +89,7 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
 
     switch (codec->codec_type)
     {
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
     case AVMEDIA_TYPE_AUDIO:
-#else
-    case CODEC_TYPE_AUDIO:
-#endif
       audio_streams++;
       name = grabber_ffmpeg_codec_name (codec->codec_id);
       if (name)
@@ -107,11 +103,7 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
                               VALHALLA_METADATA_AUDIO_BITRATE, ffmpeg->pl);
       break;
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
     case AVMEDIA_TYPE_VIDEO:
-#else
-    case CODEC_TYPE_VIDEO:
-#endif
       /* Common part (image + video) */
       video_streams++;
       name = grabber_ffmpeg_codec_name (codec->codec_id);
@@ -146,11 +138,7 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
                             VALHALLA_METADATA_VIDEO_ASPECT, ffmpeg->pl);
       break;
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
     case AVMEDIA_TYPE_SUBTITLE:
-#else
-    case CODEC_TYPE_SUBTITLE:
-#endif
       sub_streams++;
       break;
 
