@@ -176,7 +176,8 @@ int
 vh_url_save_to_disk (url_t *handler, char *src, char *dst)
 {
   url_data_t data;
-  int n, fd;
+  int fd;
+  size_t n;
   CURL *curl = (CURL *) handler;
 
   if (!curl || !src || !dst)
@@ -205,6 +206,9 @@ vh_url_save_to_disk (url_t *handler, char *src, char *dst)
   n = write (fd, data.buffer, data.size);
   close (fd);
   free (data.buffer);
+
+  if (n != data.size)
+    return URL_ERROR_FILE;
 
   return URL_SUCCESS;
 }
