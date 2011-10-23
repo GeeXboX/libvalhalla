@@ -1,3 +1,17 @@
+libvalhalla (2.1)
+
+  2.1.0: DD Mmm, YYYY
+
+    Core:
+    * Possibility to see all SQL query plans (debugging).
+
+    Metadata:
+    * Possibility to retrieve the meta keys with the ondemand callback.
+
+    Other:
+    * Some fixes...
+
+
 libvalhalla (2.0)
 
   2.0.0: 3 Oct, 2010
