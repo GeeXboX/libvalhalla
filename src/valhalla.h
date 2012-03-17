@@ -1126,7 +1126,6 @@ valhalla_db_file_read (valhalla_t *handle, valhalla_db_stmt_t *vhstmt);
  * insertion is canceled and no error is returned, else the 'external' flag is
  * set to 1.
  * \see ::valhalla_db_metares_t
- * \see ::valhalla_db_filemeta_t
  *
  * Please, refer to \ref ext_metadata.
  *
