@@ -57,12 +57,14 @@
 
 /* The arguments in the queries MUST BE sorted by first byte value! */
 #define AMAZON_ARGS         "AWSAccessKeyId=%s"           "&" \
+                            "AssociateTag=0"              "&" \
                             "Keywords=%s"                 "&" \
                             "Operation=ItemSearch"        "&" \
                             "SearchIndex=%s"              "&" \
                             "Service=AWSECommerceService" "&" \
                             "Timestamp=%s"
 #define AMAZON_ARGS_COVER   "AWSAccessKeyId=%s"           "&" \
+                            "AssociateTag=0"              "&" \
                             "ItemId=%s"                   "&" \
                             "Operation=ItemLookup"        "&" \
                             "ResponseGroup=Images"        "&" \
