@@ -45,8 +45,8 @@
 
 #define TMDB_API_KEY      "5401cd030990fba60e1c23d2832de62e"
 
-#define TMDB_QUERY_SEARCH "http://%s/2.0/Movie.search?title=%s&api_key=%s"
-#define TMDB_QUERY_INFO   "http://%s/2.0/Movie.getInfo?id=%s&api_key=%s"
+#define TMDB_QUERY_SEARCH "http://%s/2.1/Movie.search/en/xml/%s/%s"
+#define TMDB_QUERY_INFO   "http://%s/2.1/Movie.getInfo/en/xml/%s/%s"
 
 typedef struct grabber_tmdb_s {
   url_t *handler;
@@ -107,7 +107,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
 
   /* proceed with TMDB search request */
   snprintf (url, sizeof (url), TMDB_QUERY_SEARCH,
-            TMDB_HOSTNAME, escaped_keywords, TMDB_API_KEY);
+            TMDB_HOSTNAME, TMDB_API_KEY, escaped_keywords);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
 
@@ -153,7 +153,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
 
   /* proceed with TMDB search request */
   snprintf (url, sizeof (url),
-            TMDB_QUERY_INFO, TMDB_HOSTNAME, tmp, TMDB_API_KEY);
+            TMDB_QUERY_INFO, TMDB_HOSTNAME, TMDB_API_KEY, tmp);
   xmlFree (tmp);
 
   vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
