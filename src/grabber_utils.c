@@ -94,9 +94,10 @@ vh_grabber_parse_str (file_data_t *fdata, xmlNode *nd, const char *tag,
   }
 }
 
-void
-vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node,
-                             valhalla_lang_t lang, const metadata_plist_t *pl)
+static void
+grabber_parse_list (file_data_t *fdata, xmlNode *node,
+                    const char *node_name, const char *meta,
+                    valhalla_lang_t lang, const metadata_plist_t *pl)
 {
   xmlNode *n;
   int i;
@@ -104,23 +105,54 @@ vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node,
   if (!fdata || !node)
     return;
 
-  n = vh_xml_get_node_tree (node, "category");
-  for (i = 0; i < 5; i++)
+  n = vh_xml_get_node_tree (node, node_name);
+  for (i = 0; i < 5; i++, n = n->next)
   {
     xmlChar *tmp = NULL;
 
     if (!n)
       break;
 
-    tmp = vh_xml_get_prop_value_from_tree (n, "name");
-    if (tmp)
+    switch (n->type)
     {
-      vh_metadata_add_auto (&fdata->meta_grabber,
-                            VALHALLA_METADATA_CATEGORY, (char *) tmp, lang, pl);
-      xmlFree (tmp);
+    case XML_TEXT_NODE:
+      tmp = vh_xml_get_prop_value_from_tree (n, "name");
+      break;
+
+    case XML_ELEMENT_NODE:
+      tmp = vh_xml_get_attr_value_from_node (n, "name");
+      break;
+
+    default:
+      break;
     }
-    n = n->next;
+
+    /* we retry with the next because it depends of n->type */
+    if (!tmp)
+    {
+      --i;
+      continue;
+    }
+
+      vh_metadata_add_auto (&fdata->meta_grabber, meta, (char *) tmp, lang, pl);
+      xmlFree (tmp);
   }
+}
+
+void
+vh_grabber_parse_categories (file_data_t *fdata, xmlNode *node,
+                             valhalla_lang_t lang, const metadata_plist_t *pl)
+{
+  grabber_parse_list (fdata, node,
+                      "category", VALHALLA_METADATA_CATEGORY, lang, pl);
+}
+
+void
+vh_grabber_parse_countries (file_data_t *fdata, xmlNode *node,
+                            valhalla_lang_t lang, const metadata_plist_t *pl)
+{
+  grabber_parse_list (fdata, node,
+                      "country", VALHALLA_METADATA_COUNTRY, lang, pl);
 }
 
 static void
