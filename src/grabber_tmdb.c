@@ -98,7 +98,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
 
   xmlDocPtr doc;
   xmlChar *tmp;
-  xmlNode *n, *node;
+  xmlNode *n;
 
   int res_int = 0;
 
@@ -205,18 +205,10 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   vh_grabber_parse_str (fdata, n, "revenue", VALHALLA_METADATA_REVENUE,
                         VALHALLA_LANG_UNDEF, tmdb->pl);
 
-  /* fetch movie country */
-  node = vh_xml_get_node_tree (n, "country");
-  if (node)
-  {
-    tmp = vh_xml_get_prop_value_from_tree (node, "short_name");
-    if (tmp)
-    {
-      vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_COUNTRY,
-                            (char *) tmp, VALHALLA_LANG_EN, tmdb->pl);
-      xmlFree (tmp);
-    }
-  }
+  /* fetch movie country
+   * <country name="..."/>
+   */
+  vh_grabber_parse_countries (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
   /* fetch movie categories */
   vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
