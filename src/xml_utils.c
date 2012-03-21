@@ -139,12 +139,14 @@ vh_xml_get_attr_value_from_node (xmlNode *node, const char *attr_name)
     if (!attr || !attr->children)
       continue;
 
-    if (xmlStrcmp ((unsigned char *) attr_name, attr->name))
-      continue;
-
+    for (; attr; attr = attr->next)
+      if (!xmlStrcmp ((unsigned char *) attr_name, attr->name))
+      {
     content = xmlNodeGetContent (attr->children);
     if (content)
       return content;
+        break;
+      }
   }
 
   return NULL;
