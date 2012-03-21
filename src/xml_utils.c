@@ -190,7 +190,20 @@ vh_xml_search_str (xmlNode *n, const char *node, char **str)
   if (*str)
     return 1;
 
-  tmp = vh_xml_get_prop_value_from_tree (n, node);
+  switch (n->type)
+  {
+  case XML_TEXT_NODE:
+    tmp = vh_xml_get_prop_value_from_tree (n, node);
+    break;
+
+  case XML_ELEMENT_NODE:
+    tmp = vh_xml_get_attr_value_from_node (n, node);
+    break;
+
+  default:
+    break;
+  }
+
   if (!tmp)
     return 1;
 
