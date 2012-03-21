@@ -1,6 +1,6 @@
 /*
  * GeeXboX Valhalla: tiny media scanner API.
- * Copyright (C) 2009 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2009-2012 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * This file is part of libvalhalla.
  *
