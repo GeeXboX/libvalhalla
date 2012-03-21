@@ -113,30 +113,13 @@ xmlChar *
 vh_xml_get_attr_value_from_tree (xmlNode *root,
                                  const char *prop, const char *attr_name)
 {
-  xmlNode *n, *node;
-  xmlAttr *attr;
+  xmlNode *node;
 
   node = vh_xml_get_node_tree (root, prop);
   if (!node)
     return NULL;
 
-  for (n = node; n; n = n->next)
-  {
-    xmlChar *content;
-
-    attr = n->properties;
-    if (!attr || !attr->children)
-      continue;
-
-    if (xmlStrcmp ((unsigned char *) attr_name, attr->name))
-      continue;
-
-    content = xmlNodeGetContent (attr->children);
-    if (content)
-      return content;
-  }
-
-  return NULL;
+  return vh_xml_get_attr_value_from_node (node, attr_name);
 }
 
 xmlChar *
