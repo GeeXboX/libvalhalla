@@ -134,6 +134,8 @@ grabber_add_person (file_data_t *fdata,
 
   vh_xml_search_str (node, "name", &name);
   vh_xml_search_str (node, "role", &role);
+  if (!role)
+    vh_xml_search_str (node, "character", &role);
 
   if (name)
   {
