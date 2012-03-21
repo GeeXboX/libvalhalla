@@ -210,13 +210,19 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
    */
   vh_grabber_parse_countries (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
-  /* fetch movie categories */
+  /* fetch movie categories
+   * <category name="..."/>
+   */
   vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
-  /* fetch movie people */
+  /* fetch movie people
+   * <person name="..." character="..." job="..."/>
+   */
   vh_grabber_parse_casting (fdata, n, tmdb->pl);
 
-  /* fetch movie poster */
+  /* fetch movie poster
+   * <image type="poster" url="..." size="mid"/>
+   */
   tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "poster", "size", "mid");
   if (tmp)
   {
@@ -225,7 +231,9 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     xmlFree (tmp);
   }
 
-  /* fetch movie fan art */
+  /* fetch movie fan art
+   * <image type="backdrop" url="..." size="mid"/>
+   */
   tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "backdrop", "size", "mid");
   if (tmp)
   {
