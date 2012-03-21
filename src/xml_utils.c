@@ -89,7 +89,11 @@ vh_xml_get_prop_value_from_tree_by_attr (xmlNode *root, const char *prop,
     if (!attr || !attr->children)
       continue;
 
-    if (xmlStrcmp ((unsigned char *) attr_name, attr->name))
+    for (; attr; attr = attr->next)
+      if (!xmlStrcmp ((unsigned char *) attr_name, attr->name))
+        break;
+
+    if (!attr)
       continue;
 
     content = xmlNodeGetContent (attr->children);
