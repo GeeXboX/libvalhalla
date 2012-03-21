@@ -173,7 +173,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   n = xmlDocGetRootElement (doc);
 
   /* fetch movie overview description */
-  vh_grabber_parse_str (fdata, n, "short_overview",
+  vh_grabber_parse_str (fdata, n, "overview",
                         VALHALLA_METADATA_SYNOPSIS, VALHALLA_LANG_EN, tmdb->pl);
 
   /* fetch movie runtime (in minutes) */
@@ -181,7 +181,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                         VALHALLA_LANG_UNDEF, tmdb->pl);
 
   /* fetch movie year of production */
-  vh_xml_search_int (n, "release", &res_int);
+  vh_xml_search_int (n, "released", &res_int);
   if (res_int)
   {
     vh_grabber_parse_int (fdata, res_int, VALHALLA_METADATA_YEAR, tmdb->pl);
