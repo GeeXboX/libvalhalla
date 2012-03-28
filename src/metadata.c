@@ -108,6 +108,7 @@ static const struct {
   { VALHALLA_METADATA_TITLE,               VALHALLA_META_GRP_TITLES         },
   { VALHALLA_METADATA_TITLE_ALTERNATIVE,   VALHALLA_META_GRP_TITLES         },
   { VALHALLA_METADATA_TITLE_SHOW,          VALHALLA_META_GRP_TITLES         },
+  { VALHALLA_METADATA_TITLE_STREAM,        VALHALLA_META_GRP_TITLES         },
 
   { NULL,                                  VALHALLA_META_GRP_NIL            },
 };

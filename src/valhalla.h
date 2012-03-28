@@ -246,6 +246,7 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_TITLE                      "title"
 #define VALHALLA_METADATA_TITLE_ALTERNATIVE          "title_alternative"
 #define VALHALLA_METADATA_TITLE_SHOW                 "title_show"
+#define VALHALLA_METADATA_TITLE_STREAM               "title_stream"
 
 /**
  * @}

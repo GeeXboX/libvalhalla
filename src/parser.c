@@ -307,8 +307,17 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
     AVStream *st = ctx->streams[i];
     while ((tag = av_metadata_get (st->metadata,
                                    "", tag, AV_METADATA_IGNORE_SUFFIX)))
-      vh_metadata_add_auto (&meta, tag->key, tag->value,
+    {
+      const char *key = tag->key;
+
+      /* without this check, it is possible to have more than one title */
+      if (vh_metadata_get (meta, VALHALLA_METADATA_TITLE, 0, &title_tag)
+          && !strcasecmp (key, VALHALLA_METADATA_TITLE))
+        key = VALHALLA_METADATA_TITLE_STREAM;
+
+      vh_metadata_add_auto (&meta, key, tag->value,
                             VALHALLA_LANG_UNDEF, &pl);
+    }
   }
 
   if (!meta)
