@@ -284,7 +284,7 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   unsigned int i;
   metadata_t *meta = NULL;
   const metadata_t *title_tag = NULL;
-  AVMetadataTag *tag = NULL;
+  AVDictionaryEntry *tag = NULL;
   const metadata_plist_t pl = {
     .metadata = NULL,
     .priority = VALHALLA_METADATA_PL_HIGHEST
@@ -293,20 +293,14 @@ parser_metadata_get (parser_t *parser, AVFormatContext *ctx, const char *file)
   if (!ctx)
     return NULL;
 
-#if LIBAVFORMAT_VERSION_MAJOR < 53
-  av_metadata_conv (ctx, NULL, ctx->iformat->metadata_conv);
-#endif /* LIBAVFORMAT_VERSION_MAJOR < 53 */
-
-  while ((tag = av_metadata_get (ctx->metadata,
-                                 "", tag, AV_METADATA_IGNORE_SUFFIX)))
+  while ((tag = av_dict_get (ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
     vh_metadata_add_auto (&meta, tag->key, tag->value,
                           VALHALLA_LANG_UNDEF, &pl);
 
   for (i = 0; i < ctx->nb_streams; i++)
   {
     AVStream *st = ctx->streams[i];
-    while ((tag = av_metadata_get (st->metadata,
-                                   "", tag, AV_METADATA_IGNORE_SUFFIX)))
+    while ((tag = av_dict_get (st->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
     {
       const char *key = tag->key;
 
