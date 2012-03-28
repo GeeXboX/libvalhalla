@@ -39,6 +39,7 @@ static const struct {
   { "director_of_photography",      "director_of_photography"     },
   { "editor",                       "editor"                      },
   { "original_music_composer",      "composer"                    },
+  { "original music composer",      "composer"                    },
   { "producer",                     "producer"                    },
   { NULL,                           NULL                          }
 };
