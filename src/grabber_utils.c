@@ -207,7 +207,7 @@ vh_grabber_parse_casting (file_data_t *fdata,
       continue;
 
     for (i = 0; grabber_casting_mapping[i].tag; i++)
-      if (!strcmp ((char *) ch, grabber_casting_mapping[i].tag))
+      if (!strcasecmp ((char *) ch, grabber_casting_mapping[i].tag))
       {
         grabber_add_person (fdata, n, grabber_casting_mapping[i].name, pl);
         break;
