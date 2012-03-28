@@ -1209,7 +1209,7 @@ if enabled avutil; then
   fi
 
   echologn "Checking for libavutil ... "
-  check_lib_pkgcfg libavutil libavutil/md5.h av_md5_sum -lavutil
+  check_lib_pkgcfg libavutil libavutil/dict.h av_dict_get -lavutil
   if [ "$?" = 0 ]; then
     echolog "(yes)"
   else
