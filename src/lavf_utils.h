@@ -22,12 +22,6 @@
 #ifndef VALHALLA_LAVF_UTILS
 #define VALHALLA_LAVF_UTILS
 
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
-#define AVMEDIA_TYPE_AUDIO    CODEC_TYPE_AUDIO
-#define AVMEDIA_TYPE_VIDEO    CODEC_TYPE_VIDEO
-#define AVMEDIA_TYPE_SUBTITLE CODEC_TYPE_SUBTITLE
-#endif /* LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0) */
-
 const char *vh_lavf_utils_fmtname_get (const char *suffix);
 AVFormatContext *vh_lavf_utils_open_input_file (const char *file);
 
