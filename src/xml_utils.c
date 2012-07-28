@@ -185,7 +185,7 @@ vh_xml_get_xnodes_from_tree (xmlDocPtr doc, xmlChar *xpath)
 int
 vh_xml_search_str (xmlNode *n, const char *node, char **str)
 {
-  xmlChar *tmp;
+  xmlChar *tmp = NULL;
 
   if (*str)
     return 1;
