@@ -89,6 +89,34 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
   free (cover);
 }
 
+static xmlChar *
+grabber_tmdb_parse_forimage (xmlNode *n, const char *type, const char *size)
+{
+  xmlNode *node;
+  xmlChar *content_type = NULL;
+  xmlChar *content_size = NULL;
+  xmlChar *content_url  = NULL;
+
+  node = vh_xml_get_node_tree (n, "images");
+  if (!node || node->type != XML_ELEMENT_NODE)
+    return NULL;
+
+  for (node = node->children; node && !content_url; node = node->next)
+  {
+      content_type = vh_xml_get_attr_value_from_node (node, "type");
+      content_size = vh_xml_get_attr_value_from_node (node, "size");
+
+      if (   !xmlStrcmp (content_type, (const xmlChar *) type)
+          && !xmlStrcmp (content_size, (const xmlChar *) size))
+        content_url = vh_xml_get_attr_value_from_node (node, "url");
+
+      xmlFree (content_type);
+      xmlFree (content_size);
+  }
+
+  return content_url;
+}
+
 static int
 grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                   const char *keywords, char *escaped_keywords)
@@ -220,10 +248,10 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
    */
   vh_grabber_parse_casting (fdata, n, tmdb->pl);
 
-  /* FIXME: fetch movie poster
+  /* Fetch movie poster
    * <image type="poster" url="..." size="mid"/>
    */
-  tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "poster", "size", "mid");
+  tmp = grabber_tmdb_parse_forimage (n, "poster", "mid");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp,
@@ -231,10 +259,10 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     xmlFree (tmp);
   }
 
-  /* FIXME: fetch movie fan art
-   * <image type="backdrop" url="..." size="mid"/>
+  /* Fetch movie fan art
+   * <image type="backdrop" url="..." size="w1280"/>
    */
-  tmp = vh_xml_get_prop_value_from_tree_by_attr (n, "backdrop", "size", "mid");
+  tmp = grabber_tmdb_parse_forimage (n, "backdrop", "w1280");
   if (tmp)
   {
     grabber_tmdb_get_picture (fdata, keywords, tmp,
