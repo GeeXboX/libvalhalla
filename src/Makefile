@@ -38,6 +38,7 @@ SRCS =  database.c \
 	lavf_utils.c \
 	list.c \
 	logs.c \
+	md5.c \
 	metadata.c \
 	ondemand.c \
 	osdep.c \
@@ -100,7 +101,6 @@ SRCS_GRABBER-$(GRABBER)			+= downloader.c \
 					   url_utils.c \
 
 SRCS_GRABBER-$(XML)			+= xml_utils.c
-SRCS_GRABBER-$(MD5)			+= md5.c
 SRCS_GRABBER-$(HMAC_SHA256)		+= hmac_sha256.c \
 					   sha.c
 SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c

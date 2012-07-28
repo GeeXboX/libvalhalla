@@ -1419,7 +1419,6 @@ fi
 append_config "XML=$xml"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
-append_config "MD5=$avutil"
 append_config "HMAC_SHA256=$grabber_amazon"
 append_config "GRABBER=$grabber"
 append_config "GRABBER_DUMMY=$grabber_dummy"
