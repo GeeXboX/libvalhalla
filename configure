@@ -1060,6 +1060,24 @@ echolog "Checking for libavformat ..."
 check_lib_pkgcfg libavformat libavformat/avformat.h av_metadata_get -lavformat || die "Error, can't find libavformat !"
 
 
+###############################################
+#   check for FFmpeg libavutil
+###############################################
+if [ -n "$lavudir" ]; then
+  check_cppflags -I${lavudir}/include
+  check_ldflags -L${lavudir}/lib
+fi
+if [ -n "$lavuincdir" ]; then
+  check_cppflags -I${lavuincdir}
+fi
+if [ -n "$lavulibdir" ]; then
+  check_ldflags -L${lavulibdir}
+fi
+
+echolog "Checking for libavutil ..."
+check_lib_pkgcfg libavutil libavutil/dict.h av_dict_get -lavutil || die "Error, can't find libavutil !"
+
+
 #################################################
 #   check for SQLite sqlite3
 #################################################
@@ -1134,9 +1152,6 @@ fi
 avcodec_dep_grabber="ffmpeg"
 grabber_enable_dep avcodec_dep_grabber
 
-avutil_dep_grabber="amazon lastfm tmdb tvdb"
-grabber_enable_dep avutil_dep_grabber
-
 exif_dep_grabber="exif"
 grabber_enable_dep exif_dep_grabber
 
@@ -1190,34 +1205,6 @@ if enabled xml; then
     [ "$?" != 0 ] && die "Error, can't find libxml2 !"
     xml="no"
     grabber_set_no $xml_dep_grabber
-  fi
-fi
-
-if enabled avutil; then
-  ###############################################
-  #   check for FFmpeg libavutil
-  ###############################################
-  if [ -n "$lavudir" ]; then
-    check_cppflags -I${lavudir}/include
-    check_ldflags -L${lavudir}/lib
-  fi
-  if [ -n "$lavuincdir" ]; then
-    check_cppflags -I${lavuincdir}
-  fi
-  if [ -n "$lavulibdir" ]; then
-    check_ldflags -L${lavulibdir}
-  fi
-
-  echologn "Checking for libavutil ... "
-  check_lib_pkgcfg libavutil libavutil/dict.h av_dict_get -lavutil
-  if [ "$?" = 0 ]; then
-    echolog "(yes)"
-  else
-    echolog "(no)"
-    grabber_forced $avutil_dep_grabber
-    [ "$?" != 0 ] && die "Error, can't find libavutil !"
-    avutil="no"
-    grabber_set_no $avutil_dep_grabber
   fi
 fi
 
