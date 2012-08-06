@@ -4,9 +4,14 @@ libvalhalla (2.1)
 
     Core:
     * Possibility to see all SQL query plans (debugging).
+    * Support for libav.
 
     Metadata:
     * Possibility to retrieve the meta keys with the ondemand callback.
+
+    Grabber:
+    * Fix TheMovieDB grabber (TMDB) for API 2.1.
+    * Fix Amazon grabber.
 
     Other:
     * Some fixes...
