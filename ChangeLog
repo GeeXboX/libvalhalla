@@ -1,6 +1,6 @@
 libvalhalla (2.1)
 
-  2.1.0: DD Mmm, YYYY
+  2.1.0: 12 Aug, 2012
 
     Core:
     * Possibility to see all SQL query plans (debugging).
