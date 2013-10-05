@@ -77,6 +77,7 @@ show_help(){
   echo "  --with-sqlite3-dir=DIR       check for SQLite installed in DIR"
   echo "  --with-curl-dir=DIR          check for libcurl installed in DIR"
   echo "  --with-xml2-dir=DIR          check for libxml-2.0 installed in DIR"
+  echo "  --with-json-dir=DIR          check for libjson installed in DIR"
   echo "  --with-exif-dir=DIR          check for libexif installed in DIR"
   echo "  --with-nfo-dir=DIR           check for libnfo installed in DIR"
   echo ""
@@ -632,6 +633,8 @@ for opt do
   ;;
   --with-xml2-dir=*) xml2dir="$optval";
   ;;
+  --with-json-dir=*) jsondir="$optval";
+  ;;
   --with-exif-dir=*) exifdir="$optval";
   ;;
   --with-nfo-dir=*) nfodir="$optval";
@@ -1158,8 +1161,11 @@ grabber_enable_dep exif_dep_grabber
 nfo_dep_grabber="nfo"
 grabber_enable_dep nfo_dep_grabber
 
-xml_dep_grabber="allocine amazon chartlyrics imdb lastfm lyricwiki tmdb tvdb tvrage"
+xml_dep_grabber="allocine amazon chartlyrics imdb lastfm lyricwiki tvdb tvrage"
 grabber_enable_dep xml_dep_grabber
+
+json_dep_grabber="tmdb"
+grabber_enable_dep json_dep_grabber
 
 if enabled nfo; then
   ###############################################
@@ -1205,6 +1211,29 @@ if enabled xml; then
     [ "$?" != 0 ] && die "Error, can't find libxml2 !"
     xml="no"
     grabber_set_no $xml_dep_grabber
+  fi
+fi
+
+if enabled json; then
+  ###############################################
+  #   check for libjson
+  ###############################################
+  if [ -n "$jsondir" ]; then
+    check_cppflags -I$jsondir
+    check_ldflags -L$jsondir
+  fi
+
+  echologn "Checking for libjson ... "
+  check_lib_pkgcfg json json_object.h json_object_new_string -ljson
+  if [ "$?" = 0 ]; then
+    echolog "(yes)"
+    add_cppflags -DUSE_JSON
+  else
+    echolog "(no)"
+    grabber_forced $json_dep_grabber
+    [ "$?" != 0 ] && die "Error, can't find libjson !"
+    json="no"
+    grabber_set_no $json_dep_grabber
   fi
 fi
 
@@ -1417,6 +1446,7 @@ if enabled bigendian; then
 fi
 
 append_config "XML=$xml"
+append_config "JSON=$json"
 append_config "EXIF=$exif"
 append_config "NFO=$nfo"
 append_config "HMAC_SHA256=$grabber_amazon"
