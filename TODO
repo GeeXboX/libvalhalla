@@ -16,6 +16,7 @@
      -> TheMovieDB grabber is broken; the old API v2.1 is no longer supported
         and the new API v3 is working with JSON instead of XML. It needs to
         implement the JSON parser first.
+     -> Allocine and IMDB grabbers are broken; no real webservice.
      -> Add the possibility to configure every grabber at the init. Some
         grabbers can handle several languages and english is hardcoded or
         the language is ignored.
