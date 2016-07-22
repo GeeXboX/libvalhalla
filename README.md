@@ -18,10 +18,10 @@ Its goal is to interact with GeeXboX / Enna Media Center.
 > field Fólkvangr. In Valhalla, the dead join the masses of those who have
 > died in combat known as Einherjar, as well as various legendary Germanic
 > heroes and kings, as they prepare to aid Odin during the events of Ragnarök.
-
->   Valhalla. (2009, February 11). In Wikipedia, The Free Encyclopedia.
->     Retrieved 14:49, February 14, 2009,
->     from http://en.wikipedia.org/w/index.php?title=Valhalla&oldid=270025459
+>
+>>  Valhalla. (2009, February 11). In Wikipedia, The Free Encyclopedia.  
+>>    Retrieved 14:49, February 14, 2009,  
+>>    from http://en.wikipedia.org/w/index.php?title=Valhalla&oldid=270025459
 >
 > In Valhalla, the heroes are happy: they fight, kill, are reborn to assail
 > again in a closed field.
