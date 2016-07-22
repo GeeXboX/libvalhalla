@@ -379,7 +379,7 @@ parser_metadata (parser_t *parser, file_data_t *data)
   data->file.type = parser_stream_info (ctx);
   data->meta_parser = parser_metadata_get (parser, ctx, data->file.path);
 
-  av_close_input_file (ctx);
+  avformat_close_input (&ctx);
 }
 
 static void *
