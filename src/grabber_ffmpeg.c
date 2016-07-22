@@ -45,7 +45,7 @@ static const metadata_plist_t ffmpeg_pl[] = {
 
 
 static const char *
-grabber_ffmpeg_codec_name (enum CodecID id)
+grabber_ffmpeg_codec_name (enum AVCodecID id)
 {
   AVCodec *avc = NULL;
 
