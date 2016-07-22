@@ -1060,7 +1060,7 @@ if [ -n "$lavflibdir" ]; then
 fi
 
 echolog "Checking for libavformat ..."
-check_lib_pkgcfg libavformat libavformat/avformat.h av_metadata_get -lavformat || die "Error, can't find libavformat !"
+check_lib_pkgcfg libavformat libavformat/avformat.h avformat_open_input -lavformat || die "Error, can't find libavformat !"
 
 
 ###############################################
