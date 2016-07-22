@@ -64,7 +64,7 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
   unsigned int i;
   unsigned int audio_streams = 0, video_streams = 0, sub_streams = 0;
 
-  res = av_find_stream_info (ctx);
+  res = avformat_find_stream_info (ctx, NULL);
   if (res < 0)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
