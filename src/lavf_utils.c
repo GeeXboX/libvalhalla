@@ -203,7 +203,6 @@ vh_lavf_utils_open_input_file (const char *file)
   int res;
   const char *name;
   AVFormatContext   *ctx;
-  AVFormatParameters ap;
   AVInputFormat     *fmt = NULL;
 
   ctx = avformat_alloc_context ();
@@ -229,10 +228,7 @@ vh_lavf_utils_open_input_file (const char *file)
       fmt = NULL;
   }
 
-  memset (&ap, 0, sizeof (ap));
-  ap.prealloced_context = 1;
-
-  res = av_open_input_file (&ctx, file, fmt, 0, &ap);
+  res = avformat_open_input (&ctx, file, fmt, NULL);
   if (res)
   {
     vh_log (VALHALLA_MSG_WARNING,
