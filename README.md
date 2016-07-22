@@ -8,6 +8,8 @@ It provides a very simple API and it can use several parsers concurrently
 to speed up on a multi-core/cpu system.
 Its goal is to interact with GeeXboX / Enna Media Center.
 
+![libvalhalla](DOCS/valhalla.svg)
+
 
 ## Why Valhalla?
 
