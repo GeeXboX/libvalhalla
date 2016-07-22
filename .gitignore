@@ -1,0 +1,11 @@
+*.o
+*.so*
+.depend
+*.a
+config.log
+config.mak
+libvalhalla-test
+libvalhalla.pc
+DOCS/doxygen
+TAGS
+valhalla.db
