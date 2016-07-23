@@ -1224,7 +1224,7 @@ if enabled json; then
   fi
 
   echologn "Checking for libjson ... "
-  check_lib_pkgcfg json json_object.h json_object_new_string -ljson
+  check_lib_pkgcfg json-c json_object.h json_object_new_string -ljson-c
   if [ "$?" = 0 ]; then
     echolog "(yes)"
     add_cppflags -DUSE_JSON
