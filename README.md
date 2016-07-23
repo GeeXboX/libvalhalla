@@ -1,5 +1,5 @@
 
-# VALHALLA
+# ![libvalhalla](DOCS/valhalla.png)
 
 GeeXboX Valhalla (or libvalhalla) is a scanner and parser for audio/video
 files based on SQLite and FFmpeg/libavformat. Media files are retrieved in
@@ -7,9 +7,6 @@ paths defined by the user and metadata are saved in a database.
 It provides a very simple API and it can use several parsers concurrently
 to speed up on a multi-core/cpu system.
 Its goal is to interact with GeeXboX / Enna Media Center.
-
-![libvalhalla](DOCS/valhalla.png)
-
 
 ## Why Valhalla?
 
