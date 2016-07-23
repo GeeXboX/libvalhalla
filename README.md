@@ -8,7 +8,7 @@ It provides a very simple API and it can use several parsers concurrently
 to speed up on a multi-core/cpu system.
 Its goal is to interact with GeeXboX / Enna Media Center.
 
-![libvalhalla](DOCS/valhalla.svg)
+![libvalhalla](DOCS/valhalla.png)
 
 
 ## Why Valhalla?
@@ -54,7 +54,7 @@ compatible change (e.g. new grabber).
 
 ## AUTHORS
 
-Mathieu Schroeter <mathieu@schroetersa.ch>
-Benjamin Zores <ben@geexbox.org>
-Fabien Brisset <fbrisset@gmail.com>
-Davide Cavalca <davide@geexbox.org>
+Mathieu Schroeter <mathieu@schroetersa.ch>  
+Benjamin Zores <ben@geexbox.org>  
+Fabien Brisset <fbrisset@gmail.com>  
+Davide Cavalca <davide@geexbox.org>  
