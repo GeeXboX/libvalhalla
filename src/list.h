@@ -29,6 +29,9 @@ void vh_list_append (list_t *list, const void *data, size_t len);
 list_t *vh_list_new (unsigned int depth, void (*free_fct) (void *data));
 void vh_list_free (list_t *list);
 void vh_list_empty (list_t *list);
+void *vh_list_foreach (const list_t *list, void *data,
+                       void *(*each_fct) (void *data,
+                                          const void *item_data));
 void *vh_list_search (const list_t *list, const void *tocmp,
                       int (*cmp_fct) (const void *tocmp, const void *data));
 void *vh_list_pos (const list_t *list, unsigned int pos);
