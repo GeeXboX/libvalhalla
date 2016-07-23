@@ -278,8 +278,8 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   return 0;
 
  error:
- if (doc)
-   json_object_put (doc);
+  if (doc)
+    json_object_put (doc);
   return -1;
 }
 
