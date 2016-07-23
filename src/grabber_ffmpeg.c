@@ -85,7 +85,7 @@ grabber_ffmpeg_properties_get (grabber_ffmpeg_t *ffmpeg,
     float value;
     const char *name;
     AVStream *st = ctx->streams[i];
-    AVCodecContext *codec = st->codec;
+    AVCodecParameters *codec = st->codecpar;
 
     switch (codec->codec_type)
     {
