@@ -76,7 +76,9 @@ START_TEST (test_json_utils_json_get)
       \"tux\": 42,     \
       \"arr\": [       \
         \"walkyries\", \
-        \"thor\"       \
+        \"thor\", {    \
+          \"id\": 8    \
+        }              \
       ]                \
     }                  \
   }                    \
@@ -97,6 +99,10 @@ START_TEST (test_json_utils_json_get)
   tmp = vh_json_get (json, "c.arr[1]");
   s = json_object_get_string (tmp);
   fail_unless (!strcmp (s, "thor"), "expected \"thor\" but received %s", s);
+
+  tmp = vh_json_get (json, "c.arr[2].id");
+  i = json_object_get_int (tmp);
+  fail_unless (i == 8, "expected 8 but received %d", i);
 
   json_object_put (json);
 }
