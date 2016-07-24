@@ -31,6 +31,7 @@ typedef struct vh_test_case_s {
 static const vh_test_case_t vtc[] = {
   { "osdep",        vh_test_osdep },
   { "parser",       vh_test_parser },
+  { "json_utils",   vh_test_json_utils },
 };
 
 

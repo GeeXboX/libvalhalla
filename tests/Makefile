@@ -11,13 +11,16 @@ APP_LDFLAGS = -L../src $$(pkg-config --libs check) $(CFG_LDFLAGS) $(LDFLAGS)
 APP_CPPFLAGS += -DOSDEP_STRNDUP -DOSDEP_STRCASESTR -DOSDEP_STRTOK_R
 
 SRCS =  vh_suite.c \
+	vh_test_json_utils.c \
 	vh_test_osdep.c \
 	vh_test_parser.c \
 
 EXTRA_SRCS = \
+	list.c \
 	osdep.c \
 
 STATIC_FCT = \
+	json_utils.c \
 	parser.c \
 
 EXTRADIST = \
