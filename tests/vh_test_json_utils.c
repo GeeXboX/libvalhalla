@@ -56,7 +56,7 @@ START_TEST (test_json_utils_tokenize)
   int cnt = 0;
   list_t *list = tokenize ("foo.bar.arr[2].tux");
 
-  vh_list_foreach (list, &cnt, foreach);
+  vh_list_foreach (list, &cnt, (void *) foreach);
   vh_list_free (list);
   fail_unless (cnt == 4,
                "expected 4 loops, but %d received", cnt);
