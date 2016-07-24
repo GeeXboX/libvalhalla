@@ -93,7 +93,7 @@ tokenize (const char *path)
   while (token)
   {
     item_t *it = NULL;
-    char *item = strdup (token);
+    char item[strlen (token) + 1];
     unsigned int index = 0;
 
     int nb = sscanf (token, "%[^[][%u]", item, &index);
@@ -105,7 +105,6 @@ tokenize (const char *path)
     vh_list_append (tokens, it, sizeof (*it));
     token = strtok (NULL, ".");
 
-    free (item);
     free (it);
   }
 
