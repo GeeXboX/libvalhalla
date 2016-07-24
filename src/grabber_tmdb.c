@@ -22,13 +22,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <json-c/json_tokener.h>
 
 #include "grabber_common.h"
 #include "grabber_tmdb.h"
 #include "metadata.h"
 #include "url_utils.h"
 #include "grabber_utils.h"
+#include "json_utils.h"
 #include "utils.h"
 #include "logs.h"
 #include "md5.h"
@@ -125,9 +125,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   url_data_t udata;
 
   json_object *doc;
-  json_object *tmp;
-  json_bool res;
-  const char *value_s;
+  char *value_s;
   int value_d;
   int id;
 
@@ -154,30 +152,15 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     return -1;
 
   /* check for total number of results */
-  res = json_object_object_get_ex (doc, "total_results", &tmp);
-  if (!res)
+  if (vh_json_get_int (doc, "total_results") <= 0)
   {
     vh_log (VALHALLA_MSG_VERBOSE,
             "Unable to find the item \"%s\"", escaped_keywords);
     goto error;
   }
 
-  /* check that requested item is known on TMDB */
-  if (json_object_get_int (tmp) <= 0)
-    goto error;
-
-  json_object *results;
-  res = json_object_object_get_ex (doc, "results", &results);
-  if (!res)
-    goto error;
-
-  json_object *details = json_object_array_get_idx (results, 0);
-  if (!details)
-    goto error;
-
   /* get TMDB Movie ID */
-  res = json_object_object_get_ex (details, "id", &tmp);
-  id = json_object_get_int (tmp);
+  id = vh_json_get_int (doc, "results[0].id");
 
   /* proceed with TMDB search request */
   snprintf (url, sizeof (url),
@@ -200,32 +183,38 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     goto error;
 
   /* fetch movie overview description */
-  res = json_object_object_get_ex (doc, "overview", &tmp);
-  value_s = json_object_get_string (tmp);
+  value_s = vh_json_get_str (doc, "overview");
   if (value_s)
+  {
     vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_SYNOPSIS,
                           value_s, VALHALLA_LANG_EN, tmdb->pl);
+    free (value_s);
+  }
 
   /* fetch movie runtime (in minutes) */
-  res = json_object_object_get_ex (doc, "runtime", &tmp);
-  value_d = json_object_get_int (tmp);
+  value_d = vh_json_get_int (doc, "runtime");
   if (value_d)
     vh_grabber_parse_int (fdata, value_d,
                           VALHALLA_METADATA_RUNTIME, tmdb->pl);
 
   /* fetch movie year of production */
-  res = json_object_object_get_ex (doc, "release_date", &tmp);
-  value_s = json_object_get_string (tmp);
+  value_s = vh_json_get_str (doc, "release_date");
   if (value_s)
+  {
     vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_DATE,
                           value_s, VALHALLA_LANG_EN, tmdb->pl);
+    free (value_s);
+  }
 
   /* fetch movie rating */
-  res = json_object_object_get_ex (doc, "vote_average", &tmp);
-  value_s = json_object_get_string (tmp);
+  value_s = vh_json_get_str (doc, "vote_average");
   if (value_s)
+  {
     vh_metadata_add_auto (&fdata->meta_grabber, VALHALLA_METADATA_RATING,
                           value_s, VALHALLA_LANG_EN, tmdb->pl);
+    free (value_s);
+  }
+
 #if 0
   /* fetch movie budget */
   vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET,
