@@ -96,7 +96,7 @@ tokenize (const char *path)
     char *item = strdup (token);
     unsigned int index = 0;
 
-    int nb = sscanf (token, "%[a-zA-Z0-9-_][%u]", item, &index);
+    int nb = sscanf (token, "%[^[][%u]", item, &index);
     if (nb < 2)
       it = item_new (item);
     else
