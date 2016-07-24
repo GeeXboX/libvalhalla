@@ -63,8 +63,48 @@ START_TEST (test_json_utils_tokenize)
 }
 END_TEST
 
+START_TEST (test_json_utils_json_get)
+{
+  int i;
+  const char *s;
+  json_object *tmp;
+  json_object *json = json_tokener_parse (" \
+  {                    \
+    \"a\": 3,          \
+    \"b\": \"two\",    \
+    \"c\": {           \
+      \"tux\": 42,     \
+      \"arr\": [       \
+        \"walkyries\", \
+        \"thor\"       \
+      ]                \
+    }                  \
+  }                    \
+  ");
+
+  tmp = vh_json_get (json, "a");
+  i = json_object_get_int (tmp);
+  fail_unless (i == 3, "expected 3 but received %d", i);
+
+  tmp = vh_json_get (json, "b");
+  s = json_object_get_string (tmp);
+  fail_unless (!strcmp (s, "two"), "expected \"two\" but received %s", s);
+
+  tmp = vh_json_get (json, "c.tux");
+  i = json_object_get_int (tmp);
+  fail_unless (i == 42, "expected 42 but received %d", i);
+
+  tmp = vh_json_get (json, "c.arr[1]");
+  s = json_object_get_string (tmp);
+  fail_unless (!strcmp (s, "thor"), "expected \"thor\" but received %s", s);
+
+  json_object_put (json);
+}
+END_TEST
+
 void
 vh_test_json_utils (TCase *tc)
 {
   tcase_add_test (tc, test_json_utils_tokenize);
+  tcase_add_test (tc, test_json_utils_json_get);
 }
