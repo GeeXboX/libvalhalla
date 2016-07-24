@@ -146,11 +146,21 @@ vh_json_get (json_object *json, const char *path)
 char *
 vh_json_get_str (json_object *json, const char *path)
 {
+  json_object *value = vh_json_get (json, path);
+  if (!value)
+    return NULL;
 
+  char *res = strdup (json_object_get_string (value));
+  json_object_put (value);
+  return res;
 }
 
 int
 vh_json_get_int (json_object *json, const char *path)
 {
+  json_object *value = vh_json_get (json, path);
+  if (!value)
+    return 0;
 
+  return json_object_get_int (value);
 }
