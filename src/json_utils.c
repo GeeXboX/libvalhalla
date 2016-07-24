@@ -108,6 +108,7 @@ tokenize (const char *path)
     free (it);
   }
 
+  free (p);
   return tokens;
 }
 
