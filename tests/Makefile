@@ -37,7 +37,7 @@ all: extra_srcs static_fct depend $(VH_TEST)
 	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(APP_CPPFLAGS) -o $@ $<
 
 $(VH_TEST): $(OBJS)
-	$(CC) $(OBJS) $(APP_LDFLAGS) -o $(VH_TEST)
+	$(CC) $(OBJS) $(APP_LDFLAGS) $(EXTRALIBS) -o $(VH_TEST)
 
 extra_srcs:
 	for l in $(EXTRA_SRCS); do \
