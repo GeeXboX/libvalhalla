@@ -215,15 +215,18 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     free (value_s);
   }
 
-#if 0
   /* fetch movie budget */
-  vh_grabber_parse_str (fdata, n, "budget", VALHALLA_METADATA_BUDGET,
-                        VALHALLA_LANG_UNDEF, tmdb->pl);
+  value_d = vh_json_get_int (doc, "budget");
+  if (value_d)
+    vh_grabber_parse_int (fdata, value_d,
+                          VALHALLA_METADATA_BUDGET, tmdb->pl);
 
   /* fetch movie revenue */
-  vh_grabber_parse_str (fdata, n, "revenue", VALHALLA_METADATA_REVENUE,
-                        VALHALLA_LANG_UNDEF, tmdb->pl);
-
+  value_d = vh_json_get_int (doc, "revenue");
+  if (value_d)
+    vh_grabber_parse_int (fdata, value_d,
+                          VALHALLA_METADATA_REVENUE, tmdb->pl);
+#if 0
   /* fetch movie country
    * <country name="..."/>
    */
