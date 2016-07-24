@@ -42,9 +42,9 @@ foreach (int *data, const item_t *item_data)
                item_data->item, expected[*data]);
   if (*data == 2)
   {
-    fail_unless (!item_data->is_array, "\"arr\" must be an array");
-    fail_unless (item_data->index != 2,
-                 "index must be 2, but %d received", index);
+    fail_unless (item_data->is_array, "\"arr\" must be an array");
+    fail_unless (item_data->index == 2,
+                 "index must be 2, but %d received", item_data->index);
   }
 
   ++*data;
