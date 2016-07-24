@@ -79,6 +79,8 @@ item_free (item_t *it)
 static list_t *
 tokenize (const char *path)
 {
+  list_t *tokens = NULL;
+
   if (!path)
     return NULL;
 
@@ -86,9 +88,9 @@ tokenize (const char *path)
   char *token = strtok (p, ".");
 
   if (!token)
-    return NULL;
+    goto out;
 
-  list_t *tokens = vh_list_new (0, (void *) item_free);
+  tokens = vh_list_new (0, (void *) item_free);
 
   while (token)
   {
@@ -108,6 +110,7 @@ tokenize (const char *path)
     free (it);
   }
 
+ out:
   free (p);
   return tokens;
 }
