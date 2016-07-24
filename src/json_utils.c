@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "osdep.h"
 #include "list.h"
 #include "json_utils.h"
 
@@ -84,8 +85,9 @@ tokenize (const char *path)
   if (!path)
     return NULL;
 
+  char *saveptr = NULL;
   char *p = strdup (path);
-  char *token = strtok (p, ".");
+  char *token = strtok_r (p, ".", &saveptr);
 
   if (!token)
     goto out;
@@ -105,7 +107,7 @@ tokenize (const char *path)
       it = item_array_new (item, index);
 
     vh_list_append (tokens, it, sizeof (*it));
-    token = strtok (NULL, ".");
+    token = strtok_r (NULL, ".", &saveptr);
 
     free (it);
   }
