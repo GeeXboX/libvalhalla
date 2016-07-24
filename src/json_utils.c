@@ -104,6 +104,9 @@ tokenize (const char *path)
 
     vh_list_append (tokens, it, sizeof (*it));
     token = strtok (NULL, ".");
+
+    free (item);
+    free (it);
   }
 
   return tokens;
