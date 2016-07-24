@@ -102,7 +102,7 @@ tokenize (const char *path)
     else
       it = item_array_new (item, index);
 
-    vh_list_append (tokens, it, sizeof (it));
+    vh_list_append (tokens, it, sizeof (*it));
     token = strtok (NULL, ".");
   }
 
