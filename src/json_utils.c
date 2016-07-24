@@ -116,13 +116,12 @@ foreach_item (json_object *json, const item_t *it)
 {
   json_object *value = NULL;
 
-  if (!it->is_array)
-  {
-    json_object_object_get_ex (json, it->item, &value);
-    return value;
-  }
+  json_object_object_get_ex (json, it->item, &value);
 
-  return json_object_array_get_idx (json, it->index);
+  if (!it->is_array)
+    return value;
+
+  return json_object_array_get_idx (value, it->index);
 }
 
 json_object *
