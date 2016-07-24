@@ -9,3 +9,6 @@ libvalhalla.pc
 DOCS/doxygen
 TAGS
 valhalla.db
+tests/*.c
+!tests/vh_*.c
+tests/vh_test
