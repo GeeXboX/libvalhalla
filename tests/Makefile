@@ -5,19 +5,22 @@ include ../config.mak
 
 VH_TEST = vh_test
 
-APP_CPPFLAGS = -I../src $(CFG_CPPFLAGS) $(CPPFLAGS)
-APP_LDFLAGS = -L../src -lcheck $(CFG_LDFLAGS) $(LDFLAGS)
+APP_CPPFLAGS = -I../src $$(pkg-config --cflags check) $(CFG_CPPFLAGS) $(CPPFLAGS) -O0 -g3
+APP_LDFLAGS = -L../src $$(pkg-config --libs check) $(CFG_LDFLAGS) $(LDFLAGS)
 
 APP_CPPFLAGS += -DOSDEP_STRNDUP -DOSDEP_STRCASESTR -DOSDEP_STRTOK_R
 
 SRCS =  vh_suite.c \
+	vh_test_json_utils.c \
 	vh_test_osdep.c \
 	vh_test_parser.c \
 
 EXTRA_SRCS = \
+	list.c \
 	osdep.c \
 
 STATIC_FCT = \
+	json_utils.c \
 	parser.c \
 
 EXTRADIST = \
@@ -34,7 +37,7 @@ all: extra_srcs static_fct depend $(VH_TEST)
 	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(APP_CPPFLAGS) -o $@ $<
 
 $(VH_TEST): $(OBJS)
-	$(CC) $(OBJS) $(APP_LDFLAGS) -o $(VH_TEST)
+	$(CC) $(OBJS) $(APP_LDFLAGS) $(EXTRALIBS) -o $(VH_TEST)
 
 extra_srcs:
 	for l in $(EXTRA_SRCS); do \

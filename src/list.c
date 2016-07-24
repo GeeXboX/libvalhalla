@@ -140,6 +140,21 @@ vh_list_free (list_t *list)
 }
 
 void *
+vh_list_foreach (const list_t *list, void *data,
+                 void *(*each_fct) (void *data, const void *item_data))
+{
+  if (!list || !each_fct)
+    return NULL;
+
+  void *last = data;
+
+  for (list_item_t *item = list->item; item; item = item->next)
+    last = each_fct (last, item->data);
+
+  return last;
+}
+
+void *
 vh_list_search (const list_t *list, const void *tocmp,
                 int (*cmp_fct) (const void *tocmp, const void *data))
 {

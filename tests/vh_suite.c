@@ -31,6 +31,7 @@ typedef struct vh_test_case_s {
 static const vh_test_case_t vtc[] = {
   { "osdep",        vh_test_osdep },
   { "parser",       vh_test_parser },
+  { "json_utils",   vh_test_json_utils },
 };
 
 
@@ -74,6 +75,8 @@ main (void)
   sr = srunner_create (s);
   if (!sr)
     return -1;
+
+  /* srunner_set_fork_status (sr, CK_NOFORK); */
 
   srunner_run_all (sr, CK_NORMAL);
   failed = srunner_ntests_failed (sr);

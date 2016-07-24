@@ -1,6 +1,6 @@
 /*
  * GeeXboX Valhalla: tiny media scanner API.
- * Copyright (C) 2010 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2016 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * This file is part of libvalhalla.
  *
@@ -19,11 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef VH_TEST_H
-#define VH_TEST_H
+#ifndef VALHALLA_JSON_UTILS_H
+#define VALHALLA_JSON_UTILS_H
 
-void vh_test_osdep (TCase *tc);
-void vh_test_parser (TCase *tc);
-void vh_test_json_utils (TCase *tc);
+#include <json-c/json_tokener.h>
 
-#endif /* VH_TEST_H */
+json_object *vh_json_get (json_object *json, const char *path);
+char *vh_json_get_str (json_object *json, const char *path);
+int vh_json_get_int (json_object *json, const char *path);
+
+#endif /* VALHALLA_JSON_UTILS_H */

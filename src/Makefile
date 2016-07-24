@@ -74,6 +74,7 @@ EXTRADIST = \
 	grabber_tvdb.h \
 	grabber_tvrage.h \
 	grabber_utils.h \
+	json_utils.h \
 	hmac_sha256.h \
 	lavf_utils.h \
 	list.h \
@@ -101,6 +102,7 @@ SRCS_GRABBER-$(GRABBER)			+= downloader.c \
 					   url_utils.c \
 
 SRCS_GRABBER-$(XML)			+= xml_utils.c
+SRCS_GRABBER-$(JSON)			+= json_utils.c
 SRCS_GRABBER-$(HMAC_SHA256)		+= hmac_sha256.c \
 					   sha.c
 SRCS_GRABBER-$(GRABBER_DUMMY)		+= grabber_dummy.c
