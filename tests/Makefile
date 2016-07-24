@@ -5,7 +5,7 @@ include ../config.mak
 
 VH_TEST = vh_test
 
-APP_CPPFLAGS = -I../src $$(pkg-config --cflags check) $(CFG_CPPFLAGS) $(CPPFLAGS)
+APP_CPPFLAGS = -I../src $$(pkg-config --cflags check) $(CFG_CPPFLAGS) $(CPPFLAGS) -O0 -g3
 APP_LDFLAGS = -L../src $$(pkg-config --libs check) $(CFG_LDFLAGS) $(LDFLAGS)
 
 APP_CPPFLAGS += -DOSDEP_STRNDUP -DOSDEP_STRCASESTR -DOSDEP_STRTOK_R
