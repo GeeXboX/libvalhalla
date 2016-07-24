@@ -134,7 +134,9 @@ vh_json_get (json_object *json, const char *path)
   if (!items)
     return NULL;
 
-  return vh_list_foreach (items, json, (void *) foreach_item);
+  json_object *res = vh_list_foreach (items, json, (void *) foreach_item);
+  vh_list_free (items);
+  return res;
 }
 
 char *
