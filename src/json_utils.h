@@ -24,6 +24,7 @@
 
 #include <json-c/json_tokener.h>
 
+json_object *vh_json_get (json_object *json, const char *path);
 char *vh_json_get_str (json_object *json, const char *path);
 int vh_json_get_int (json_object *json, const char *path);
 
