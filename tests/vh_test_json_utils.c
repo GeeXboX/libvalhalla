@@ -104,6 +104,14 @@ START_TEST (test_json_utils_json_get)
   i = json_object_get_int (tmp);
   fail_unless (i == 8, "expected 8 but received %d", i);
 
+  char *sv = vh_json_get_str (json, "c.arr[0]");
+  fail_unless (!strcmp (sv, "walkyries"),
+               "expected \"walkyries\" but received %s", sv);
+  free (sv);
+
+  i = vh_json_get_int (json, "c.arr[2].id");
+  fail_unless (i == 8, "expected 8 but received %d", i);
+
   json_object_put (json);
 }
 END_TEST
