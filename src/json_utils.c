@@ -153,7 +153,6 @@ vh_json_get_str (json_object *json, const char *path)
     return NULL;
 
   char *res = strdup (json_object_get_string (value));
-  json_object_put (value);
   return res;
 }
 
