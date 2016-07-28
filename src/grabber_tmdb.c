@@ -42,11 +42,13 @@
  */
 
 #define TMDB_HOSTNAME     "api.themoviedb.org"
+#define TMDB_HOSTNAME_IMG "image.tmdb.org"
 
 #define TMDB_API_KEY      "5401cd030990fba60e1c23d2832de62e"
 
 #define TMDB_QUERY_SEARCH "http://%s/3/search/movie?api_key=%s&query=%s"
 #define TMDB_QUERY_INFO   "http://%s/3/movie/%d?api_key=%s"
+#define TMDB_QUERY_IMAGE  "http://%s/t/p/w%d%s"
 
 typedef struct grabber_tmdb_s {
   url_t *handler;
@@ -59,17 +61,18 @@ static const metadata_plist_t tmdb_pl[] = {
   { NULL,                             VALHALLA_METADATA_PL_HIGH     }
 };
 
-#if 0
+
 static void
 grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
-                          xmlChar *url, valhalla_dl_t dl,
+                          const char *path, valhalla_dl_t dl,
                           const metadata_plist_t *pl)
 {
   char name[1024] = { 0 };
+  char url[MAX_URL_SIZE];
   const char *type;
   char *cover = NULL;
 
-  if (!fdata || !url)
+  if (!fdata || !path)
     return;
 
   if (dl == VALHALLA_DL_COVER)
@@ -79,44 +82,19 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
   else
     return;
 
+  snprintf (url, sizeof (url), TMDB_QUERY_IMAGE,
+            TMDB_HOSTNAME_IMG, 1920, path);
+
   snprintf (name, sizeof (name), "%s-%s", type, keywords);
   cover = vh_md5sum (name);
 
   vh_metadata_add_auto (&fdata->meta_grabber,
                         type, cover, VALHALLA_LANG_UNDEF, pl);
-  vh_file_dl_add (&fdata->list_downloader, (char *) url, cover, dl);
+  vh_file_dl_add (&fdata->list_downloader, url, cover, dl);
 
   free (cover);
 }
 
-static xmlChar *
-grabber_tmdb_parse_forimage (xmlNode *n, const char *type, const char *size)
-{
-  xmlNode *node;
-  xmlChar *content_type = NULL;
-  xmlChar *content_size = NULL;
-  xmlChar *content_url  = NULL;
-
-  node = vh_xml_get_node_tree (n, "images");
-  if (!node || node->type != XML_ELEMENT_NODE)
-    return NULL;
-
-  for (node = node->children; node && !content_url; node = node->next)
-  {
-      content_type = vh_xml_get_attr_value_from_node (node, "type");
-      content_size = vh_xml_get_attr_value_from_node (node, "size");
-
-      if (   !xmlStrcmp (content_type, (const xmlChar *) type)
-          && !xmlStrcmp (content_size, (const xmlChar *) size))
-        content_url = vh_xml_get_attr_value_from_node (node, "url");
-
-      xmlFree (content_type);
-      xmlFree (content_size);
-  }
-
-  return content_url;
-}
-#endif /* 0 */
 static int
 grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                   const char *keywords, char *escaped_keywords)
@@ -242,30 +220,27 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
    */
   vh_grabber_parse_casting (fdata, n, tmdb->pl);
 
-  /* Fetch movie poster
-   * <image type="poster" url="..." size="mid"/>
-   */
-  tmp = grabber_tmdb_parse_forimage (n, "poster", "mid");
-  if (tmp)
-  {
-    grabber_tmdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_DL_COVER, tmdb->pl);
-    xmlFree (tmp);
-  }
-
-  /* Fetch movie fan art
-   * <image type="backdrop" url="..." size="w1280"/>
-   */
-  tmp = grabber_tmdb_parse_forimage (n, "backdrop", "w1280");
-  if (tmp)
-  {
-    grabber_tmdb_get_picture (fdata, keywords, tmp,
-                              VALHALLA_DL_FAN_ART, tmdb->pl);
-    xmlFree (tmp);
-  }
-
   xmlFreeDoc (doc);
 #endif /* 0 */
+
+  /* Fetch movie poster */
+  value_s = vh_json_get_str (doc, "poster_path");
+  if (value_s)
+  {
+    grabber_tmdb_get_picture (fdata, keywords, value_s,
+                              VALHALLA_DL_COVER, tmdb->pl);
+    free (value_s);
+  }
+
+  /* Fetch movie fan art */
+  value_s = vh_json_get_str (doc, "backdrop_path");
+  if (value_s)
+  {
+    grabber_tmdb_get_picture (fdata, keywords, value_s,
+                              VALHALLA_DL_FAN_ART, tmdb->pl);
+    free (value_s);
+  }
+
   json_object_put (doc);
   return 0;
 
