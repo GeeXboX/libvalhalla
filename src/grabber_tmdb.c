@@ -129,6 +129,7 @@ grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
 
   vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_ACTOR,
                         value_s, VALHALLA_LANG_UNDEF, data->tmdb->pl);
+  free (value_s);
 }
 
 static int
