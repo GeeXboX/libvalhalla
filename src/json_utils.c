@@ -145,6 +145,24 @@ vh_json_get (json_object *json, const char *path)
   return res;
 }
 
+void
+vh_json_foreach (json_object *json, const char *path,
+                 void *(*foreach) (json_object *json, void *data), void *data)
+{
+  if (!foreach)
+    return;
+
+  json_object *value = vh_json_get (json, path);
+  if (!value)
+    return;
+
+  if (json_object_get_type (value) != json_type_array)
+    return;
+
+  for (int i = 0; i < json_object_array_length (value); ++i)
+    foreach (json_object_array_get_idx (value, i), data);
+}
+
 char *
 vh_json_get_str (json_object *json, const char *path)
 {
