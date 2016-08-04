@@ -49,6 +49,7 @@
 
 #define TMDB_QUERY_SEARCH "http://%s/3/search/movie?api_key=%s&query=%s"
 #define TMDB_QUERY_INFO   "http://%s/3/movie/%d?api_key=%s"
+#define TMDB_QUERY_CAST   "http://%s/3/movie/%d/credits?api_key=%s"
 #define TMDB_QUERY_IMAGE  "http://%s/t/p/w%d%s"
 
 typedef struct grabber_tmdb_s {
@@ -61,6 +62,11 @@ static const metadata_plist_t tmdb_pl[] = {
   { VALHALLA_METADATA_FAN_ART,        VALHALLA_METADATA_PL_HIGHER   },
   { NULL,                             VALHALLA_METADATA_PL_HIGH     }
 };
+
+typedef struct grabber_tmdb_data_s {
+  metadata_t **meta_grabber;
+  grabber_tmdb_t *tmdb;
+} grabber_tmdb_data_t;
 
 
 static void
@@ -112,6 +118,18 @@ grabber_tmdb_query (grabber_tmdb_t *tmdb, const char *url)
   free (udata.buffer);
 
   return doc;
+}
+
+static void
+grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
+{
+  char *value_s = vh_json_get_str (json, "name");
+  if (!value_s)
+    return;
+
+
+  vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_ACTOR,
+                        value_s, VALHALLA_LANG_UNDEF, data->tmdb->pl);
 }
 
 static int
@@ -236,6 +254,21 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                               VALHALLA_DL_FAN_ART, tmdb->pl);
     free (value_s);
   }
+
+  /* proceed with TMDB search request */
+  snprintf (url, sizeof (url),
+            TMDB_QUERY_CAST, TMDB_HOSTNAME, id, TMDB_API_KEY);
+
+  json_object_put (doc);
+  doc = grabber_tmdb_query (tmdb, url);
+  if (!doc)
+    goto error;
+
+  grabber_tmdb_data_t data = {
+    .meta_grabber = &fdata->meta_grabber,
+    .tmdb = tmdb,
+  };
+  vh_json_foreach (doc, "cast", (void *) grabber_tmdb_cast, &data);
 
   json_object_put (doc);
   return 0;
