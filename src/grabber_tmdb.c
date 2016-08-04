@@ -49,7 +49,7 @@
 
 #define TMDB_QUERY_SEARCH "http://%s/3/search/movie?api_key=%s&query=%s"
 #define TMDB_QUERY_INFO   "http://%s/3/movie/%d?api_key=%s"
-#define TMDB_QUERY_CAST   "http://%s/3/movie/%d/credits?api_key=%s"
+#define TMDB_QUERY_CREDITS "http://%s/3/movie/%d/credits?api_key=%s"
 #define TMDB_QUERY_IMAGE  "http://%s/t/p/w%d%s"
 
 typedef struct grabber_tmdb_s {
@@ -256,7 +256,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
 
   /* proceed with TMDB search request */
   snprintf (url, sizeof (url),
-            TMDB_QUERY_CAST, TMDB_HOSTNAME, id, TMDB_API_KEY);
+            TMDB_QUERY_CREDITS, TMDB_HOSTNAME, id, TMDB_API_KEY);
 
   json_object_put (doc);
   doc = grabber_tmdb_query (tmdb, url);
