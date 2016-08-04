@@ -57,16 +57,16 @@ typedef struct grabber_tmdb_s {
   const metadata_plist_t *pl;
 } grabber_tmdb_t;
 
+typedef struct grabber_tmdb_data_s {
+  metadata_t **meta_grabber;
+  grabber_tmdb_t *tmdb;
+} grabber_tmdb_data_t;
+
 static const metadata_plist_t tmdb_pl[] = {
   { VALHALLA_METADATA_COVER,          VALHALLA_METADATA_PL_HIGHER   },
   { VALHALLA_METADATA_FAN_ART,        VALHALLA_METADATA_PL_HIGHER   },
   { NULL,                             VALHALLA_METADATA_PL_HIGH     }
 };
-
-typedef struct grabber_tmdb_data_s {
-  metadata_t **meta_grabber;
-  grabber_tmdb_t *tmdb;
-} grabber_tmdb_data_t;
 
 
 static void
