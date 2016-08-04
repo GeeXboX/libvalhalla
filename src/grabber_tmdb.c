@@ -127,7 +127,6 @@ grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
   if (!value_s)
     return;
 
-
   vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_ACTOR,
                         value_s, VALHALLA_LANG_UNDEF, data->tmdb->pl);
 }
