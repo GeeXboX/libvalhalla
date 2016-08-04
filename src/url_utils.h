@@ -44,7 +44,7 @@ void vh_url_global_uninit (void);
 
 url_t *vh_url_new (url_ctl_t *abort);
 void vh_url_free (url_t *url);
-url_data_t vh_url_get_data (url_t *handler, char *url);
+url_data_t vh_url_get_data (url_t *handler, const char *url);
 char *vh_url_escape_string (url_t *handler, const char *buf);
 int vh_url_save_to_disk (url_t *handler, char *src, char *dst);
 

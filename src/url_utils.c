@@ -130,7 +130,7 @@ vh_url_global_uninit (void)
 }
 
 url_data_t
-vh_url_get_data (url_t *handler, char *url)
+vh_url_get_data (url_t *handler, const char *url)
 {
   url_data_t chunk;
   CURL *curl = (CURL *) handler;
