@@ -96,12 +96,29 @@ grabber_tmdb_get_picture (file_data_t *fdata, const char *keywords,
   free (cover);
 }
 
+static json_object *
+grabber_tmdb_query (grabber_tmdb_t *tmdb, const char *url)
+{
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
+
+  url_data_t udata = vh_url_get_data (tmdb->handler, url);
+  if (udata.status != 0)
+    return NULL;
+
+  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
+
+  /* parse the JSON answer */
+  json_object *doc = json_tokener_parse (udata.buffer);
+  free (udata.buffer);
+
+  return doc;
+}
+
 static int
 grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                   const char *keywords, char *escaped_keywords)
 {
   char url[MAX_URL_SIZE];
-  url_data_t udata;
 
   json_object *doc;
   char *value_s;
@@ -115,18 +132,7 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   snprintf (url, sizeof (url), TMDB_QUERY_SEARCH,
             TMDB_HOSTNAME, TMDB_API_KEY, escaped_keywords);
 
-  vh_log (VALHALLA_MSG_VERBOSE, "Search Request: %s", url);
-
-  udata = vh_url_get_data (tmdb->handler, url);
-  if (udata.status != 0)
-    return -1;
-
-  vh_log (VALHALLA_MSG_VERBOSE, "Search Reply: %s", udata.buffer);
-
-  /* parse the JSON answer */
-  doc = json_tokener_parse (udata.buffer);
-  free (udata.buffer);
-
+  doc = grabber_tmdb_query (tmdb, url);
   if (!doc)
     return -1;
 
@@ -145,19 +151,8 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   snprintf (url, sizeof (url),
             TMDB_QUERY_INFO, TMDB_HOSTNAME, id, TMDB_API_KEY);
 
-  vh_log (VALHALLA_MSG_VERBOSE, "Info Request: %s", url);
-
-  udata = vh_url_get_data (tmdb->handler, url);
-  if (udata.status != 0)
-    goto error;
-
-  vh_log (VALHALLA_MSG_VERBOSE, "Info Reply: %s", udata.buffer);
-
-  /* parse the JSON answer */
   json_object_put (doc);
-  doc = json_tokener_parse (udata.buffer);
-  free (udata.buffer);
-
+  doc = grabber_tmdb_query (tmdb, url);
   if (!doc)
     goto error;
 
