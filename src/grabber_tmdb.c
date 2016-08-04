@@ -42,15 +42,15 @@
  *  http://api.themoviedb.org
  */
 
-#define TMDB_HOSTNAME     "api.themoviedb.org"
-#define TMDB_HOSTNAME_IMG "image.tmdb.org"
+#define TMDB_HOSTNAME      "api.themoviedb.org"
+#define TMDB_HOSTNAME_IMG  "image.tmdb.org"
 
-#define TMDB_API_KEY      "5401cd030990fba60e1c23d2832de62e"
+#define TMDB_API_KEY       "5401cd030990fba60e1c23d2832de62e"
 
-#define TMDB_QUERY_SEARCH "http://%s/3/search/movie?api_key=%s&query=%s"
-#define TMDB_QUERY_INFO   "http://%s/3/movie/%d?api_key=%s"
+#define TMDB_QUERY_SEARCH  "http://%s/3/search/movie?api_key=%s&query=%s"
+#define TMDB_QUERY_INFO    "http://%s/3/movie/%d?api_key=%s"
 #define TMDB_QUERY_CREDITS "http://%s/3/movie/%d/credits?api_key=%s"
-#define TMDB_QUERY_IMAGE  "http://%s/t/p/w%d%s"
+#define TMDB_QUERY_IMAGE   "http://%s/t/p/w%d%s"
 
 typedef struct grabber_tmdb_s {
   url_t *handler;
