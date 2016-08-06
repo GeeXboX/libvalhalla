@@ -333,7 +333,10 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   if (!doc)
     goto error;
 
+  /* fetch movie castings */
   vh_json_foreach (doc, "cast", (void *) grabber_tmdb_cast, &data);
+
+  /* fetch movie crews */
   vh_json_foreach (doc, "crew", (void *) grabber_tmdb_crew, &data);
 
   json_object_put (doc);
