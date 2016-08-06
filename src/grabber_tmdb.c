@@ -123,13 +123,25 @@ grabber_tmdb_query (grabber_tmdb_t *tmdb, const char *url)
 static void
 grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
 {
-  char *value_s = vh_json_get_str (json, "name");
-  if (!value_s)
+  char *name = vh_json_get_str (json, "name");
+  if (!name)
     return;
 
+  char str[256] = { 0 };
+
+  char *character = vh_json_get_str (json, "character");
+  if (character)
+  {
+    snprintf (str, sizeof (str), "%s (%s)", name, character);
+    free (character);
+  }
+  else
+    snprintf (str, sizeof (str), "%s", name);
+
+  free (name);
+
   vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_ACTOR,
-                        value_s, VALHALLA_LANG_UNDEF, data->tmdb->pl);
-  free (value_s);
+                        str, VALHALLA_LANG_UNDEF, data->tmdb->pl);
 }
 
 static int
