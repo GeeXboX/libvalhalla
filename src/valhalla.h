@@ -193,6 +193,7 @@ typedef enum valhalla_meta_grp {
 #define VALHALLA_METADATA_ARTIST                     "artist"
 #define VALHALLA_METADATA_AUTHOR                     "author"
 #define VALHALLA_METADATA_CASTING                    "casting"
+#define VALHALLA_METADATA_CHOREGRAPHER               "choregrapher"
 #define VALHALLA_METADATA_COMPOSER                   "composer"
 #define VALHALLA_METADATA_CREDITS                    "credits"
 #define VALHALLA_METADATA_DIRECTOR                   "director"

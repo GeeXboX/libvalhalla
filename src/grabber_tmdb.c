@@ -144,6 +144,45 @@ grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
                         str, VALHALLA_LANG_UNDEF, data->tmdb->pl);
 }
 
+static void
+grabber_tmdb_crew (json_object *json, grabber_tmdb_data_t *data)
+{
+  static const struct {
+    const char *job;
+    const char *meta;
+  } casting_mapping[] = {
+    { "Director",                   VALHALLA_METADATA_DIRECTOR       },
+    { "Screenplay",                 VALHALLA_METADATA_WRITER         },
+    { "Producer",                   VALHALLA_METADATA_PRODUCER       },
+    { "Music",                      VALHALLA_METADATA_COMPOSER       },
+    { "Director of Photography",    VALHALLA_METADATA_DIRECTOR_PHOTO },
+    { "Editor",                     VALHALLA_METADATA_EDITOR         },
+    { "Original Story",             VALHALLA_METADATA_AUTHOR         },
+    { "Martial Arts Choreographer", VALHALLA_METADATA_CHOREGRAPHER   },
+    { NULL,                         NULL                             }
+  };
+
+  char *job = vh_json_get_str (json, "job");
+  if (!job)
+    return;
+
+  char *name = vh_json_get_str (json, "name");
+  if (!name)
+    goto out;
+
+  for (int i = 0; casting_mapping[i].job; i++)
+    if (!strcasecmp (job, casting_mapping[i].job))
+    {
+      vh_metadata_add_auto (data->meta_grabber, casting_mapping[i].meta,
+                            name, VALHALLA_LANG_UNDEF, data->tmdb->pl);
+      break;
+    }
+
+  free (name);
+ out:
+  free (job);
+}
+
 static int
 grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
                   const char *keywords, char *escaped_keywords)
@@ -280,7 +319,9 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
     .meta_grabber = &fdata->meta_grabber,
     .tmdb = tmdb,
   };
+
   vh_json_foreach (doc, "cast", (void *) grabber_tmdb_cast, &data);
+  vh_json_foreach (doc, "crew", (void *) grabber_tmdb_crew, &data);
 
   json_object_put (doc);
   return 0;
