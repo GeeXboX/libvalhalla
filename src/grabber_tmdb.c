@@ -176,13 +176,13 @@ grabber_tmdb_crew (json_object *json, grabber_tmdb_data_t *data)
     const char *meta;
   } casting_mapping[] = {
     { "Director",                   VALHALLA_METADATA_DIRECTOR       },
-    { "Screenplay",                 VALHALLA_METADATA_WRITER         },
-    { "Producer",                   VALHALLA_METADATA_PRODUCER       },
-    { "Music",                      VALHALLA_METADATA_COMPOSER       },
     { "Director of Photography",    VALHALLA_METADATA_DIRECTOR_PHOTO },
     { "Editor",                     VALHALLA_METADATA_EDITOR         },
-    { "Original Story",             VALHALLA_METADATA_AUTHOR         },
     { "Martial Arts Choreographer", VALHALLA_METADATA_CHOREGRAPHER   },
+    { "Music",                      VALHALLA_METADATA_COMPOSER       },
+    { "Original Story",             VALHALLA_METADATA_AUTHOR         },
+    { "Producer",                   VALHALLA_METADATA_PRODUCER       },
+    { "Screenplay",                 VALHALLA_METADATA_WRITER         },
     { NULL,                         NULL                             }
   };
 
