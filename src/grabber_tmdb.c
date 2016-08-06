@@ -280,11 +280,6 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
    */
   vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
-  /* fetch movie people
-   * <person name="..." character="..." job="..."/>
-   */
-  vh_grabber_parse_casting (fdata, n, tmdb->pl);
-
   xmlFreeDoc (doc);
 #endif /* 0 */
 
