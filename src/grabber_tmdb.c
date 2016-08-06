@@ -121,6 +121,30 @@ grabber_tmdb_query (grabber_tmdb_t *tmdb, const char *url)
 }
 
 static void
+grabber_tmdb_genres (json_object *json, grabber_tmdb_data_t *data)
+{
+  char *genre = vh_json_get_str (json, "name");
+  if (!genre)
+    return;
+
+  vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_CATEGORY,
+                        genre, VALHALLA_LANG_EN, data->tmdb->pl);
+  free (genre);
+}
+
+static void
+grabber_tmdb_countries (json_object *json, grabber_tmdb_data_t *data)
+{
+  char *country = vh_json_get_str (json, "name");
+  if (!country)
+    return;
+
+  vh_metadata_add_auto (data->meta_grabber, VALHALLA_METADATA_COUNTRY,
+                        country, VALHALLA_LANG_EN, data->tmdb->pl);
+  free (country);
+}
+
+static void
 grabber_tmdb_cast (json_object *json, grabber_tmdb_data_t *data)
 {
   char *name = vh_json_get_str (json, "name");
@@ -193,6 +217,11 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   char *value_s;
   int value_d;
   int id;
+
+  grabber_tmdb_data_t data = {
+    .meta_grabber = &fdata->meta_grabber,
+    .tmdb = tmdb,
+  };
 
   if (!keywords || !escaped_keywords)
     return -1;
@@ -269,19 +298,13 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   if (value_d)
     vh_grabber_parse_int (fdata, value_d,
                           VALHALLA_METADATA_REVENUE, tmdb->pl);
-#if 0
-  /* fetch movie country
-   * <country name="..."/>
-   */
-  vh_grabber_parse_countries (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
 
-  /* fetch movie categories
-   * <category name="..."/>
-   */
-  vh_grabber_parse_categories (fdata, n, VALHALLA_LANG_EN, tmdb->pl);
+  /* fetch movie genres */
+  vh_json_foreach (doc, "genres", (void *) grabber_tmdb_genres, &data);
 
-  xmlFreeDoc (doc);
-#endif /* 0 */
+  /* fetch movie countries */
+  vh_json_foreach (doc, "production_countries",
+                   (void *) grabber_tmdb_countries, &data);
 
   /* Fetch movie poster */
   value_s = vh_json_get_str (doc, "poster_path");
@@ -309,11 +332,6 @@ grabber_tmdb_get (grabber_tmdb_t *tmdb, file_data_t *fdata,
   doc = grabber_tmdb_query (tmdb, url);
   if (!doc)
     goto error;
-
-  grabber_tmdb_data_t data = {
-    .meta_grabber = &fdata->meta_grabber,
-    .tmdb = tmdb,
-  };
 
   vh_json_foreach (doc, "cast", (void *) grabber_tmdb_cast, &data);
   vh_json_foreach (doc, "crew", (void *) grabber_tmdb_crew, &data);
