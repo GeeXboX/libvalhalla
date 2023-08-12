@@ -34,7 +34,7 @@ EXTRADIST = \
 	$(MANS) \
 
 SUBDIRS = \
-	DOCS \
+	Documentations \
 	src \
 	tests \
 	utils \
@@ -64,10 +64,10 @@ apps: apps-dep lib
 	$(MAKE) $(VHTEST)
 
 docs:
-	$(MAKE) -C DOCS
+	$(MAKE) -C Documentations
 
 docs-clean:
-	$(MAKE) -C DOCS clean
+	$(MAKE) -C Documentations clean
 
 tests:
 	$(MAKE) -C tests
@@ -101,7 +101,7 @@ install-apps: apps
 	$(INSTALL) -c -m 755 $(VHTEST) $(bindir)
 
 install-docs: docs
-	$(MAKE) -C DOCS install
+	$(MAKE) -C Documentations install
 
 install-man: $(MANS)
 	for m in $(MANS); do \
@@ -122,7 +122,7 @@ uninstall-apps:
 	rm -f $(bindir)/$(VHTEST)
 
 uninstall-docs:
-	$(MAKE) -C DOCS uninstall
+	$(MAKE) -C Documentations uninstall
 
 uninstall-man:
 	for m in $(MANS); do \
